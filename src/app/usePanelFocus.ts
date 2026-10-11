@@ -1,24 +1,16 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 
-export function usePanelFocus(
-  helpOpen: boolean,
-  promotion: object | null,
-  onClose: () => void,
-) {
+export function usePanelFocus(promotion: object | null, onClose: () => void) {
   const close = useRef(onClose);
   useLayoutEffect(() => {
     close.current = onClose;
   });
   useEffect(() => {
-    if (!helpOpen && !promotion) return;
+    if (!promotion) return;
     const previous = document.activeElement as HTMLElement | null;
-    const panel = document.querySelector<HTMLElement>(
-      promotion ? ".promotion-card" : ".help-card",
-    );
+    const panel = document.querySelector<HTMLElement>(".promotion-card");
     panel
-      ?.querySelector<HTMLElement>(
-        promotion ? ".promotion-choices button" : "button",
-      )
+      ?.querySelector<HTMLElement>(".promotion-choices button")
       ?.focus({ preventScroll: true });
     if (window.matchMedia("(max-width: 900px)").matches)
       panel?.scrollIntoView({
@@ -35,5 +27,5 @@ export function usePanelFocus(
       document.removeEventListener("keydown", handleKey);
       previous?.focus({ preventScroll: true });
     };
-  }, [helpOpen, promotion]);
+  }, [promotion]);
 }

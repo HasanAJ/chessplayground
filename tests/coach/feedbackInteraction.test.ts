@@ -72,8 +72,6 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
             }
         : null,
       feedbackPly: game.history.length,
-      helpOpen: false,
-      onCloseHelp() {},
       onReviewRetry() {},
       onCalculate() {
         calculations++;

@@ -460,40 +460,6 @@ footer img {
   color: #7b668b;
   line-height: 1.65;
 }
-.panel-dialog ol {
-  padding-left: 20px;
-  margin: 18px 0;
-}
-.panel-dialog li {
-  font-size: var(--text-body);
-  line-height: 1.6;
-  padding-left: 7px;
-  margin-bottom: 19px;
-}
-.panel-dialog li::marker {
-  color: #b68bce;
-  font-family: var(--heading);
-  font-weight: 600;
-}
-.panel-dialog li strong {
-  font-weight: 600;
-}
-.panel-dialog li p {
-  font-size: var(--text-body);
-  color: #7b668b;
-  margin-top: 5px;
-}
-.panel-dialog p.help-footnote {
-  font-size: var(--text-sm);
-  line-height: 1.7;
-  border-top: 1px solid #eee0f5;
-  padding-top: 16px;
-  margin-bottom: 20px;
-}
-.help-card .primary-button {
-  width: 100%;
-  justify-content: space-between;
-}
 .promotion-choices {
   display: flex;
   gap: 10px;

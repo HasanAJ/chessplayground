@@ -29,11 +29,16 @@ export default {
   Black: "Nero",
   "Tempo home": "Pagina iniziale di Tempo",
   "Your chess playground": "Il tuo spazio per gli scacchi",
-  "How it works": "Come funziona",
   "Your next move,": "La tua prossima mossa,",
   "explained.": "spiegata.",
   "Explore the board. Understand the plan. Try a move.":
     "Esplora la scacchiera. Comprendi il piano. Prova una mossa.",
+  "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.":
+    "Fai clic su un pezzo e sulla casella di destinazione per giocare una mossa, oppure trascina i pezzi dai vassoi per creare la tua posizione.",
+  "Select “{0}” for suggestions and explanations, then preview a reply or try a move.":
+    "Seleziona «{0}» per vedere suggerimenti e spiegazioni, poi visualizza una risposta in anteprima o prova una mossa.",
+  "Play both sides, or turn on the computer opponent to practice against it.":
+    "Gioca con entrambi i colori oppure attiva l’avversario controllato dal computer per allenarti.",
   "A good move starts with a little understanding.":
     "Una buona mossa inizia con un po' di comprensione.",
   "Powered by Stockfish 19": "Con Stockfish 19",
@@ -393,31 +398,6 @@ export default {
     "La differenza di valutazione è espressa in pedoni. I giudizi considerano l'intera posizione; il matto non ha un valore in pedoni.",
   "Quick review": "Revisione rapida",
   "{0} evaluation drop": "{0} di calo nella valutazione",
-  "Close help": "Chiudi aiuto",
-  "WELCOME TO TEMPO": "BENVENUTO SU TEMPO",
-  "A board. A plan. Your next move.":
-    "Una scacchiera. Un piano. La tua prossima mossa.",
-  "Make it your position.": "Crea la tua posizione.",
-  "The piece trays above and below the board are always available. Drag a tray piece onto the board, or select it and click a square. Drag a legal board move to play it. Other board drops arrange a new position and restart history. Right-click a piece or drag it off the board to remove it. “Clear board” beside New game empties the board. Click a piece and a legal destination to play a move. Choose who plays next under “Your coach,” then press “Calculate best moves” whenever you want guidance for that position.":
-    "Le vaschette dei pezzi sopra e sotto la scacchiera sono sempre disponibili. Trascina un pezzo sulla scacchiera oppure selezionalo e clicca una casella. Trascina una mossa legale per giocarla; gli altri spostamenti creano una nuova posizione e riavviano la cronologia. Rimuovi un pezzo con il tasto destro o trascinandolo fuori. «Svuota scacchiera», accanto a «Nuova partita», rimuove tutti i pezzi. Puoi anche giocare cliccando un pezzo e la destinazione legale. Scegli il turno sotto «Il tuo allenatore» e premi «Calcola le migliori mosse» quando vuoi un consiglio.",
-  "Understand your options.": "Comprendi le tue opzioni.",
-  "The best move appears with a short explanation and a plain-language move description. Use “Preview reply” to see the response, then “Explore next moves” for the longer line. Open “About this position” for more context. “Other good options” appears only when worthwhile alternatives exist. Hover anywhere on the Best Move card, or focus one of its controls, to see its arrow. You can also hover or focus an alternative move. Hover a continuation move or “Likely reply” to see that position temporarily. Moving away restores the board. Keyboard focus and previews work the same way. Clicking or tapping keeps the preview, even when you jump back to the board. Choose “Return to game” or press Escape to finish a kept preview.":
-    "La mossa migliore include una breve spiegazione e una descrizione semplice. «Anteprima risposta» mostra la risposta, poi «Esplora le prossime mosse» estende la linea. Apri «Su questa posizione» per il contesto. «Altre buone opzioni» compare solo con alternative valide. Passa il puntatore sulla scheda della mossa migliore, usa il focus sui controlli o su un'alternativa per vederne la freccia. Puntatore e focus su una continuazione o «Risposta probabile» mostrano temporaneamente la posizione; uscendo, la scacchiera torna com'era. Clicca o tocca per mantenere l'anteprima, anche tornando alla scacchiera. Usa «Torna alla partita» o Escape per uscire.",
-  "Learn as you go.": "Impara giocando.",
-  "Use the “See” link below an explanation to preview its moves, attacks, or defenses with teal arrows and outlines. Your game stays unchanged. Move feedback includes a “Next time” lesson when the analysis finds a stronger alternative.":
-    "Usa il link «Vedi» sotto una spiegazione per visualizzare mosse, attacchi o difese con frecce e contorni verde acqua. La partita resta invariata. La valutazione include un consiglio «La prossima volta» quando l'analisi trova un'alternativa più forte.",
-  "Keep the conversation going.": "Continua a esplorare.",
-  "Click a piece and its destination to play for either side, or use a suggested move. Click “Calculate best moves” whenever you want guidance for the current position. Use the arrows above the board, or click a move in your history, to revisit its position and analysis. Use “Back to latest” to continue your game, or play a move from the selected position to continue from there.":
-    "Clicca un pezzo e la destinazione per giocare con entrambi i lati, oppure usa una mossa suggerita. Premi «Calcola le migliori mosse» per consigli sulla posizione attuale. Usa le frecce sopra la scacchiera o una mossa nella cronologia per rivedere una posizione e analizzarla. «Torna all'ultima» riprende la partita; una mossa da una posizione precedente continua da lì.",
-  "Practice your way.": "Allenati come preferisci.",
-  "Use the computer toggle beside “Your coach” to turn the opponent on or off. Open its settings to choose your side and level. Your last move’s review opens above the recommendations. Calculating best moves collapses it to the move and rating; select the row to reopen the details.":
-    "Attiva o disattiva l'avversario con l'interruttore accanto a «Il tuo allenatore». Apri le impostazioni per scegliere lato e livello. La revisione dell'ultima mossa si apre sopra i consigli. Calcolare le migliori mosse la riduce alla mossa e al giudizio; seleziona la riga per riaprire i dettagli.",
-  "Keep your discoveries.": "Conserva le tue scoperte.",
-  "Your game is autosaved in this browser. Use the FEN controls below the board to load or copy a position.":
-    "La partita viene salvata automaticamente in questo browser. Usa i controlli FEN sotto la scacchiera per caricare o copiare una posizione.",
-  "Stockfish 19 Lite analyzes locally for about two seconds per position. Explanations use board patterns and the engine’s continuation. They’re a starting point for understanding; they aren’t a complete tactical proof. Move grades account for the overall position and compare alternatives at the same search depth. Grades can change with deeper analysis. Games are saved in this browser.":
-    "Stockfish 19 Lite analizza localmente per circa due secondi a posizione. Le spiegazioni usano schemi della scacchiera e la continuazione del motore: aiutano a capire, ma non sono una prova tattica completa. I giudizi considerano l'intera posizione e confrontano alternative alla stessa profondità. Analisi più profonde possono cambiarli. Le partite sono salvate in questo browser.",
-  "Let’s explore": "Esploriamo",
   "Keep the mating attack going": "Continua l'attacco di matto",
   "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.":
     "Secondo questa analisi, c'è matto in {0} mosse iniziando con {1}. Segui le risposte per capire l'attacco.",

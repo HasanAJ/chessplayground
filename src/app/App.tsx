@@ -3,7 +3,7 @@ import { useTranslation } from "../i18n/LanguageProvider";
 import { languagePath } from "../i18n/routes";
 import { SiteIntro } from "./SiteIntro";
 import { useEffect, useState } from "react";
-import { CircleHelp, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { ROOT } from "../chess/study";
 import { BoardPanel } from "../features/board/BoardPanel";
 import { useBoardInteractions } from "../features/board/useBoardInteractions";
@@ -40,7 +40,6 @@ export default function App() {
     botTurn,
     preview.boardPreview || !!board.freeDrag,
   );
-  const [helpOpen, setHelpOpen] = useState(false);
   const [reviewRetry, setReviewRetry] = useState(0);
   const feedbackPly =
     computer.enabled && !game.reviewing
@@ -56,10 +55,7 @@ export default function App() {
     reviewRetry,
   );
   const storageError = game.storageError || computer.storageError;
-  usePanelFocus(helpOpen, game.promotion, () => {
-    setHelpOpen(false);
-    game.setPromotion(null);
-  });
+  usePanelFocus(game.promotion, () => game.setPromotion(null));
   useEffect(() => {
     if (!game.playable) computer.setOpen(false);
   }, [game.playable]);
@@ -111,14 +107,6 @@ export default function App() {
         </div>
         <div className="header-actions">
           <LanguageSelector />
-          <button
-            className="help-button"
-            aria-label={t("How it works")}
-            onClick={() => setHelpOpen(true)}
-          >
-            <CircleHelp size={16} />
-            <span>{t("How it works")}</span>
-          </button>
         </div>
       </header>
 
@@ -130,6 +118,18 @@ export default function App() {
             </h1>
             <p>{t("Explore the board. Understand the plan. Try a move.")}</p>
           </div>
+          <p className="page-guide">
+            {t(
+              "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.",
+            )}{" "}
+            {t(
+              "Select “{0}” for suggestions and explanations, then preview a reply or try a move.",
+              t("Calculate best moves"),
+            )}{" "}
+            {t(
+              "Play both sides, or turn on the computer opponent to practice against it.",
+            )}
+          </p>
         </section>
 
         <SaveNotice
@@ -162,8 +162,6 @@ export default function App() {
               presentation={presentation}
               feedback={feedback}
               feedbackPly={feedbackPly}
-              helpOpen={helpOpen}
-              onCloseHelp={() => setHelpOpen(false)}
               onReviewRetry={() => setReviewRetry((value) => value + 1)}
               onCalculate={calculateBestMoves}
               onNewGame={newGame}

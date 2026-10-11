@@ -23,7 +23,6 @@ import type {
 } from "../computer/useComputerOpponent";
 import type { BoardController } from "../board/useBoardInteractions";
 import type { BoardPreview } from "../board/useBoardPreview";
-import { HelpCard } from "./HelpCard";
 import { PromotionCard } from "../game/PromotionCard";
 import { MoveFeedback } from "./MoveFeedback";
 import type { ReviewState } from "./moveReview";
@@ -42,8 +41,6 @@ type Props = {
   presentation: CoachPresentation;
   feedback: ReviewState | null;
   feedbackPly: number;
-  helpOpen: boolean;
-  onCloseHelp: () => void;
   onReviewRetry: () => void;
   onCalculate: () => void;
   onNewGame: () => void;
@@ -60,8 +57,6 @@ export function CoachPanel({
   presentation,
   feedback,
   feedbackPly,
-  helpOpen,
-  onCloseHelp,
   onReviewRetry,
   onCalculate: calculateBestMoves,
   onNewGame,
@@ -290,7 +285,6 @@ export function CoachPanel({
           }
         />
       )}
-      {helpOpen && <HelpCard onClose={onCloseHelp} />}
       {reviewing && (
         <section
           className="history-review"

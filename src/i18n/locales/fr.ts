@@ -29,11 +29,16 @@ export default {
   Black: "Noirs",
   "Tempo home": "Accueil de Tempo",
   "Your chess playground": "Votre terrain de jeu d’échecs",
-  "How it works": "Comment ça marche",
   "Your next move,": "Votre prochain coup,",
   "explained.": "expliqué.",
   "Explore the board. Understand the plan. Try a move.":
     "Explorez l’échiquier. Comprenez le plan. Essayez un coup.",
+  "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.":
+    "Cliquez sur une pièce puis sur sa case de destination pour jouer un coup, ou faites glisser des pièces depuis les réserves pour créer votre propre position.",
+  "Select “{0}” for suggestions and explanations, then preview a reply or try a move.":
+    "Sélectionnez « {0} » pour voir des suggestions et des explications, puis prévisualisez une réponse ou essayez un coup.",
+  "Play both sides, or turn on the computer opponent to practice against it.":
+    "Jouez les deux camps ou activez l’adversaire contrôlé par l’ordinateur pour vous entraîner.",
   "A good move starts with a little understanding.":
     "Un bon coup commence par un peu de compréhension.",
   "Powered by Stockfish 19": "Avec Stockfish 19",
@@ -391,31 +396,6 @@ export default {
     "L’écart d’évaluation est mesuré en pions. Les notes tiennent compte de toute la position ; le mat n’a pas de valeur en pions.",
   "Quick review": "Examen rapide",
   "{0} evaluation drop": "{0} de baisse d’évaluation",
-  "Close help": "Fermer l’aide",
-  "WELCOME TO TEMPO": "BIENVENUE SUR TEMPO",
-  "A board. A plan. Your next move.":
-    "Un échiquier. Un plan. Votre prochain coup.",
-  "Make it your position.": "Créez votre position.",
-  "The piece trays above and below the board are always available. Drag a tray piece onto the board, or select it and click a square. Drag a legal board move to play it. Other board drops arrange a new position and restart history. Right-click a piece or drag it off the board to remove it. “Clear board” beside New game empties the board. Click a piece and a legal destination to play a move. Choose who plays next under “Your coach,” then press “Calculate best moves” whenever you want guidance for that position.":
-    "Les réserves de pièces au-dessus et au-dessous de l’échiquier restent disponibles. Glissez une pièce sur l’échiquier ou sélectionnez-la puis cliquez sur une case. Glissez un coup légal pour le jouer ; les autres déplacements créent une nouvelle position et réinitialisent l’historique. Retirez une pièce par clic droit ou en la glissant hors de l’échiquier. «Vider l’échiquier», près de «Nouvelle partie», retire les pièces. Vous pouvez aussi cliquer sur une pièce puis sur sa destination légale. Choisissez le trait sous «Votre coach», puis «Calculer les meilleurs coups» pour obtenir des conseils.",
-  "Understand your options.": "Comprenez vos options.",
-  "The best move appears with a short explanation and a plain-language move description. Use “Preview reply” to see the response, then “Explore next moves” for the longer line. Open “About this position” for more context. “Other good options” appears only when worthwhile alternatives exist. Hover anywhere on the Best Move card, or focus one of its controls, to see its arrow. You can also hover or focus an alternative move. Hover a continuation move or “Likely reply” to see that position temporarily. Moving away restores the board. Keyboard focus and previews work the same way. Clicking or tapping keeps the preview, even when you jump back to the board. Choose “Return to game” or press Escape to finish a kept preview.":
-    "Le meilleur coup apparaît avec une courte explication et une description simple. «Voir la réponse» montre la réponse, puis «Explorer les coups suivants» prolonge la ligne. Ouvrez «À propos de cette position» pour le contexte. «Autres bonnes options» apparaît seulement si des alternatives intéressantes existent. Survolez la carte du meilleur coup ou placez le focus sur ses commandes, ou sur une alternative, pour afficher sa flèche. Survoler une suite ou «Réponse probable», ou y placer le focus, montre temporairement la position ; en quittant, l’échiquier revient. Un clic ou un toucher conserve l’aperçu, même en revenant à l’échiquier. «Revenir à la partie» ou Échap le termine.",
-  "Learn as you go.": "Apprenez en jouant.",
-  "Use the “See” link below an explanation to preview its moves, attacks, or defenses with teal arrows and outlines. Your game stays unchanged. Move feedback includes a “Next time” lesson when the analysis finds a stronger alternative.":
-    "Utilisez le lien «Voir» sous une explication pour visualiser ses coups, attaques ou défenses avec des flèches et contours turquoise. Votre partie est conservée. L’évaluation inclut une leçon «La prochaine fois» lorsque l’analyse trouve une meilleure alternative.",
-  "Keep the conversation going.": "Continuez à explorer.",
-  "Click a piece and its destination to play for either side, or use a suggested move. Click “Calculate best moves” whenever you want guidance for the current position. Use the arrows above the board, or click a move in your history, to revisit its position and analysis. Use “Back to latest” to continue your game, or play a move from the selected position to continue from there.":
-    "Cliquez sur une pièce puis sa destination pour jouer les deux camps, ou utilisez un coup suggéré. «Calculer les meilleurs coups» donne des conseils sur la position actuelle. Les flèches au-dessus de l’échiquier ou les coups de l’historique permettent de revoir une position et son analyse. «Revenir au présent» reprend la partie ; jouer depuis une ancienne position poursuit la partie à cet endroit.",
-  "Practice your way.": "Entraînez-vous à votre façon.",
-  "Use the computer toggle beside “Your coach” to turn the opponent on or off. Open its settings to choose your side and level. Your last move’s review opens above the recommendations. Calculating best moves collapses it to the move and rating; select the row to reopen the details.":
-    "Activez ou désactivez l’adversaire avec l’interrupteur près de «Votre coach». Ouvrez ses réglages pour choisir votre camp et le niveau. L’examen de votre dernier coup s’ouvre au-dessus des recommandations. Calculer les meilleurs coups le réduit au coup et à sa note ; sélectionnez la ligne pour rouvrir les détails.",
-  "Keep your discoveries.": "Conservez vos découvertes.",
-  "Your game is autosaved in this browser. Use the FEN controls below the board to load or copy a position.":
-    "Votre partie est enregistrée automatiquement dans ce navigateur. Utilisez les commandes FEN sous l’échiquier pour charger ou copier une position.",
-  "Stockfish 19 Lite analyzes locally for about two seconds per position. Explanations use board patterns and the engine’s continuation. They’re a starting point for understanding; they aren’t a complete tactical proof. Move grades account for the overall position and compare alternatives at the same search depth. Grades can change with deeper analysis. Games are saved in this browser.":
-    "Stockfish 19 Lite analyse localement environ deux secondes par position. Les explications utilisent les motifs de l’échiquier et la suite du moteur : elles aident à comprendre, sans constituer une preuve tactique complète. Les notes tiennent compte de toute la position et comparent les alternatives à profondeur égale. Une analyse plus poussée peut les changer. Les parties sont enregistrées dans ce navigateur.",
-  "Let’s explore": "Explorons",
   "Keep the mating attack going": "Poursuivez l’attaque de mat",
   "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.":
     "Selon cette analyse, il y a un mat en {0} coups en commençant par {1}. Parcourez les réponses pour comprendre l’attaque.",

@@ -29,11 +29,16 @@ export default {
   Black: "Negras",
   "Tempo home": "Inicio de Tempo",
   "Your chess playground": "Tu espacio de ajedrez",
-  "How it works": "Cómo funciona",
   "Your next move,": "Tu próxima jugada,",
   "explained.": "explicada.",
   "Explore the board. Understand the plan. Try a move.":
     "Explora el tablero. Entiende el plan. Prueba una jugada.",
+  "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.":
+    "Haz clic en una pieza y en su casilla de destino para jugar, o arrastra piezas desde las bandejas para crear tu propia posición.",
+  "Select “{0}” for suggestions and explanations, then preview a reply or try a move.":
+    "Selecciona «{0}» para ver sugerencias y explicaciones; después, previsualiza una respuesta o prueba una jugada.",
+  "Play both sides, or turn on the computer opponent to practice against it.":
+    "Juega con ambos bandos o activa el rival por ordenador para practicar contra él.",
   "A good move starts with a little understanding.":
     "Una buena jugada empieza con un poco de comprensión.",
   "Powered by Stockfish 19": "Con Stockfish 19",
@@ -390,30 +395,6 @@ export default {
     "La diferencia de evaluación se mide en peones. Las notas tienen en cuenta toda la posición; los mates no tienen una puntuación en peones.",
   "Quick review": "Revisión rápida",
   "{0} evaluation drop": "{0} de caída en la evaluación",
-  "Close help": "Cerrar ayuda",
-  "WELCOME TO TEMPO": "TE DAMOS LA BIENVENIDA A TEMPO",
-  "A board. A plan. Your next move.": "Un tablero. Un plan. Tu próxima jugada.",
-  "Make it your position.": "Crea tu posición.",
-  "The piece trays above and below the board are always available. Drag a tray piece onto the board, or select it and click a square. Drag a legal board move to play it. Other board drops arrange a new position and restart history. Right-click a piece or drag it off the board to remove it. “Clear board” beside New game empties the board. Click a piece and a legal destination to play a move. Choose who plays next under “Your coach,” then press “Calculate best moves” whenever you want guidance for that position.":
-    "Las bandejas de piezas siempre están disponibles encima y debajo del tablero. Arrastra una pieza al tablero o selecciónala y haz clic en una casilla. Arrastra una jugada legal para jugarla; otros movimientos organizan una nueva posición y reinician el historial. Haz clic derecho en una pieza o arrástrala fuera para retirarla. «Vaciar tablero», junto a «Nueva partida», elimina las piezas. También puedes jugar haciendo clic en una pieza y en su destino legal. Elige el siguiente turno en «Tu entrenador» y pulsa «Calcular mejores jugadas» cuando quieras orientación.",
-  "Understand your options.": "Entiende tus opciones.",
-  "The best move appears with a short explanation and a plain-language move description. Use “Preview reply” to see the response, then “Explore next moves” for the longer line. Open “About this position” for more context. “Other good options” appears only when worthwhile alternatives exist. Hover anywhere on the Best Move card, or focus one of its controls, to see its arrow. You can also hover or focus an alternative move. Hover a continuation move or “Likely reply” to see that position temporarily. Moving away restores the board. Keyboard focus and previews work the same way. Clicking or tapping keeps the preview, even when you jump back to the board. Choose “Return to game” or press Escape to finish a kept preview.":
-    "La mejor jugada incluye una explicación breve y una descripción sencilla. «Ver respuesta» muestra la respuesta rival; «Explorar próximas jugadas» amplía la línea. Abre «Sobre esta posición» para más contexto. «Otras buenas opciones» aparece si hay alternativas útiles. Pasa el cursor sobre la tarjeta de la mejor jugada, enfoca sus controles o una alternativa para ver su flecha. Pasa el cursor o enfoca una continuación o «Respuesta probable» para verla temporalmente; al salir se restaura el tablero. Haz clic o toca para mantener la vista previa, incluso al volver al tablero. Usa «Volver a la partida» o Escape para salir.",
-  "Learn as you go.": "Aprende mientras juegas.",
-  "Use the “See” link below an explanation to preview its moves, attacks, or defenses with teal arrows and outlines. Your game stays unchanged. Move feedback includes a “Next time” lesson when the analysis finds a stronger alternative.":
-    "Usa el enlace «Ver» bajo una explicación para previsualizar sus jugadas, ataques o defensas con flechas y contornos turquesa. Tu partida se conserva. La valoración de la jugada incluye una lección «Para la próxima» cuando el análisis encuentra una alternativa más fuerte.",
-  "Keep the conversation going.": "Sigue explorando.",
-  "Click a piece and its destination to play for either side, or use a suggested move. Click “Calculate best moves” whenever you want guidance for the current position. Use the arrows above the board, or click a move in your history, to revisit its position and analysis. Use “Back to latest” to continue your game, or play a move from the selected position to continue from there.":
-    "Haz clic en una pieza y su destino para jugar con cualquier bando, o usa una jugada sugerida. Pulsa «Calcular mejores jugadas» para recibir orientación en la posición actual. Las flechas sobre el tablero y las jugadas del historial permiten volver a posiciones anteriores y analizarlas. «Volver a la actual» continúa tu partida; jugar desde una posición anterior continúa desde allí.",
-  "Practice your way.": "Practica a tu manera.",
-  "Use the computer toggle beside “Your coach” to turn the opponent on or off. Open its settings to choose your side and level. Your last move’s review opens above the recommendations. Calculating best moves collapses it to the move and rating; select the row to reopen the details.":
-    "Activa o desactiva el rival con el interruptor junto a «Tu entrenador». Abre sus ajustes para elegir bando y nivel. La revisión de tu última jugada se abre sobre las recomendaciones. Calcular las mejores jugadas la reduce a la jugada y su nota; selecciona la fila para reabrir los detalles.",
-  "Keep your discoveries.": "Conserva tus descubrimientos.",
-  "Your game is autosaved in this browser. Use the FEN controls below the board to load or copy a position.":
-    "Tu partida se guarda automáticamente en este navegador. Usa los controles FEN bajo el tablero para cargar o copiar una posición.",
-  "Stockfish 19 Lite analyzes locally for about two seconds per position. Explanations use board patterns and the engine’s continuation. They’re a starting point for understanding; they aren’t a complete tactical proof. Move grades account for the overall position and compare alternatives at the same search depth. Grades can change with deeper analysis. Games are saved in this browser.":
-    "Stockfish 19 Lite analiza localmente durante unos dos segundos por posición. Las explicaciones se basan en patrones del tablero y en la continuación del motor: ayudan a entender, pero no son una demostración táctica completa. Las notas tienen en cuenta toda la posición y comparan alternativas a la misma profundidad. Un análisis más profundo puede cambiarlas. Las partidas se guardan en este navegador.",
-  "Let’s explore": "Vamos a explorar",
   "Keep the mating attack going": "Continúa el ataque de mate",
   "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.":
     "Según este análisis, hay mate en {0} jugadas empezando con {1}. Recorre las respuestas para entender el ataque.",

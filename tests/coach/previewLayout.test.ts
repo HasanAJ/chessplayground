@@ -72,8 +72,6 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
         presentation,
         feedback: null,
         feedbackPly: 0,
-        helpOpen: false,
-        onCloseHelp() {},
         onReviewRetry() {},
         onCalculate() {},
         onNewGame() {},

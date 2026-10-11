@@ -135,12 +135,6 @@
   .header-actions {
     gap: 6px;
   }
-  .help-button {
-    padding: 10px;
-  }
-  .help-button span {
-    display: none;
-  }
   .language-selector .language-icon {
     display: none;
   }
