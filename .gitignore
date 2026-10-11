@@ -1,0 +1,10 @@
+node_modules/
+dist/
+public/engine/
+test-results/
+playwright-report/
+.DS_Store
+*.tsbuildinfo
+.env*
+!.env.example
+.wrangler/

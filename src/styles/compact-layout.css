@@ -1,0 +1,395 @@
+@media (max-width: 1100px) {
+  .coach-panel {
+    padding: 18px;
+  }
+}
+@media (max-width: 900px) {
+  main {
+    padding-top: 32px;
+  }
+  .workspace {
+    gap: 18px;
+  }
+  .coach-heading {
+    padding-bottom: 14px;
+  }
+  .mobile-coach-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--purple-soft);
+    border-radius: 9px;
+    color: #655099;
+    padding: 12px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin: 0 0 14px 40px;
+  }
+  .coach-heading {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .mobile-board-link {
+    display: block;
+    margin-left: auto;
+    color: #7d688b;
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+  .strategy-card {
+    padding: 20px;
+  }
+  .candidate-toggle {
+    padding: 14px;
+  }
+}
+@media (max-width: 540px) {
+  .piece-tray {
+    margin-left: 37px;
+  }
+  .page-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .board-toolbar .new-game-button {
+    padding: 7px 9px;
+    font-size: var(--text-sm);
+    gap: 5px;
+  }
+  .page-heading h1 {
+    line-height: 1.2;
+    letter-spacing: -1px;
+  }
+  .page-heading h1 span {
+    display: inline;
+  }
+  .page-heading p {
+    margin: 0;
+  }
+  .coach-panel {
+    border-radius: 18px;
+  }
+  .mobile-coach-link {
+    margin-left: 37px;
+  }
+  .strategy-card {
+    padding: 18px;
+  }
+  .plan-actions {
+    gap: 7px;
+  }
+  .learning-actions {
+    gap: 5px 14px;
+  }
+}
+/* Keep the board and recommendations visible together on desktop. */
+@media (min-width: 901px) {
+  .site-header {
+    height: 80px;
+    padding: 0 max(24px, calc((100vw - 1132px) / 2));
+  }
+  .brand {
+    gap: 8px;
+  }
+  .brand > img {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+  }
+  .brand > span {
+    font-size: 41.6px;
+  }
+  .header-center {
+    padding: 6px 10px;
+  }
+  .help-button {
+    min-height: 32px;
+    padding: 7px 10px;
+  }
+  main {
+    max-width: 1180px;
+    padding: 32px 24px 0;
+  }
+  .page-heading {
+    margin-bottom: 24px;
+    gap: 24px;
+  }
+  .page-heading > div:first-child {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .page-heading h1 {
+    font-size: 24px;
+    margin-bottom: 0;
+  }
+  .page-heading p {
+    line-height: 1.5;
+  }
+  .workspace {
+    grid-template-columns:
+      minmax(470px, min(54.8%, calc((100dvh - 360px) * 1.2)))
+      minmax(0, 1fr);
+    gap: 24px;
+  }
+  .board-panel,
+  .coach-panel {
+    padding: 12px;
+    border-radius: 16px;
+  }
+  .board-panel {
+    position: sticky;
+    top: 12px;
+  }
+  .board-toolbar {
+    gap: 6px;
+    padding-bottom: 6px;
+  }
+  .new-game-button {
+    min-height: 32px;
+    padding: 7px 9px;
+    gap: 5px;
+    border-radius: 8px;
+  }
+  .toolbar-actions .icon-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .board-toolbar .flip-board-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .board-surface {
+    max-width: clamp(360px, calc((100dvh - 384px) * 1.2 + 18px), 100%);
+    margin-inline: auto;
+  }
+  .board-with-eval {
+    gap: 8px;
+  }
+  .piece-tray {
+    margin-left: 40px;
+  }
+  .chessboard {
+    border-radius: 9px;
+  }
+  .history-heading {
+    margin: 12px 0 4px;
+  }
+  .move-history {
+    min-height: 36px;
+    padding: 4px 6px;
+    border-radius: 9px;
+  }
+  .move-history > button {
+    min-height: 28px;
+    padding: 4px 6px;
+  }
+  .coach-heading h2 {
+    letter-spacing: -0.5px;
+  }
+  .strategy-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .strategy-card h3 {
+    margin: 4px 0 6px;
+  }
+  .strategy-card > p {
+    line-height: 1.65;
+  }
+  .strategy-foot {
+    gap: 5px;
+  }
+  .score-pill {
+    padding: 5px 7px;
+    margin-left: 0;
+  }
+  .plan-actions {
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .plan-actions .primary-button,
+  .plan-preview {
+    min-height: 34px;
+    padding: 8px 10px;
+  }
+  .candidates-heading {
+    margin: 12px 0 8px;
+  }
+  .candidate-list {
+    gap: 6px;
+  }
+  .candidate-card {
+    border-radius: 9px;
+  }
+  .candidate-toggle {
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .candidate-purpose {
+    margin-top: 3px;
+  }
+  .candidate-body {
+    padding: 0 12px 12px;
+  }
+  .candidate-body > p {
+    line-height: 1.6;
+  }
+  .position-details {
+    padding: 10px 12px;
+  }
+  footer img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Keep calculation within reach while the turn selector stays with the board. */
+@media (max-width: 900px) {
+  main {
+    padding-bottom: 110px;
+  }
+  .calculation-controls {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    gap: 8px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: #fff;
+    box-shadow: 0 -4px 18px #302c4c0d;
+  }
+  .calculation-controls .calculate-button {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px;
+  }
+}
+@media (max-width: 540px) {
+  .site-header {
+    height: 80px;
+    padding-inline: 10px;
+  }
+  .brand > img {
+    width: 56px;
+    height: 56px;
+  }
+  .brand > span {
+    font-size: 41.6px;
+  }
+  .help-button {
+    min-height: 36px;
+    padding: 7px 9px;
+  }
+  main {
+    padding: 24px 8px 110px;
+  }
+  .page-heading {
+    margin-bottom: 20px;
+  }
+  .page-heading h1 {
+    font-size: 22px;
+    margin: 0;
+  }
+  .page-heading p {
+    display: none;
+  }
+  .board-panel {
+    padding: 6px;
+    border-radius: 12px;
+  }
+  .board-toolbar {
+    padding-bottom: 6px;
+  }
+  .toolbar-actions .new-game-button,
+  .toolbar-actions .icon-button {
+    min-height: 44px;
+  }
+  .toolbar-actions .icon-button {
+    width: 44px;
+  }
+  .board-toolbar .flip-board-button {
+    width: 44px;
+    min-height: 44px;
+  }
+  .turn-select select {
+    min-height: 42px;
+  }
+  .board-with-eval {
+    gap: 4px;
+  }
+  .piece-tray {
+    margin: 4px 0 4px 36px;
+    padding: 0;
+    border: 0;
+  }
+  .mobile-coach-link {
+    min-height: 36px;
+    margin: 4px 0 0 36px;
+    padding: 8px;
+    font-size: var(--text-sm);
+  }
+  .workspace {
+    gap: 20px;
+  }
+  .coach-panel {
+    padding: 12px;
+  }
+  .board-toolbar .toolbar-actions {
+    flex-shrink: 1;
+  }
+  .fen-controls input {
+    font-size: 16px;
+  }
+}
+@media (max-width: 360px) {
+  .board-toolbar {
+    gap: 4px;
+  }
+  .board-toolbar .new-game-button {
+    padding-inline: 5px;
+  }
+  .board-history-navigation {
+    gap: 0;
+    padding: 1px;
+  }
+}
+
+@media (max-width: 760px) {
+  .header-center {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .help-button {
+    width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .help-button > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 900px) {
+  .coach-heading {
+    display: block;
+  }
+  .mobile-board-link {
+    margin: 6px 0 0;
+  }
+}

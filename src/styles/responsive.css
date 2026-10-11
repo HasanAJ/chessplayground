@@ -1,0 +1,132 @@
+@media (max-width: 1100px) {
+  .workspace {
+    gap: 22px;
+  }
+  .board-panel {
+    padding: 17px;
+    border-radius: 20px;
+  }
+  .strategy-card {
+    padding: 20px;
+  }
+  .candidate-toggle {
+    padding: 16px 13px;
+    gap: 9px;
+  }
+}
+@media (max-width: 900px) {
+  .site-header {
+    padding: 0 25px;
+  }
+  main {
+    padding: 28px 25px 0;
+    max-width: 720px;
+  }
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .board-panel {
+    padding: 22px;
+  }
+  .candidate-body {
+    padding: 0 20px 20px;
+  }
+  footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    line-height: 1.6;
+    gap: 10px;
+  }
+}
+@media (max-width: 540px) {
+  .site-header {
+    padding: 0 18px;
+  }
+  .header-center {
+    display: none;
+  }
+  .eyebrow {
+    letter-spacing: 1.3px;
+  }
+  h1 {
+    font-size: 37px;
+    letter-spacing: -1.7px;
+    line-height: 1.1;
+    max-width: 340px;
+    margin-top: 12px;
+  }
+  h1 span {
+    display: block;
+  }
+  .page-heading p {
+    margin-top: 12px;
+  }
+  .board-toolbar {
+    gap: 6px;
+  }
+  .board-toolbar > .icon-button {
+    width: 34px;
+    height: 38px;
+  }
+  .chessboard {
+    border-radius: 8px;
+  }
+  .coach-status {
+    text-align: left;
+    gap: 5px;
+  }
+  .move-history {
+    padding: 5px;
+  }
+  .move-history > button {
+    min-height: 40px;
+    padding: 6px;
+  }
+  .move-history > button small {
+    margin-right: 4px;
+  }
+  .fen-controls form {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+  .fen-controls .small-button {
+    grid-column: 1 / -1;
+  }
+  .candidate-toggle {
+    gap: 10px;
+  }
+  .candidate-body {
+    padding: 0 16px 16px;
+  }
+  .continuation-moves button {
+    min-height: 40px;
+  }
+  footer > span:last-child {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .panel-dialog {
+    padding: 14px;
+  }
+  .panel-dialog h2 {
+    font-size: 20px;
+  }
+  .promotion-choices {
+    gap: 7px;
+  }
+}
+@media (max-width: 380px) {
+  .candidate-toggle {
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

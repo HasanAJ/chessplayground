@@ -1,0 +1,113 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { Chess } from "chess.js";
+import { START_FEN } from "../../src/chess/position";
+import {
+  candidatesFor,
+  recommendedCandidates,
+} from "../../src/features/coach/candidates";
+import { type EngineLine } from "../../src/engine/uci";
+import { strategyInsight } from "../../src/features/coach/strategy";
+
+function candidates(
+  scores: Pick<EngineLine, "cp" | "mate">[],
+  fen = START_FEN,
+) {
+  const moves = new Chess(fen).moves({ verbose: true });
+  const result = candidatesFor(
+    fen,
+    scores.map((score, index) => ({
+      rank: index + 1,
+      depth: 15,
+      ...score,
+      pv: [moves[index].lan],
+    })),
+  );
+  assert.equal(result.length, scores.length);
+  return result;
+}
+
+test("recommendations keep close alternatives and exclude a drop beyond half a pawn", () => {
+  const evaluated = candidates([100, 70, 50, 49, -200].map((cp) => ({ cp })));
+  assert.deepEqual(
+    recommendedCandidates(evaluated).map((move) => move.rank),
+    [1, 2, 3],
+  );
+  assert.equal(evaluated.length, 5); // Full engine results remain available for validation.
+});
+
+test("recommendations evaluate alternatives from Black's perspective", () => {
+  const game = new Chess();
+  game.move("e4");
+  const result = recommendedCandidates(
+    candidates(
+      [40, 10, -20, -300].map((cp) => ({ cp })),
+      game.fen(),
+    ),
+  );
+  assert.deepEqual(
+    result.map((move) => move.rank),
+    [1, 2],
+  );
+  assert.deepEqual(
+    result.map((move) => move.whiteScore),
+    [-0.4, -0.1],
+  );
+});
+
+test("up to five worthwhile options retain their ranking and continuations", () => {
+  const evaluated = candidates([30, 25, 20, 15, 10, 5].map((cp) => ({ cp })));
+  const result = recommendedCandidates(evaluated);
+  assert.deepEqual(result, evaluated.slice(0, 5));
+  assert.equal(result[4].continuation[0].lan, evaluated[4].move.lan);
+});
+
+test("a clear best move is shown alone, even when several other moves are legal", () => {
+  const evaluated = candidates([0, -100, -250].map((cp) => ({ cp })));
+  const result = recommendedCandidates(evaluated);
+  assert.deepEqual(result, [evaluated[0]]);
+  const insight = strategyInsight(new Chess(), result[0]);
+  assert.match(insight.comparison, /only recommended move/);
+  assert.doesNotMatch(insight.comparison, /only one legal move/);
+});
+
+test("a losing position still shows the best defense and comparable alternatives", () => {
+  const evaluated = candidates([-800, -830, -900].map((cp) => ({ cp })));
+  assert.deepEqual(
+    recommendedCandidates(evaluated).map((move) => move.rank),
+    [1, 2],
+  );
+  assert.deepEqual(recommendedCandidates([]), []);
+});
+
+test("winning mating lines exclude moves that give up mate or allow mate", () => {
+  const evaluated = candidates([
+    { mate: 2 },
+    { mate: 5 },
+    { cp: 1000 },
+    { mate: -2 },
+  ]);
+  assert.deepEqual(
+    recommendedCandidates(evaluated).map((move) => move.rank),
+    [1, 2],
+  );
+  const avoidableMate = candidates([{ cp: -900 }, { mate: -10 }]);
+  assert.deepEqual(recommendedCandidates(avoidableMate), [avoidableMate[0]]);
+});
+
+test("when mate is unavoidable, weaker defenses are omitted", () => {
+  const evaluated = candidates([{ mate: -5 }, { mate: -5 }, { mate: -2 }]);
+  assert.deepEqual(
+    recommendedCandidates(evaluated).map((move) => move.rank),
+    [1, 2],
+  );
+});
+
+test("a position with only one legal move still explains the forced choice", () => {
+  const game = new Chess("7k/4K3/5B2/8/8/8/8/7R b - - 0 1");
+  const best = candidatesFor(game.fen(), [
+    { rank: 1, depth: 15, mate: -1, pv: ["h8g8", "h1h8"] },
+  ])[0];
+  assert.deepEqual(recommendedCandidates([best]), [best]);
+  assert.match(strategyInsight(game, best).comparison, /only one legal move/);
+});

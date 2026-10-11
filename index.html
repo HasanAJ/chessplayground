@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f7fb" />
+    <meta
+      name="description"
+      content="Play chess, set up a position, and explore Stockfish move suggestions with plain-English explanations. Free browser-based analysis and computer practice."
+    />
+    <title>Tempo — Chess Coach &amp; Position Playground</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <style>
+      .loading-intro {
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 24px;
+        color: #282536;
+        font:
+          18px/1.6 system-ui,
+          sans-serif;
+      }
+      .loading-intro h1 {
+        font-size: 36px;
+        line-height: 1.2;
+      }
+      .loading-intro h2 {
+        font-size: 24px;
+        margin-top: 24px;
+      }
+      .loading-intro p {
+        margin: 12px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <main class="loading-intro">
+        <h1>Tempo — your next chess move, explained.</h1>
+        <p>
+          Play for either side, practice against a computer, or arrange a chess
+          position. Tempo uses Stockfish 19 Lite to suggest moves and explain
+          board patterns in plain English.
+        </p>
+        <h2>How to use the chess playground</h2>
+        <ol>
+          <li>
+            Click a piece and a legal destination, or drag a legal move to play.
+          </li>
+          <li>
+            Add pieces from the trays, or load a FEN in Position setup to
+            explore a position.
+          </li>
+          <li>
+            Choose Calculate best moves for suggestions. Preview a reply or
+            continuation, then return to your game.
+          </li>
+        </ol>
+        <h2>Local analysis, with clear limits</h2>
+        <p>
+          Analysis runs in your browser. Games autosave in this browser when
+          storage is available. Short engine searches and explanations based on
+          board patterns are learning aids; they do not prove every tactic or
+          guarantee the best strategic plan. Move grades can change with deeper
+          analysis.
+        </p>
+        <noscript
+          ><p>
+            Enable JavaScript to use the interactive chessboard and local
+            engine.
+          </p></noscript
+        >
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

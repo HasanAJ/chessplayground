@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f7fb"/>
+  <rect x="60" y="60" width="1080" height="510" rx="32" fill="#fff"/>
+  <rect x="100" y="105" width="68" height="68" rx="20" fill="#7560cd"/>
+  <path d="M121 153h26m-23-8h20l-3-24h-14l-3 24zm3-24 7-8 7 8" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="186" y="155" font-family="Arial,sans-serif" font-weight="700" font-size="52" fill="#282536">tempo<tspan fill="#7560cd">.</tspan></text>
+  <text x="100" y="280" font-family="Arial,sans-serif" font-weight="700" font-size="64" fill="#282536">Your next move,</text>
+  <text x="100" y="357" font-family="Arial,sans-serif" font-weight="700" font-size="64" fill="#5e47b7">explained.</text>
+  <text x="100" y="430" font-family="Arial,sans-serif" font-size="27" fill="#635872">Play. Explore positions. Understand the plan.</text>
+  <text x="100" y="505" font-family="Arial,sans-serif" font-size="22" fill="#635872">Chess coaching with Stockfish · In your browser</text>
+  <g transform="translate(850 180)">
+    <rect width="228" height="228" rx="12" fill="#eeeaf8"/>
+    <path d="M0 0h76v76H0zm152 0h76v76h-76zM76 76h76v76H76zM0 152h76v76H0zm152 0h76v76h-76z" fill="#a99aca"/>
+    <path d="M70 183h90l-8-24H78zm13-35h65l-10-58h-45zm17-67h33l-8-25h-17z" fill="#332142"/>
+    <path d="M105 45h24m-12-12v24" stroke="#332142" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,111 @@
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import type { Color, PieceSymbol, Square } from "chess.js";
+import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
+import type { GameController } from "../game/useGameController";
+import { startComputerTurn } from "./computer";
+import { COMPUTER_DIFFICULTY_KEY, readDifficulty } from "./preferences";
+
+export function useComputerSettings() {
+  const [enabled, setEnabled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [side, setSide] = useState<Color>("w");
+  const [difficulty, setDifficulty] = useState(readDifficulty);
+  const [storageError, setStorageError] = useState("");
+  const disable = useCallback(() => setEnabled(false), []);
+  useEffect(() => {
+    if (!enabled) setOpen(false);
+  }, [enabled]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(COMPUTER_DIFFICULTY_KEY, difficulty);
+      setStorageError("");
+    } catch {
+      setStorageError(
+        "Your computer difficulty could not be saved in this browser.",
+      );
+    }
+  }, [difficulty]);
+  return {
+    enabled,
+    open,
+    side,
+    difficulty,
+    storageError,
+    disable,
+    setEnabled,
+    setOpen,
+    setSide,
+    setDifficulty,
+  };
+}
+
+export type ComputerSettings = ReturnType<typeof useComputerSettings>;
+
+export function useComputerTurn(
+  game: GameController,
+  settings: ComputerSettings,
+  turn: boolean,
+  paused: boolean,
+) {
+  const engine = useAnalysisEngine();
+  const [state, setState] = useState<"idle" | "thinking" | "waiting" | "error">(
+    "idle",
+  );
+  const [retry, setRetry] = useState(0);
+  const playMove = useRef(game.playMove);
+  useLayoutEffect(() => {
+    playMove.current = game.playMove;
+  });
+  const busy = turn && (state === "thinking" || state === "waiting");
+  useEffect(() => {
+    if (!turn || !game.playable || paused || game.terminal) {
+      setState("idle");
+      return;
+    }
+    setState("thinking");
+    return startComputerTurn(
+      engine.current!,
+      game.fen,
+      {
+        rootFen: game.study.rootFen,
+        moves: game.history.map((move) => move.lan),
+      },
+      settings.difficulty,
+      {
+        onWaiting() {
+          setState("waiting");
+        },
+        onError() {
+          setState("error");
+        },
+        onMove(uci) {
+          setState("idle");
+          playMove.current(
+            uci.slice(0, 2) as Square,
+            uci.slice(2, 4) as Square,
+            uci[4] as PieceSymbol | undefined,
+            true,
+          );
+        },
+      },
+    );
+  }, [
+    game.fen,
+    game.study.id,
+    turn,
+    settings.difficulty,
+    game.playable,
+    paused,
+    game.terminal,
+    retry,
+  ]);
+  return { turn, busy, state, retry: () => setRetry((value) => value + 1) };
+}
+
+export type ComputerTurn = ReturnType<typeof useComputerTurn>;
