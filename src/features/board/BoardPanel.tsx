@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import {
   ArrowDownUp,
   ArrowRight,
@@ -39,6 +40,7 @@ export function BoardPanel({
   onNewGame: newGame,
   onShowHistory: showHistory,
 }: Props) {
+  const { t } = useTranslation();
   const { flipped, setFlipped, choosePiece } = board;
   const { history, historyPly, tool, setTool, replaceGame, setNotice } = game;
   const clearBoard = () => {
@@ -50,22 +52,22 @@ export function BoardPanel({
   return (
     <section
       className="board-panel"
-      aria-label="Chess board and position controls"
+      aria-label={t("Chess board and position controls")}
     >
       <div className="board-toolbar">
         <div className="toolbar-actions">
           <button
             className="new-game-button"
-            title="Start a new game from the standard chess position"
+            title={t("Start a new game from the standard chess position")}
             onClick={newGame}
           >
-            <Plus size={15} /> New game
+            <Plus size={15} /> {t("New game")}
           </button>
           <button
             className="icon-button"
             onClick={clearBoard}
-            title="Clear board"
-            aria-label="Clear board"
+            title={t("Clear board")}
+            aria-label={t("Clear board")}
           >
             <Eraser size={16} />
           </button>
@@ -73,12 +75,12 @@ export function BoardPanel({
         <div
           className="board-history-navigation"
           role="group"
-          aria-label="Game move navigation"
+          aria-label={t("Game move navigation")}
         >
           <button
             className="icon-button"
-            title="Previous game move"
-            aria-label="Previous game move"
+            title={t("Previous game move")}
+            aria-label={t("Previous game move")}
             disabled={!game.playable || (historyPly ?? history.length) === 0}
             onClick={() => showHistory((historyPly ?? history.length) - 1)}
           >
@@ -86,8 +88,8 @@ export function BoardPanel({
           </button>
           <button
             className="icon-button"
-            title="Next game move"
-            aria-label="Next game move"
+            title={t("Next game move")}
+            aria-label={t("Next game move")}
             disabled={!game.playable || historyPly === null}
             onClick={() => showHistory((historyPly ?? history.length) + 1)}
           >
@@ -97,8 +99,8 @@ export function BoardPanel({
         <button
           className="icon-button flip-board-button"
           onClick={() => setFlipped(!flipped)}
-          title="Flip board"
-          aria-label="Flip board"
+          title={t("Flip board")}
+          aria-label={t("Flip board")}
         >
           <ArrowDownUp size={17} />
         </button>
@@ -134,7 +136,8 @@ export function BoardPanel({
       </div>
 
       <a className="mobile-coach-link" href="#coach">
-        See your coach <ArrowRight size={15} />
+        {t("See your coach")}
+        <ArrowRight size={15} />
       </a>
       <div className="board-tools">
         {game.playable && (

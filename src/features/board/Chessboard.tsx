@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import type { Square } from "chess.js";
 import type { GameController } from "../game/useGameController";
 import type { Recommendations } from "../coach/useRecommendations";
@@ -22,6 +23,7 @@ export function Chessboard({
   analysis,
   highlights,
 }: Props) {
+  const { t } = useTranslation();
   const highlightedSquare = useHighlightedSquare();
   const {
     flipped,
@@ -55,9 +57,9 @@ export function Chessboard({
     ? Math.max(4, Math.min(96, 50 + 46 * Math.tanh(evaluation.whiteScore / 4)))
     : 50;
   const evaluationNotice = hiddenAnalysis
-    ? "Calculate best moves to see the evaluation"
+    ? t("Calculate best moves to see the evaluation")
     : boardPreview
-      ? "Evaluation paused during board preview"
+      ? t("Evaluation paused during board preview")
       : undefined;
   const arrowMove =
     inspectionMove ?? (hiddenAnalysis ? undefined : shownCandidate?.move);
@@ -81,10 +83,12 @@ export function Chessboard({
       <div className="board-with-eval" ref={board.ref}>
         <div
           className="eval-track"
-          title={evaluationNotice ?? "+ = White ahead · − = Black ahead"}
+          title={evaluationNotice ?? t("+ = White ahead · − = Black ahead")}
           aria-label={
             evaluationNotice ??
-            (best ? `White evaluation ${best.score}` : "Evaluation pending")
+            (best
+              ? t("White evaluation {0}", best.score)
+              : t("Evaluation pending"))
           }
         >
           <div
@@ -98,7 +102,7 @@ export function Chessboard({
             {evaluation
               ? evaluation.mate !== undefined
                 ? evaluation.score
-                : `${evaluation.whiteScore >= 0 ? "+" : "−"}${Math.abs(evaluation.whiteScore).toFixed(1)}`
+                : `${evaluation.whiteScore >= 0 ? "+" : "−"}${Math.abs(evaluation.whiteScore).toLocaleString(t.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
               : "—"}
           </span>
         </div>
@@ -113,10 +117,10 @@ export function Chessboard({
             role="group"
             aria-label={
               inspection
-                ? "Move preview chessboard"
+                ? t("Move preview chessboard")
                 : reviewing
-                  ? "Game history chessboard"
-                  : "Interactive chessboard"
+                  ? t("Game history chessboard")
+                  : t("Interactive chessboard")
             }
           >
             {ranks.flatMap((rank) =>
@@ -154,7 +158,7 @@ export function Chessboard({
                     key={square}
                     type="button"
                     className={classes.filter(Boolean).join(" ")}
-                    aria-label={`${square}${piece ? ` ${pieceLabel(piece)}` : " empty"}${square === checkedKing ? " in check" : ""}`}
+                    aria-label={`${square}${piece ? ` ${pieceLabel(piece, t)}` : t(" empty")}${square === checkedKing ? t(" in check") : ""}`}
                     data-square={square}
                     aria-pressed={isSelected}
                     draggable={!!piece}

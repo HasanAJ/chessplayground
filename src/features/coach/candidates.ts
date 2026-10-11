@@ -1,3 +1,4 @@
+import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import type { EngineLine } from "../../engine/uci";
 import { moveDescription, uciMove } from "../../chess/moves";
@@ -43,7 +44,11 @@ export function recommendedCandidates(candidates: Candidate[]): Candidate[] {
     .slice(0, MAX_RECOMMENDED_MOVES);
 }
 
-export function candidatesFor(fen: string, lines: EngineLine[]): Candidate[] {
+export function candidatesFor(
+  fen: string,
+  lines: EngineLine[],
+  t: Translator = english,
+): Candidate[] {
   return [...lines]
     .sort((a, b) => a.rank - b.rank)
     .flatMap((line) => {
@@ -51,29 +56,37 @@ export function candidatesFor(fen: string, lines: EngineLine[]): Candidate[] {
         after = new Chess(fen);
       try {
         const move = uciMove(after, line.pv[0]);
-        let insight = explainMove(before, after, move);
+        let insight = explainMove(before, after, move, t);
         if (line.mate !== undefined && line.mate > 0 && !after.isCheckmate()) {
           insight = {
-            title: "Keep the mating attack going",
-            text: `There’s a checkmate in ${line.mate} moves starting with ${move.san}, according to this analysis. Play through the replies to see how the attack works.`,
+            title: t("Keep the mating attack going"),
+            text: t(
+              "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.",
+              line.mate,
+              move.san,
+            ),
             theme: "mating-attack",
-            focus: boardFocus("See the start of the mating attack", [
+            focus: boardFocus(t("See the start of the mating attack"), [
               { from: move.from, to: move.to },
             ]),
           };
         } else if (line.mate !== undefined && line.mate < 0) {
           insight = {
-            title: "Find the toughest defense",
-            text: `Your king is in serious trouble: this analysis still finds a forced checkmate after ${move.san}. Play through their checks to see where the danger comes from.`,
+            title: t("Find the toughest defense"),
+            text: t(
+              "Your king is in serious trouble: this analysis still finds a forced checkmate after {0}. Play through their checks to see where the danger comes from.",
+              move.san,
+            ),
             theme: "mate-defense",
-            focus: boardFocus("See the defensive move", [
+            focus: boardFocus(t("See the defensive move"), [
               { from: move.from, to: move.to },
             ]),
           };
         }
         const continuation: Move[] = [move];
-        let reply =
-          "No reply is included in this preview. Try the move to explore what comes next.";
+        let reply = t(
+          "No reply is included in this preview. Try the move to explore what comes next.",
+        );
         if (line.pv[1] && !after.isGameOver()) {
           // An invalid immediate reply rejects the candidate; later errors only
           // shorten the preview. Parse each move once for both prose and frames.
@@ -86,11 +99,11 @@ export function candidatesFor(fen: string, lines: EngineLine[]): Candidate[] {
               break;
             }
           }
-          reply = `${describeReply(response)}${continuation[2] ? ` You could follow with ${continuation[2].san}: ${moveDescription(continuation[2])}.` : ""}`;
+          reply = `${describeReply(response, t)}${continuation[2] ? t(" You could follow with {0}: {1}.", continuation[2].san, moveDescription(continuation[2], t)) : ""}`;
         } else if (after.isGameOver())
           reply = after.isCheckmate()
-            ? "That’s checkmate. They have no reply."
-            : "This move ends the game in a draw.";
+            ? t("That’s checkmate. They have no reply.")
+            : t("This move ends the game in a draw.");
         const sign = before.turn() === "w" ? 1 : -1;
         const whiteScore =
           line.mate !== undefined
@@ -99,7 +112,7 @@ export function candidatesFor(fen: string, lines: EngineLine[]): Candidate[] {
         const score =
           line.mate !== undefined
             ? `${whiteScore > 0 ? "+" : "−"}M${Math.abs(line.mate)}`
-            : `${whiteScore >= 0 ? "+" : "−"}${Math.abs(whiteScore).toFixed(2)}`;
+            : `${whiteScore >= 0 ? "+" : "−"}${Math.abs(whiteScore).toLocaleString(t.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         return [
           {
             ...line,
@@ -120,13 +133,19 @@ export function candidatesFor(fen: string, lines: EngineLine[]): Candidate[] {
     });
 }
 
-export function positionSummary(candidate: Candidate): string {
+export function positionSummary(
+  candidate: Candidate,
+  t: Translator = english,
+): string {
   if (candidate.mate !== undefined)
-    return `A forced mate for ${candidate.whiteScore > 0 ? "White" : "Black"}`;
+    return t(
+      "A forced mate for {0}",
+      candidate.whiteScore > 0 ? t("White") : t("Black"),
+    );
   const advantage = Math.abs(candidate.whiteScore),
-    side = candidate.whiteScore >= 0 ? "White" : "Black";
-  if (advantage < 0.3) return "A balanced position";
-  if (advantage < 1) return `${side} has a small edge`;
-  if (advantage < 3) return `${side} has the advantage`;
-  return `${side} has a winning advantage`;
+    side = candidate.whiteScore >= 0 ? t("White") : t("Black");
+  if (advantage < 0.3) return t("A balanced position");
+  if (advantage < 1) return t("{0} has a small edge", side);
+  if (advantage < 3) return t("{0} has the advantage", side);
+  return t("{0} has a winning advantage", side);
 }

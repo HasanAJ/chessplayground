@@ -1,3 +1,5 @@
+import { translateNotice } from "../../i18n/notices";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useRef } from "react";
 import type { Color } from "chess.js";
 import { Bot, RotateCcw, SlidersHorizontal, X } from "lucide-react";
@@ -31,6 +33,7 @@ export function CoachOptions({
   onEnabledChange: (enabled: boolean) => void;
   onRetry: () => void;
 }) {
+  const { t } = useTranslation();
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   function close() {
@@ -63,8 +66,8 @@ export function CoachOptions({
         className="computer-toggle"
         role="switch"
         aria-checked={enabled}
-        aria-label="Play computer"
-        title={status}
+        aria-label={t("Play computer")}
+        title={translateNotice(status, t)}
         disabled={!enabled && startDisabled}
         onClick={() => {
           onEnabledChange(!enabled);
@@ -72,7 +75,7 @@ export function CoachOptions({
         }}
       >
         <Bot size={15} aria-hidden="true" />
-        <span>Computer</span>
+        <span>{t("Computer")}</span>
         <span className="computer-switch-track" aria-hidden="true">
           <span />
         </span>
@@ -82,8 +85,8 @@ export function CoachOptions({
         ref={trigger}
         aria-expanded={open}
         aria-controls="computer-settings"
-        aria-label="Computer settings"
-        title="Computer settings"
+        aria-label={t("Computer settings")}
+        title={t("Computer settings")}
         onClick={() => onOpenChange(!open)}
       >
         <SlidersHorizontal size={15} />
@@ -93,7 +96,7 @@ export function CoachOptions({
           className="computer-retry"
           onClick={onRetry}
           disabled={startDisabled}
-          aria-label="Retry computer"
+          aria-label={t("Retry computer")}
         >
           <RotateCcw size={13} />
         </button>
@@ -101,14 +104,14 @@ export function CoachOptions({
       <section
         className="computer-settings"
         id="computer-settings"
-        aria-label="Computer settings"
+        aria-label={t("Computer settings")}
         hidden={!open}
       >
         <div className="computer-settings-heading">
-          <h3>Computer settings</h3>
+          <h3>{t("Computer settings")}</h3>
           <button
             className="icon-button"
-            aria-label="Close computer settings"
+            aria-label={t("Close computer settings")}
             onClick={close}
           >
             <X size={15} />
@@ -116,7 +119,7 @@ export function CoachOptions({
         </div>
         <div className="computer-settings-fields">
           <fieldset className="computer-side-options">
-            <legend>You play as</legend>
+            <legend>{t("You play as")}</legend>
             <div>
               {(["w", "b"] as Color[]).map((color) => (
                 <button
@@ -127,13 +130,13 @@ export function CoachOptions({
                   }}
                 >
                   <img src={`/pieces/${color}K.svg`} alt="" />
-                  {sideName(color)}
+                  {sideName(color, t)}
                 </button>
               ))}
             </div>
           </fieldset>
           <fieldset className="computer-level-options">
-            <legend>Your challenge</legend>
+            <legend>{t("Your challenge")}</legend>
             <div>
               {Object.entries(COMPUTER_LEVELS).map(([value, option], index) => (
                 <button
@@ -152,7 +155,7 @@ export function CoachOptions({
                       />
                     ))}
                   </span>
-                  <span>{option.label}</span>
+                  <span>{t(option.label)}</span>
                 </button>
               ))}
             </div>
@@ -162,7 +165,7 @@ export function CoachOptions({
           className={`computer-status ${failed ? "has-error" : ""}`}
           role="status"
         >
-          {status}
+          {translateNotice(status, t)}
         </p>
         <div className="computer-settings-actions">
           {failed && (
@@ -171,11 +174,11 @@ export function CoachOptions({
               onClick={onRetry}
               disabled={startDisabled}
             >
-              <RotateCcw size={13} /> Retry
+              <RotateCcw size={13} /> {t("Retry")}
             </button>
           )}
           <button className="primary-button" onClick={close}>
-            Done
+            {t("Done")}
           </button>
         </div>
       </section>

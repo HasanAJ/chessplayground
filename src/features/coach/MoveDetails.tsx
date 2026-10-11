@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect } from "react";
 import { sideName } from "../../chess/position";
 import { moveDescription } from "../../chess/moves";
@@ -9,16 +10,17 @@ export function LikelyReply({
   candidate,
   onInspect,
 }: Omit<MovePreviewProps, "preview">) {
+  const { t } = useTranslation();
   const replyPly = Math.min(2, candidate.continuation.length);
   return (
     <button
       type="button"
       className="reply-box detail-preview"
-      aria-label={`Preview likely reply: ${candidate.reply}`}
+      aria-label={t("Preview likely reply: {0}", candidate.reply)}
       {...movePreviewEvents(onInspect, candidate, replyPly)}
       onClick={() => onInspect(candidate, replyPly, "click")}
     >
-      <span>LIKELY REPLY</span>
+      <span>{t("LIKELY REPLY")}</span>
       <span className="reply-text">
         <SquareText text={candidate.reply} focusable={false} />
       </span>
@@ -31,21 +33,27 @@ export function Continuation({
   preview,
   onInspect,
 }: MovePreviewProps) {
+  const { t } = useTranslation();
   return (
-    <div className="continuation" aria-label="Engine continuation">
+    <div className="continuation" aria-label={t("Engine continuation")}>
       <div className="continuation-heading">
-        <span>POSSIBLE NEXT MOVES</span>
+        <span>{t("POSSIBLE NEXT MOVES")}</span>
       </div>
       <div className="continuation-moves">
         {candidate.continuation.map((move, index) => {
           const current =
             preview?.candidate === candidate && preview.ply === index + 1;
-          const description = moveDescription(move);
+          const description = moveDescription(move, t);
           return (
             <button
               key={index}
               className={current ? "current-step" : ""}
-              aria-label={`Preview move ${index + 1}: ${sideName(move.color)} plays ${move.san}`}
+              aria-label={t(
+                "Preview move {0}: {1} plays {2}",
+                index + 1,
+                sideName(move.color, t),
+                move.san,
+              )}
               aria-pressed={current}
               title={description}
               {...movePreviewEvents(onInspect, candidate, index + 1)}

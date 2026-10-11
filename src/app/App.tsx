@@ -1,3 +1,5 @@
+import { LanguageSelector } from "../i18n/LanguageSelector";
+import { useTranslation } from "../i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import { CircleHelp, Sparkles } from "lucide-react";
 import { ROOT } from "../chess/study";
@@ -18,6 +20,7 @@ import { SaveNotice } from "../features/game/SaveNotice";
 import { usePanelFocus } from "./usePanelFocus";
 
 export default function App() {
+  const { t } = useTranslation();
   const computer = useComputerSettings();
   const game = useGameController(computer.disable);
   const preview = useBoardPreview(game.analysisKey, game.playable);
@@ -91,28 +94,35 @@ export default function App() {
   return (
     <>
       <header className="site-header">
-        <a className="brand" href="/" aria-label="Tempo home">
+        <a className="brand" href="/" aria-label={t("Tempo home")}>
           <img src="/favicon.svg" alt="" />
           <span>
             tempo<span className="brand-dot">.</span>
           </span>
         </a>
         <div className="header-center">
-          <Sparkles size={14} /> Your chess playground
+          <Sparkles size={14} /> {t("Your chess playground")}
         </div>
-        <button className="help-button" onClick={() => setHelpOpen(true)}>
-          <CircleHelp size={16} />
-          <span>How it works</span>
-        </button>
+        <div className="header-actions">
+          <LanguageSelector />
+          <button
+            className="help-button"
+            aria-label={t("How it works")}
+            onClick={() => setHelpOpen(true)}
+          >
+            <CircleHelp size={16} />
+            <span>{t("How it works")}</span>
+          </button>
+        </div>
       </header>
 
       <main>
         <section className="page-heading">
           <div>
             <h1>
-              Your next move, <span>explained.</span>
+              {t("Your next move,")} <span>{t("explained.")}</span>
             </h1>
-            <p>Explore the board. Understand the plan. Try a move.</p>
+            <p>{t("Explore the board. Understand the plan. Try a move.")}</p>
           </div>
         </section>
 
@@ -157,12 +167,12 @@ export default function App() {
         </SquareHighlightProvider>
         <footer>
           <span>
-            <img src="/favicon.svg" alt="" /> A good move starts with a little
-            understanding.
+            <img src="/favicon.svg" alt="" />{" "}
+            {t("A good move starts with a little understanding.")}
           </span>
           <span>
             © {new Date().getFullYear()} Tempo{" "}
-            <span className="footer-dot">·</span> Powered by Stockfish 19{" "}
+            <span className="footer-dot">·</span> {t("Powered by Stockfish 19")}{" "}
             <span className="footer-dot">·</span>
           </span>
         </footer>

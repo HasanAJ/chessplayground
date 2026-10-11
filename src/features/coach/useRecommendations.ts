@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Color } from "chess.js";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
@@ -18,6 +19,7 @@ type Analysis = {
 };
 
 export function useRecommendations(game: GameController, paused: boolean) {
+  const { t } = useTranslation();
   const engine = useAnalysisEngine();
   const [request, setRequest] = useState<{
     key: string;
@@ -30,8 +32,13 @@ export function useRecommendations(game: GameController, paused: boolean) {
   const current =
     requested && analysis?.key === game.analysisKey && game.playable;
   const candidates = useMemo(
-    () => (current ? recommendedCandidates(analysis.candidates) : []),
-    [current, analysis],
+    () =>
+      current
+        ? recommendedCandidates(
+            candidatesFor(game.analysisFen, analysis.candidates, t),
+          )
+        : [],
+    [current, analysis, game.analysisFen, t],
   );
   const thinking =
     game.playable &&

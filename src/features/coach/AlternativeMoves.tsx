@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import type { BoardController } from "../board/useBoardInteractions";
 import type { BoardPreview } from "../board/useBoardPreview";
@@ -20,14 +21,15 @@ export function AlternativeMoves({
   preview,
   presentation,
 }: Props) {
+  const { t } = useTranslation();
   const { active, setActive, setHovered } = presentation;
   const { inspection, inspectMove, clearPreview } = preview;
   const { playSuggestedMove: playMove } = board;
   if (candidates.length < 2) return null;
   return (
-    <section aria-label="Other good options">
+    <section aria-label={t("Other good options")}>
       <div className="candidates-heading">
-        <h3>Other good options</h3>
+        <h3>{t("Other good options")}</h3>
       </div>
       <div className="candidate-list">
         {candidates.slice(1).map((candidate, index) => {
@@ -48,7 +50,12 @@ export function AlternativeMoves({
                 onFocus={() => setHovered(i)}
                 onBlur={() => setHovered(null)}
                 aria-expanded={active === i}
-                aria-label={`Alternative: ${candidate.move.san}. ${moveDescription(candidate.move)}. ${candidate.title}`}
+                aria-label={t(
+                  "Alternative: {0}. {1}. {2}",
+                  candidate.move.san,
+                  moveDescription(candidate.move, t),
+                  candidate.title,
+                )}
               >
                 <div className="candidate-info">
                   <div>
@@ -61,14 +68,16 @@ export function AlternativeMoves({
                   </span>
                   <span className="candidate-move-description">
                     <SquareText
-                      text={moveDescription(candidate.move)}
+                      text={moveDescription(candidate.move, t)}
                       focusable={false}
                     />
                   </span>
                 </div>
                 <span
                   className="candidate-score"
-                  title="Position estimate in pawn units: + favors White, − favors Black."
+                  title={t(
+                    "Position estimate in pawn units: + favors White, − favors Black.",
+                  )}
                 >
                   {candidate.score}
                 </span>
@@ -92,7 +101,7 @@ export function AlternativeMoves({
                     }
                   >
                     <SquareText
-                      text={`Play ${candidate.move.san}`}
+                      text={t("Play {0}", candidate.move.san)}
                       focusable={false}
                     />
                     <ArrowRight size={15} />

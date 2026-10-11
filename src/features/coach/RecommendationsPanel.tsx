@@ -1,3 +1,5 @@
+import { translateNotice } from "../../i18n/notices";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { LoaderCircle, RotateCcw, ShieldAlert } from "lucide-react";
 import { sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
@@ -33,12 +35,13 @@ export function RecommendationsPanel({
   presentation,
   onNewGame: newGame,
 }: Props) {
+  const { t } = useTranslation();
   const {
     analysisGame,
     analysisKey,
     analysisTerminal,
     reviewing,
-    reviewLabel,
+    reviewLabel: rawReviewLabel,
     lastMove,
   } = game;
   const {
@@ -49,6 +52,7 @@ export function RecommendationsPanel({
     current: isCurrent,
     continuity,
   } = recommendations;
+  const reviewLabel = translateNotice(rawReviewLabel, t);
   const analysis = recommendations.analysis!;
   const turn = analysisGame.turn();
   const computer = settings.enabled,
@@ -82,37 +86,41 @@ export function RecommendationsPanel({
         <>
           <div className="sr-only" role="status">
             {thinking
-              ? "Analyzing…"
+              ? t("Analyzing…")
               : analysis.state === "error"
-                ? "Engine unavailable"
-                : "Recommendations ready"}
+                ? t("Engine unavailable")
+                : t("Recommendations ready")}
           </div>
           {reviewing && (
             <p className="analysis-context">
               <SquareText
-                text={`Reviewing ${reviewLabel}. Analysis is for this position.`}
+                text={t(
+                  "Reviewing {0}. Analysis is for this position.",
+                  reviewLabel,
+                )}
               />
             </p>
           )}
           {isCurrent && analysis.state === "error" ? (
             <div className="engine-error" role="alert">
               <ShieldAlert size={22} />
-              <h3>Let’s try that again.</h3>
+              <h3>{t("Let’s try that again.")}</h3>
               <p>
-                <SquareText text={analysis.error ?? ""} />
+                <SquareText text={translateNotice(analysis.error ?? "", t)} />
               </p>
               <button
                 className="primary-button"
                 onClick={recommendations.calculate}
               >
-                Retry analysis <RotateCcw size={15} />
+                {t("Retry analysis")}
+                <RotateCcw size={15} />
               </button>
             </div>
           ) : (
             <>
               <section
                 className={`strategy-card ${thinking ? "strategy-loading" : ""}`}
-                aria-label="Best move and strategy"
+                aria-label={t("Best move and strategy")}
                 aria-busy={thinking}
                 onMouseEnter={() => setHovered(0)}
                 onMouseLeave={() => setHovered(null)}
@@ -142,21 +150,25 @@ export function RecommendationsPanel({
                   <>
                     <div className="card-eyebrow">
                       <LoaderCircle size={16} className="spin" />
-                      <span>FINDING YOUR MOVE</span>
+                      <span>{t("FINDING YOUR MOVE")}</span>
                     </div>
-                    <h3>Finding {sideName(turn)}’s best move…</h3>
+                    <h3>{t("Finding {0}’s best move…", sideName(turn, t))}</h3>
                     <p>
                       {reviewing
-                        ? "Looking at your options and their replies from this earlier position."
-                        : "Checking your options and your opponent’s replies. Feel free to keep playing."}
+                        ? t(
+                            "Looking at your options and their replies from this earlier position.",
+                          )
+                        : t(
+                            "Checking your options and your opponent’s replies. Feel free to keep playing.",
+                          )}
                     </p>
                     <div className="analysis-progress" aria-hidden="true">
                       <span />
                     </div>
                     <p className="analysis-timing">
                       {analysis.depth > 0 && isCurrent
-                        ? `Checking deeper · depth ${analysis.depth}`
-                        : "Usually ready in a couple of seconds"}
+                        ? t("Checking deeper · depth {0}", analysis.depth)
+                        : t("Usually ready in a couple of seconds")}
                     </p>
                   </>
                 )}
@@ -182,11 +194,13 @@ export function RecommendationsPanel({
                   {watching.target && !analysisGame.inCheck() && (
                     <p
                       className="strategy-warning"
-                      aria-label="Watch out for"
+                      aria-label={t("Watch out for")}
                       tabIndex={!boardPreview ? 0 : undefined}
                       title={
                         !boardPreview
-                          ? "Hover or focus to highlight the threatened piece and its attackers."
+                          ? t(
+                              "Hover or focus to highlight the threatened piece and its attackers.",
+                            )
                           : undefined
                       }
                       onMouseEnter={() => setHoveredWarning(true)}

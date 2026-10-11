@@ -130,3 +130,21 @@
     scroll-behavior: auto !important;
   }
 }
+
+@media (max-width: 540px) {
+  .header-actions {
+    gap: 6px;
+  }
+  .help-button {
+    padding: 10px;
+  }
+  .help-button span {
+    display: none;
+  }
+  .language-selector > svg {
+    display: none;
+  }
+  .language-selector select {
+    max-width: 102px;
+  }
+}

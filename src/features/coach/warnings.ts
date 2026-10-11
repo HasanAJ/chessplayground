@@ -1,3 +1,4 @@
+import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Square } from "chess.js";
 import { names, opposite, positionOf } from "../../chess/position";
 
@@ -9,7 +10,10 @@ type BoardWarning = {
   attackers: Square[];
 };
 
-export function watchOutFor(game: Chess): BoardWarning {
+export function watchOutFor(
+  game: Chess,
+  t: Translator = english,
+): BoardWarning {
   const color = game.turn(),
     enemy = opposite(color),
     position = positionOf(game);
@@ -18,7 +22,9 @@ export function watchOutFor(game: Chess): BoardWarning {
       ([, piece]) => piece?.color === color && piece.type === "k",
     )![0] as Square;
     return {
-      text: "Deal with the check first. Look for a king move, a way to take the attacker, or a piece that can block the attack.",
+      text: t(
+        "Deal with the check first. Look for a king move, a way to take the attacker, or a piece that can block the attack.",
+      ),
       target: king,
       attackers: game.attackers(king, enemy),
     };
@@ -36,18 +42,28 @@ export function watchOutFor(game: Chess): BoardWarning {
   );
   if (undefended)
     return {
-      text: `Your ${names[undefended[1]!.type]} on ${undefended[0]} is under attack with no defender. Can you move it, protect it, or make a threat they have to answer first?`,
+      text: t(
+        "Your {0} on {1} is under attack with no defender. Can you move it, protect it, or make a threat they have to answer first?",
+        t(names[undefended[1]!.type]),
+        undefended[0],
+      ),
       target: undefended[0] as Square,
       attackers: game.attackers(undefended[0] as Square, enemy),
     };
   if (pressure.length)
     return {
-      text: `Your ${names[pressure[0][1]!.type]} on ${pressure[0][0]} is under attack. It has a defender, but play out the trade before leaving it there.`,
+      text: t(
+        "Your {0} on {1} is under attack. It has a defender, but play out the trade before leaving it there.",
+        t(names[pressure[0][1]!.type]),
+        pressure[0][0],
+      ),
       target: pressure[0][0] as Square,
       attackers: game.attackers(pressure[0][0] as Square, enemy),
     };
   return {
-    text: "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.",
+    text: t(
+      "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.",
+    ),
     target: null,
     attackers: [],
   };

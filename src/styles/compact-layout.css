@@ -277,13 +277,17 @@
   .site-header {
     height: 80px;
     padding-inline: 10px;
+    gap: 8px;
+  }
+  .brand {
+    gap: 6px;
   }
   .brand > img {
-    width: 56px;
-    height: 56px;
+    width: 40px;
+    height: 40px;
   }
   .brand > span {
-    font-size: 41.6px;
+    font-size: 32px;
   }
   .help-button {
     min-height: 36px;

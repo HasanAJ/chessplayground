@@ -1,3 +1,4 @@
+import { english, type Translator } from "../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import { names } from "./position";
 
@@ -5,18 +6,36 @@ export const capturedSquare = (move: Move) =>
   (move.isEnPassant() ? `${move.to[0]}${move.from[1]}` : move.to) as Move["to"];
 
 /** Keep notation visible while giving new players the complete move in words. */
-export function moveDescription(move: Move): string {
-  const piece = names[move.piece];
-  let text = `${piece[0].toUpperCase()}${piece.slice(1)} from ${move.from} to ${move.to}`;
+export function moveDescription(move: Move, t: Translator = english): string {
+  const piece = t(names[move.piece]);
+  let text = t(
+    "{0}{1} from {2} to {3}",
+    piece[0].toUpperCase(),
+    piece.slice(1),
+    move.from,
+    move.to,
+  );
   if (move.isKingsideCastle() || move.isQueensideCastle()) {
     const rank = move.from[1];
-    text = `Castle: king ${move.from} to ${move.to}, rook ${move.isKingsideCastle() ? `h${rank} to f${rank}` : `a${rank} to d${rank}`}`;
+    text = t(
+      "Castle: king {0} to {1}, rook {2}",
+      move.from,
+      move.to,
+      move.isKingsideCastle()
+        ? t("h{0} to f{1}", rank, rank)
+        : t("a{0} to d{1}", rank, rank),
+    );
   } else if (move.captured) {
-    text += `, taking the ${names[move.captured]}${move.isEnPassant() ? ` on ${capturedSquare(move)} en passant` : ""}`;
+    text += t(
+      ", taking the {0}{1}",
+      t(names[move.captured]),
+      move.isEnPassant() ? t(" on {0} en passant", capturedSquare(move)) : "",
+    );
   }
-  if (move.promotion) text += `, promoting to a ${names[move.promotion]}`;
-  if (move.san.endsWith("#")) text += " — checkmate";
-  else if (move.san.endsWith("+")) text += " — check";
+  if (move.promotion)
+    text += t(", promoting to a {0}", t(names[move.promotion]));
+  if (move.san.endsWith("#")) text += t(" — checkmate");
+  else if (move.san.endsWith("+")) text += t(" — check");
   return text;
 }
 

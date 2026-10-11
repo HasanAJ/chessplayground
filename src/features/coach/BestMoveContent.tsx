@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useState } from "react";
 import { ArrowRight, Eye, Lightbulb } from "lucide-react";
 import { LikelyReply, Continuation } from "./MoveDetails";
@@ -17,19 +18,21 @@ export function BestMoveContent({
   continuity: boolean;
   onPlay: () => void;
 }) {
+  const { t } = useTranslation();
   const [replyOpen, setReplyOpen] = useState(false);
   const replyId = useId();
   const { onInspect } = previewProps;
   useEffect(() => () => onInspect(candidate, 0), [onInspect, candidate]);
   const hasReply = candidate.continuation.length > 1;
-  const title = candidate.theme === "check" ? "Escape check" : candidate.title;
+  const title =
+    candidate.theme === "check" ? t("Escape check") : candidate.title;
   return (
     <>
       <div className="card-eyebrow">
-        <Lightbulb size={16} /> <span>BEST MOVE</span>
+        <Lightbulb size={16} /> <span>{t("BEST MOVE")}</span>
         {(forcedMove || continuity) && (
           <span className="plan-continuity">
-            {forcedMove ? "Only legal move" : "Plan continues"}
+            {forcedMove ? t("Only legal move") : t("Plan continues")}
           </span>
         )}
       </div>
@@ -44,7 +47,7 @@ export function BestMoveContent({
         <SquareText text={title} />
       </h3>
       <p className="move-description">
-        <SquareText text={moveDescription(candidate.move)} />
+        <SquareText text={moveDescription(candidate.move, t)} />
       </p>
       <p>
         <SquareText text={candidate.explanation} />
@@ -53,10 +56,13 @@ export function BestMoveContent({
       <div className="plan-actions">
         <button
           className="primary-button"
-          aria-label={`Play best move ${candidate.move.san}`}
+          aria-label={t("Play best move {0}", candidate.move.san)}
           onClick={onPlay}
         >
-          <SquareText text={`Play ${candidate.move.san}`} focusable={false} />{" "}
+          <SquareText
+            text={t("Play {0}", candidate.move.san)}
+            focusable={false}
+          />{" "}
           <ArrowRight size={14} />
         </button>
         {hasReply && (
@@ -69,7 +75,7 @@ export function BestMoveContent({
               onInspect(candidate, 0);
             }}
           >
-            <Eye size={14} /> {replyOpen ? "Hide reply" : "Preview reply"}
+            <Eye size={14} /> {replyOpen ? t("Hide reply") : t("Preview reply")}
           </button>
         )}
       </div>
@@ -84,7 +90,7 @@ export function BestMoveContent({
                   if (!event.currentTarget.open) onInspect(candidate, 0);
                 }}
               >
-                <summary>Explore next moves</summary>
+                <summary>{t("Explore next moves")}</summary>
                 <Continuation candidate={candidate} {...previewProps} />
               </details>
             </>

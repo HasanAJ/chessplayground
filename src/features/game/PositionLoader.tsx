@@ -1,3 +1,5 @@
+import { translateNotice } from "../../i18n/notices";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useState, type FormEvent } from "react";
 import type { Chess } from "chess.js";
 import { Copy } from "lucide-react";
@@ -12,6 +14,7 @@ export function PositionLoader({
   onLoad: (game: Chess) => void;
   onCopied: () => void;
 }) {
+  const { t } = useTranslation();
   const [input, setInput] = useState(fen);
   const [error, setError] = useState("");
 
@@ -50,10 +53,10 @@ export function PositionLoader({
   }
 
   return (
-    <section className="fen-controls" aria-label="FEN position controls">
+    <section className="fen-controls" aria-label={t("FEN position controls")}>
       <form onSubmit={load}>
         <label className="sr-only" htmlFor="fen-input">
-          FEN position
+          {t("FEN position")}
         </label>
         <input
           id="fen-input"
@@ -63,24 +66,24 @@ export function PositionLoader({
             setError("");
           }}
           spellCheck={false}
-          placeholder="Paste a FEN position"
+          placeholder={t("Paste a FEN position")}
         />
         <button
           type="button"
           className="icon-button"
-          aria-label="Copy current FEN"
-          title="Copy current FEN"
+          aria-label={t("Copy current FEN")}
+          title={t("Copy current FEN")}
           onClick={copy}
         >
           <Copy size={15} />
         </button>
         <button type="submit" className="small-button">
-          Load
+          {t("Load")}
         </button>
       </form>
       {error && (
         <p className="fen-error" role="alert">
-          {error}
+          {translateNotice(error, t)}
         </p>
       )}
     </section>

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useState, type ReactNode } from "react";
 import { Eye } from "lucide-react";
 import { positionSummary, type Candidate } from "./candidates";
@@ -23,6 +24,7 @@ export function PositionDetails({
   onHighlightPreviewChange: (enabled: boolean) => void;
   children?: ReactNode;
 }) {
+  const { t } = useTranslation();
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   useEffect(() => {
@@ -40,11 +42,11 @@ export function PositionDetails({
         }
       }}
     >
-      <summary>About this position</summary>
+      <summary>{t("About this position")}</summary>
       <div className="position-details-body">
         <div className="strategy-foot">
           <span>
-            <SquareText text={positionSummary(candidate)} />
+            <SquareText text={positionSummary(candidate, t)} />
           </span>
           <span className="score-pill">{candidate.score}</span>
         </div>
@@ -53,7 +55,7 @@ export function PositionDetails({
           <>
             {insight.change && !inCheck && (
               <div className="plan-change">
-                <span>WHAT CHANGED</span>
+                <span>{t("WHAT CHANGED")}</span>
                 <p>
                   <SquareText text={insight.change} />
                 </p>
@@ -84,7 +86,9 @@ export function PositionDetails({
                 onClick={() => onHighlightChange(!highlighted)}
               >
                 <Eye size={13} />{" "}
-                {highlighted ? "Hide key squares" : "Highlight key squares"}
+                {highlighted
+                  ? t("Hide key squares")
+                  : t("Highlight key squares")}
               </button>
             )}
             {highlighted && insight.squares.length > 0 && (
@@ -92,7 +96,10 @@ export function PositionDetails({
                 <span aria-hidden="true" />
                 <span>
                   <SquareText
-                    text={`Teal outlines mark the squares discussed above: ${insight.squares.join(", ")}.`}
+                    text={t(
+                      "Teal outlines mark the squares discussed above: {0}.",
+                      insight.squares.join(", "),
+                    )}
                   />
                 </span>
               </p>

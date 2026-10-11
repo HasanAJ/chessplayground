@@ -1,4 +1,7 @@
-import { useEffect, useId } from "react";
+import { translateNotice } from "../../i18n/notices";
+import { localizeReview } from "./grading";
+import { useTranslation } from "../../i18n/LanguageProvider";
+import { useEffect, useId, useMemo } from "react";
 import { ChevronDown, Eye, LoaderCircle } from "lucide-react";
 import type { ReviewState } from "./moveReview";
 import type { InspectMove, MovePreview } from "../board/useBoardPreview";
@@ -26,14 +29,21 @@ export function MoveFeedback({
   collapsed: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   const bodyId = useId();
-  const review = result.state === "ready" ? result.review : undefined;
+  const storedReview = result.state === "ready" ? result.review : undefined;
+  const review = useMemo(
+    () => (storedReview ? localizeReview(storedReview, t) : undefined),
+    [storedReview, t],
+  );
   const status =
     result.state === "thinking"
-      ? "Reviewing…"
+      ? t("Reviewing…")
       : result.state === "error"
-        ? "Review unavailable"
-        : review?.label;
+        ? t("Review unavailable")
+        : review
+          ? t(review.label)
+          : "";
   useEffect(() => {
     if (collapsed) return;
     return () => {
@@ -46,7 +56,7 @@ export function MoveFeedback({
       className="move-feedback"
       data-rating={review?.label}
       data-collapsed={collapsed}
-      aria-label="Move feedback"
+      aria-label={t("Move feedback")}
       aria-busy={result.state === "thinking"}
     >
       <h3 className="feedback-heading">
@@ -55,11 +65,17 @@ export function MoveFeedback({
           className="feedback-toggle"
           aria-expanded={!collapsed}
           aria-controls={bodyId}
-          aria-label={`${context}: ${moveLabel}. ${status}. ${collapsed ? "Show" : "Hide"} details`}
+          aria-label={t(
+            "{0}: {1}. {2}. {3} details",
+            t(context),
+            moveLabel,
+            status,
+            collapsed ? t("Show") : t("Hide"),
+          )}
           onClick={onToggle}
         >
           <span className="feedback-move">
-            <span className="feedback-context">{context}</span>
+            <span className="feedback-context">{t(context)}</span>
             <strong>
               <SquareText text={moveLabel} focusable={false} />
             </strong>
@@ -81,29 +97,29 @@ export function MoveFeedback({
         {!collapsed &&
           (result.state === "thinking" ? (
             <p className="learning-pending">
-              Looking at your move and the best alternatives…
+              {t("Looking at your move and the best alternatives…")}
             </p>
           ) : result.state === "error" ? (
             <>
               <p>
-                <SquareText text={result.error} />
+                <SquareText text={translateNotice(result.error, t)} />
               </p>
               <button className="text-action" onClick={onReanalyze}>
-                Retry move review
+                {t("Retry move review")}
               </button>
             </>
           ) : (
             review && (
               <>
                 <p className="move-description">
-                  <SquareText text={moveDescription(review.move)} />
+                  <SquareText text={moveDescription(review.move, t)} />
                 </p>
                 <p>
                   <SquareText text={review.text} />
                 </p>
                 {review.lesson && (
                   <div className="move-lesson">
-                    <span>Next time</span>
+                    <span>{t("Next time")}</span>
                     <p>
                       <SquareText text={review.lesson.text} />
                     </p>
@@ -124,14 +140,28 @@ export function MoveFeedback({
                         {...movePreviewEvents(onInspect, review.reply, 1)}
                         onClick={() => onInspect(review.reply!, 1, "click")}
                       >
-                        <Eye size={13} /> Likely reply
+                        <Eye size={13} /> {t("Likely reply")}
                       </button>
                     )}
                   </div>
-                  <small title="The evaluation difference is measured in pawn units. Grades account for the overall position; mate outcomes have no pawn score.">
-                    Quick review
+                  <small
+                    title={t(
+                      "The evaluation difference is measured in pawn units. Grades account for the overall position; mate outcomes have no pawn score.",
+                    )}
+                  >
+                    {t("Quick review")}
                     {review.label !== "Best move" && review.loss !== null ? (
-                      <> · {review.loss.toFixed(1)} evaluation drop</>
+                      <>
+                        {" "}
+                        ·{" "}
+                        {t(
+                          "{0} evaluation drop",
+                          review.loss.toLocaleString(t.language, {
+                            minimumFractionDigits: 1,
+                            maximumFractionDigits: 1,
+                          }),
+                        )}
+                      </>
                     ) : (
                       ""
                     )}

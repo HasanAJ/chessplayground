@@ -6,7 +6,7 @@ export const COMPUTER_LEVELS = {
   medium: { label: "Medium", depth: 11, movetime: 650, skill: 7 },
   hard: { label: "Hard", depth: 15, movetime: 1000, skill: 13 },
   expert: { label: "Expert", depth: 18, movetime: 1500, skill: 20 },
-};
+} as const;
 export type ComputerLevel = keyof typeof COMPUTER_LEVELS;
 
 export function startComputerTurn(

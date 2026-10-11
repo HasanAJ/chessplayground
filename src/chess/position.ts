@@ -1,3 +1,4 @@
+import { english, type Translator } from "../i18n/translate";
 import {
   Chess,
   validateFen,
@@ -11,15 +12,16 @@ export type Position = Partial<
   Record<Square, { type: PieceSymbol; color: Color }>
 >;
 export const START_FEN = new Chess().fen();
-export const names: Record<PieceSymbol, string> = {
+export const names = {
   p: "pawn",
   n: "knight",
   b: "bishop",
   r: "rook",
   q: "queen",
   k: "king",
-};
-export const sideName = (color: Color) => (color === "w" ? "White" : "Black");
+} as const satisfies Record<PieceSymbol, string>;
+export const sideName = (color: Color, t: Translator = english) =>
+  t(color === "w" ? "White" : "Black");
 export const opposite = (color: Color): Color => (color === "w" ? "b" : "w");
 export const gameMoveLabel = (move: Move) =>
   `${move.before.split(" ")[5]}${move.color === "w" ? "." : "…"} ${move.san}`;
@@ -238,14 +240,14 @@ export function checkedGame(fen: string): Chess {
   return game;
 }
 
-export function ending(game: Chess): string | null {
+export function ending(game: Chess, t: Translator = english): string | null {
   if (game.isCheckmate())
-    return `${sideName(opposite(game.turn()))} wins by checkmate.`;
+    return t("{0} wins by checkmate.", sideName(opposite(game.turn()), t));
   if (game.isStalemate())
-    return "Stalemate. There are no legal moves, and the king is safe.";
-  if (game.isThreefoldRepetition()) return "Draw by threefold repetition.";
+    return t("Stalemate. There are no legal moves, and the king is safe.");
+  if (game.isThreefoldRepetition()) return t("Draw by threefold repetition.");
   if (game.isInsufficientMaterial())
-    return "Draw. Neither side has enough material to checkmate.";
-  if (game.isDrawByFiftyMoves()) return "Draw by the fifty-move rule.";
+    return t("Draw. Neither side has enough material to checkmate.");
+  if (game.isDrawByFiftyMoves()) return t("Draw by the fifty-move rule.");
   return null;
 }

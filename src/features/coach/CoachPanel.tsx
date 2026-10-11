@@ -1,3 +1,6 @@
+import { translateNotice } from "../../i18n/notices";
+import type { Translator } from "../../i18n/translate";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useState } from "react";
 import {
   Check,
@@ -64,6 +67,7 @@ export function CoachPanel({
   onNewGame,
   onShowHistory: showHistory,
 }: Props) {
+  const { t } = useTranslation();
   const [collapsedFeedbackKey, setCollapsedFeedbackKey] = useState<
     string | null
   >(null);
@@ -74,7 +78,7 @@ export function CoachPanel({
     history,
     historyPly,
     reviewing,
-    reviewLabel,
+    reviewLabel: rawReviewLabel,
     notice,
     error,
     setError,
@@ -97,45 +101,50 @@ export function CoachPanel({
     setEnabled: setComputer,
   } = settings;
   const turn = analysisGame.turn();
+  const reviewLabel = translateNotice(rawReviewLabel, t);
   const feedbackMove = history[feedbackPly - 1];
-  const calculateReason = game.positionIssue ?? "";
+  const calculateReason = translateNotice(game.positionIssue ?? "", t);
   const turnStatus = displayedEnding
     ? (boardPreview ? preview.previewGame! : analysisGame).isCheckmate()
-      ? "Checkmate"
-      : "Draw"
+      ? t("Checkmate")
+      : t("Draw")
     : boardPreview
       ? checkedKing
-        ? "Preview · Check"
-        : "Preview"
+        ? t("Preview · Check")
+        : t("Preview")
       : checkedKing
-        ? "Check"
+        ? t("Check")
         : computer && optionsOpen
-          ? "Paused"
+          ? t("Paused")
           : botTurn
             ? botState === "waiting"
-              ? "Replying…"
-              : "Thinking…"
+              ? t("Replying…")
+              : t("Thinking…")
             : reviewing
-              ? "Reviewing"
+              ? t("Reviewing")
               : computer
-                ? "Your turn"
+                ? t("Your turn")
                 : "";
   return (
-    <aside className="coach-panel" id="coach" aria-label="Position analysis">
+    <aside
+      className="coach-panel"
+      id="coach"
+      aria-label={t("Position analysis")}
+    >
       <div className="coach-header">
         <div className="coach-heading">
           <div>
-            <h2>Your coach</h2>
+            <h2>{t("Your coach")}</h2>
             <div className="next-player">
               <label className="turn-label" htmlFor="next-player-select">
-                To move
+                {t("To move")}
               </label>
               <div
                 className={`turn-select ${displayedTurn === "b" ? "is-black" : ""}`}
               >
                 <select
                   id="next-player-select"
-                  aria-label="Who plays next"
+                  aria-label={t("Who plays next")}
                   value={displayedTurn}
                   disabled={boardPreview || botTurn}
                   onChange={(event) =>
@@ -143,12 +152,14 @@ export function CoachPanel({
                   }
                   title={
                     game.playable && history.length > 0
-                      ? "Changing the player starts a new position and clears the move history."
+                      ? t(
+                          "Changing the player starts a new position and clears the move history.",
+                        )
                       : undefined
                   }
                 >
-                  <option value="w">White</option>
-                  <option value="b">Black</option>
+                  <option value="w">{t("White")}</option>
+                  <option value="b">{t("Black")}</option>
                 </select>
                 <ChevronDown size={12} aria-hidden="true" />
               </div>
@@ -161,7 +172,7 @@ export function CoachPanel({
             </div>
           </div>
           <a className="mobile-board-link" href="#board">
-            Back to board ↑
+            {t("Back to board ↑")}
           </a>
         </div>
         <CoachOptions
@@ -173,7 +184,7 @@ export function CoachPanel({
             !game.playable || !!terminal || reviewing || boardPreview
           }
           failed={computer && botState === "error"}
-          status={computerStatus(game, settings, opponent, boardPreview)}
+          status={computerStatus(game, settings, opponent, boardPreview, t)}
           onSideChange={setHumanSide}
           onDifficultyChange={setDifficulty}
           onOpenChange={setOptionsOpen}
@@ -189,7 +200,7 @@ export function CoachPanel({
         <MoveFeedback
           key={feedback.key}
           result={feedback}
-          moveLabel={`${gameMoveLabel(feedbackMove)} · ${sideName(feedbackMove.color)}`}
+          moveLabel={`${gameMoveLabel(feedbackMove)} · ${sideName(feedbackMove.color, t)}`}
           context={
             reviewing
               ? "Selected move"
@@ -220,10 +231,10 @@ export function CoachPanel({
           }
           aria-label={
             botTurn
-              ? "Waiting for computer"
+              ? t("Waiting for computer")
               : thinking
-                ? "Calculating best moves"
-                : "Calculate best moves"
+                ? t("Calculating best moves")
+                : t("Calculate best moves")
           }
           aria-describedby={calculateReason ? "calculation-reason" : undefined}
           onClick={() => {
@@ -238,10 +249,10 @@ export function CoachPanel({
           )}
           <span aria-hidden="true">
             {botTurn
-              ? "Waiting for computer…"
+              ? t("Waiting for computer…")
               : thinking
-                ? "Calculating…"
-                : "Calculate best moves"}
+                ? t("Calculating…")
+                : t("Calculate best moves")}
           </span>
         </button>
         {calculateReason && (
@@ -255,7 +266,7 @@ export function CoachPanel({
         <div className="panel-notice" role="status">
           <Check size={15} />
           <span>
-            <SquareText text={notice} />
+            <SquareText text={translateNotice(notice, t)} />
           </span>
         </div>
       )}
@@ -263,9 +274,9 @@ export function CoachPanel({
         <div className="error-message" role="alert">
           <ShieldAlert size={16} />
           <span>
-            <SquareText text={error} />
+            <SquareText text={translateNotice(error, t)} />
           </span>
-          <button aria-label="Dismiss error" onClick={() => setError("")}>
+          <button aria-label={t("Dismiss error")} onClick={() => setError("")}>
             <X size={14} />
           </button>
         </div>
@@ -281,9 +292,12 @@ export function CoachPanel({
       )}
       {helpOpen && <HelpCard onClose={onCloseHelp} />}
       {reviewing && (
-        <section className="history-review" aria-label="Move history controls">
+        <section
+          className="history-review"
+          aria-label={t("Move history controls")}
+        >
           <p className="history-position-label" role="status">
-            <span>Reviewing</span>
+            <span>{t("Reviewing")}</span>
             <strong>
               <SquareText text={reviewLabel} />
             </strong>
@@ -293,12 +307,10 @@ export function CoachPanel({
           </span>
           <button
             className="history-latest"
-            aria-label="Back to latest"
+            aria-label={t("Back to latest")}
             onClick={() => showHistory(history.length)}
           >
-            <span>
-              <span className="history-latest-prefix">Back to </span>latest
-            </span>
+            <span>{t("Back to latest")}</span>
             <ArrowRight size={14} />
           </button>
         </section>
@@ -331,19 +343,31 @@ export function CoachPanel({
             <SquareText
               text={
                 inspectionMove
-                  ? `Preview · ${gameMoveLabel(inspectionMove)}`
+                  ? t("Preview · {0}", gameMoveLabel(inspectionMove))
                   : reviewing
                     ? thinking
-                      ? `Reviewing ${reviewLabel} · Updating this position’s analysis`
+                      ? t(
+                          "Reviewing {0} · Updating this position’s analysis",
+                          reviewLabel,
+                        )
                       : analysisRequested
-                        ? `Reviewing ${reviewLabel} · Analysis is for this position`
-                        : `Reviewing ${reviewLabel} · Calculate when you want guidance`
+                        ? t(
+                            "Reviewing {0} · Analysis is for this position",
+                            reviewLabel,
+                          )
+                        : t(
+                            "Reviewing {0} · Calculate when you want guidance",
+                            reviewLabel,
+                          )
                     : botBusy
                       ? botState === "waiting"
-                        ? "Computer moves in a moment…"
-                        : "Computer is choosing a reply…"
+                        ? t("Computer moves in a moment…")
+                        : t("Computer is choosing a reply…")
                       : thinking
-                        ? `Updating ${sideName(turn)}’s analysis · You can keep playing`
+                        ? t(
+                            "Updating {0}’s analysis · You can keep playing",
+                            sideName(turn, t),
+                          )
                         : ""
               }
             />
@@ -353,7 +377,7 @@ export function CoachPanel({
               className="text-action coach-preview-exit"
               onClick={preview.clearPreview}
             >
-              Return to game
+              {t("Return to game")}
             </button>
           )}
         </div>
@@ -367,20 +391,24 @@ function computerStatus(
   settings: ComputerSettings,
   opponent: ComputerTurn,
   previewing: boolean,
+  t: Translator,
 ) {
   if (!game.playable)
-    return "Arrange a legal position with both kings to play the computer.";
-  if (game.terminal) return "This game has ended. Start a new game to play.";
+    return t("Arrange a legal position with both kings to play the computer.");
+  if (game.terminal) return t("This game has ended. Start a new game to play.");
   if (game.reviewing || previewing)
-    return "Return to your game to continue playing.";
+    return t("Return to your game to continue playing.");
   if (!settings.enabled)
-    return `Turn on “Play computer” to play against ${sideName(settings.side === "w" ? "b" : "w")}.`;
-  if (settings.open) return "Game paused while you choose your settings.";
+    return t(
+      "Turn on “Play computer” to play against {0}.",
+      sideName(settings.side === "w" ? "b" : "w", t),
+    );
+  if (settings.open) return t("Game paused while you choose your settings.");
   if (opponent.state === "error")
-    return "The computer could not choose a move. Try again.";
+    return t("The computer could not choose a move. Try again.");
   if (opponent.busy)
     return opponent.state === "waiting"
-      ? "Computer moves in a moment…"
-      : "Computer is thinking…";
-  return "Your turn. Make a move on the board.";
+      ? t("Computer moves in a moment…")
+      : t("Computer is thinking…");
+  return t("Your turn. Make a move on the board.");
 }

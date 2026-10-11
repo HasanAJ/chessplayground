@@ -1,3 +1,4 @@
+import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useMemo, useState } from "react";
 import type { GameController } from "../game/useGameController";
 import type { BoardPreview } from "../board/useBoardPreview";
@@ -10,6 +11,7 @@ export function useCoachPresentation(
   recommendations: Recommendations,
   preview: BoardPreview,
 ) {
+  const { t } = useTranslation();
   const [active, setActive] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [bestFocused, setBestFocused] = useState(false);
@@ -26,6 +28,7 @@ export function useCoachPresentation(
             best,
             candidates[1],
             game.reviewing ? game.reviewedMove : game.lastMove,
+            t,
           )
         : null,
     [
@@ -35,11 +38,12 @@ export function useCoachPresentation(
       game.reviewing,
       game.reviewedMove,
       game.lastMove,
+      t,
     ],
   );
   const watching = useMemo(
-    () => watchOutFor(game.analysisGame),
-    [game.analysisGame],
+    () => watchOutFor(game.analysisGame, t),
+    [game.analysisGame, t],
   );
   const forcedMove = !!best && game.analysisGame.moves().length === 1;
   const shownCandidate =

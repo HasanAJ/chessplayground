@@ -1,3 +1,5 @@
+import { translateNotice } from "../../i18n/notices";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import type { SaveRecovery } from "./storage";
 
 export function SaveNotice({
@@ -13,28 +15,31 @@ export function SaveNotice({
   onResume: () => void;
   onDismiss: () => void;
 }) {
+  const { t } = useTranslation();
   if (!error && !recovery) return null;
   return (
     <section
       className="save-notice"
       role="status"
-      aria-label="Game saving status"
+      aria-label={t("Game saving status")}
     >
       <strong>
         {paused
-          ? "Saved game needs recovery"
+          ? t("Saved game needs recovery")
           : error
-            ? "Browser save unavailable"
-            : "Original save preserved"}
+            ? t("Browser save unavailable")
+            : t("Original save preserved")}
       </strong>
       {recovery && (
         <p>
           {paused
-            ? recovery.message
-            : "The original data is kept in a separate browser recovery backup. Autosave has resumed."}
+            ? translateNotice(recovery.message, t)
+            : t(
+                "The original data is kept in a separate browser recovery backup. Autosave has resumed.",
+              )}
         </p>
       )}
-      {error && <p>{error}</p>}
+      {error && <p>{translateNotice(error, t)}</p>}
       {recovery && (paused || !error) && (
         <div className="save-notice-actions">
           <button
@@ -42,8 +47,8 @@ export function SaveNotice({
             onClick={paused ? onResume : onDismiss}
           >
             {paused
-              ? "Keep current game & resume saving"
-              : "Dismiss recovery notice"}
+              ? t("Keep current game & resume saving")
+              : t("Dismiss recovery notice")}
           </button>
         </div>
       )}
