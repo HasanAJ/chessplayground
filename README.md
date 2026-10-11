@@ -2,7 +2,7 @@
 
 A local chess prototype for understanding the plan behind your next move. Arrange a position, explore up to five worthwhile Stockfish moves with plain-English explanations, then make moves for either side and calculate again whenever you want guidance.
 
-Choose English, Spanish, German, Italian, or French in the header. Your browser remembers the language.
+Choose English, Spanish, German, Italian, or French in the header. The URL keeps the selected language across reloads; switching languages keeps your game.
 
 ## Run
 
@@ -26,6 +26,8 @@ The installation copies Stockfish's small, single-threaded WebAssembly engine in
 ## Deployment
 
 `.github/workflows/deploy.yml` runs the tests, builds the complete site, and validates the Cloudflare configuration on pull requests and pushes to `main`. Successful pushes to `main`, or manual runs on `main`, deploy to `https://chessplayground.app` and check that HTTPS and the Stockfish engine are available.
+
+The build creates English at `/` and translated pages at `/es/`, `/de/`, `/it/`, and `/fr/`. Each includes its title, description, canonical URL, language links, and introductory content before JavaScript runs. The live app uses the same content and metadata. `SITE_URL` can override the production origin for another deployment; the generated sitemap lists all five pages. Deployment checks verify these pages, the sitemap, and 404 responses.
 
 Configure these GitHub Actions settings on `HasanAJ/chessplayground`:
 

@@ -1,81 +1,114 @@
-import type { HtmlTagDescriptor, Plugin } from "vite";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import type { Plugin } from "vite";
+import { SiteIntro } from "../src/app/SiteIntro";
+import { pageMetadata, siteOrigin } from "../src/i18n/metadata";
+import { languageFromPath, languagePath } from "../src/i18n/routes";
+import { siteContent } from "../src/i18n/siteContent";
+import { languages, type Language } from "../src/i18n/translate";
 
-export const SITE_TITLE = "Tempo — Chess Coach & Position Playground";
-export const SITE_DESCRIPTION =
-  "Play chess, set up a position, and explore Stockfish move suggestions with plain-English explanations. Free browser-based analysis and computer practice.";
+function escapeHtml(value: string) {
+  return value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character]!,
+  );
+}
 
-export function siteMetadata(siteUrl: string) {
-  const site = new URL(siteUrl);
-  if (
-    site.protocol !== "https:" ||
-    site.username ||
-    site.password ||
-    site.pathname !== "/" ||
-    site.search ||
-    site.hash
-  )
-    throw new Error(
-      "SITE_URL must be an HTTPS origin, for example https://chessplayground.app",
-    );
-  const url = `${site.origin}/`;
-  const image = `${site.origin}/social-preview.png`;
-  const meta = (property: string, content: string): HtmlTagDescriptor => ({
-    tag: "meta",
-    attrs: { property, content },
-  });
-  const tags: HtmlTagDescriptor[] = [
-    { tag: "link", attrs: { rel: "canonical", href: url } },
-    meta("og:type", "website"),
-    meta("og:site_name", "Tempo"),
-    meta("og:title", SITE_TITLE),
-    meta("og:description", SITE_DESCRIPTION),
-    meta("og:url", url),
-    meta("og:image", image),
-    meta("og:image:type", "image/png"),
-    meta("og:image:width", "1200"),
-    meta("og:image:height", "630"),
-    meta("og:image:alt", "Tempo chess coach: your next move, explained."),
-    {
-      tag: "meta",
-      attrs: { name: "twitter:card", content: "summary_large_image" },
-    },
-    { tag: "meta", attrs: { name: "twitter:title", content: SITE_TITLE } },
-    {
-      tag: "meta",
-      attrs: { name: "twitter:description", content: SITE_DESCRIPTION },
-    },
-    { tag: "meta", attrs: { name: "twitter:image", content: image } },
-    {
-      tag: "meta",
-      attrs: {
-        name: "twitter:image:alt",
-        content: "Tempo chess coach: your next move, explained.",
-      },
-    },
-  ];
+export function siteMetadata(siteUrl: string, language: Language = "en") {
+  const origin = siteOrigin(siteUrl);
   return {
-    tags,
-    robots: `User-agent: *\nAllow: /\nSitemap: ${site.origin}/sitemap.xml\n`,
-    sitemap: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${url}</loc></url></urlset>\n`,
+    ...pageMetadata(origin, language),
+    robots: `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`,
+    sitemap: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${(
+      Object.keys(languages) as Language[]
+    )
+      .map(
+        (code) =>
+          `<url><loc>${escapeHtml(origin + languagePath(code))}</loc></url>`,
+      )
+      .join("")}</urlset>\n`,
   };
+}
+
+function renderSitePage(html: string, siteUrl: string, language: Language) {
+  const metadata = pageMetadata(siteUrl, language);
+  const head = /<!--seo:start-->[\s\S]*?<!--seo:end-->/;
+  const intro = /<!--intro:start-->[\s\S]*?<!--intro:end-->/;
+  if (!head.test(html) || !intro.test(html))
+    throw new Error(
+      "The HTML template must contain the SEO and intro markers.",
+    );
+  const tags = metadata.tags.map(
+    ({ tag, attrs }) =>
+      `<${tag} ${Object.entries(attrs)
+        .map(([name, value]) => `${name}="${escapeHtml(value)}"`)
+        .join(" ")}>`,
+  );
+  const content = siteContent[language];
+  const staticIntro = renderToStaticMarkup(
+    createElement(SiteIntro, { language }),
+  );
+  return html
+    .replace(/<html lang="[^"]*">/, `<html lang="${language}">`)
+    .replace(
+      head,
+      () =>
+        `<!--seo:start-->\n<title>${escapeHtml(metadata.title)}</title>\n${tags.join("\n")}\n<!--seo:end-->`,
+    )
+    .replace(
+      intro,
+      () =>
+        `<!--intro:start--><main class="loading-intro"><h1>${escapeHtml(content.title)}</h1>${staticIntro}<noscript><p>${escapeHtml(content.javascript)}</p></noscript></main><!--intro:end-->`,
+    );
 }
 
 export function seoPlugin(siteUrl: string): Plugin {
   const metadata = siteMetadata(siteUrl);
   return {
     name: "tempo-seo",
-    transformIndexHtml: () => metadata.tags,
-    generateBundle() {
-      this.emitFile({
-        type: "asset",
-        fileName: "robots.txt",
-        source: metadata.robots,
-      });
-      this.emitFile({
-        type: "asset",
-        fileName: "sitemap.xml",
-        source: metadata.sitemap,
-      });
+    transformIndexHtml(html, context) {
+      const pathname = new URL(
+        context.originalUrl ?? context.path,
+        "http://localhost",
+      ).pathname;
+      return renderSitePage(html, siteUrl, languageFromPath(pathname) ?? "en");
+    },
+    generateBundle: {
+      order: "post",
+      handler(_options, bundle) {
+        const index = bundle["index.html"];
+        if (
+          !index ||
+          index.type !== "asset" ||
+          typeof index.source !== "string"
+        )
+          this.error("The localized pages need Vite’s built index.html.");
+        for (const code of Object.keys(languages) as Language[]) {
+          if (code === "en") continue;
+          this.emitFile({
+            type: "asset",
+            fileName: `${languagePath(code).slice(1)}index.html`,
+            source: renderSitePage(index.source, siteUrl, code),
+          });
+        }
+        this.emitFile({
+          type: "asset",
+          fileName: "robots.txt",
+          source: metadata.robots,
+        });
+        this.emitFile({
+          type: "asset",
+          fileName: "sitemap.xml",
+          source: metadata.sitemap,
+        });
+      },
     },
   };
 }

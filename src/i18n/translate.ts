@@ -43,10 +43,3 @@ export function translator(language: Language): Translator {
     { language },
   );
 }
-
-export function supportedLanguage(
-  value: string | null | undefined,
-): Language | null {
-  const base = value?.toLowerCase().split("-")[0];
-  return base && Object.hasOwn(languages, base) ? (base as Language) : null;
-}

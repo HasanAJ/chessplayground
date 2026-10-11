@@ -1,5 +1,7 @@
 import { LanguageSelector } from "../i18n/LanguageSelector";
 import { useTranslation } from "../i18n/LanguageProvider";
+import { languagePath } from "../i18n/routes";
+import { SiteIntro } from "./SiteIntro";
 import { useEffect, useState } from "react";
 import { CircleHelp, Sparkles } from "lucide-react";
 import { ROOT } from "../chess/study";
@@ -20,7 +22,7 @@ import { SaveNotice } from "../features/game/SaveNotice";
 import { usePanelFocus } from "./usePanelFocus";
 
 export default function App() {
-  const { t } = useTranslation();
+  const { t, language, setLanguage } = useTranslation();
   const computer = useComputerSettings();
   const game = useGameController(computer.disable);
   const preview = useBoardPreview(game.analysisKey, game.playable);
@@ -94,7 +96,11 @@ export default function App() {
   return (
     <>
       <header className="site-header">
-        <a className="brand" href="/" aria-label={t("Tempo home")}>
+        <a
+          className="brand"
+          href={languagePath(language)}
+          aria-label={t("Tempo home")}
+        >
           <img src="/favicon.svg" alt="" />
           <span>
             tempo<span className="brand-dot">.</span>
@@ -165,6 +171,7 @@ export default function App() {
             />
           </div>
         </SquareHighlightProvider>
+        <SiteIntro language={language} onLanguageChange={setLanguage} />
         <footer>
           <span>
             <img src="/favicon.svg" alt="" />{" "}

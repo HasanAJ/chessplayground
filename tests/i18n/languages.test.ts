@@ -7,15 +7,12 @@ import {
   catalogs,
   languages,
   translator,
-  supportedLanguage,
   type Translator,
   type Message,
 } from "../../src/i18n/translate";
-import {
-  initialLanguage,
-  LanguageProvider,
-  LANGUAGE_KEY,
-} from "../../src/i18n/LanguageProvider";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider";
+import { languageFromPath, languagePath } from "../../src/i18n/routes";
+import { siteContent } from "../../src/i18n/siteContent";
 import { LanguageSelector } from "../../src/i18n/LanguageSelector";
 import { translateNotice } from "../../src/i18n/notices";
 import { moveDescription } from "../../src/chess/moves";
@@ -54,26 +51,48 @@ test("every language covers the complete catalog and preserves interpolation val
   );
 });
 
-test("saved language takes priority, browser variants resolve, and blocked storage still permits language detection", () => {
-  assert.equal(initialLanguage({ getItem: () => "it" }, ["es-ES"]), "it");
-  assert.equal(
-    initialLanguage({ getItem: () => "unknown" }, ["pt-BR", "fr-CA"]),
-    "fr",
-  );
-  assert.equal(
-    initialLanguage(
-      {
-        getItem() {
-          throw new Error("blocked");
-        },
-      },
-      ["de-AT"],
+test("each language has a distinct URL and unknown paths are not language pages", () => {
+  assert.equal(languageFromPath("/"), "en");
+  for (const language of Object.keys(catalogs) as (keyof typeof catalogs)[]) {
+    assert.equal(languageFromPath(languagePath(language)), language);
+    assert.equal(languageFromPath(`/${language}`), language);
+  }
+  for (const pathname of [
+    "/en/",
+    "/pt/",
+    "/fr-CA/",
+    "/constructor/",
+    "/fr/missing/",
+  ])
+    assert.equal(languageFromPath(pathname), null);
+});
+
+test("a direct language URL controls the page language, title, and metadata", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  dom.window.localStorage.setItem("tempo-language-v1", "de");
+  dom.window.history.replaceState(null, "", "/fr/#coach");
+  await act(() =>
+    root.render(
+      createElement(LanguageProvider, {
+        children: createElement(LanguageSelector),
+      }),
     ),
-    "de",
   );
-  assert.equal(initialLanguage({ getItem: () => null }, ["ja-JP"]), "en");
-  assert.equal(supportedLanguage("EN-gb"), "en");
-  assert.equal(supportedLanguage("constructor"), null);
+  assert.equal(dom.window.document.querySelector("select")!.value, "fr");
+  assert.equal(dom.window.document.documentElement.lang, "fr");
+  assert.equal(dom.window.document.title, siteContent.fr.title);
+  assert.equal(
+    dom.window.document
+      .querySelector('meta[name="description"]')!
+      .getAttribute("content"),
+    siteContent.fr.description,
+  );
+  assert.equal(
+    dom.window.document
+      .querySelector('link[rel="canonical"]')!
+      .getAttribute("href"),
+    "https://chessplayground.app/fr/",
+  );
 });
 
 test("special moves and cached reviews translate without changing notation, evaluations, or legal lines", () => {
@@ -159,7 +178,7 @@ test("retained validation notices follow the selected language and preserve ches
 
 test("switching languages keeps the game and completed recommendations without another engine search", async (t) => {
   const { root, dom } = createTestRoot(t);
-  dom.window.localStorage.setItem(LANGUAGE_KEY, "en");
+  dom.window.history.replaceState(null, "", "/?source=test#coach");
   let searches = 0;
   let callbacks!: Parameters<AnalysisEngine["analyze"]>[1];
   t.mock.method(
@@ -215,7 +234,16 @@ test("switching languages keeps the game and completed recommendations without a
       select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
     });
     assert.equal(dom.window.document.documentElement.lang, language);
-    assert.equal(dom.window.localStorage.getItem(LANGUAGE_KEY), language);
+    assert.equal(
+      dom.window.location.pathname,
+      languagePath(language as keyof typeof languages),
+    );
+    assert.equal(dom.window.location.search, "?source=test");
+    assert.equal(dom.window.location.hash, "#coach");
+    assert.equal(
+      dom.window.document.title,
+      siteContent[language as keyof typeof languages].title,
+    );
     assert.equal(current.game.study, study);
     assert.equal(current.game.analysisKey, analysisKey);
     assert.equal(current.game.fen, fen);
@@ -230,6 +258,17 @@ test("switching languages keeps the game and completed recommendations without a
     if (language !== "en")
       assert.notEqual(current.recommendations.best?.title, "Claim the center");
   }
+  await act(async () => {
+    const navigated = new Promise<void>((resolve) =>
+      dom.window.addEventListener("popstate", () => resolve(), { once: true }),
+    );
+    dom.window.history.back();
+    await navigated;
+  });
+  assert.equal(select.value, "it");
+  assert.equal(dom.window.document.title, siteContent.it.title);
+  assert.equal(current.game.study, study);
+  assert.equal(searches, 1);
 });
 
 test("translated repetition reviews keep the original draw outcome", () => {

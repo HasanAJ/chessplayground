@@ -44,6 +44,16 @@ jobs:
         run: |
           curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' https://chessplayground.app/ --output /tmp/deployed-index.html
           cmp dist/index.html /tmp/deployed-index.html
+          for language in es de it fr; do
+            curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' "https://chessplayground.app/$language/" --output "/tmp/deployed-$language.html"
+            cmp "dist/$language/index.html" "/tmp/deployed-$language.html"
+          done
+          for asset in robots.txt sitemap.xml; do
+            curl --fail --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 20 --proto '=https' "https://chessplayground.app/$asset" --output "/tmp/deployed-$asset"
+            cmp "dist/$asset" "/tmp/deployed-$asset"
+          done
+          missing=$(curl --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code}' https://chessplayground.app/missing-page/)
+          test "$missing" = '404'
           curl --fail --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 20 --proto '=https' https://chessplayground.app/engine/stockfish-19-lite-single.wasm --output /tmp/deployed-engine.wasm
           cmp dist/engine/stockfish-19-lite-single.wasm /tmp/deployed-engine.wasm
           redirect=$(curl --fail --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code} %{redirect_url}' http://chessplayground.app/)

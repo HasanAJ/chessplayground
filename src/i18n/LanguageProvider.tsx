@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,32 +9,12 @@ import {
 } from "react";
 import {
   english,
-  supportedLanguage,
   translator,
   type Language,
   type Translator,
 } from "./translate";
-
-export const LANGUAGE_KEY = "tempo-language-v1";
-
-export function initialLanguage(
-  storage?: Pick<Storage, "getItem">,
-  preferred: readonly string[] = [],
-): Language {
-  try {
-    const saved = supportedLanguage(
-      (storage ?? localStorage).getItem(LANGUAGE_KEY),
-    );
-    if (saved) return saved;
-  } catch {
-    // Language choice remains available when browser storage is disabled.
-  }
-  for (const preference of preferred) {
-    const language = supportedLanguage(preference);
-    if (language) return language;
-  }
-  return "en";
-}
+import { languageFromPath, languagePath } from "./routes";
+import { updatePageMetadata } from "./metadata";
 
 const LanguageContext = createContext<{
   language: Language;
@@ -42,22 +23,32 @@ const LanguageContext = createContext<{
 }>({ language: "en", setLanguage() {}, t: english });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState(() =>
-    initialLanguage(undefined, navigator.languages),
+  const [language, setCurrentLanguage] = useState(
+    () => languageFromPath(window.location.pathname) ?? "en",
   );
+  const setLanguage = useCallback((next: Language) => {
+    const path = languagePath(next);
+    if (window.location.pathname !== path)
+      window.history.pushState(
+        window.history.state,
+        "",
+        `${path}${window.location.search}${window.location.hash}`,
+      );
+    setCurrentLanguage(next);
+  }, []);
   const value = useMemo(
     () => ({ language, setLanguage, t: translator(language) }),
-    [language],
+    [language, setLanguage],
   );
   useEffect(() => {
-    document.documentElement.lang = language;
-    document.title = value.t("Tempo — Your next move, explained.");
-    try {
-      localStorage.setItem(LANGUAGE_KEY, language);
-    } catch {
-      // A failed preference save must not interrupt the game.
-    }
-  }, [language, value]);
+    updatePageMetadata(language);
+  }, [language]);
+  useEffect(() => {
+    const restoreLanguage = () =>
+      setCurrentLanguage(languageFromPath(window.location.pathname) ?? "en");
+    window.addEventListener("popstate", restoreLanguage);
+    return () => window.removeEventListener("popstate", restoreLanguage);
+  }, []);
   return (
     <LanguageContext.Provider value={value}>
       {children}
