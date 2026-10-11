@@ -105,7 +105,7 @@ export default {
     "Avant de jouer, vérifiez si leurs pièces peuvent atteindre votre roi en {0}. Ici, {1} termine la partie.",
   "See their checkmate threat": "Voir leur menace de mat",
   "leaves your {0} on {1} with no defender. Their {2} can take it with {3}":
-    "laisse votre {0} en {1} sans défense. Leur {2} peut le capturer avec {3}",
+    "laisse votre {0} en {1} sans défense. Leur {2} peut capturer cette pièce avec {3}",
   "allows their {0} to take your {1} on {2} with {3}. Your piece has a defender, so follow the rest of the trade":
     "permet à leur {0} de capturer votre {1} en {2} avec {3}. Votre pièce est défendue ; suivez la suite de l’échange",
   "Before moving, check which of your pieces they can capture and whether you can capture back.":
@@ -175,13 +175,13 @@ export default {
   "See the defense of your {0}": "Voir la défense de votre {0}",
   "Move your {0} out of danger": "Mettez votre {0} à l’abri",
   "Your {0} was under attack on {1}. On {2}, none of their pieces currently attack it.":
-    "Votre {0} était attaqué en {1}. En {2}, aucune pièce adverse ne l’attaque actuellement.",
+    "Une attaque visait votre {0} en {1}. En {2}, aucune pièce adverse ne l’attaque actuellement.",
   "See your {0} move out of danger": "Voir votre {0} se mettre à l’abri",
   "Attack the {0}": "Attaquez leur {0}",
   "Your {0} on {1} attacks their {2} on {3}. Watch for a retreat, a defense, or a threat of their own.":
     "Votre {0} en {1} attaque leur {2} en {3}. Surveillez une retraite, une défense ou une menace adverse.",
   "Your {0} on {1} now attacks their {2} on {3}. They may move it or defend it, so look at the reply before counting on a capture.":
-    "Votre {0} en {1} attaque maintenant leur {2} en {3}. Ils peuvent le déplacer ou le défendre ; regardez la réponse avant de compter sur une capture.",
+    "Votre {0} en {1} attaque maintenant leur {2} en {3}. Ils peuvent déplacer cette pièce ou la défendre ; regardez la réponse avant de compter sur une capture.",
   "{0} on {1}": "{0} en {1}",
   "Your {0} give check.": "Vos pièces ({0}) donnent échec.",
   "Your {0} gives check.": "Votre {0} donne échec.",
@@ -279,16 +279,16 @@ export default {
   "Deal with the check first. Look for a king move, a way to take the attacker, or a piece that can block the attack.":
     "Répondez d’abord à l’échec. Cherchez un coup de roi, une capture de l’attaquant ou une pièce pour bloquer l’attaque.",
   "Your {0} on {1} is under attack with no defender. Can you move it, protect it, or make a threat they have to answer first?":
-    "Votre {0} en {1} est attaqué sans défense. Pouvez-vous le déplacer, le protéger ou créer une menace prioritaire ?",
+    "Votre {0} en {1} subit une attaque sans défense. Pouvez-vous déplacer ou protéger cette pièce, ou créer une menace prioritaire ?",
   "Your {0} on {1} is under attack. It has a defender, but play out the trade before leaving it there.":
-    "Votre {0} en {1} est attaqué. Il est défendu, mais examinez l’échange avant de le laisser là.",
+    "Votre {0} en {1} subit une attaque. Une autre pièce assure sa défense, mais examinez l’échange avant de laisser cette pièce sur place.",
   "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.":
     "Avant de jouer, regardez leurs échecs, captures et attaques sur les pièces non protégées. Commencez par la réponse probable sous votre coup.",
   "{0} puts {1} under attack from your {2}.":
     "{0} met {1} sous l’attaque de votre {2}.",
   "their {0} on {1}": "leur {0} en {1}",
   "Your {0} is under attack with no defender.":
-    "Votre {0} est attaqué sans défense.",
+    "Votre {0} subit une attaque sans défense.",
   "Your {0} are under attack with no defender.":
     "Vos pièces ({0}) sont attaquées sans défense.",
   "Your pieces cover {0} in the center.":
@@ -310,7 +310,7 @@ export default {
   "{0} puts your king in check. Getting out of check comes first.":
     "{0} met votre roi en échec. Sortir de l’échec est prioritaire.",
   "{0} leaves your {1} on {2} under attack with no defender. Take care of it before carrying on with your plan.":
-    "{0} laisse votre {1} en {2} attaqué sans défense. Occupez-vous-en avant de poursuivre votre plan.",
+    "{0} laisse votre {1} en {2} sans défense face à une attaque. Occupez-vous-en avant de poursuivre votre plan.",
   "They’ve just taken your {0} with {1}. Look at {2} before deciding how to answer.":
     "Ils viennent de capturer votre {0} avec {1}. Regardez {2} avant de choisir votre réponse.",
   "{0} changes their control of {1}. Try {2} now, and see how they might respond.":

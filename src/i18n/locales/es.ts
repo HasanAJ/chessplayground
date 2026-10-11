@@ -106,7 +106,7 @@ export default {
     "Antes de mover, comprueba si sus piezas pueden llegar a tu rey en {0}. Aquí, {1} termina la partida.",
   "See their checkmate threat": "Ver su amenaza de mate",
   "leaves your {0} on {1} with no defender. Their {2} can take it with {3}":
-    "deja tu {0} en {1} sin defensa. Su {2} puede capturarlo con {3}",
+    "deja tu {0} en {1} sin defensa. Su {2} puede capturar esa pieza con {3}",
   "allows their {0} to take your {1} on {2} with {3}. Your piece has a defender, so follow the rest of the trade":
     "permite que su {0} capture tu {1} en {2} con {3}. Tu pieza tiene defensa; sigue el resto del cambio",
   "Before moving, check which of your pieces they can capture and whether you can capture back.":
@@ -172,17 +172,17 @@ export default {
   "Support your center": "Apoya tu centro",
   "Defend your {0}": "Defiende tu {0}",
   "Your {0} on {1} now defends the {2} on {3}. If they capture it, your {4} may be able to capture back; check the reply before trading.":
-    "Tu {0} en {1} defiende ahora tu {2} en {3}. Si lo capturan, tu {4} podría recapturar; revisa la respuesta antes de cambiar.",
+    "Tu {0} en {1} defiende ahora tu {2} en {3}. Si capturan esa pieza, tu {4} podría recapturar; revisa la respuesta antes de cambiar.",
   "See the defense of your {0}": "Ver la defensa de tu {0}",
   "Move your {0} out of danger": "Aparta tu {0} del peligro",
   "Your {0} was under attack on {1}. On {2}, none of their pieces currently attack it.":
-    "Tu {0} estaba bajo ataque en {1}. En {2}, ninguna pieza rival lo ataca actualmente.",
+    "Tu {0} estaba bajo ataque en {1}. En {2}, ya no recibe ataques de ninguna pieza rival.",
   "See your {0} move out of danger": "Ver cómo tu {0} sale del peligro",
   "Attack the {0}": "Ataca su {0}",
   "Your {0} on {1} attacks their {2} on {3}. Watch for a retreat, a defense, or a threat of their own.":
     "Tu {0} en {1} ataca su {2} en {3}. Vigila una retirada, una defensa o una amenaza rival.",
   "Your {0} on {1} now attacks their {2} on {3}. They may move it or defend it, so look at the reply before counting on a capture.":
-    "Tu {0} en {1} ataca ahora su {2} en {3}. Pueden moverlo o defenderlo; mira la respuesta antes de contar con una captura.",
+    "Tu {0} en {1} ataca ahora su {2} en {3}. Pueden mover esa pieza o defenderla; mira la respuesta antes de contar con una captura.",
   "{0} on {1}": "{0} en {1}",
   "Your {0} give check.": "Tus piezas ({0}) dan jaque.",
   "Your {0} gives check.": "Tu {0} da jaque.",
@@ -278,9 +278,9 @@ export default {
   "Deal with the check first. Look for a king move, a way to take the attacker, or a piece that can block the attack.":
     "Resuelve primero el jaque. Busca un movimiento de rey, una captura del atacante o una pieza que bloquee el ataque.",
   "Your {0} on {1} is under attack with no defender. Can you move it, protect it, or make a threat they have to answer first?":
-    "Tu {0} en {1} está bajo ataque y sin defensa. ¿Puedes moverlo, protegerlo o crear una amenaza que deban responder primero?",
+    "Tu {0} en {1} está bajo ataque y sin defensa. ¿Puedes mover o proteger esa pieza, o crear una amenaza que deban responder primero?",
   "Your {0} on {1} is under attack. It has a defender, but play out the trade before leaving it there.":
-    "Tu {0} en {1} está bajo ataque. Tiene defensa, pero recorre el cambio antes de dejarlo ahí.",
+    "Tu {0} en {1} está bajo ataque. Tiene defensa, pero recorre el cambio antes de dejar esa pieza ahí.",
   "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.":
     "Antes de mover, revisa sus jaques, capturas y ataques a piezas sin protección. Empieza por la respuesta probable bajo tu jugada.",
   "{0} puts {1} under attack from your {2}.": "{0} hace que tu {2} ataque {1}.",
