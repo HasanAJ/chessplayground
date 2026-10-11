@@ -141,10 +141,11 @@
   .help-button span {
     display: none;
   }
-  .language-selector > svg {
+  .language-selector .language-icon {
     display: none;
   }
   .language-selector select {
     max-width: 102px;
+    padding-left: 12px;
   }
 }

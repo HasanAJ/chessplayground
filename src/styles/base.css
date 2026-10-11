@@ -226,18 +226,46 @@ h1 span {
   gap: 10px;
 }
 .language-selector {
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
   color: var(--muted);
 }
+.language-selector:hover {
+  background: var(--purple-soft);
+  border-color: #dbd3ef;
+}
+.language-selector:has(select:focus-visible) {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+.language-selector > svg {
+  position: absolute;
+  pointer-events: none;
+}
+.language-icon {
+  left: 12px;
+}
+.language-chevron {
+  right: 10px;
+}
 .language-selector select {
-  max-width: 120px;
+  appearance: none;
+  max-width: 140px;
   min-height: 40px;
-  padding: 6px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--paper);
+  padding: 9px 30px 9px 36px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
   color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 550;
   cursor: pointer;
+}
+.language-selector select:focus-visible {
+  outline: none;
 }

@@ -1,4 +1,4 @@
-import { Languages } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import { useTranslation } from "./LanguageProvider";
 import { languages, type Language } from "./translate";
 
@@ -6,7 +6,7 @@ export function LanguageSelector() {
   const { language, setLanguage, t } = useTranslation();
   return (
     <label className="language-selector">
-      <Languages size={16} aria-hidden="true" />
+      <Languages className="language-icon" size={16} aria-hidden="true" />
       <span className="sr-only">{t("Language")}</span>
       <select
         value={language}
@@ -18,6 +18,7 @@ export function LanguageSelector() {
           </option>
         ))}
       </select>
+      <ChevronDown className="language-chevron" size={14} aria-hidden="true" />
     </label>
   );
 }
