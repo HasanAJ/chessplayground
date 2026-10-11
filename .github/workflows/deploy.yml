@@ -42,5 +42,9 @@ jobs:
       - name: Verify HTTPS and chess engine
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' https://chessplayground.app/ --output /dev/null
-          curl --fail --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 20 --proto '=https' https://chessplayground.app/engine/stockfish-19-lite-single.wasm --output /dev/null
+          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' https://chessplayground.app/ --output /tmp/deployed-index.html
+          cmp dist/index.html /tmp/deployed-index.html
+          curl --fail --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 20 --proto '=https' https://chessplayground.app/engine/stockfish-19-lite-single.wasm --output /tmp/deployed-engine.wasm
+          cmp dist/engine/stockfish-19-lite-single.wasm /tmp/deployed-engine.wasm
+          redirect=$(curl --fail --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code} %{redirect_url}' http://chessplayground.app/)
+          test "$redirect" = '301 https://chessplayground.app/'
