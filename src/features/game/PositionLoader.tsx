@@ -53,10 +53,10 @@ export function PositionLoader({
   }
 
   return (
-    <section className="fen-controls" aria-label={t("FEN position controls")}>
+    <section className="fen-controls" aria-label={t("position.controls.label")}>
       <form onSubmit={load}>
         <label className="sr-only" htmlFor="fen-input">
-          {t("FEN position")}
+          {t("position.controls.heading")}
         </label>
         <input
           id="fen-input"
@@ -66,19 +66,19 @@ export function PositionLoader({
             setError("");
           }}
           spellCheck={false}
-          placeholder={t("Paste a FEN position")}
+          placeholder={t("position.controls.input")}
         />
         <button
           type="button"
           className="icon-button"
-          aria-label={t("Copy current FEN")}
-          title={t("Copy current FEN")}
+          aria-label={t("position.controls.copy")}
+          title={t("position.controls.copy")}
           onClick={copy}
         >
           <Copy size={15} />
         </button>
         <button type="submit" className="small-button">
-          {t("Load")}
+          {t("position.controls.load")}
         </button>
       </form>
       {error && (

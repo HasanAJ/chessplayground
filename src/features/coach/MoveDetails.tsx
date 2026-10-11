@@ -16,11 +16,11 @@ export function LikelyReply({
     <button
       type="button"
       className="reply-box detail-preview"
-      aria-label={t("Preview likely reply: {0}", candidate.reply)}
+      aria-label={t("coach.continuation.previewReply", candidate.reply)}
       {...movePreviewEvents(onInspect, candidate, replyPly)}
       onClick={() => onInspect(candidate, replyPly, "click")}
     >
-      <span>{t("LIKELY REPLY")}</span>
+      <span>{t("coach.continuation.replyHeading")}</span>
       <span className="reply-text">
         <SquareText text={candidate.reply} focusable={false} />
       </span>
@@ -35,9 +35,9 @@ export function Continuation({
 }: MovePreviewProps) {
   const { t } = useTranslation();
   return (
-    <div className="continuation" aria-label={t("Engine continuation")}>
+    <div className="continuation" aria-label={t("coach.continuation.label")}>
       <div className="continuation-heading">
-        <span>{t("POSSIBLE NEXT MOVES")}</span>
+        <span>{t("coach.continuation.heading")}</span>
       </div>
       <div className="continuation-moves">
         {candidate.continuation.map((move, index) => {
@@ -49,7 +49,7 @@ export function Continuation({
               key={index}
               className={current ? "current-step" : ""}
               aria-label={t(
-                "Preview move {0}: {1} plays {2}",
+                "coach.continuation.previewMove",
                 index + 1,
                 sideName(move.color, t),
                 move.san,

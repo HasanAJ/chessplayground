@@ -1,11 +1,16 @@
 import type { AnalysisEngine } from "../../engine/AnalysisEngine";
 
 export const COMPUTER_LEVELS = {
-  beginner: { label: "Beginner", depth: 5, movetime: 300, skill: 0 },
-  easy: { label: "Easy", depth: 8, movetime: 450, skill: 3 },
-  medium: { label: "Medium", depth: 11, movetime: 650, skill: 7 },
-  hard: { label: "Hard", depth: 15, movetime: 1000, skill: 13 },
-  expert: { label: "Expert", depth: 18, movetime: 1500, skill: 20 },
+  beginner: {
+    labelKey: "computer.level.beginner",
+    depth: 5,
+    movetime: 300,
+    skill: 0,
+  },
+  easy: { labelKey: "computer.level.easy", depth: 8, movetime: 450, skill: 3 },
+  medium: { labelKey: "computer.level.medium", depth: 11, movetime: 650, skill: 7 },
+  hard: { labelKey: "computer.level.hard", depth: 15, movetime: 1000, skill: 13 },
+  expert: { labelKey: "computer.level.expert", depth: 18, movetime: 1500, skill: 20 },
 } as const;
 export type ComputerLevel = keyof typeof COMPUTER_LEVELS;
 

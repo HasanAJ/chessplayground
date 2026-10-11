@@ -95,7 +95,7 @@ export default function App() {
         <a
           className="brand"
           href={languagePath(language)}
-          aria-label={t("Tempo home")}
+          aria-label={t("header.home")}
         >
           <img src="/favicon.svg" alt="" />
           <span>
@@ -103,7 +103,7 @@ export default function App() {
           </span>
         </a>
         <div className="header-center">
-          <Sparkles size={14} /> {t("Your chess playground")}
+          <Sparkles size={14} /> {t("header.tagline")}
         </div>
         <div className="header-actions">
           <LanguageSelector />
@@ -114,21 +114,17 @@ export default function App() {
         <section className="page-heading">
           <div>
             <h1>
-              {t("Your next move,")} <span>{t("explained.")}</span>
+              {t("intro.heading.start")} <span>{t("intro.heading.end")}</span>
             </h1>
-            <p>{t("Explore the board. Understand the plan. Try a move.")}</p>
+            <p>{t("intro.tagline")}</p>
           </div>
           <p className="page-guide">
+            {t("intro.guide.play")}{" "}
             {t(
-              "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.",
+              "intro.guide.analyze",
+              t("coach.calculate.label.ready"),
             )}{" "}
-            {t(
-              "Select “{0}” for suggestions and explanations, then preview a reply or try a move.",
-              t("Calculate best moves"),
-            )}{" "}
-            {t(
-              "Play both sides, or turn on the computer opponent to practice against it.",
-            )}
+            {t("intro.guide.practice")}
           </p>
         </section>
 
@@ -173,11 +169,11 @@ export default function App() {
         <footer>
           <span>
             <img src="/favicon.svg" alt="" />{" "}
-            {t("A good move starts with a little understanding.")}
+            {t("footer.tagline")}
           </span>
           <span>
             © {new Date().getFullYear()} Tempo{" "}
-            <span className="footer-dot">·</span> {t("Powered by Stockfish 19")}{" "}
+            <span className="footer-dot">·</span> {t("footer.engine")}{" "}
             <span className="footer-dot">·</span>
           </span>
         </footer>

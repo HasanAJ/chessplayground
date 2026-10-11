@@ -1,6 +1,6 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Square } from "chess.js";
-import { names, opposite, positionOf } from "../../chess/position";
+import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
 
 const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
 
@@ -22,9 +22,7 @@ export function watchOutFor(
       ([, piece]) => piece?.color === color && piece.type === "k",
     )![0] as Square;
     return {
-      text: t(
-        "Deal with the check first. Look for a king move, a way to take the attacker, or a piece that can block the attack.",
-      ),
+      text: t("coach.warning.check"),
       target: king,
       attackers: game.attackers(king, enemy),
     };
@@ -43,8 +41,8 @@ export function watchOutFor(
   if (undefended)
     return {
       text: t(
-        "Your {0} on {1} is under attack with no defender. Can you move it, protect it, or make a threat they have to answer first?",
-        t(names[undefended[1]!.type]),
+        "coach.warning.undefended",
+        t(pieceNameKeys[undefended[1]!.type]),
         undefended[0],
       ),
       target: undefended[0] as Square,
@@ -53,17 +51,15 @@ export function watchOutFor(
   if (pressure.length)
     return {
       text: t(
-        "Your {0} on {1} is under attack. It has a defender, but play out the trade before leaving it there.",
-        t(names[pressure[0][1]!.type]),
+        "coach.warning.defended",
+        t(pieceNameKeys[pressure[0][1]!.type]),
         pressure[0][0],
       ),
       target: pressure[0][0] as Square,
       attackers: game.attackers(pressure[0][0] as Square, enemy),
     };
   return {
-    text: t(
-      "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.",
-    ),
+    text: t("coach.warning.general"),
     target: null,
     attackers: [],
   };

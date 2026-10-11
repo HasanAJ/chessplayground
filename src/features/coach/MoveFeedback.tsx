@@ -1,5 +1,6 @@
 import { translateNotice } from "../../i18n/notices";
-import { localizeReview } from "./grading";
+import { localizeReview, type MoveReview } from "./grading";
+import type { MessageKey } from "../../i18n/translate";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useMemo } from "react";
 import { ChevronDown, Eye, LoaderCircle } from "lucide-react";
@@ -10,10 +11,18 @@ import { moveDescription } from "../../chess/moves";
 import { ExplanationLink } from "./ExplanationLink";
 import { SquareText } from "../board/SquareHighlight";
 
+const gradeKeys = {
+  "Best move": "coach.grade.best",
+  "Good move": "coach.grade.good",
+  Inaccuracy: "coach.grade.inaccuracy",
+  Mistake: "coach.grade.mistake",
+  Blunder: "coach.grade.blunder",
+} satisfies Record<MoveReview["label"], MessageKey>;
+
 export function MoveFeedback({
   result,
   moveLabel,
-  context = "Last move",
+  context = "coach.feedback.context.lastMove",
   onReanalyze,
   onInspect,
   preview = null,
@@ -22,7 +31,10 @@ export function MoveFeedback({
 }: {
   result: ReviewState;
   moveLabel: string;
-  context?: "Last move" | "Your last move" | "Selected move";
+  context?:
+    | "coach.feedback.context.lastMove"
+    | "coach.feedback.context.yourLastMove"
+    | "coach.feedback.context.selectedMove";
   onReanalyze: () => void;
   onInspect: InspectMove;
   preview?: MovePreview | null;
@@ -38,11 +50,11 @@ export function MoveFeedback({
   );
   const status =
     result.state === "thinking"
-      ? t("Reviewing…")
+      ? t("coach.feedback.status.reviewing")
       : result.state === "error"
-        ? t("Review unavailable")
+        ? t("coach.feedback.status.unavailable")
         : review
-          ? t(review.label)
+          ? t(gradeKeys[review.label])
           : "";
   useEffect(() => {
     if (collapsed) return;
@@ -56,7 +68,7 @@ export function MoveFeedback({
       className="move-feedback"
       data-rating={review?.label}
       data-collapsed={collapsed}
-      aria-label={t("Move feedback")}
+      aria-label={t("coach.feedback.label")}
       aria-busy={result.state === "thinking"}
     >
       <h3 className="feedback-heading">
@@ -66,11 +78,11 @@ export function MoveFeedback({
           aria-expanded={!collapsed}
           aria-controls={bodyId}
           aria-label={t(
-            "{0}: {1}. {2}. {3} details",
+            "coach.feedback.toggleDescription",
             t(context),
             moveLabel,
             status,
-            collapsed ? t("Show") : t("Hide"),
+            collapsed ? t("common.show") : t("common.hide"),
           )}
           onClick={onToggle}
         >
@@ -97,7 +109,7 @@ export function MoveFeedback({
         {!collapsed &&
           (result.state === "thinking" ? (
             <p className="learning-pending">
-              {t("Looking at your move and the best alternatives…")}
+              {t("coach.feedback.pending")}
             </p>
           ) : result.state === "error" ? (
             <>
@@ -105,7 +117,7 @@ export function MoveFeedback({
                 <SquareText text={translateNotice(result.error, t)} />
               </p>
               <button className="text-action" onClick={onReanalyze}>
-                {t("Retry move review")}
+                {t("coach.feedback.retry")}
               </button>
             </>
           ) : (
@@ -119,7 +131,7 @@ export function MoveFeedback({
                 </p>
                 {review.lesson && (
                   <div className="move-lesson">
-                    <span>{t("Next time")}</span>
+                    <span>{t("coach.feedback.nextTime")}</span>
                     <p>
                       <SquareText text={review.lesson.text} />
                     </p>
@@ -140,22 +152,20 @@ export function MoveFeedback({
                         {...movePreviewEvents(onInspect, review.reply, 1)}
                         onClick={() => onInspect(review.reply!, 1, "click")}
                       >
-                        <Eye size={13} /> {t("Likely reply")}
+                        <Eye size={13} /> {t("coach.feedback.likelyReply")}
                       </button>
                     )}
                   </div>
                   <small
-                    title={t(
-                      "The evaluation difference is measured in pawn units. Grades account for the overall position; mate outcomes have no pawn score.",
-                    )}
+                    title={t("coach.feedback.evaluationDescription")}
                   >
-                    {t("Quick review")}
+                    {t("coach.feedback.quickReview")}
                     {review.label !== "Best move" && review.loss !== null ? (
                       <>
                         {" "}
                         ·{" "}
                         {t(
-                          "{0} evaluation drop",
+                          "coach.feedback.evaluationDrop",
                           review.loss.toLocaleString(t.language, {
                             minimumFractionDigits: 1,
                             maximumFractionDigits: 1,

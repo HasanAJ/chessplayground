@@ -25,14 +25,14 @@ export function BestMoveContent({
   useEffect(() => () => onInspect(candidate, 0), [onInspect, candidate]);
   const hasReply = candidate.continuation.length > 1;
   const title =
-    candidate.theme === "check" ? t("Escape check") : candidate.title;
+    candidate.theme === "check" ? t("coach.best.escapeCheck") : candidate.title;
   return (
     <>
       <div className="card-eyebrow">
-        <Lightbulb size={16} /> <span>{t("BEST MOVE")}</span>
+        <Lightbulb size={16} /> <span>{t("coach.best.heading")}</span>
         {(forcedMove || continuity) && (
           <span className="plan-continuity">
-            {forcedMove ? t("Only legal move") : t("Plan continues")}
+            {forcedMove ? t("coach.best.forced") : t("coach.best.continuity")}
           </span>
         )}
       </div>
@@ -56,11 +56,11 @@ export function BestMoveContent({
       <div className="plan-actions">
         <button
           className="primary-button"
-          aria-label={t("Play best move {0}", candidate.move.san)}
+          aria-label={t("coach.best.play", candidate.move.san)}
           onClick={onPlay}
         >
           <SquareText
-            text={t("Play {0}", candidate.move.san)}
+            text={t("coach.move.play", candidate.move.san)}
             focusable={false}
           />{" "}
           <ArrowRight size={14} />
@@ -75,7 +75,8 @@ export function BestMoveContent({
               onInspect(candidate, 0);
             }}
           >
-            <Eye size={14} /> {replyOpen ? t("Hide reply") : t("Preview reply")}
+            <Eye size={14} />{" "}
+            {replyOpen ? t("coach.best.hideReply") : t("coach.best.previewReply")}
           </button>
         )}
       </div>
@@ -90,7 +91,7 @@ export function BestMoveContent({
                   if (!event.currentTarget.open) onInspect(candidate, 0);
                 }}
               >
-                <summary>{t("Explore next moves")}</summary>
+                <summary>{t("coach.best.explore")}</summary>
                 <Continuation candidate={candidate} {...previewProps} />
               </details>
             </>

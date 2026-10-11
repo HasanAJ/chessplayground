@@ -59,34 +59,32 @@ export function candidatesFor(
         let insight = explainMove(before, after, move, t);
         if (line.mate !== undefined && line.mate > 0 && !after.isCheckmate()) {
           insight = {
-            title: t("Keep the mating attack going"),
+            title: t("coach.explanation.matingAttack.title"),
             text: t(
-              "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.",
+              "coach.explanation.matingAttack.text",
               line.mate,
               move.san,
             ),
             theme: "mating-attack",
-            focus: boardFocus(t("See the start of the mating attack"), [
+            focus: boardFocus(t("coach.explanation.matingAttack.focus"), [
               { from: move.from, to: move.to },
             ]),
           };
         } else if (line.mate !== undefined && line.mate < 0) {
           insight = {
-            title: t("Find the toughest defense"),
+            title: t("coach.explanation.mateDefense.title"),
             text: t(
-              "Your king is in serious trouble: this analysis still finds a forced checkmate after {0}. Play through their checks to see where the danger comes from.",
+              "coach.explanation.mateDefense.text",
               move.san,
             ),
             theme: "mate-defense",
-            focus: boardFocus(t("See the defensive move"), [
+            focus: boardFocus(t("coach.explanation.mateDefense.focus"), [
               { from: move.from, to: move.to },
             ]),
           };
         }
         const continuation: Move[] = [move];
-        let reply = t(
-          "No reply is included in this preview. Try the move to explore what comes next.",
-        );
+        let reply = t("coach.reply.unavailable");
         if (line.pv[1] && !after.isGameOver()) {
           // An invalid immediate reply rejects the candidate; later errors only
           // shorten the preview. Parse each move once for both prose and frames.
@@ -99,11 +97,11 @@ export function candidatesFor(
               break;
             }
           }
-          reply = `${describeReply(response, t)}${continuation[2] ? t(" You could follow with {0}: {1}.", continuation[2].san, moveDescription(continuation[2], t)) : ""}`;
+          reply = `${describeReply(response, t)}${continuation[2] ? t("coach.reply.continuation", continuation[2].san, moveDescription(continuation[2], t)) : ""}`;
         } else if (after.isGameOver())
           reply = after.isCheckmate()
-            ? t("That’s checkmate. They have no reply.")
-            : t("This move ends the game in a draw.");
+            ? t("coach.reply.terminal.checkmate")
+            : t("coach.reply.terminal.draw");
         const sign = before.turn() === "w" ? 1 : -1;
         const whiteScore =
           line.mate !== undefined
@@ -139,13 +137,13 @@ export function positionSummary(
 ): string {
   if (candidate.mate !== undefined)
     return t(
-      "A forced mate for {0}",
-      candidate.whiteScore > 0 ? t("White") : t("Black"),
+      "coach.estimate.mate",
+      candidate.whiteScore > 0 ? t("chess.side.white") : t("chess.side.black"),
     );
   const advantage = Math.abs(candidate.whiteScore),
-    side = candidate.whiteScore >= 0 ? t("White") : t("Black");
-  if (advantage < 0.3) return t("A balanced position");
-  if (advantage < 1) return t("{0} has a small edge", side);
-  if (advantage < 3) return t("{0} has the advantage", side);
-  return t("{0} has a winning advantage", side);
+    side = candidate.whiteScore >= 0 ? t("chess.side.white") : t("chess.side.black");
+  if (advantage < 0.3) return t("coach.estimate.balanced");
+  if (advantage < 1) return t("coach.estimate.smallEdge", side);
+  if (advantage < 3) return t("coach.estimate.advantage", side);
+  return t("coach.estimate.winning", side);
 }

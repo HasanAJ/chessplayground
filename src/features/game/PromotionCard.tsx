@@ -1,7 +1,7 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import type { Color, PieceSymbol } from "chess.js";
 import { X } from "lucide-react";
-import { names } from "../../chess/position";
+import { pieceNameKeys } from "../../chess/position";
 import { pieceImage } from "../board/pieces";
 
 export function PromotionCard({
@@ -18,26 +18,26 @@ export function PromotionCard({
     <section
       className="panel-dialog promotion-card"
       role="region"
-      aria-label={t("Choose a promotion piece")}
+      aria-label={t("game.promotion.label")}
     >
       <button
         className="panel-close icon-button"
-        aria-label={t("Cancel promotion")}
+        aria-label={t("game.promotion.cancel")}
         onClick={onClose}
       >
         <X size={20} />
       </button>
-      <h2>{t("Your pawn made it.")}</h2>
-      <p>{t("Choose its next chapter.")}</p>
+      <h2>{t("game.promotion.heading")}</h2>
+      <p>{t("game.promotion.description")}</p>
       <div className="promotion-choices">
         {(["q", "r", "b", "n"] as PieceSymbol[]).map((type) => (
           <button
             key={type}
-            aria-label={t("Promote to {0}", t(names[type]))}
+            aria-label={t("game.promotion.choose", t(pieceNameKeys[type]))}
             onClick={() => onChoose(type)}
           >
             <img src={pieceImage({ color: color, type })} alt="" />
-            <span>{t(names[type])}</span>
+            <span>{t(pieceNameKeys[type])}</span>
           </button>
         ))}
       </div>

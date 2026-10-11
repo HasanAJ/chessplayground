@@ -1,4 +1,4 @@
-import { english, type Translator } from "../i18n/translate";
+import { english, type MessageKey, type Translator } from "../i18n/translate";
 import {
   Chess,
   validateFen,
@@ -12,16 +12,16 @@ export type Position = Partial<
   Record<Square, { type: PieceSymbol; color: Color }>
 >;
 export const START_FEN = new Chess().fen();
-export const names = {
-  p: "pawn",
-  n: "knight",
-  b: "bishop",
-  r: "rook",
-  q: "queen",
-  k: "king",
-} as const satisfies Record<PieceSymbol, string>;
+export const pieceNameKeys = {
+  p: "chess.piece.pawn",
+  n: "chess.piece.knight",
+  b: "chess.piece.bishop",
+  r: "chess.piece.rook",
+  q: "chess.piece.queen",
+  k: "chess.piece.king",
+} as const satisfies Record<PieceSymbol, MessageKey>;
 export const sideName = (color: Color, t: Translator = english) =>
-  t(color === "w" ? "White" : "Black");
+  t(color === "w" ? "chess.side.white" : "chess.side.black");
 export const opposite = (color: Color): Color => (color === "w" ? "b" : "w");
 export const gameMoveLabel = (move: Move) =>
   `${move.before.split(" ")[5]}${move.color === "w" ? "." : "…"} ${move.san}`;
@@ -242,12 +242,12 @@ export function checkedGame(fen: string): Chess {
 
 export function ending(game: Chess, t: Translator = english): string | null {
   if (game.isCheckmate())
-    return t("{0} wins by checkmate.", sideName(opposite(game.turn()), t));
+    return t("game.ending.checkmate", sideName(opposite(game.turn()), t));
   if (game.isStalemate())
-    return t("Stalemate. There are no legal moves, and the king is safe.");
-  if (game.isThreefoldRepetition()) return t("Draw by threefold repetition.");
+    return t("game.ending.stalemate");
+  if (game.isThreefoldRepetition()) return t("game.ending.repetition");
   if (game.isInsufficientMaterial())
-    return t("Draw. Neither side has enough material to checkmate.");
-  if (game.isDrawByFiftyMoves()) return t("Draw by the fifty-move rule.");
+    return t("game.ending.insufficientMaterial");
+  if (game.isDrawByFiftyMoves()) return t("game.ending.fiftyMoves");
   return null;
 }

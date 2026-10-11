@@ -5,10 +5,11 @@ import { Chess } from "chess.js";
 import en from "../../src/i18n/locales/en";
 import {
   catalogs,
+  english,
   languages,
   translator,
   type Translator,
-  type Message,
+  type MessageKey,
 } from "../../src/i18n/translate";
 import { LanguageProvider } from "../../src/i18n/LanguageProvider";
 import { languageFromPath, languagePath } from "../../src/i18n/routes";
@@ -27,7 +28,12 @@ import { createTestRoot } from "../helpers/dom";
 const placeholders = (message: string) =>
   [...message.matchAll(/\{\d+\}/g)].map((match) => match[0]).sort();
 
-test("every language covers the complete catalog and preserves interpolation values", () => {
+test("descriptive keys resolve to English copy and every language preserves interpolation values", () => {
+  for (const [key, value] of Object.entries(en)) {
+    assert.match(key, /^([a-z][a-zA-Z]*\.)+[a-z][a-zA-Z]*$/);
+    assert.ok(value.trim(), key);
+    assert.equal(english(key as MessageKey), value);
+  }
   for (const [language, catalog] of Object.entries(catalogs)) {
     assert.deepEqual(
       Object.keys(catalog).sort(),
@@ -38,12 +44,14 @@ test("every language covers the complete catalog and preserves interpolation val
       assert.ok(value.trim(), `${language}: ${key}`);
       assert.deepEqual(
         placeholders(value),
-        placeholders(key),
+        placeholders(en[key as MessageKey]),
         `${language}: ${key}`,
       );
     }
   }
-  assert.equal(translator("fr")("Play {0}", "<e4>"), "Jouer <e4>");
+  assert.equal(translator("fr")("coach.move.play", "<e4>"), "Jouer <e4>");
+  assert.equal(english("coach.move.play", "<e4>"), "Play <e4>");
+  assert.equal(english("position.error.invalidFen"), "Invalid FEN: {0}");
   assert.equal(translateNotice("constructor", translator("fr")), "constructor");
   assert.equal(
     translateNotice("unrecognized diagnostic", translator("de")),
@@ -104,7 +112,7 @@ test("special moves and cached reviews translate without changing notation, eval
   for (const language of Object.keys(catalogs) as (keyof typeof catalogs)[]) {
     const translate = translator(language);
     const t: Translator = Object.assign(
-      (key: Message, ...values: (string | number)[]) => {
+      (key: MessageKey, ...values: (string | number)[]) => {
         assert.ok(Object.hasOwn(en, key), `Missing source message: ${key}`);
         return translate(key, ...values);
       },
@@ -174,6 +182,39 @@ test("retained validation notices follow the selected language and preserve ches
     ),
     /Negras.*16/,
   );
+});
+
+test("raw engine and saved-game diagnostics resolve through descriptive keys", () => {
+  const fixtures: [string, MessageKey][] = [
+    [
+      "The chess engine could not load. Check your connection and retry analysis.",
+      "engine.error.load",
+    ],
+    [
+      "The engine could not check the reply. Try again.",
+      "coach.review.error.reply",
+    ],
+    [
+      "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
+      "game.save.error.unavailable",
+    ],
+    [
+      "Your saved game could not be read. The last valid position was restored, without its move history. Autosave is paused to protect the original data.",
+      "game.save.error.restoredPosition",
+    ],
+    [
+      "Your computer difficulty could not be saved in this browser.",
+      "computer.error.saveDifficulty",
+    ],
+    ["Starting position", "game.history.startingPosition"],
+    ["Position loaded", "position.notice.loaded"],
+  ];
+  for (const language of Object.keys(languages) as (keyof typeof languages)[]) {
+    const t = translator(language);
+    for (const [source, key] of fixtures)
+      assert.equal(translateNotice(source, t), t(key), `${language}: ${source}`);
+    assert.equal(translateNotice("engine.error.load", t), "engine.error.load");
+  }
 });
 
 test("switching languages keeps the game and completed recommendations without another engine search", async (t) => {

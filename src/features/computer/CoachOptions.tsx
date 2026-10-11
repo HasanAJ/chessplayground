@@ -66,7 +66,7 @@ export function CoachOptions({
         className="computer-toggle"
         role="switch"
         aria-checked={enabled}
-        aria-label={t("Play computer")}
+        aria-label={t("computer.toggle.label")}
         title={translateNotice(status, t)}
         disabled={!enabled && startDisabled}
         onClick={() => {
@@ -75,7 +75,7 @@ export function CoachOptions({
         }}
       >
         <Bot size={15} aria-hidden="true" />
-        <span>{t("Computer")}</span>
+        <span>{t("computer.toggle.text")}</span>
         <span className="computer-switch-track" aria-hidden="true">
           <span />
         </span>
@@ -85,8 +85,8 @@ export function CoachOptions({
         ref={trigger}
         aria-expanded={open}
         aria-controls="computer-settings"
-        aria-label={t("Computer settings")}
-        title={t("Computer settings")}
+        aria-label={t("computer.settings.heading")}
+        title={t("computer.settings.heading")}
         onClick={() => onOpenChange(!open)}
       >
         <SlidersHorizontal size={15} />
@@ -96,7 +96,7 @@ export function CoachOptions({
           className="computer-retry"
           onClick={onRetry}
           disabled={startDisabled}
-          aria-label={t("Retry computer")}
+          aria-label={t("computer.retry")}
         >
           <RotateCcw size={13} />
         </button>
@@ -104,14 +104,14 @@ export function CoachOptions({
       <section
         className="computer-settings"
         id="computer-settings"
-        aria-label={t("Computer settings")}
+        aria-label={t("computer.settings.heading")}
         hidden={!open}
       >
         <div className="computer-settings-heading">
-          <h3>{t("Computer settings")}</h3>
+          <h3>{t("computer.settings.heading")}</h3>
           <button
             className="icon-button"
-            aria-label={t("Close computer settings")}
+            aria-label={t("computer.settings.close")}
             onClick={close}
           >
             <X size={15} />
@@ -119,7 +119,7 @@ export function CoachOptions({
         </div>
         <div className="computer-settings-fields">
           <fieldset className="computer-side-options">
-            <legend>{t("You play as")}</legend>
+            <legend>{t("computer.settings.side")}</legend>
             <div>
               {(["w", "b"] as Color[]).map((color) => (
                 <button
@@ -136,7 +136,7 @@ export function CoachOptions({
             </div>
           </fieldset>
           <fieldset className="computer-level-options">
-            <legend>{t("Your challenge")}</legend>
+            <legend>{t("computer.settings.difficulty")}</legend>
             <div>
               {Object.entries(COMPUTER_LEVELS).map(([value, option], index) => (
                 <button
@@ -155,7 +155,7 @@ export function CoachOptions({
                       />
                     ))}
                   </span>
-                  <span>{t(option.label)}</span>
+                  <span>{t(option.labelKey)}</span>
                 </button>
               ))}
             </div>
@@ -174,11 +174,11 @@ export function CoachOptions({
               onClick={onRetry}
               disabled={startDisabled}
             >
-              <RotateCcw size={13} /> {t("Retry")}
+              <RotateCcw size={13} /> {t("common.retry")}
             </button>
           )}
           <button className="primary-button" onClick={close}>
-            {t("Done")}
+            {t("common.done")}
           </button>
         </div>
       </section>

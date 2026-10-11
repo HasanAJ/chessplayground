@@ -21,22 +21,20 @@ export function SaveNotice({
     <section
       className="save-notice"
       role="status"
-      aria-label={t("Game saving status")}
+      aria-label={t("game.save.label")}
     >
       <strong>
         {paused
-          ? t("Saved game needs recovery")
+          ? t("game.save.recoveryHeading")
           : error
-            ? t("Browser save unavailable")
-            : t("Original save preserved")}
+            ? t("game.save.unavailableHeading")
+            : t("game.save.backupHeading")}
       </strong>
       {recovery && (
         <p>
           {paused
             ? translateNotice(recovery.message, t)
-            : t(
-                "The original data is kept in a separate browser recovery backup. Autosave has resumed.",
-              )}
+            : t("game.save.backupDescription")}
         </p>
       )}
       {error && <p>{translateNotice(error, t)}</p>}
@@ -47,8 +45,8 @@ export function SaveNotice({
             onClick={paused ? onResume : onDismiss}
           >
             {paused
-              ? t("Keep current game & resume saving")
-              : t("Dismiss recovery notice")}
+              ? t("game.save.resume")
+              : t("game.save.dismiss")}
           </button>
         </div>
       )}

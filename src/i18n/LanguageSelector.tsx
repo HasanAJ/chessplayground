@@ -7,7 +7,7 @@ export function LanguageSelector() {
   return (
     <label className="language-selector">
       <Languages className="language-icon" size={16} aria-hidden="true" />
-      <span className="sr-only">{t("Language")}</span>
+      <span className="sr-only">{t("language.selector.label")}</span>
       <select
         value={language}
         onChange={(event) => setLanguage(event.target.value as Language)}

@@ -1,4 +1,4 @@
-import type en from "./locales/en";
+import en from "./locales/en";
 import es from "./locales/es";
 import de from "./locales/de";
 import it from "./locales/it";
@@ -12,9 +12,9 @@ export const languages = {
   fr: "Français",
 } as const;
 export type Language = keyof typeof languages;
-export type Message = keyof typeof en;
+export type MessageKey = keyof typeof en;
 export type Translator = ((
-  source: Message,
+  key: MessageKey,
   ...values: (string | number)[]
 ) => string) & { language: Language };
 export const catalogs = { es, de, it, fr };
@@ -26,20 +26,17 @@ function interpolate(source: string, values: (string | number)[]) {
 }
 
 export const english: Translator = Object.assign(
-  (source: string, ...values: (string | number)[]) =>
-    interpolate(source, values),
+  (key: MessageKey, ...values: (string | number)[]) =>
+    interpolate(en[key], values),
   { language: "en" as Language },
 );
 
 export function translator(language: Language): Translator {
   if (language === "en") return english;
-  const catalog: Record<string, string> = catalogs[language];
+  const catalog = catalogs[language];
   return Object.assign(
-    (source: string, ...values: (string | number)[]) =>
-      interpolate(
-        Object.hasOwn(catalog, source) ? catalog[source] : source,
-        values,
-      ),
+    (key: MessageKey, ...values: (string | number)[]) =>
+      interpolate(catalog[key] ?? en[key], values),
     { language },
   );
 }

@@ -38,7 +38,7 @@ export function reviewMove(
   const isDraw = drawn || after.isDraw();
   const result = played ?? reply;
   if (!after.isCheckmate() && !isDraw && !result)
-    throw new Error(t("The move needs analysis of the resulting position."));
+    throw new Error(t("coach.review.error.needsAnalysis"));
   const resultingOutlook = after.isCheckmate()
     ? 1
     : isDraw
@@ -74,45 +74,41 @@ export function reviewMove(
       : undefined;
   if (after.isCheckmate())
     text = t(
-      "{0} delivers checkmate. Their king has no way out—you’ve finished the game.",
+      "coach.review.checkmate",
       move.san,
     );
   else if (same)
-    text = t("{0} is the top choice here. {1}", move.san, best.explanation);
+    text = t("coach.review.best", move.san, best.explanation);
   else if (label === "Good move") {
     const description = isDraw
-      ? t("gets you a draw, close to the best result found here")
+      ? t("coach.review.good.draw")
       : result!.mate !== undefined
         ? resultingOutlook === 1
-          ? t("keeps your checkmate on track in the analyzed line")
-          : t(
-              "holds up about as well as the best defense found here, though the analysis still finds mate against you",
-            )
+          ? t("coach.review.good.winningMate")
+          : t("coach.review.good.losingMate")
         : resultingOutlook > 0.9
-          ? t("keeps your strong advantage. You’re still in a great position")
+          ? t("coach.review.good.winning")
           : resultingOutlook < 0.1
-            ? t(
-                "holds up about as well as the best option in an already tough position",
-              )
-            : t("looks good here, with chances close to {0}", best.move.san);
+            ? t("coach.review.good.losing")
+            : t("coach.review.good.balanced", best.move.san);
     text = `${move.san} ${description}.`;
   } else {
     const consequence = isDraw
-      ? t("leads to a draw. {0} offered better chances", best.move.san)
+      ? t("coach.review.consequence.draw", best.move.san)
       : result!.mate !== undefined && resultingOutlook === 0
-        ? t("allows a forced checkmate in the analyzed line")
+        ? t("coach.review.consequence.allowsMate")
         : best.mate !== undefined && outlook(best, sign) === 1
-          ? t("lets a forced checkmate slip away")
+          ? t("coach.review.consequence.missesMate")
           : (lesson?.consequence ??
             t(
-              "gives your opponent better chances than {0} would",
+              "coach.review.consequence.worseChances",
               best.move.san,
             ));
     const response = reply
       ? (played?.reply ?? describeReply(reply.move, t))
       : isDraw
-        ? t("Try the other move to see what you could keep playing for.")
-        : t("Play through the reply to see what they could do next.");
+        ? t("coach.review.response.draw")
+        : t("coach.review.response.preview");
     text = `${move.san} ${consequence}.${lesson?.consequence ? "" : ` ${response}`}`;
   }
   return {

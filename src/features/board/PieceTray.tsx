@@ -1,7 +1,7 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import type { Color, PieceSymbol } from "chess.js";
 import { pieceImage } from "./pieces";
-import { names, sideName } from "../../chess/position";
+import { pieceNameKeys, sideName } from "../../chess/position";
 
 export function PieceTray({
   color,
@@ -18,19 +18,19 @@ export function PieceTray({
   return (
     <section
       className="piece-tray"
-      aria-label={t("{0} pieces", sideName(color, t))}
+      aria-label={t("board.tray.label", sideName(color, t))}
     >
       <div className="piece-tray-pieces">
         {(["k", "q", "r", "b", "n", "p"] as PieceSymbol[]).map((type) => (
           <button
             key={type}
             className={selected === `${color}${type}` ? "chosen" : ""}
-            aria-label={t("Place {0} {1}", sideName(color, t), t(names[type]))}
+            aria-label={t("board.tray.place", sideName(color, t), t(pieceNameKeys[type]))}
             aria-pressed={selected === `${color}${type}`}
             title={t(
-              "Add {0} {1} · Click or drag to board",
+              "board.tray.add",
               sideName(color, t).toLowerCase(),
-              t(names[type]),
+              t(pieceNameKeys[type]),
             )}
             draggable
             onDragStart={(event) => {

@@ -86,16 +86,16 @@ export function RecommendationsPanel({
         <>
           <div className="sr-only" role="status">
             {thinking
-              ? t("Analyzing…")
+              ? t("coach.analysis.status.thinking")
               : analysis.state === "error"
-                ? t("Engine unavailable")
-                : t("Recommendations ready")}
+                ? t("coach.analysis.status.unavailable")
+                : t("coach.analysis.status.ready")}
           </div>
           {reviewing && (
             <p className="analysis-context">
               <SquareText
                 text={t(
-                  "Reviewing {0}. Analysis is for this position.",
+                  "coach.analysis.reviewingPosition",
                   reviewLabel,
                 )}
               />
@@ -104,7 +104,7 @@ export function RecommendationsPanel({
           {isCurrent && analysis.state === "error" ? (
             <div className="engine-error" role="alert">
               <ShieldAlert size={22} />
-              <h3>{t("Let’s try that again.")}</h3>
+              <h3>{t("coach.analysis.errorHeading")}</h3>
               <p>
                 <SquareText text={translateNotice(analysis.error ?? "", t)} />
               </p>
@@ -112,7 +112,7 @@ export function RecommendationsPanel({
                 className="primary-button"
                 onClick={recommendations.calculate}
               >
-                {t("Retry analysis")}
+                {t("coach.analysis.retry")}
                 <RotateCcw size={15} />
               </button>
             </div>
@@ -120,7 +120,7 @@ export function RecommendationsPanel({
             <>
               <section
                 className={`strategy-card ${thinking ? "strategy-loading" : ""}`}
-                aria-label={t("Best move and strategy")}
+                aria-label={t("coach.analysis.label")}
                 aria-busy={thinking}
                 onMouseEnter={() => setHovered(0)}
                 onMouseLeave={() => setHovered(null)}
@@ -150,25 +150,21 @@ export function RecommendationsPanel({
                   <>
                     <div className="card-eyebrow">
                       <LoaderCircle size={16} className="spin" />
-                      <span>{t("FINDING YOUR MOVE")}</span>
+                      <span>{t("coach.analysis.search.heading")}</span>
                     </div>
-                    <h3>{t("Finding {0}’s best move…", sideName(turn, t))}</h3>
+                    <h3>{t("coach.analysis.search.bestMove", sideName(turn, t))}</h3>
                     <p>
                       {reviewing
-                        ? t(
-                            "Looking at your options and their replies from this earlier position.",
-                          )
-                        : t(
-                            "Checking your options and your opponent’s replies. Feel free to keep playing.",
-                          )}
+                        ? t("coach.analysis.search.history")
+                        : t("coach.analysis.search.live")}
                     </p>
                     <div className="analysis-progress" aria-hidden="true">
                       <span />
                     </div>
                     <p className="analysis-timing">
                       {analysis.depth > 0 && isCurrent
-                        ? t("Checking deeper · depth {0}", analysis.depth)
-                        : t("Usually ready in a couple of seconds")}
+                        ? t("coach.analysis.search.depth", analysis.depth)
+                        : t("coach.analysis.search.estimate")}
                     </p>
                   </>
                 )}
@@ -194,13 +190,11 @@ export function RecommendationsPanel({
                   {watching.target && !analysisGame.inCheck() && (
                     <p
                       className="strategy-warning"
-                      aria-label={t("Watch out for")}
+                      aria-label={t("coach.warnings.heading")}
                       tabIndex={!boardPreview ? 0 : undefined}
                       title={
                         !boardPreview
-                          ? t(
-                              "Hover or focus to highlight the threatened piece and its attackers.",
-                            )
+                          ? t("coach.warnings.description")
                           : undefined
                       }
                       onMouseEnter={() => setHoveredWarning(true)}

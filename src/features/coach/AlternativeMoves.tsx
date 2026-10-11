@@ -27,9 +27,9 @@ export function AlternativeMoves({
   const { playSuggestedMove: playMove } = board;
   if (candidates.length < 2) return null;
   return (
-    <section aria-label={t("Other good options")}>
+    <section aria-label={t("coach.alternatives.heading")}>
       <div className="candidates-heading">
-        <h3>{t("Other good options")}</h3>
+        <h3>{t("coach.alternatives.heading")}</h3>
       </div>
       <div className="candidate-list">
         {candidates.slice(1).map((candidate, index) => {
@@ -51,7 +51,7 @@ export function AlternativeMoves({
                 onBlur={() => setHovered(null)}
                 aria-expanded={active === i}
                 aria-label={t(
-                  "Alternative: {0}. {1}. {2}",
+                  "coach.alternatives.description",
                   candidate.move.san,
                   moveDescription(candidate.move, t),
                   candidate.title,
@@ -75,9 +75,7 @@ export function AlternativeMoves({
                 </div>
                 <span
                   className="candidate-score"
-                  title={t(
-                    "Position estimate in pawn units: + favors White, − favors Black.",
-                  )}
+                  title={t("coach.evaluation.description")}
                 >
                   {candidate.score}
                 </span>
@@ -101,7 +99,7 @@ export function AlternativeMoves({
                     }
                   >
                     <SquareText
-                      text={t("Play {0}", candidate.move.san)}
+                      text={t("coach.move.play", candidate.move.san)}
                       focusable={false}
                     />
                     <ArrowRight size={15} />

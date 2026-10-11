@@ -42,7 +42,7 @@ export function PositionDetails({
         }
       }}
     >
-      <summary>{t("About this position")}</summary>
+      <summary>{t("coach.position.heading")}</summary>
       <div className="position-details-body">
         <div className="strategy-foot">
           <span>
@@ -55,7 +55,7 @@ export function PositionDetails({
           <>
             {insight.change && !inCheck && (
               <div className="plan-change">
-                <span>{t("WHAT CHANGED")}</span>
+                <span>{t("coach.position.changed")}</span>
                 <p>
                   <SquareText text={insight.change} />
                 </p>
@@ -87,8 +87,8 @@ export function PositionDetails({
               >
                 <Eye size={13} />{" "}
                 {highlighted
-                  ? t("Hide key squares")
-                  : t("Highlight key squares")}
+                  ? t("coach.position.hideSquares")
+                  : t("coach.position.showSquares")}
               </button>
             )}
             {highlighted && insight.squares.length > 0 && (
@@ -97,7 +97,7 @@ export function PositionDetails({
                 <span>
                   <SquareText
                     text={t(
-                      "Teal outlines mark the squares discussed above: {0}.",
+                      "coach.position.squaresDescription",
                       insight.squares.join(", "),
                     )}
                   />

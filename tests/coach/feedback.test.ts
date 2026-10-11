@@ -26,7 +26,7 @@ test("expanded move review shows its rating, explanation, and likely reply", () 
   const props = {
     result: { key: "test", state: "ready" as const, review },
     moveLabel: "2. g4 · White",
-    context: "Your last move" as const,
+    context: "coach.feedback.context.yourLastMove" as const,
     collapsed: false,
     onToggle() {},
     onReanalyze() {},
@@ -53,7 +53,7 @@ test("pending automatic review identifies the selected move without stale feedba
     createElement(MoveFeedback, {
       result: { key: "pending", state: "thinking" },
       moveLabel: "1… e5 · Black",
-      context: "Selected move",
+      context: "coach.feedback.context.selectedMove",
       collapsed: false,
       onToggle() {},
       onReanalyze() {},

@@ -57,9 +57,9 @@ export function Chessboard({
     ? Math.max(4, Math.min(96, 50 + 46 * Math.tanh(evaluation.whiteScore / 4)))
     : 50;
   const evaluationNotice = hiddenAnalysis
-    ? t("Calculate best moves to see the evaluation")
+    ? t("board.evaluation.calculateFirst")
     : boardPreview
-      ? t("Evaluation paused during board preview")
+      ? t("board.evaluation.previewPaused")
       : undefined;
   const arrowMove =
     inspectionMove ?? (hiddenAnalysis ? undefined : shownCandidate?.move);
@@ -83,12 +83,12 @@ export function Chessboard({
       <div className="board-with-eval" ref={board.ref}>
         <div
           className="eval-track"
-          title={evaluationNotice ?? t("+ = White ahead · − = Black ahead")}
+          title={evaluationNotice ?? t("board.evaluation.legend")}
           aria-label={
             evaluationNotice ??
             (best
-              ? t("White evaluation {0}", best.score)
-              : t("Evaluation pending"))
+              ? t("board.evaluation.whiteScore", best.score)
+              : t("board.evaluation.pending"))
           }
         >
           <div
@@ -117,10 +117,10 @@ export function Chessboard({
             role="group"
             aria-label={
               inspection
-                ? t("Move preview chessboard")
+                ? t("board.label.preview")
                 : reviewing
-                  ? t("Game history chessboard")
-                  : t("Interactive chessboard")
+                  ? t("board.label.history")
+                  : t("board.label.interactive")
             }
           >
             {ranks.flatMap((rank) =>
@@ -158,7 +158,7 @@ export function Chessboard({
                     key={square}
                     type="button"
                     className={classes.filter(Boolean).join(" ")}
-                    aria-label={`${square}${piece ? ` ${pieceLabel(piece, t)}` : t(" empty")}${square === checkedKing ? t(" in check") : ""}`}
+                    aria-label={`${square}${piece ? ` ${pieceLabel(piece, t)}` : t("board.square.empty")}${square === checkedKing ? t("board.square.check") : ""}`}
                     data-square={square}
                     aria-pressed={isSelected}
                     draggable={!!piece}

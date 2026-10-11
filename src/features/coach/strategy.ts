@@ -1,6 +1,6 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Color, type Move, type Square } from "chess.js";
-import { names, opposite, positionOf, sideName } from "../../chess/position";
+import { pieceNameKeys, opposite, positionOf, sideName } from "../../chess/position";
 import type { Candidate } from "./candidates";
 
 const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
@@ -51,14 +51,14 @@ export function strategyInsight(
   if (targets.length) {
     facts.push(
       t(
-        "{0} puts {1} under attack from your {2}.",
+        "coach.strategy.attack",
         best.move.san,
         targets
           .map(([sq, piece]) =>
-            t("their {0} on {1}", t(names[piece!.type]), sq),
+            t("coach.piece.theirsOnSquare", t(pieceNameKeys[piece!.type]), sq),
           )
-          .join(t(" and ")),
-        t(names[best.move.promotion ?? best.move.piece]),
+          .join(t("common.join.and")),
+        t(pieceNameKeys[best.move.promotion ?? best.move.piece]),
       ),
     );
     squares.push(
@@ -72,11 +72,11 @@ export function strategyInsight(
     facts.push(
       t(
         loose.length === 1
-          ? "Your {0} is under attack with no defender."
-          : "Your {0} are under attack with no defender.",
+          ? "coach.strategy.undefended.singular"
+          : "coach.strategy.undefended.plural",
         loose
-          .map((sq) => t("{0} on {1}", t(names[game.get(sq)!.type]), sq))
-          .join(t(" and ")),
+          .map((sq) => t("coach.piece.onSquare", t(pieceNameKeys[game.get(sq)!.type]), sq))
+          .join(t("common.join.and")),
       ),
     );
     squares.push(...loose);
@@ -84,7 +84,7 @@ export function strategyInsight(
   const controlled = center.filter((sq) => game.isAttacked(sq, side));
   if (controlled.length && facts.length < 2) {
     facts.push(
-      t("Your pieces cover {0} in the center.", controlled.join(", ")),
+      t("coach.strategy.center", controlled.join(", ")),
     );
     squares.push(...controlled);
   }
@@ -97,28 +97,28 @@ export function strategyInsight(
     const gain = afterBalance - beforeBalance;
     facts.push(
       future.isCheckmate()
-        ? t("{0} finishes this line with checkmate.", end.san)
+        ? t("coach.strategy.line.checkmate", end.san)
         : end.captured
           ? t(
-              "The preview ends with {0} playing {1}, a capture. The exchange may continue.",
+              "coach.strategy.line.capture",
               sideName(end.color, t),
               end.san,
             )
           : gain > 0
             ? t(
                 gain === 1
-                  ? "In this possible line, you’d gain the equivalent of {0} pawn in material."
-                  : "In this possible line, you’d gain the equivalent of {0} pawns in material.",
+                  ? "coach.strategy.material.gain.singular"
+                  : "coach.strategy.material.gain.plural",
                 gain,
               )
             : gain < 0
               ? t(
                   gain === -1
-                    ? "In this possible line, you’d give up the equivalent of {0} pawn in material."
-                    : "In this possible line, you’d give up the equivalent of {0} pawns in material.",
+                    ? "coach.strategy.material.loss.singular"
+                    : "coach.strategy.material.loss.plural",
                   Math.abs(gain),
                 )
-              : t("The material balance stays the same in this line."),
+              : t("coach.strategy.material.even"),
     );
   }
   let change: string | null = null;
@@ -132,21 +132,21 @@ export function strategyInsight(
       );
       if (king) squares.push(king[0] as Square);
       change = t(
-        "{0} puts your king in check. Getting out of check comes first.",
+        "coach.strategy.change.check",
         lastMove.san,
       );
     } else if (newLoose.length)
       change = t(
-        "{0} leaves your {1} on {2} under attack with no defender. Take care of it before carrying on with your plan.",
+        "coach.strategy.change.undefended",
         lastMove.san,
-        t(names[game.get(newLoose[0])!.type]),
+        t(pieceNameKeys[game.get(newLoose[0])!.type]),
         newLoose[0],
       );
     else if (lastMove.captured) {
       squares.push(lastMove.to);
       change = t(
-        "They’ve just taken your {0} with {1}. Look at {2} before deciding how to answer.",
-        t(names[lastMove.captured]),
+        "coach.strategy.change.capture",
+        t(pieceNameKeys[lastMove.captured]),
         lastMove.san,
         best.move.san,
       );
@@ -158,19 +158,19 @@ export function strategyInsight(
       );
       change = changed.length
         ? t(
-            "{0} changes their control of {1}. Try {2} now, and see how they might respond.",
+            "coach.strategy.change.center",
             lastMove.san,
             changed.join(", "),
             best.move.san,
           )
         : t(
-            "Their {0} is now on {1}. Try {2}{3}.",
-            t(names[lastMove.promotion ?? lastMove.piece]),
+            "coach.strategy.change.move",
+            t(pieceNameKeys[lastMove.promotion ?? lastMove.piece]),
             lastMove.to,
             best.move.san,
             best.continuation[1]
-              ? t("; one reply to look at is {0}", best.continuation[1].san)
-              : t(" and see how they respond"),
+              ? t("coach.strategy.change.reply", best.continuation[1].san)
+              : t("coach.strategy.change.respond"),
           );
       squares.push(lastMove.to, ...changed);
     }
@@ -183,25 +183,25 @@ export function strategyInsight(
     : 0;
   const comparison = !alternative
     ? game.moves().length === 1
-      ? t("This position has only one legal move.")
+      ? t("coach.strategy.compare.forced")
       : t(
-          "{0} is the only recommended move here. The other moves checked give up too much compared with it.",
+          "coach.strategy.compare.onlyRecommendation",
           best.move.san,
         )
     : best.mate !== undefined || alternative.mate !== undefined
       ? t(
-          "Here, checkmate threats matter more than a small difference in score. Play through {0} and {1}, and follow the checks carefully.",
+          "coach.strategy.compare.mate",
           best.move.san,
           alternative.move.san,
         )
       : gap < 0.3
         ? t(
-            "{0} and {1} both look good here. Play through their replies and choose the position you’d rather have.",
+            "coach.strategy.compare.similar",
             best.move.san,
             alternative.move.san,
           )
         : t(
-            "{0} looks stronger than {1} here. Play through both replies to see how the positions differ.",
+            "coach.strategy.compare.stronger",
             best.move.san,
             alternative.move.san,
           );

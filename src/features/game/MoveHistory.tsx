@@ -19,16 +19,16 @@ export function MoveHistory({
   return (
     <>
       <div className="history-heading">
-        <span>{t("Game moves")}</span>
+        <span>{t("game.history.label")}</span>
       </div>
-      <div className="move-history" aria-label={t("Move history")}>
+      <div className="move-history" aria-label={t("game.history.heading")}>
         <button
           className={`history-start ${currentPly === 0 ? "current-history" : ""}`}
-          aria-label={t("View starting position")}
+          aria-label={t("game.history.viewStart")}
           aria-current={currentPly === 0 ? "step" : undefined}
           onClick={() => onSelect(0)}
         >
-          {t("Start")}
+          {t("game.history.start")}
         </button>
         {history.map((move, index) => {
           const current = currentPly === index + 1;
@@ -36,7 +36,7 @@ export function MoveHistory({
             <button
               key={index}
               className={`${index === history.length - 1 ? "latest" : ""} ${current ? "current-history" : ""}`}
-              aria-label={t("View position after {0}", gameMoveLabel(move))}
+              aria-label={t("game.history.viewMove", gameMoveLabel(move))}
               aria-current={current ? "step" : undefined}
               onClick={() => onSelect(index + 1)}
             >

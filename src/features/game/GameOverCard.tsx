@@ -28,7 +28,7 @@ export function GameOverCard({
   return (
     <section
       className={`game-over-card ${winner ? "is-checkmate" : "is-draw"}${celebrate ? " has-celebration" : ""}${celebrate && animate ? " animate-celebration" : ""}`}
-      aria-label={t("Game result")}
+      aria-label={t("game.result.label")}
     >
       <p className="sr-only" role="status">
         {reason}
@@ -53,7 +53,7 @@ export function GameOverCard({
       )}
       <span className="result-tag">
         {winner ? <Trophy size={13} /> : <Handshake size={14} />}
-        {winner ? t("CHECKMATE") : t("DRAW")}
+        {winner ? t("game.result.checkmate") : t("game.result.draw")}
       </span>
       <div className="result-art" aria-hidden="true">
         <div className="result-board" />
@@ -87,26 +87,28 @@ export function GameOverCard({
         )}
       </div>
       <h3>
-        {winner ? t("{0} wins!", sideName(winner, t)) : t("Honors shared.")}
+        {winner
+          ? t("game.result.winner", sideName(winner, t))
+          : t("game.result.drawHeading")}
       </h3>
       <p className="result-message">
         {winner
           ? celebrate
-            ? t("A royal finish. Ready for another round?")
-            : t("Good game. There’s always another round.")
+            ? t("game.result.checkmateMessage")
+            : t("game.result.drawMessage")
           : reason}
       </p>
       <div
         className="result-score"
         role="group"
         aria-label={t(
-          "Final score: White {0}, Black {1}",
+          "game.result.score",
           whiteScore,
           blackScore,
         )}
       >
         <span className={winner === "w" ? "result-winner" : ""}>
-          <i className="side-disc" /> {t("White")}
+          <i className="side-disc" /> {t("chess.side.white")}
         </span>
         <strong>
           {whiteScore}
@@ -114,12 +116,12 @@ export function GameOverCard({
           {blackScore}
         </strong>
         <span className={winner === "b" ? "result-winner" : ""}>
-          {t("Black")}
+          {t("chess.side.black")}
           <i className="side-disc black-disc" />
         </span>
       </div>
       <button className="primary-button" onClick={onPlayAgain}>
-        {t("Play again")}
+        {t("game.result.playAgain")}
         <ArrowRight size={15} />
       </button>
     </section>
