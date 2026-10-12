@@ -85,6 +85,11 @@ export default {
   "board.newGame.description": "Iniciar una partida desde la posición inicial",
   "board.newGame.label": "Nueva partida",
   "board.clear": "Vaciar tablero",
+  "board.turn.white": "Juegan blancas",
+  "board.turn.black": "Juegan negras",
+  "board.turn.select": "Quién juega ahora",
+  "board.turn.changeDescription":
+    "Cambiar el turno inicia una nueva posición y borra el historial.",
   "board.navigation.label": "Navegación de jugadas",
   "board.navigation.previous": "Jugada anterior",
   "board.navigation.next": "Jugada siguiente",
@@ -415,10 +420,6 @@ export default {
   "coach.status.yourTurn": "Tu turno",
   "coach.panel.label": "Análisis de posición",
   "coach.panel.heading": "Tu entrenador",
-  "coach.turn.label": "Turno de",
-  "coach.turn.select": "Quién juega ahora",
-  "coach.turn.changeDescription":
-    "Cambiar el turno inicia una nueva posición y borra el historial.",
   "coach.panel.backToBoard": "Volver al tablero ↑",
   "coach.calculate.label.waiting": "Esperando al ordenador",
   "coach.calculate.label.thinking": "Calculando mejores jugadas",

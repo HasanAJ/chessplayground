@@ -29,12 +29,19 @@ async function renderWorkspace(t: TestContext) {
   ]);
   let preview!: ReturnType<typeof useBoardPreview>;
   let currentGame!: ReturnType<typeof useGameController>;
+  let currentComputer!: ReturnType<typeof useComputerSettings>;
   function Harness() {
     const computer = useComputerSettings();
+    currentComputer = computer;
     const game = useGameController(computer.disable);
     currentGame = game;
     preview = useBoardPreview(game.analysisKey, game.playable);
-    const board = useBoardInteractions(game, preview, computer, false);
+    const botTurn =
+      computer.enabled &&
+      !computer.open &&
+      !game.reviewing &&
+      game.game.turn() !== computer.side;
+    const board = useBoardInteractions(game, preview, computer, botTurn);
     const recommendations: Recommendations = {
       candidates,
       best: candidates[0],
@@ -60,6 +67,7 @@ async function renderWorkspace(t: TestContext) {
         board,
         preview,
         computer,
+        botTurn,
         analysis: recommendations,
         highlights: presentation,
         onNewGame() {},
@@ -70,7 +78,7 @@ async function renderWorkspace(t: TestContext) {
         board,
         preview,
         computer,
-        opponent: { turn: false, busy: false, state: "idle", retry() {} },
+        opponent: { turn: botTurn, busy: false, state: "idle", retry() {} },
         recommendations,
         presentation,
         feedback: null,
@@ -95,6 +103,9 @@ async function renderWorkspace(t: TestContext) {
     get game() {
       return currentGame;
     },
+    get computer() {
+      return currentComputer;
+    },
     get preview() {
       return preview;
     },
@@ -106,6 +117,63 @@ async function renderWorkspace(t: TestContext) {
     },
   };
 }
+
+test("the board turn selector follows the displayed position and preserves editing safeguards", async (t) => {
+  const view = await renderWorkspace(t);
+  const { dom, document, boardPanel, candidates } = view;
+  const select = boardPanel.querySelector<HTMLSelectElement>(
+    '.board-toolbar select[aria-label="Who plays next"]',
+  )!;
+  const choose = async (color: "w" | "b") => {
+    await act(() => {
+      select.value = color;
+      select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+    });
+  };
+  assert.ok(select);
+  assert.equal(document.querySelector(".coach-panel .turn-select"), null);
+  assert.equal(select.selectedOptions[0].textContent, "White to move");
+  const liveFen = view.game.fen;
+  await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
+  assert.equal(select.value, "b");
+  assert.equal(select.disabled, true);
+  assert.ok(select.parentElement!.classList.contains("is-black"));
+  assert.equal(view.game.fen, liveFen);
+  await act(() => view.preview.clearPreview());
+  assert.equal(select.value, "w");
+  assert.equal(select.disabled, false);
+
+  await choose("b");
+  assert.equal(view.game.game.turn(), "b");
+  assert.equal(select.selectedOptions[0].textContent, "Black to move");
+  await choose("w");
+  await act(() => view.game.playMove("e2", "e4"));
+  assert.equal(select.value, "b");
+  assert.ok(select.title.includes("clears the move history"));
+  await choose("w");
+  assert.equal(view.game.history.length, 0);
+  assert.equal(view.game.game.get("e4")?.type, "p");
+  assert.equal(select.parentElement!.classList.contains("is-black"), false);
+
+  await act(() => {
+    view.computer.setSide("b");
+    view.computer.setEnabled(true);
+  });
+  assert.equal(
+    select.disabled,
+    true,
+    "the computer turn cannot be changed mid-search",
+  );
+  await act(() => view.computer.setOpen(true));
+  assert.equal(
+    select.disabled,
+    false,
+    "pausing the computer allows position editing",
+  );
+  await act(() => view.game.setBoardPosition({}, "b", ""));
+  await choose("w");
+  assert.equal(view.game.draft?.turn, "w");
+});
 
 test("hovered and pinned previews preserve board structure and square highlights", async (t) => {
   const view = await renderWorkspace(t);

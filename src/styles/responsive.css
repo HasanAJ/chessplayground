@@ -65,7 +65,7 @@
   .board-toolbar {
     gap: 6px;
   }
-  .board-toolbar > .icon-button {
+  .board-navigation-actions > .icon-button {
     width: 34px;
     height: 38px;
   }

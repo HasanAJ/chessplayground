@@ -124,6 +124,7 @@ export default function App() {
               board={board}
               preview={preview}
               computer={computer}
+              botTurn={botTurn}
               analysis={recommendations}
               highlights={presentation}
               onNewGame={newGame}

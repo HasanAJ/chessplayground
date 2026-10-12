@@ -87,6 +87,11 @@ export default {
     "Commencer une partie depuis la position initiale",
   "board.newGame.label": "Nouvelle partie",
   "board.clear": "Vider l’échiquier",
+  "board.turn.white": "Trait aux blancs",
+  "board.turn.black": "Trait aux noirs",
+  "board.turn.select": "Qui joue maintenant",
+  "board.turn.changeDescription":
+    "Changer le trait crée une nouvelle position et efface l’historique.",
   "board.navigation.label": "Navigation des coups",
   "board.navigation.previous": "Coup précédent",
   "board.navigation.next": "Coup suivant",
@@ -421,10 +426,6 @@ export default {
   "coach.status.yourTurn": "À vous de jouer",
   "coach.panel.label": "Analyse de position",
   "coach.panel.heading": "Votre coach",
-  "coach.turn.label": "Trait aux",
-  "coach.turn.select": "Qui joue maintenant",
-  "coach.turn.changeDescription":
-    "Changer le trait crée une nouvelle position et efface l’historique.",
   "coach.panel.backToBoard": "Retour à l’échiquier ↑",
   "coach.calculate.label.waiting": "En attente de l’ordinateur",
   "coach.calculate.label.thinking": "Calcul des meilleurs coups",

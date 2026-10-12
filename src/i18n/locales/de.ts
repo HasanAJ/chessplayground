@@ -87,6 +87,11 @@ export default {
     "Eine neue Partie aus der Anfangsstellung starten",
   "board.newGame.label": "Neue Partie",
   "board.clear": "Brett leeren",
+  "board.turn.white": "Weiß am Zug",
+  "board.turn.black": "Schwarz am Zug",
+  "board.turn.select": "Wer ist am Zug",
+  "board.turn.changeDescription":
+    "Ein Farbwechsel startet eine neue Stellung und löscht den Zugverlauf.",
   "board.navigation.label": "Zugnavigation",
   "board.navigation.previous": "Vorheriger Zug",
   "board.navigation.next": "Nächster Zug",
@@ -428,10 +433,6 @@ export default {
   "coach.status.yourTurn": "Du bist am Zug",
   "coach.panel.label": "Stellungsanalyse",
   "coach.panel.heading": "Dein Trainer",
-  "coach.turn.label": "Am Zug",
-  "coach.turn.select": "Wer ist am Zug",
-  "coach.turn.changeDescription":
-    "Ein Farbwechsel startet eine neue Stellung und löscht den Zugverlauf.",
   "coach.panel.backToBoard": "Zum Brett ↑",
   "coach.calculate.label.waiting": "Warten auf den Computer",
   "coach.calculate.label.thinking": "Beste Züge werden berechnet",

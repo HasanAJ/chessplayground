@@ -84,6 +84,11 @@ const en = {
     "Start a new game from the standard chess position",
   "board.newGame.label": "New game",
   "board.clear": "Clear board",
+  "board.turn.white": "White to move",
+  "board.turn.black": "Black to move",
+  "board.turn.select": "Who plays next",
+  "board.turn.changeDescription":
+    "Changing the player starts a new position and clears the move history.",
   "board.navigation.label": "Game move navigation",
   "board.navigation.previous": "Previous game move",
   "board.navigation.next": "Next game move",
@@ -412,10 +417,6 @@ const en = {
   "coach.status.yourTurn": "Your turn",
   "coach.panel.label": "Position analysis",
   "coach.panel.heading": "Your coach",
-  "coach.turn.label": "To move",
-  "coach.turn.select": "Who plays next",
-  "coach.turn.changeDescription":
-    "Changing the player starts a new position and clears the move history.",
   "coach.panel.backToBoard": "Back to board ↑",
   "coach.calculate.label.waiting": "Waiting for computer",
   "coach.calculate.label.thinking": "Calculating best moves",

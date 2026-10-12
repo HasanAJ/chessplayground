@@ -274,7 +274,6 @@
   border-radius: 8px;
   background: #fff;
   flex-shrink: 0;
-  margin-left: auto;
 }
 .board-history-navigation .icon-button {
   width: 30px;
@@ -650,28 +649,15 @@
   border-bottom: 1px solid var(--line);
 }
 
-.coach-heading .next-player {
-  margin-top: 6px;
-  gap: 6px;
-  min-height: 36px;
-}
-.coach-heading .turn-select {
-  width: 96px;
-  flex-shrink: 0;
-  background: #f8f5fc;
-}
-.coach-heading .turn-select.is-black {
-  background: #4b3c60;
-  color: #fff;
-  border-color: #4b3c60;
-}
 .coach-heading .turn-status {
+  display: inline-block;
+  margin-top: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .coach-heading .turn-status:empty {
-  visibility: hidden;
+  display: none;
 }
 
 .coach-status {

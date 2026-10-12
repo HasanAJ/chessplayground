@@ -1,16 +1,20 @@
 .board-toolbar {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   padding-bottom: 16px;
   border-bottom: 1px solid #f0eef5;
 }
 .board-toolbar .toolbar-actions {
-  width: auto;
   margin-left: 0;
   justify-content: flex-start;
+}
+.board-navigation-actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 6px;
 }
 .board-toolbar .new-game-button {
   white-space: nowrap;

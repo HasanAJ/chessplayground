@@ -1,8 +1,10 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useState } from "react";
+import type { Color } from "chess.js";
 import {
   ArrowDownUp,
   ArrowRight,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Eraser,
@@ -28,6 +30,7 @@ type Props = {
   board: BoardController;
   preview: BoardPreview;
   computer: ComputerSettings;
+  botTurn: boolean;
   analysis: Recommendations;
   highlights: CoachPresentation;
   onNewGame: () => void;
@@ -39,6 +42,7 @@ export function BoardPanel({
   board,
   preview,
   computer,
+  botTurn,
   analysis,
   highlights,
   onNewGame: newGame,
@@ -86,37 +90,60 @@ export function BoardPanel({
           </button>
         </div>
         <div
-          className="board-history-navigation"
-          role="group"
-          aria-label={t("board.navigation.label")}
+          className={`turn-select ${board.turn === "b" ? "is-black" : ""}`}
         >
-          <button
-            className="icon-button"
-            title={t("board.navigation.previous")}
-            aria-label={t("board.navigation.previous")}
-            disabled={!game.playable || (historyPly ?? history.length) === 0}
-            onClick={() => showHistory((historyPly ?? history.length) - 1)}
+          <select
+            aria-label={t("board.turn.select")}
+            value={board.turn}
+            disabled={preview.boardPreview || botTurn}
+            onChange={(event) =>
+              game.chooseNextPlayer(event.target.value as Color)
+            }
+            title={
+              game.playable && history.length > 0
+                ? t("board.turn.changeDescription")
+                : undefined
+            }
           >
-            <ChevronLeft size={19} />
-          </button>
-          <button
-            className="icon-button"
-            title={t("board.navigation.next")}
-            aria-label={t("board.navigation.next")}
-            disabled={!game.playable || historyPly === null}
-            onClick={() => showHistory((historyPly ?? history.length) + 1)}
+            <option value="w">{t("board.turn.white")}</option>
+            <option value="b">{t("board.turn.black")}</option>
+          </select>
+          <ChevronDown size={14} aria-hidden="true" />
+        </div>
+        <div className="board-navigation-actions">
+          <div
+            className="board-history-navigation"
+            role="group"
+            aria-label={t("board.navigation.label")}
           >
-            <ChevronRight size={19} />
+            <button
+              className="icon-button"
+              title={t("board.navigation.previous")}
+              aria-label={t("board.navigation.previous")}
+              disabled={!game.playable || (historyPly ?? history.length) === 0}
+              onClick={() => showHistory((historyPly ?? history.length) - 1)}
+            >
+              <ChevronLeft size={19} />
+            </button>
+            <button
+              className="icon-button"
+              title={t("board.navigation.next")}
+              aria-label={t("board.navigation.next")}
+              disabled={!game.playable || historyPly === null}
+              onClick={() => showHistory((historyPly ?? history.length) + 1)}
+            >
+              <ChevronRight size={19} />
+            </button>
+          </div>
+          <button
+            className="icon-button flip-board-button"
+            onClick={() => setFlipped(!flipped)}
+            title={t("board.flip")}
+            aria-label={t("board.flip")}
+          >
+            <ArrowDownUp size={17} />
           </button>
         </div>
-        <button
-          className="icon-button flip-board-button"
-          onClick={() => setFlipped(!flipped)}
-          title={t("board.flip")}
-          aria-label={t("board.flip")}
-        >
-          <ArrowDownUp size={17} />
-        </button>
       </div>
       <div className="board-surface">
         <PieceTray

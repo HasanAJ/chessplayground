@@ -4,7 +4,6 @@ import { useTranslation } from "../../i18n/LanguageProvider";
 import { useState } from "react";
 import {
   Check,
-  ChevronDown,
   Clock3,
   Eye,
   LoaderCircle,
@@ -13,7 +12,6 @@ import {
   X,
   ArrowRight,
 } from "lucide-react";
-import type { Color } from "chess.js";
 import { gameMoveLabel, sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
 import { CoachOptions } from "../computer/CoachOptions";
@@ -79,11 +77,10 @@ export function CoachPanel({
     setError,
     promotion,
     setPromotion,
-    chooseNextPlayer,
   } = game;
   const { thinking, requested: analysisRequested } = recommendations;
   const { boardPreview, inspectionMove, inspectMove } = preview;
-  const { turn: displayedTurn, checkedKing, terminal: displayedEnding } = board;
+  const { checkedKing, terminal: displayedEnding } = board;
   const { turn: botTurn, busy: botBusy, state: botState } = opponent;
   const {
     enabled: computer,
@@ -130,39 +127,12 @@ export function CoachPanel({
         <div className="coach-heading">
           <div>
             <h2>{t("coach.panel.heading")}</h2>
-            <div className="next-player">
-              <label className="turn-label" htmlFor="next-player-select">
-                {t("coach.turn.label")}
-              </label>
-              <div
-                className={`turn-select ${displayedTurn === "b" ? "is-black" : ""}`}
-              >
-                <select
-                  id="next-player-select"
-                  aria-label={t("coach.turn.select")}
-                  value={displayedTurn}
-                  disabled={boardPreview || botTurn}
-                  onChange={(event) =>
-                    chooseNextPlayer(event.target.value as Color)
-                  }
-                  title={
-                    game.playable && history.length > 0
-                      ? t("coach.turn.changeDescription")
-                      : undefined
-                  }
-                >
-                  <option value="w">{t("chess.side.white")}</option>
-                  <option value="b">{t("chess.side.black")}</option>
-                </select>
-                <ChevronDown size={12} aria-hidden="true" />
-              </div>
-              <span
-                className={`turn-status ${checkedKing ? "is-check" : ""}`}
-                role="status"
-              >
-                {turnStatus}
-              </span>
-            </div>
+            <span
+              className={`turn-status ${checkedKing ? "is-check" : ""}`}
+              role="status"
+            >
+              {turnStatus}
+            </span>
           </div>
           <a className="mobile-board-link" href="#board">
             {t("coach.panel.backToBoard")}

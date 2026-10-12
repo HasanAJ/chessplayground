@@ -95,11 +95,10 @@
     margin: 0;
   }
 
-  .coach-heading .next-player {
+  .coach-heading .turn-status {
     margin: 0;
   }
 
-  .coach-heading .turn-label,
   .mobile-board-link {
     display: none;
   }

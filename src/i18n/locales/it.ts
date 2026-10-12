@@ -87,6 +87,11 @@ export default {
   "board.newGame.description": "Inizia una partita dalla posizione iniziale",
   "board.newGame.label": "Nuova partita",
   "board.clear": "Svuota scacchiera",
+  "board.turn.white": "Muove il Bianco",
+  "board.turn.black": "Muove il Nero",
+  "board.turn.select": "Chi gioca adesso",
+  "board.turn.changeDescription":
+    "Cambiare il turno avvia una nuova posizione e cancella la cronologia.",
   "board.navigation.label": "Navigazione delle mosse",
   "board.navigation.previous": "Mossa precedente",
   "board.navigation.next": "Mossa successiva",
@@ -424,10 +429,6 @@ export default {
   "coach.status.yourTurn": "Tocca a te",
   "coach.panel.label": "Analisi della posizione",
   "coach.panel.heading": "Il tuo allenatore",
-  "coach.turn.label": "Tratto a",
-  "coach.turn.select": "Chi gioca adesso",
-  "coach.turn.changeDescription":
-    "Cambiare il turno avvia una nuova posizione e cancella la cronologia.",
   "coach.panel.backToBoard": "Torna alla scacchiera ↑",
   "coach.calculate.label.waiting": "In attesa del computer",
   "coach.calculate.label.thinking": "Calcolo delle migliori mosse",

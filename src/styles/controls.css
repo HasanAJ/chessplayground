@@ -1,25 +1,18 @@
-.next-player {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.turn-label {
-  font-size: var(--text-sm);
-  font-weight: 550;
-  color: #796b85;
-  white-space: nowrap;
-}
 .turn-select {
   position: relative;
-  width: 96px;
-  border: 1px solid #ded6e8;
+  justify-self: center;
+  border: 1px solid var(--purple);
   border-radius: 10px;
   background: #fff;
-  color: #4c3d5f;
+  color: var(--purple-dark);
   box-shadow: 0 2px 4px #30204006;
   transition:
     border-color 150ms ease,
     background 150ms ease;
+}
+.turn-select.is-black {
+  background: #111;
+  color: #fff;
 }
 .turn-select:hover {
   border-color: #ac9ac7;
@@ -27,7 +20,7 @@
 .turn-select select {
   appearance: none;
   width: 100%;
-  min-height: 34px;
+  min-height: 36px;
   padding: 7px 25px 7px 12px;
   border: 0;
   border-radius: inherit;
@@ -52,8 +45,6 @@
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-}
-.turn-select > svg {
   right: 9px;
   opacity: 0.65;
 }
