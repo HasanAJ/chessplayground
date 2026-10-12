@@ -27,11 +27,17 @@ export function useBoardPreview(key: string, enabled: boolean) {
   );
   const [pinnedInspection, setPinnedInspection] =
     useState<MoveInspection | null>(null);
-  const frame = hoverInspection ?? focusInspection ?? pinnedInspection;
-  const inspection =
-    enabled && frame?.key === key && frame.candidate.continuation[frame.ply - 1]
+  function currentInspection(frame: MoveInspection | null) {
+    return enabled &&
+      frame?.key === key &&
+      frame.candidate.continuation[frame.ply - 1]
       ? frame
       : null;
+  }
+  const inspection = currentInspection(
+    hoverInspection ?? focusInspection ?? pinnedInspection,
+  );
+  const keptInspection = currentInspection(pinnedInspection);
   const inspectionMove = inspection?.candidate.continuation[inspection.ply - 1];
   const boardPreview = inspection !== null;
   const previewGame = useMemo(
@@ -72,6 +78,7 @@ export function useBoardPreview(key: string, enabled: boolean) {
 
   return {
     inspection,
+    pinnedInspection: keptInspection,
     inspectionMove,
     boardPreview,
     pinned: boardPreview && inspection === pinnedInspection,

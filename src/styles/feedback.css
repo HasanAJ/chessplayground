@@ -382,7 +382,7 @@
 
 .square-reference {
   border-radius: 2px;
-  cursor: crosshair;
+  cursor: pointer;
   text-decoration: underline dotted;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;

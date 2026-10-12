@@ -338,6 +338,13 @@
   font-weight: 600;
   letter-spacing: -0.9px;
   margin-top: 0;
+  flex-shrink: 0;
+}
+.coach-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 .side-disc {
   width: 12px;
@@ -651,7 +658,7 @@
 
 .coach-heading .turn-status {
   display: inline-block;
-  margin-top: 6px;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

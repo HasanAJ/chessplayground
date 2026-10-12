@@ -7,9 +7,10 @@ import type { BoardPreview } from "./useBoardPreview";
 
 export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
   const { t } = useTranslation();
-  const { inspection, inspectionMove, pinned, inspectMove, clearPreview } = preview;
-  if (!pinned || !inspection || !inspectionMove) return null;
-  const { candidate, ply } = inspection;
+  const { pinnedInspection, inspectMove, clearPreview } = preview;
+  if (!pinnedInspection) return null;
+  const { candidate, ply } = pinnedInspection;
+  const inspectionMove = candidate.continuation[ply - 1];
   return (
     <section
       className="board-preview-controls"

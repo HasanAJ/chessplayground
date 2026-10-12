@@ -83,19 +83,8 @@
     margin-bottom: 8px;
   }
 
-  .coach-heading > div {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-  }
-
   .coach-heading h2 {
     font-size: 16px;
-    margin: 0;
-  }
-
-  .coach-heading .turn-status {
     margin: 0;
   }
 

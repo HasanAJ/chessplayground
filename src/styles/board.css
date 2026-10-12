@@ -147,6 +147,7 @@
   place-items: center;
   min-width: 0;
   border-radius: 0;
+  cursor: pointer;
 }
 .light-square {
   background: #eeeaf8;
@@ -162,9 +163,6 @@
 }
 .square:hover {
   filter: brightness(1.035);
-}
-.previewing .square {
-  cursor: default;
 }
 .previewing .square:hover {
   filter: none;

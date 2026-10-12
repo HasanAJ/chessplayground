@@ -172,7 +172,7 @@ export function BoardPanel({
       </div>
 
       <BoardPreviewControls preview={preview} />
-      {best && !preview.boardPreview && (
+      {best && !preview.pinnedInspection && (
         <MobileCoachSummary
           candidate={best}
           onPlay={() =>

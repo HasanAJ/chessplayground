@@ -199,6 +199,7 @@ test("hovered and pinned previews preserve board structure and square highlights
     return clone.textContent;
   };
   const initialText = leftText();
+  const initialSummary = left.querySelector(".mobile-coach-summary");
   const initialChildren = Array.from(board.children);
   const initialToolbar = left.querySelector(".board-toolbar")!.textContent;
   const arrowFrames = () =>
@@ -224,6 +225,11 @@ test("hovered and pinned previews preserve board structure and square highlights
     });
     assert.equal(view.preview.boardPreview, true);
     assert.equal(view.preview.pinned, action === "click");
+    assert.equal(
+      left.querySelector(".mobile-coach-summary"),
+      action === "hover" ? initialSummary : null,
+      "temporary previews must keep the mobile summary in place",
+    );
     assert.deepEqual(Array.from(board.children), initialChildren);
     assert.equal(
       leftText(),
@@ -372,7 +378,20 @@ test("mobile preview controls navigate without changing the game and reveal an o
   assert.equal(view.scrolls, 0, "hover previews must never scroll the page");
   await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
   assert.equal(view.scrolls, 1, "a pinned mobile preview reveals an offscreen board");
+  const controls = boardPanel.querySelector(".board-preview-controls");
+  const controlsText = controls!.textContent;
+  await act(() => view.preview.inspectMove(candidates[0], 2, "hover"));
+  assert.equal(view.preview.inspection?.ply, 2);
+  assert.equal(view.preview.pinnedInspection?.ply, 1);
+  assert.equal(boardPanel.querySelector(".board-preview-controls"), controls);
+  assert.equal(controls!.textContent, controlsText);
+  assert.equal(boardPanel.querySelector(".mobile-coach-summary"), null);
+  assert.equal(view.scrolls, 1, "hovering over a pinned preview must not scroll");
+  await act(() => view.preview.inspectMove(candidates[0], 0, "hover"));
+  assert.equal(view.preview.pinned, true);
+  assert.equal(view.scrolls, 1, "restoring a pinned preview must not scroll");
   await act(() => view.preview.clearPreview());
+  assert.equal(view.preview.pinnedInspection, null);
   view.setMobile(false);
   await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
   assert.equal(view.scrolls, 1, "desktop previews preserve scroll position");

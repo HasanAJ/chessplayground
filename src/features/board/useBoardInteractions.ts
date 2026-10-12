@@ -240,9 +240,9 @@ export function useBoardInteractions(
   }, [game.revealBoard]);
 
   useEffect(() => {
-    if (preview.pinned && window.matchMedia("(max-width: 900px)").matches)
+    if (preview.pinnedInspection && window.matchMedia("(max-width: 900px)").matches)
       scrollToBoard();
-  }, [preview.pinned, preview.inspection?.candidate, preview.inspection?.ply]);
+  }, [preview.pinnedInspection]);
 
   return {
     ref,
