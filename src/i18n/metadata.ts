@@ -7,6 +7,8 @@ export type MetadataTag = {
   attrs: Record<string, string>;
 };
 
+export type PageDetails = { path: string; title: string; description: string };
+
 export function siteOrigin(siteUrl: string) {
   const site = new URL(siteUrl);
   if (
@@ -23,10 +25,17 @@ export function siteOrigin(siteUrl: string) {
   return site.origin;
 }
 
-export function pageMetadata(siteUrl: string, language: Language) {
+export function pageMetadata(
+  siteUrl: string,
+  language: Language,
+  page?: PageDetails,
+) {
   const origin = siteOrigin(siteUrl);
   const content = siteContent[language];
-  const url = `${origin}${languagePath(language)}`;
+  const path = page?.path ?? "";
+  const title = page?.title ?? content.title;
+  const description = page?.description ?? content.description;
+  const url = `${origin}${languagePath(language)}${path}`;
   const image = `${origin}/social-preview.png`;
   const meta = (property: string, value: string): MetadataTag => ({
     tag: "meta",
@@ -35,7 +44,7 @@ export function pageMetadata(siteUrl: string, language: Language) {
   const tags: MetadataTag[] = [
     {
       tag: "meta",
-      attrs: { name: "description", content: content.description },
+      attrs: { name: "description", content: description },
     },
     { tag: "link", attrs: { rel: "canonical", href: url } },
     ...Object.keys(languages).map((code) => ({
@@ -43,17 +52,21 @@ export function pageMetadata(siteUrl: string, language: Language) {
       attrs: {
         rel: "alternate",
         hreflang: code,
-        href: `${origin}${languagePath(code as Language)}`,
+        href: `${origin}${languagePath(code as Language)}${path}`,
       },
     })),
     {
       tag: "link",
-      attrs: { rel: "alternate", hreflang: "x-default", href: `${origin}/` },
+      attrs: {
+        rel: "alternate",
+        hreflang: "x-default",
+        href: `${origin}/${path}`,
+      },
     },
     meta("og:type", "website"),
     meta("og:site_name", "Tempo"),
-    meta("og:title", content.title),
-    meta("og:description", content.description),
+    meta("og:title", title),
+    meta("og:description", description),
     meta("og:url", url),
     meta("og:image", image),
     meta("og:image:type", "image/png"),
@@ -64,10 +77,10 @@ export function pageMetadata(siteUrl: string, language: Language) {
       tag: "meta",
       attrs: { name: "twitter:card", content: "summary_large_image" },
     },
-    { tag: "meta", attrs: { name: "twitter:title", content: content.title } },
+    { tag: "meta", attrs: { name: "twitter:title", content: title } },
     {
       tag: "meta",
-      attrs: { name: "twitter:description", content: content.description },
+      attrs: { name: "twitter:description", content: description },
     },
     { tag: "meta", attrs: { name: "twitter:image", content: image } },
     {
@@ -75,17 +88,17 @@ export function pageMetadata(siteUrl: string, language: Language) {
       attrs: { name: "twitter:image:alt", content: content.imageAlt },
     },
   ];
-  return { title: content.title, tags };
+  return { title, tags };
 }
 
-export function updatePageMetadata(language: Language) {
+export function updatePageMetadata(language: Language, page?: PageDetails) {
   const canonical = document.querySelector<HTMLLinkElement>(
     'link[rel="canonical"]',
   );
   const origin = canonical
     ? new URL(canonical.href).origin
     : "https://chessplayground.app";
-  const { title, tags } = pageMetadata(origin, language);
+  const { title, tags } = pageMetadata(origin, language, page);
   document.documentElement.lang = language;
   document.title = title;
   for (const { tag, attrs } of tags) {

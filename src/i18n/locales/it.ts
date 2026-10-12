@@ -1,6 +1,121 @@
 import type { Catalog } from "./en";
 
 export default {
+  "workspace.tabs.label": "Area di lavoro",
+  "workspace.tabs.play": "Gioca",
+  "workspace.tabs.opening": "Aperture",
+  "opening.seo.title": "Trappole e attacchi di apertura negli scacchi — Tempo",
+  "opening.seo.description":
+    "Impara aperture d’attacco e trappole comuni per principianti e giocatori di livello intermedio. Esplora attacco e difesa, una mossa alla volta.",
+  "opening.heading.start": "Prepara la trappola.",
+  "opening.heading.end": "Capisci l’attacco.",
+  "opening.subtitle":
+    "Aperture d’attacco che sfruttano mosse allettanti ma sbagliate. Esplora attacco e difesa, una mossa alla volta.",
+  "opening.loading": "Caricamento degli attacchi…",
+  "opening.error.title": "Impossibile caricare le aperture",
+  "opening.error.description":
+    "Controlla la connessione e ricarica per riprovare. Puoi anche tornare alla sezione «Gioca».",
+  "opening.error.reload": "Ricarica",
+  "opening.notFound": "Apertura non trovata",
+  "opening.background": "Il piano e la difesa",
+  "board.square.highlight": "Evidenzia la casa {0}",
+  "opening.search": "Cerca attacchi, aperture o case",
+  "opening.filter": "Livello",
+  "opening.level.all": "Tutti i livelli",
+  "opening.level.beginner": "Principiante",
+  "opening.level.intermediate": "Intermedio",
+  "opening.count": "{0} di {1} attacchi",
+  "opening.side": "Colore",
+  "opening.side.all": "Entrambi i colori",
+  "opening.target": "Obiettivo",
+  "opening.target.all": "Tutti gli obiettivi",
+  "opening.explore": "Esplora",
+  "opening.empty":
+    "Nessun attacco corrisponde. Prova un’altra ricerca o filtro.",
+  "opening.library.note":
+    "Ordinati per quanto l’errore sembra invitante a chi non conosce la trappola. È una stima editoriale, non un tasso di successo misurato.",
+  "opening.rank": "Posizione {0} per facilità stimata di cadere nella trappola",
+  "opening.backToLibrary": "Tutti gli attacchi",
+  "opening.viewer.label": "Scacchiera e navigazione della lezione d’attacco",
+  "opening.board.label": "Scacchiera di sola lettura, passo {0} di {1}",
+  "opening.step": "Passo {0} di {1}",
+  "opening.progress": "Avanzamento della lezione",
+  "opening.navigation": "Navigazione delle mosse",
+  "opening.previous": "Indietro",
+  "opening.next": "Avanti",
+  "opening.restart": "Ricomincia",
+  "opening.beforeStart": "Prima di iniziare",
+  "opening.moveIdea": "L’idea di questa mossa",
+  "opening.start.trap":
+    "Segui l’attacco del {0}. Fai attenzione alla risposta invitante {1}.",
+  "opening.start.defense":
+    "Osserva come il {0} evita la trappola immediata, iniziando con {1}.",
+  "opening.startPosition": "La posizione iniziale",
+  "opening.plan": "L’idea d’attacco",
+  "opening.mistake": "La tentazione",
+  "opening.defense": "Se si difendono",
+  "opening.complete": "Il risultato di questa linea",
+  "opening.branch.label": "Scegli un percorso",
+  "opening.branch.trap": "Accettano l’esca",
+  "opening.branch.defense": "Si difendono",
+  "opening.stage.setup": "Prepara la posizione",
+  "opening.stage.temptation": "La risposta invitante",
+  "opening.stage.attack": "Segui l’attacco",
+  "opening.stage.defense": "Evita la trappola",
+  "opening.result.defense": "La trappola immediata è evitata",
+  "opening.defense.takeaway":
+    "Continua da questa posizione. Evitare la trappola non elimina sempre la pressione dell’attaccante.",
+  "opening.risk.low": "Occasione tattica",
+  "opening.risk.gambit": "Materiale offerto per attaccare",
+  "opening.risk.high": "Rischioso se l’avversario si difende",
+  "opening.risk.detail.low":
+    "Cerca la tattica mentre ti sviluppi. L’avversario può scegliere un’altra strada.",
+  "opening.risk.detail.gambit":
+    "Offri materiale per guadagnare attività. Impara a proseguire se l’avversario evita la trappola.",
+  "opening.risk.detail.high":
+    "Una difesa precisa può lasciare l’attaccante indietro nel materiale o nello sviluppo.",
+  "opening.idea.mate":
+    "Il re è sotto scacco e non ha una fuga legale. L’attacco termina con il matto.",
+  "opening.idea.underpromotion":
+    "Promuovere a cavallo dà scacco e obbliga l’avversario a rispondere. Qui conta più di scegliere una donna.",
+  "opening.idea.check":
+    "È scacco. Bisogna proteggere il re prima di rispondere a un’altra minaccia.",
+  "opening.idea.castle":
+    "L’arrocco allontana il re dal centro e avvicina la torre all’azione.",
+  "opening.idea.capture":
+    "Dopo questa cattura, cerca di nuovo scacchi e attacchi ai pezzi indifesi. Le linee aperte possono essere cambiate.",
+  "opening.idea.p":
+    "Il pedone raggiunge {0} e cambia le case che controlla. Osserva quali diagonali si aprono o chiudono.",
+  "opening.idea.n":
+    "Da {0}, il cavallo può creare forchette. Controlla quali pezzi nemici sono a un salto di distanza.",
+  "opening.idea.b":
+    "L’alfiere raggiunge {0}. Segui le diagonali verso il re o un pezzo indifeso.",
+  "opening.idea.q":
+    "La donna raggiunge {0}. Cerca minacce immediate e ricorda che l’avversario può attaccarla.",
+  "opening.idea.r":
+    "La torre raggiunge {0}. Cerca sulla traversa e sulla colonna un bersaglio o una via d’attacco.",
+  "opening.idea.k":
+    "Il re raggiunge {0}. Controlla le case di fuga vicine e i pezzi che le proteggono.",
+  "opening.reward.mate": "Dare scacco matto",
+  "opening.reward.rookPawn": "Catturare torre e pedone",
+  "opening.reward.exchange": "Torre e pedoni per un cavallo",
+  "opening.reward.queen": "Catturare la donna",
+  "opening.reward.queenForKnight": "Donna per un cavallo",
+  "opening.reward.queenForBishop": "Donna per un alfiere",
+  "opening.reward.queenForPieces": "Donna per due pezzi leggeri",
+  "opening.reward.pieceForPawn": "Cavallo per un pedone",
+  "opening.reward.pieceForPawns": "Alfiere per due pedoni",
+  "opening.reward.rookKnight": "Catturare torre e cavallo",
+  "opening.reward.recoverPiece": "Recuperare il pezzo con scacco",
+  "opening.reward.space": "Guadagnare spazio e sviluppo",
+  "opening.reward.attack": "Esporre il re",
+  "opening.reward.activity": "Recuperare materiale con donna attiva",
+  "opening.theme.mate": "Scacco matto",
+  "opening.theme.queen": "Vincere la donna",
+  "opening.theme.rook": "Vincere una torre",
+  "opening.theme.piece": "Vincere un pezzo",
+  "opening.theme.attack": "Costruire un attacco",
+
   "intro.guide.show": "Come giocare",
   "intro.guide.hide": "Nascondi istruzioni",
   "board.editor.open": "Modifica posizione",

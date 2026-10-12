@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Square } from "chess.js";
+import { useTranslation } from "../../i18n/LanguageProvider";
 
 type Input = "hover" | "focus";
 type Highlight = { square: Square; owner: string; key: string };
@@ -75,6 +76,7 @@ export function SquareText({
   focusable?: boolean;
 }) {
   const highlight = useContext(SquareHighlightContext);
+  const { t } = useTranslation();
   const owner = useId();
   const clear = highlight?.clear;
   useEffect(() => () => clear?.(owner), [clear, owner, text]);
@@ -86,19 +88,26 @@ export function SquareText({
   )) {
     const square = match[1] as Square;
     parts.push(text.slice(end, match.index));
+    const Tag = focusable && highlight ? "button" : "span";
     parts.push(
-      <span
+      <Tag
         key={match.index}
         className="square-reference"
         data-square-reference={square}
-        tabIndex={focusable && highlight ? 0 : undefined}
+        type={Tag === "button" ? "button" : undefined}
+        aria-label={
+          Tag === "button"
+            ? `${match[0]}: ${t("board.square.highlight", square)}`
+            : undefined
+        }
+        onClick={() => highlight?.show(square, owner, "focus")}
         onMouseEnter={() => highlight?.show(square, owner, "hover")}
         onMouseLeave={() => clear?.(owner, "hover")}
         onFocus={() => highlight?.show(square, owner, "focus")}
         onBlur={() => clear?.(owner, "focus")}
       >
         {match[0]}
-      </span>,
+      </Tag>,
     );
     end = match.index + match[0].length;
   }

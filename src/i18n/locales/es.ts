@@ -1,6 +1,121 @@
 import type { Catalog } from "./en";
 
 export default {
+  "workspace.tabs.label": "Espacio de trabajo",
+  "workspace.tabs.play": "Jugar",
+  "workspace.tabs.opening": "Aperturas",
+  "opening.seo.title": "Trampas y ataques de apertura en ajedrez — Tempo",
+  "opening.seo.description":
+    "Aprende aperturas de ataque y trampas habituales para principiantes y jugadores de nivel intermedio. Explora el ataque y la defensa, jugada a jugada.",
+  "opening.heading.start": "Prepara la trampa.",
+  "opening.heading.end": "Entiende el ataque.",
+  "opening.subtitle":
+    "Aperturas de ataque que aprovechan jugadas que parecen buenas, pero son errores. Explora el ataque y la defensa, jugada a jugada.",
+  "opening.loading": "Cargando ataques…",
+  "opening.error.title": "No se pudieron cargar las aperturas",
+  "opening.error.description":
+    "Comprueba tu conexión y recarga para intentarlo de nuevo. También puedes volver a Jugar.",
+  "opening.error.reload": "Recargar",
+  "opening.notFound": "Apertura no encontrada",
+  "opening.background": "El plan y la defensa",
+  "board.square.highlight": "Resaltar la casilla {0}",
+  "opening.search": "Busca ataques, aperturas o casillas",
+  "opening.filter": "Nivel",
+  "opening.level.all": "Todos los niveles",
+  "opening.level.beginner": "Principiante",
+  "opening.level.intermediate": "Intermedio",
+  "opening.count": "{0} de {1} ataques",
+  "opening.side": "Color",
+  "opening.side.all": "Ambos colores",
+  "opening.target": "Objetivo",
+  "opening.target.all": "Todos los objetivos",
+  "opening.explore": "Ver jugadas",
+  "opening.empty":
+    "No hay ataques que coincidan. Prueba otra búsqueda o filtro.",
+  "opening.library.note":
+    "Ordenados por lo tentador del error para quien no conoce la trampa. Es una estimación editorial, no una tasa de éxito medida.",
+  "opening.rank": "Puesto {0} según lo fácil que es caer en la trampa",
+  "opening.backToLibrary": "Todos los ataques",
+  "opening.viewer.label": "Tablero y navegación de la lección de ataque",
+  "opening.board.label": "Tablero de apertura de solo lectura, paso {0} de {1}",
+  "opening.step": "Paso {0} de {1}",
+  "opening.progress": "Progreso de la lección",
+  "opening.navigation": "Navegación de jugadas de la lección",
+  "opening.previous": "Atrás",
+  "opening.next": "Adelante",
+  "opening.restart": "Reiniciar",
+  "opening.beforeStart": "Antes de empezar",
+  "opening.moveIdea": "La idea de esta jugada",
+  "opening.start.trap":
+    "Sigue el ataque con {0}. Fíjate en la tentadora respuesta {1}.",
+  "opening.start.defense":
+    "Observa cómo {0} evita la trampa inmediata, empezando con {1}.",
+  "opening.startPosition": "La posición inicial",
+  "opening.plan": "La idea de ataque",
+  "opening.mistake": "La tentación",
+  "opening.defense": "Si se defienden",
+  "opening.complete": "El resultado de esta línea",
+  "opening.branch.label": "Elige un recorrido",
+  "opening.branch.trap": "Caen en la trampa",
+  "opening.branch.defense": "Se defienden",
+  "opening.stage.setup": "Prepara la posición",
+  "opening.stage.temptation": "La respuesta tentadora",
+  "opening.stage.attack": "Sigue el ataque",
+  "opening.stage.defense": "Evita la trampa",
+  "opening.result.defense": "Se evita la trampa inmediata",
+  "opening.defense.takeaway":
+    "Continúa desde esta posición. Evitar la trampa no siempre elimina la presión del atacante.",
+  "opening.risk.low": "Oportunidad táctica",
+  "opening.risk.gambit": "Material ofrecido para atacar",
+  "opening.risk.high": "Arriesgado si el rival se defiende",
+  "opening.risk.detail.low":
+    "Busca la táctica mientras desarrollas. El rival puede elegir otra ruta.",
+  "opening.risk.detail.gambit":
+    "Ofreces material para ganar actividad. Aprende a continuar si el rival evita la trampa.",
+  "opening.risk.detail.high":
+    "Una defensa precisa puede dejar al atacante por detrás en material o desarrollo.",
+  "opening.idea.mate":
+    "El rey está en jaque y no tiene salida legal. El ataque termina en mate.",
+  "opening.idea.underpromotion":
+    "Promocionar a caballo da jaque y obliga al rival a responder. Aquí eso importa más que elegir dama.",
+  "opening.idea.check":
+    "Es jaque. Hay que proteger al rey antes de responder a otra amenaza.",
+  "opening.idea.castle":
+    "El enroque aleja al rey del centro y acerca la torre a la acción.",
+  "opening.idea.capture":
+    "Tras esta captura, busca de nuevo jaques y ataques a piezas sueltas. Las líneas abiertas pueden cambiar.",
+  "opening.idea.p":
+    "El peón llega a {0} y cambia las casillas que controla. Observa qué diagonales se abren o cierran.",
+  "opening.idea.n":
+    "Desde {0}, el caballo puede crear horquillas. Mira qué piezas rivales están a un salto.",
+  "opening.idea.b":
+    "El alfil llega a {0}. Sigue sus diagonales hacia el rey o una pieza suelta.",
+  "opening.idea.q":
+    "La dama llega a {0}. Busca amenazas inmediatas y recuerda que el rival también puede atacarla.",
+  "opening.idea.r":
+    "La torre llega a {0}. Mira su fila y columna buscando objetivos o una ruta de ataque.",
+  "opening.idea.k":
+    "El rey llega a {0}. Comprueba las salidas cercanas y qué piezas las protegen.",
+  "opening.reward.mate": "Dar jaque mate",
+  "opening.reward.rookPawn": "Capturar torre y peón",
+  "opening.reward.exchange": "Torre y peones por un caballo",
+  "opening.reward.queen": "Capturar la dama",
+  "opening.reward.queenForKnight": "Dama por un caballo",
+  "opening.reward.queenForBishop": "Dama por un alfil",
+  "opening.reward.queenForPieces": "Dama por dos piezas menores",
+  "opening.reward.pieceForPawn": "Caballo por un peón",
+  "opening.reward.pieceForPawns": "Alfil por dos peones",
+  "opening.reward.rookKnight": "Capturar torre y caballo",
+  "opening.reward.recoverPiece": "Recuperar la pieza con jaque",
+  "opening.reward.space": "Ganar espacio y desarrollo",
+  "opening.reward.attack": "Exponer al rey",
+  "opening.reward.activity": "Recuperar material con dama activa",
+  "opening.theme.mate": "Jaque mate",
+  "opening.theme.queen": "Ganar la dama",
+  "opening.theme.rook": "Ganar una torre",
+  "opening.theme.piece": "Ganar una pieza",
+  "opening.theme.attack": "Crear un ataque",
+
   "intro.guide.show": "Cómo jugar",
   "intro.guide.hide": "Ocultar instrucciones",
   "board.editor.open": "Editar posición",

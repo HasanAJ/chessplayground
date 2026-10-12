@@ -39,14 +39,14 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - name: Verify HTTPS and chess engine
+      - name: Verify HTTPS, lesson routes and chess engine
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' https://chessplayground.app/ --output /tmp/deployed-index.html
-          cmp dist/index.html /tmp/deployed-index.html
-          for language in es de it fr; do
-            curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' "https://chessplayground.app/$language/" --output "/tmp/deployed-$language.html"
-            cmp "dist/$language/index.html" "/tmp/deployed-$language.html"
+          for prefix in '' es/ de/ it/ fr/; do
+            for page in '' openings/ openings/wayward-rook/; do
+              curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 --max-time 20 --proto '=https' "https://chessplayground.app/$prefix$page" --output /tmp/deployed-page.html
+              cmp "dist/$prefix${page}index.html" /tmp/deployed-page.html
+            done
           done
           for asset in robots.txt sitemap.xml; do
             curl --fail --silent --show-error --retry 3 --retry-all-errors --retry-delay 5 --max-time 20 --proto '=https' "https://chessplayground.app/$asset" --output "/tmp/deployed-$asset"

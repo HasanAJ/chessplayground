@@ -4,6 +4,14 @@ A local chess prototype for understanding the plan behind your next move. Arrang
 
 Choose English, Spanish, German, Italian, or French in the header. The URL keeps the selected language across reloads; switching languages keeps your game.
 
+The **Openings** tab contains 30 attacking lessons for beginner and intermediate players, including early queen attacks, gambits, and traps. Each has two walkthroughs: the tempting mistake and its punishment, and a reply that avoids the immediate trap. Search or filter by level, side, and target, then use Back, Forward, or the arrow keys to follow both sides one move at a time. There are 121 localized teaching notes for the key mistakes, tactical moves, outcomes, and defensive replies. Their arrows and square outlines change with the position. Square references support hover, keyboard focus, and tapping. Restart and board flip help with review. Switching tabs pauses computer play and analysis, preserves the game, and keeps your lesson position.
+
+The library is at `/openings/`; lessons have individual URLs such as `/openings/wayward-rook/`, with translated routes such as `/es/openings/wayward-rook/`. The build emits these pages with unique descriptions, canonical and social metadata, and reciprocal language links. The initial HTML includes the library links, lesson summaries, and both move sequences before JavaScript runs. Browser Back follows lesson navigation, and switching languages preserves the current lesson. On narrow screens, the current move explanation sits between the board and its controls; the plan and defence are expandable. A lesson loading error offers Reload and access to Play.
+
+Lessons are bundled in all five languages and load when you first open the tab. Their order is an editorial estimate of how tempting each mistake looks to a newer player; it is not a measured success rate. Cards distinguish mate, material gains, and attacking activity, and explain the cost of speculative gambits when the opponent defends well.
+
+Lesson prose and representative lines are authored for Tempo, with references including Chess.com's [opening traps](https://www.chess.com/article/view/the-10-best-chess-traps), [Siberian Trap](https://www.chess.com/article/view/tactical-patterns-everyone-should-know-the-siberian-trap), and opening guides for the [Stafford Gambit](https://www.chess.com/openings/Petrovs-Defense-Classical-Stafford-Gambit), [Englund Gambit](https://www.chess.com/openings/englund-gambit), [Fried Liver Attack](https://www.chess.com/openings/Italian-Game-Fried-Liver-Attack), [Scotch Gambit](https://www.chess.com/openings/Scotch-Game-Scotch-Gambit), and [Evans Gambit](https://www.chess.com/openings/Giuoco-Piano-Game-Evans-Gambit). Tests validate all 60 lines with chess.js and check their mate and material outcomes. Stockfish 19 Lite was also used to review the final positions during authoring.
+
 ## Run
 
 Requires Node.js 22.12+.
@@ -27,7 +35,7 @@ The installation copies Stockfish's small, single-threaded WebAssembly engine in
 
 `.github/workflows/deploy.yml` runs the tests, builds the complete site, and validates the Cloudflare configuration on pull requests and pushes to `main`. Successful pushes to `main`, or manual runs on `main`, deploy to `https://chessplayground.app` and check that HTTPS and the Stockfish engine are available.
 
-The build creates English at `/` and translated pages at `/es/`, `/de/`, `/it/`, and `/fr/`. Each includes its title, description, canonical URL, language links, and introductory content before JavaScript runs. The live app uses the same content and metadata. `SITE_URL` can override the production origin for another deployment; the generated sitemap lists all five pages. Deployment checks verify these pages, the sitemap, and 404 responses.
+The build creates 160 pages: Play, the Openings library, and 30 lessons in each of the five languages. English starts at `/`; translated pages start at `/es/`, `/de/`, `/it/`, and `/fr/`. Each includes its title, description, canonical URL, language links, and introductory content before JavaScript runs. The live app uses the same content and metadata. `SITE_URL` can override the production origin for another deployment; the generated sitemap lists all 160 pages. Build tests verify every page and its translated metadata and links. Deployment checks verify Play, the library, and a lesson in each language, along with the sitemap and 404 responses.
 
 Configure these GitHub Actions settings on `HasanAJ/chessplayground`:
 
@@ -99,6 +107,7 @@ src/
     coach/             Recommendations, explanations, ratings, strategy, coach cards
     computer/          Opponent settings, difficulty preferences, paced computer turns
     game/              Game state, history, FEN loader, promotion, results, autosave
+    openings/          Attacking lessons, localized teaching prose, read-only walkthroughs
   styles/              Ordered stylesheets for shared controls and feature layouts
 ```
 
@@ -115,7 +124,7 @@ The saved-game format and storage keys remain compatible with existing sessions.
 
 Styles are imported through `styles/index.css`. Its import order preserves the existing cascade, including responsive and compact layout rules. Update the owning stylesheet when changing a control.
 
-Tests mirror these areas under `tests/chess`, `tests/engine`, `tests/coach`, `tests/game`, and `tests/computer`. Test filenames match the module they cover, such as `moveReview.test.ts` and `GameOverCard.test.ts`. Focused suites add a behavior suffix, such as `grading.outcomes.test.ts`; suites spanning related components use descriptive camelCase names. They cover legal arrangements and special moves, worker cancellation/recovery, recommendation filtering, grading, saved-game restoration, computer pacing, and component rendering contracts. Interaction checks for hover previews, history navigation, FEN loading, promotion, computer play, and narrow layouts should also be performed in the browser after controller or layout changes.
+Tests mirror these areas under `tests/chess`, `tests/engine`, `tests/coach`, `tests/game`, `tests/computer`, and `tests/openings`. Test filenames match the module they cover, such as `moveReview.test.ts` and `GameOverCard.test.ts`. Focused suites add a behavior suffix, such as `grading.outcomes.test.ts`; suites spanning related components use descriptive camelCase names. They cover legal arrangements and special moves, worker cancellation/recovery, recommendation filtering, grading, saved-game restoration, computer pacing, and component rendering contracts. Interaction checks for hover previews, history navigation, FEN loading, promotion, computer play, and narrow layouts should also be performed in the browser after controller or layout changes.
 
 ```sh
 npm test       # Domain, worker, and component rendering tests

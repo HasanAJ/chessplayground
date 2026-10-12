@@ -1,4 +1,118 @@
 const en = {
+  "workspace.tabs.label": "Workspace",
+  "workspace.tabs.play": "Play",
+  "workspace.tabs.opening": "Openings",
+  "opening.seo.title": "Chess opening traps and attacks — Tempo",
+  "opening.seo.description":
+    "Learn attacking chess openings and common traps for beginner and intermediate players. Explore the attack and the defence, one move at a time.",
+  "opening.heading.start": "Set the trap.",
+  "opening.heading.end": "Understand the attack.",
+  "opening.subtitle":
+    "Attacking openings built around tempting mistakes. Explore the attack and the defence, one move at a time.",
+  "opening.loading": "Loading attacks…",
+  "opening.error.title": "Openings could not load",
+  "opening.error.description":
+    "Check your connection and reload to try again. You can also return to Play.",
+  "opening.error.reload": "Reload",
+  "opening.notFound": "Opening not found",
+  "opening.background": "The plan and defence",
+  "board.square.highlight": "Highlight square {0}",
+  "opening.search": "Search attacks, openings or squares",
+  "opening.filter": "Level",
+  "opening.level.all": "All levels",
+  "opening.level.beginner": "Beginner",
+  "opening.level.intermediate": "Intermediate",
+  "opening.count": "{0} of {1} attacks",
+  "opening.side": "Side",
+  "opening.side.all": "Both colours",
+  "opening.target": "Goal",
+  "opening.target.all": "All goals",
+  "opening.explore": "Walk through",
+  "opening.empty": "No attacks match. Try another search or filter.",
+  "opening.library.note":
+    "Ordered by estimated temptation for an unfamiliar player. This is an editorial ranking, not measured success rates.",
+  "opening.rank": "Estimated temptation rank {0}",
+  "opening.backToLibrary": "All attacks",
+  "opening.viewer.label": "Attack lesson board and navigation",
+  "opening.board.label": "Read-only opening board, step {0} of {1}",
+  "opening.step": "Step {0} of {1}",
+  "opening.progress": "Lesson progress",
+  "opening.navigation": "Lesson move navigation",
+  "opening.previous": "Back",
+  "opening.next": "Forward",
+  "opening.restart": "Restart",
+  "opening.beforeStart": "Before you begin",
+  "opening.moveIdea": "The idea behind this move",
+  "opening.start.trap":
+    "Follow the attack for {0}. Watch for the tempting reply {1}.",
+  "opening.start.defense":
+    "Watch how {0} avoids the immediate trap, starting with {1}.",
+  "opening.startPosition": "The starting position",
+  "opening.plan": "The attacking idea",
+  "opening.mistake": "The temptation",
+  "opening.defense": "If they defend",
+  "opening.complete": "The result of this line",
+  "opening.branch.label": "Choose a walkthrough",
+  "opening.branch.trap": "They take the bait",
+  "opening.branch.defense": "They defend",
+  "opening.stage.setup": "Build the position",
+  "opening.stage.temptation": "The tempting reply",
+  "opening.stage.attack": "Follow the attack",
+  "opening.stage.defense": "Avoid the trap",
+  "opening.result.defense": "The immediate trap is avoided",
+  "opening.defense.takeaway":
+    "Continue from this position. Avoiding the trap does not always remove the attacker’s pressure.",
+  "opening.risk.low": "Tactical opportunity",
+  "opening.risk.gambit": "Material offered for attack",
+  "opening.risk.high": "Risky if avoided",
+  "opening.risk.detail.low":
+    "Look for the tactic as you develop. The opponent can choose a different route.",
+  "opening.risk.detail.gambit":
+    "You offer material to gain activity. Know how to continue if the opponent avoids the trap.",
+  "opening.risk.detail.high":
+    "Accurate defence can leave the attacker behind in material or development.",
+  "opening.idea.mate":
+    "The king is in check and has no legal escape. The attack ends in checkmate.",
+  "opening.idea.underpromotion":
+    "Promoting to a knight gives check. That extra forcing move matters more than choosing a queen here.",
+  "opening.idea.check":
+    "This is check. The king’s safety must be answered before another threat can be dealt with.",
+  "opening.idea.castle":
+    "Castling moves the king away from the centre and brings the rook closer to the action.",
+  "opening.idea.capture":
+    "After this capture, look again for checks and attacks on loose pieces. The open lines may have changed.",
+  "opening.idea.p":
+    "The pawn reaches {0}, changing the squares it controls. Watch which diagonals open or close.",
+  "opening.idea.n":
+    "From {0}, the knight can create forks. Check which enemy pieces lie one knight jump away.",
+  "opening.idea.b":
+    "The bishop reaches {0}. Follow its diagonals to see whether it points at the king or a loose piece.",
+  "opening.idea.q":
+    "The queen reaches {0}. Look for immediate threats, and remember that the opponent can also attack the queen.",
+  "opening.idea.r":
+    "The rook reaches {0}. Look along its rank and file for a target or a route into the attack.",
+  "opening.idea.k":
+    "The king reaches {0}. Check the nearby escape squares and which pieces protect them.",
+  "opening.reward.mate": "Deliver checkmate",
+  "opening.reward.rookPawn": "Capture a rook and pawn",
+  "opening.reward.exchange": "Rook and pawns for a knight",
+  "opening.reward.queen": "Capture the queen",
+  "opening.reward.queenForKnight": "Queen for a knight",
+  "opening.reward.queenForBishop": "Queen for a bishop",
+  "opening.reward.queenForPieces": "Queen for two minor pieces",
+  "opening.reward.pieceForPawn": "Knight for a pawn",
+  "opening.reward.pieceForPawns": "Bishop for two pawns",
+  "opening.reward.rookKnight": "Capture a rook and knight",
+  "opening.reward.recoverPiece": "Recover the piece with check",
+  "opening.reward.space": "Gain space and development",
+  "opening.reward.attack": "Expose the king",
+  "opening.reward.activity": "Recover material with an active queen",
+  "opening.theme.mate": "Checkmate",
+  "opening.theme.queen": "Win the queen",
+  "opening.theme.rook": "Win a rook",
+  "opening.theme.piece": "Win a piece",
+  "opening.theme.attack": "Build an attack",
+
   "intro.guide.show": "How to play",
   "intro.guide.hide": "Hide instructions",
   "board.editor.open": "Edit position",
@@ -39,12 +153,10 @@ const en = {
   "intro.heading.start": "Your next move,",
   "intro.heading.end": "explained.",
   "intro.tagline": "Explore the board. Understand the plan. Try a move.",
-  "intro.guide.play":
-    "Select a piece and its destination to play.",
+  "intro.guide.play": "Select a piece and its destination to play.",
   "intro.guide.analyze":
     "Choose “{0}”, then preview a reply or try the suggestion.",
-  "intro.guide.setup":
-    "Use the editing tools to build your own position.",
+  "intro.guide.setup": "Use the editing tools to build your own position.",
   "footer.tagline": "A good move starts with a little understanding.",
   "footer.engine": "Powered by Stockfish 19",
   "move.description.normal": "{0}{1} from {2} to {3}",

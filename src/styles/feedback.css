@@ -381,11 +381,18 @@
 }
 
 .square-reference {
+  padding: 0 2px;
+  margin: 0 -2px;
+  font: inherit;
+  line-height: inherit;
   border-radius: 2px;
   cursor: pointer;
   text-decoration: underline dotted;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
+}
+button.square-reference {
+  min-height: 24px;
 }
 button .square-reference {
   cursor: inherit;

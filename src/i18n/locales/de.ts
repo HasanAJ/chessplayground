@@ -1,6 +1,120 @@
 import type { Catalog } from "./en";
 
 export default {
+  "workspace.tabs.label": "Arbeitsbereich",
+  "workspace.tabs.play": "Spielen",
+  "workspace.tabs.opening": "Eröffnungen",
+  "opening.seo.title": "Schacheröffnungen: Fallen und Angriffe — Tempo",
+  "opening.seo.description":
+    "Lerne Angriffseröffnungen und typische Fallen für Anfänger und Fortgeschrittene. Erkunde Angriff und Verteidigung, Zug für Zug.",
+  "opening.heading.start": "Stelle die Falle.",
+  "opening.heading.end": "Verstehe den Angriff.",
+  "opening.subtitle":
+    "Angriffseröffnungen, die scheinbar gute Züge als Fehler entlarven. Erkunde Angriff und Verteidigung, Zug für Zug.",
+  "opening.loading": "Angriffe werden geladen…",
+  "opening.error.title": "Die Eröffnungen konnten nicht geladen werden",
+  "opening.error.description":
+    "Prüfe deine Verbindung und lade die Seite neu. Du kannst auch zum Bereich „Spielen“ zurückkehren.",
+  "opening.error.reload": "Neu laden",
+  "opening.notFound": "Eröffnung nicht gefunden",
+  "opening.background": "Plan und Verteidigung",
+  "board.square.highlight": "Feld {0} hervorheben",
+  "opening.search": "Angriffe, Eröffnungen oder Felder suchen",
+  "opening.filter": "Niveau",
+  "opening.level.all": "Alle Niveaus",
+  "opening.level.beginner": "Anfänger",
+  "opening.level.intermediate": "Fortgeschritten",
+  "opening.count": "{0} von {1} Angriffen",
+  "opening.side": "Farbe",
+  "opening.side.all": "Beide Farben",
+  "opening.target": "Ziel",
+  "opening.target.all": "Alle Ziele",
+  "opening.explore": "Durchgehen",
+  "opening.empty": "Keine passenden Angriffe. Ändere die Suche oder Filter.",
+  "opening.library.note":
+    "Geordnet nach geschätztem Anreiz für Spieler, die die Falle nicht kennen. Eine redaktionelle Einschätzung, keine gemessene Erfolgsquote.",
+  "opening.rank": "Platz {0} nach geschätzter Anfälligkeit für die Falle",
+  "opening.backToLibrary": "Alle Angriffe",
+  "opening.viewer.label": "Brett und Navigation der Angriffslektion",
+  "opening.board.label": "Eröffnungsbrett zum Betrachten, Schritt {0} von {1}",
+  "opening.step": "Schritt {0} von {1}",
+  "opening.progress": "Lektionsfortschritt",
+  "opening.navigation": "Zugnavigation der Lektion",
+  "opening.previous": "Zurück",
+  "opening.next": "Weiter",
+  "opening.restart": "Neustart",
+  "opening.beforeStart": "Bevor du beginnst",
+  "opening.moveIdea": "Die Idee hinter diesem Zug",
+  "opening.start.trap":
+    "Verfolge den Angriff von {0}. Achte auf die verlockende Antwort {1}.",
+  "opening.start.defense":
+    "Verfolge, wie {0} die unmittelbare Falle vermeidet, beginnend mit {1}.",
+  "opening.startPosition": "Die Anfangsstellung",
+  "opening.plan": "Die Angriffsidee",
+  "opening.mistake": "Die Verlockung",
+  "opening.defense": "Wenn sie sich verteidigen",
+  "opening.complete": "Das Ergebnis dieser Variante",
+  "opening.branch.label": "Wähle einen Ablauf",
+  "opening.branch.trap": "Sie nehmen den Köder",
+  "opening.branch.defense": "Sie verteidigen sich",
+  "opening.stage.setup": "Stellung aufbauen",
+  "opening.stage.temptation": "Die verlockende Antwort",
+  "opening.stage.attack": "Dem Angriff folgen",
+  "opening.stage.defense": "Die Falle vermeiden",
+  "opening.result.defense": "Die unmittelbare Falle ist vermieden",
+  "opening.defense.takeaway":
+    "Spiele von hier weiter. Die Falle zu vermeiden beseitigt nicht immer den Druck des Angreifers.",
+  "opening.risk.low": "Taktische Gelegenheit",
+  "opening.risk.gambit": "Material für den Angriff angeboten",
+  "opening.risk.high": "Riskant bei guter Verteidigung",
+  "opening.risk.detail.low":
+    "Achte beim Entwickeln auf die Taktik. Der Gegner kann einen anderen Weg wählen.",
+  "opening.risk.detail.gambit":
+    "Du gibst Material für Aktivität. Lerne weiterzuspielen, wenn der Gegner die Falle vermeidet.",
+  "opening.risk.detail.high":
+    "Genaue Verteidigung kann dem Angreifer Material- oder Entwicklungsrückstand bringen.",
+  "opening.idea.mate":
+    "Der König steht im Schach und hat keinen legalen Ausweg. Der Angriff endet mit Matt.",
+  "opening.idea.underpromotion":
+    "Die Springerumwandlung gibt Schach. Dieser zwingende Zug zählt hier mehr als eine Dame.",
+  "opening.idea.check":
+    "Das ist Schach. Der König muss gesichert werden, bevor eine andere Drohung beantwortet wird.",
+  "opening.idea.castle":
+    "Die Rochade bringt den König aus dem Zentrum und den Turm näher ans Geschehen.",
+  "opening.idea.capture":
+    "Suche nach diesem Schlag erneut nach Schachs und Angriffen auf ungedeckte Figuren. Linien können sich geöffnet haben.",
+  "opening.idea.p":
+    "Der Bauer erreicht {0} und kontrolliert neue Felder. Achte auf geöffnete oder geschlossene Diagonalen.",
+  "opening.idea.n":
+    "Von {0} aus kann der Springer Gabeln bilden. Prüfe, welche gegnerischen Figuren einen Sprung entfernt sind.",
+  "opening.idea.b":
+    "Der Läufer erreicht {0}. Verfolge seine Diagonalen zum König oder zu einer ungedeckten Figur.",
+  "opening.idea.q":
+    "Die Dame erreicht {0}. Suche nach direkten Drohungen und beachte mögliche Angriffe auf die Dame.",
+  "opening.idea.r":
+    "Der Turm erreicht {0}. Suche auf Reihe und Linie nach einem Ziel oder Angriffsweg.",
+  "opening.idea.k":
+    "Der König erreicht {0}. Prüfe die nahen Fluchtfelder und ihre Deckung.",
+  "opening.reward.mate": "Schachmatt setzen",
+  "opening.reward.rookPawn": "Turm und Bauer schlagen",
+  "opening.reward.exchange": "Turm und Bauern für einen Springer",
+  "opening.reward.queen": "Die Dame schlagen",
+  "opening.reward.queenForKnight": "Dame für einen Springer",
+  "opening.reward.queenForBishop": "Dame für einen Läufer",
+  "opening.reward.queenForPieces": "Dame für zwei Leichtfiguren",
+  "opening.reward.pieceForPawn": "Springer für einen Bauern",
+  "opening.reward.pieceForPawns": "Läufer für zwei Bauern",
+  "opening.reward.rookKnight": "Turm und Springer schlagen",
+  "opening.reward.recoverPiece": "Figur mit Schach zurückgewinnen",
+  "opening.reward.space": "Raum und Entwicklung gewinnen",
+  "opening.reward.attack": "Den König entblößen",
+  "opening.reward.activity": "Material mit aktiver Dame zurückgewinnen",
+  "opening.theme.mate": "Schachmatt",
+  "opening.theme.queen": "Dame gewinnen",
+  "opening.theme.rook": "Turm gewinnen",
+  "opening.theme.piece": "Figur gewinnen",
+  "opening.theme.attack": "Angriff aufbauen",
+
   "intro.guide.show": "So spielst du",
   "intro.guide.hide": "Anleitung ausblenden",
   "board.editor.open": "Stellung bearbeiten",

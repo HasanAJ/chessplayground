@@ -237,7 +237,7 @@ test("hovered and pinned previews preserve board structure and square highlights
       "previews must not replace the board or its controls",
     );
     assert.equal(
-      left.querySelectorAll(".board-preview-controls button").length,
+      left.querySelectorAll(".board-preview-actions > button").length,
       action === "click" ? 3 : 0,
     );
     assert.equal(left.querySelector(".board-toolbar")!.textContent, initialToolbar);

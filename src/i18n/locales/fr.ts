@@ -1,6 +1,121 @@
 import type { Catalog } from "./en";
 
 export default {
+  "workspace.tabs.label": "Espace de travail",
+  "workspace.tabs.play": "Jouer",
+  "workspace.tabs.opening": "Ouvertures",
+  "opening.seo.title": "Pièges et attaques d’ouverture aux échecs — Tempo",
+  "opening.seo.description":
+    "Apprenez les ouvertures d’attaque et les pièges courants pour joueurs débutants et intermédiaires. Explorez l’attaque et la défense, coup par coup.",
+  "opening.heading.start": "Tendez le piège.",
+  "opening.heading.end": "Comprenez l’attaque.",
+  "opening.subtitle":
+    "Des ouvertures d’attaque qui exploitent des coups tentants mais trompeurs. Explorez l’attaque et la défense, coup par coup.",
+  "opening.loading": "Chargement des attaques…",
+  "opening.error.title": "Impossible de charger les ouvertures",
+  "opening.error.description":
+    "Vérifiez votre connexion et rechargez la page pour réessayer. Vous pouvez aussi revenir à la section « Jouer ».",
+  "opening.error.reload": "Recharger",
+  "opening.notFound": "Ouverture introuvable",
+  "opening.background": "Le plan et la défense",
+  "board.square.highlight": "Surligner la case {0}",
+  "opening.search": "Chercher attaques, ouvertures ou cases",
+  "opening.filter": "Niveau",
+  "opening.level.all": "Tous niveaux",
+  "opening.level.beginner": "Débutant",
+  "opening.level.intermediate": "Intermédiaire",
+  "opening.count": "{0} attaques sur {1}",
+  "opening.side": "Couleur",
+  "opening.side.all": "Les deux couleurs",
+  "opening.target": "Objectif",
+  "opening.target.all": "Tous les objectifs",
+  "opening.explore": "Parcourir",
+  "opening.empty":
+    "Aucune attaque ne correspond. Essayez une autre recherche ou un filtre.",
+  "opening.library.note":
+    "Classés selon la tentation estimée pour un joueur qui ignore le piège. Un classement éditorial, pas des taux de réussite mesurés.",
+  "opening.rank": "Rang {0} selon la facilité estimée à tomber dans le piège",
+  "opening.backToLibrary": "Toutes les attaques",
+  "opening.viewer.label": "Échiquier et navigation de la leçon d’attaque",
+  "opening.board.label": "Échiquier en lecture seule, étape {0} sur {1}",
+  "opening.step": "Étape {0} sur {1}",
+  "opening.progress": "Progression de la leçon",
+  "opening.navigation": "Navigation des coups de la leçon",
+  "opening.previous": "Précédent",
+  "opening.next": "Suivant",
+  "opening.restart": "Recommencer",
+  "opening.beforeStart": "Avant de commencer",
+  "opening.moveIdea": "L’idée de ce coup",
+  "opening.start.trap":
+    "Suivez l’attaque des {0}. Repérez la réponse tentante {1}.",
+  "opening.start.defense":
+    "Observez comment les {0} évitent le piège immédiat, en commençant par {1}.",
+  "opening.startPosition": "La position initiale",
+  "opening.plan": "L’idée d’attaque",
+  "opening.mistake": "La tentation",
+  "opening.defense": "S’ils se défendent",
+  "opening.complete": "Le résultat de cette ligne",
+  "opening.branch.label": "Choisissez un parcours",
+  "opening.branch.trap": "Ils mordent à l’appât",
+  "opening.branch.defense": "Ils se défendent",
+  "opening.stage.setup": "Construire la position",
+  "opening.stage.temptation": "La réponse tentante",
+  "opening.stage.attack": "Suivre l’attaque",
+  "opening.stage.defense": "Éviter le piège",
+  "opening.result.defense": "Le piège immédiat est évité",
+  "opening.defense.takeaway":
+    "Continuez depuis cette position. Éviter le piège ne supprime pas toujours la pression de l’attaquant.",
+  "opening.risk.low": "Occasion tactique",
+  "opening.risk.gambit": "Matériel offert pour l’attaque",
+  "opening.risk.high": "Risqué face à une bonne défense",
+  "opening.risk.detail.low":
+    "Cherchez la tactique en vous développant. L’adversaire peut choisir une autre voie.",
+  "opening.risk.detail.gambit":
+    "Vous offrez du matériel pour gagner de l’activité. Apprenez à continuer si l’adversaire évite le piège.",
+  "opening.risk.detail.high":
+    "Une défense précise peut laisser l’attaquant en retard de matériel ou de développement.",
+  "opening.idea.mate":
+    "Le roi est en échec sans issue légale. L’attaque se termine par un mat.",
+  "opening.idea.underpromotion":
+    "Promouvoir en cavalier donne échec et impose une réponse à l’adversaire. Ici, cela compte plus que le choix d’une dame.",
+  "opening.idea.check":
+    "C’est un échec. Il faut protéger le roi avant de répondre à une autre menace.",
+  "opening.idea.castle":
+    "Le roque éloigne le roi du centre et rapproche la tour de l’action.",
+  "opening.idea.capture":
+    "Après cette prise, recherchez les échecs et les attaques sur les pièces non défendues. Les lignes ouvertes peuvent avoir changé.",
+  "opening.idea.p":
+    "Le pion atteint {0} et contrôle de nouvelles cases. Observez les diagonales qui s’ouvrent ou se ferment.",
+  "opening.idea.n":
+    "Depuis {0}, le cavalier peut créer des fourchettes. Repérez les pièces adverses à un saut de distance.",
+  "opening.idea.b":
+    "Le fou atteint {0}. Suivez ses diagonales vers le roi ou une pièce non défendue.",
+  "opening.idea.q":
+    "La dame atteint {0}. Cherchez les menaces immédiates et les attaques possibles contre elle.",
+  "opening.idea.r":
+    "La tour atteint {0}. Cherchez sur sa rangée et sa colonne une cible ou une voie d’attaque.",
+  "opening.idea.k":
+    "Le roi atteint {0}. Vérifiez les cases de fuite proches et les pièces qui les protègent.",
+  "opening.reward.mate": "Donner échec et mat",
+  "opening.reward.rookPawn": "Prendre tour et pion",
+  "opening.reward.exchange": "Tour et pions contre un cavalier",
+  "opening.reward.queen": "Prendre la dame",
+  "opening.reward.queenForKnight": "Dame contre un cavalier",
+  "opening.reward.queenForBishop": "Dame contre un fou",
+  "opening.reward.queenForPieces": "Dame contre deux pièces mineures",
+  "opening.reward.pieceForPawn": "Cavalier contre un pion",
+  "opening.reward.pieceForPawns": "Fou contre deux pions",
+  "opening.reward.rookKnight": "Prendre tour et cavalier",
+  "opening.reward.recoverPiece": "Récupérer la pièce avec échec",
+  "opening.reward.space": "Gagner espace et développement",
+  "opening.reward.attack": "Exposer le roi",
+  "opening.reward.activity": "Récupérer du matériel avec une dame active",
+  "opening.theme.mate": "Échec et mat",
+  "opening.theme.queen": "Gagner la dame",
+  "opening.theme.rook": "Gagner une tour",
+  "opening.theme.piece": "Gagner une pièce",
+  "opening.theme.attack": "Construire une attaque",
+
   "intro.guide.show": "Comment jouer",
   "intro.guide.hide": "Masquer les instructions",
   "board.editor.open": "Modifier la position",

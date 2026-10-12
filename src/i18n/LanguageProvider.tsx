@@ -13,7 +13,8 @@ import {
   type Language,
   type Translator,
 } from "./translate";
-import { languageFromPath, languagePath } from "./routes";
+import { languageFromPath, pathForLanguage, isOpeningsPath } from "./routes";
+import { navigate } from "../app/navigation";
 import { updatePageMetadata } from "./metadata";
 
 const LanguageContext = createContext<{
@@ -27,13 +28,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     () => languageFromPath(window.location.pathname) ?? "en",
   );
   const setLanguage = useCallback((next: Language) => {
-    const path = languagePath(next);
+    const path = pathForLanguage(window.location.pathname, next);
     if (window.location.pathname !== path)
-      window.history.pushState(
-        window.history.state,
-        "",
-        `${path}${window.location.search}${window.location.hash}`,
-      );
+      navigate(`${path}${window.location.search}${window.location.hash}`);
     setCurrentLanguage(next);
   }, []);
   const value = useMemo(
@@ -41,7 +38,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language, setLanguage],
   );
   useEffect(() => {
-    updatePageMetadata(language);
+    document.documentElement.lang = language;
+    if (!isOpeningsPath(window.location.pathname)) updatePageMetadata(language);
   }, [language]);
   useEffect(() => {
     const restoreLanguage = () =>

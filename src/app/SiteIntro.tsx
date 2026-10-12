@@ -1,14 +1,16 @@
 import type { MouseEvent } from "react";
 import { languages, type Language } from "../i18n/translate";
-import { languagePath } from "../i18n/routes";
+import { pathForLanguage } from "../i18n/routes";
 import { siteContent } from "../i18n/siteContent";
 
 export function SiteIntro({
   language,
   onLanguageChange,
+  pathname = "/",
 }: {
   language: Language;
   onLanguageChange?: (language: Language) => void;
+  pathname?: string;
 }) {
   const content = siteContent[language];
   function changeLanguage(
@@ -36,7 +38,7 @@ export function SiteIntro({
         {Object.entries(languages).map(([code, name]) => (
           <a
             key={code}
-            href={languagePath(code as Language)}
+            href={pathForLanguage(pathname, code as Language)}
             hrefLang={code}
             lang={code}
             aria-current={code === language ? "page" : undefined}

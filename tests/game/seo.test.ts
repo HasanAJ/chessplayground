@@ -3,10 +3,12 @@ import assert from "node:assert/strict";
 import { build } from "vite";
 import react from "@vitejs/plugin-react";
 import { JSDOM } from "jsdom";
-import { seoPlugin, siteMetadata } from "../../scripts/seo";
+import { seoPlugin, siteMetadata, sitePages } from "../../scripts/seo";
 import { languages, type Language } from "../../src/i18n/translate";
-import { languagePath } from "../../src/i18n/routes";
+import { languagePath, openingPath } from "../../src/i18n/routes";
 import { siteContent } from "../../src/i18n/siteContent";
+import { openings } from "../../src/features/openings/lessons";
+import { motifs } from "../../src/features/openings/content";
 
 test("canonical, social image, robots and sitemap all use the configured origin", () => {
   const { tags, robots, sitemap } = siteMetadata("https://tempo.example.org/");
@@ -52,11 +54,112 @@ test("production pages contain translated content and reciprocal language metada
     [...sitemapDocument.window.document.querySelectorAll("loc")].map(
       (loc) => loc.textContent,
     ),
-    Object.keys(languages).map(
-      (code) => `https://tempo.example.org${languagePath(code as Language)}`,
+    sitePages.map(
+      ({ language, page }) =>
+        `https://tempo.example.org${languagePath(language)}${page?.path ?? ""}`,
     ),
   );
   sitemapDocument.window.close();
+  for (const language of Object.keys(languages) as Language[]) {
+    const metadata = sitePages.filter((route) => route.language === language);
+    for (const field of ["title", "description"] as const)
+      assert.equal(
+        new Set(
+          metadata.map(
+            (route) => route.page?.[field] ?? siteContent[language][field],
+          ),
+        ).size,
+        metadata.length,
+        `${language}: unique ${field}`,
+      );
+  }
+  for (const { language, page, lesson } of sitePages.filter(
+    (route) => route.page,
+  )) {
+    const path = `${languagePath(language)}${page!.path}`;
+    const asset = pages.find(
+      (asset) => asset.fileName === `${path.slice(1)}index.html`,
+    );
+    assert.ok(asset, path);
+    const dom = new JSDOM(String(asset.source));
+    const document = dom.window.document;
+    assert.equal(document.title, page!.title);
+    assert.equal(document.querySelectorAll("h1").length, 1);
+    assert.equal(document.documentElement.lang, language);
+    assert.equal(document.querySelectorAll('link[rel="canonical"]').length, 1);
+    assert.equal(document.querySelectorAll('link[rel="alternate"]').length, 6);
+    assert.equal(
+      document.querySelectorAll('meta[name="description"]').length,
+      1,
+    );
+    for (const selector of [
+      'meta[name="description"]',
+      'meta[property="og:description"]',
+      'meta[name="twitter:description"]',
+    ])
+      assert.equal(
+        document.querySelector(selector)!.getAttribute("content"),
+        page!.description,
+      );
+    assert.equal(
+      document
+        .querySelector('link[hreflang="x-default"]')!
+        .getAttribute("href"),
+      `https://tempo.example.org/${page!.path}`,
+    );
+    assert.equal(
+      document.querySelector('link[rel="canonical"]')!.getAttribute("href"),
+      `https://tempo.example.org${path}`,
+    );
+    assert.equal(
+      document
+        .querySelector('meta[property="og:url"]')!
+        .getAttribute("content"),
+      `https://tempo.example.org${path}`,
+    );
+    for (const code of Object.keys(languages) as Language[]) {
+      assert.equal(
+        document
+          .querySelector(`link[hreflang="${code}"]`)!
+          .getAttribute("href"),
+        `https://tempo.example.org${languagePath(code)}${page!.path}`,
+      );
+      assert.equal(
+        document
+          .querySelector(`nav a[hreflang="${code}"]`)!
+          .getAttribute("href"),
+        `${languagePath(code)}${page!.path}`,
+      );
+    }
+    assert.ok(document.querySelector(`a[href="${openingPath(language)}"]`));
+    if (lesson) {
+      assert.equal(
+        document.querySelector("h1")!.textContent,
+        lesson.name[language],
+      );
+      const article = document.querySelector("article")!;
+      for (const text of Object.values(motifs[lesson.motif]))
+        assert.ok(
+          article.textContent!.includes(text[language]),
+          `${path}: translated teaching content`,
+        );
+      assert.ok(article.textContent!.includes(lesson.trap.split(" ").at(-1)!));
+      assert.ok(
+        article.textContent!.includes(lesson.defense.split(" ").at(-1)!),
+      );
+    } else {
+      const links = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>("ol a"),
+      );
+      assert.deepEqual(
+        links.map((link) => link.getAttribute("href")),
+        openings.map((entry) => openingPath(language, entry.id)),
+      );
+      for (const [index, link] of links.entries())
+        assert.ok(link.textContent!.includes(openings[index].name[language]));
+    }
+    dom.window.close();
+  }
   for (const language of Object.keys(languages) as Language[]) {
     const asset = pages.find(
       (page) =>
@@ -67,6 +170,10 @@ test("production pages contain translated content and reciprocal language metada
     const document = dom.window.document;
     const content = siteContent[language];
     assert.equal(document.documentElement.lang, language);
+    assert.ok(
+      document.querySelector(`a[href="${openingPath(language)}"]`),
+      `${language}: discoverable library link`,
+    );
     assert.equal(document.title, content.title);
     assert.equal(
       document

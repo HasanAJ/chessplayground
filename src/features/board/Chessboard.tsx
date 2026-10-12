@@ -1,12 +1,11 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
-import type { Square } from "chess.js";
 import type { GameController } from "../game/useGameController";
 import type { Recommendations } from "../coach/useRecommendations";
 import type { CoachPresentation } from "../coach/useCoachPresentation";
 import type { BoardController } from "./useBoardInteractions";
 import type { BoardPreview } from "./useBoardPreview";
-import { pieceImage, pieceLabel } from "./pieces";
-import { useHighlightedSquare } from "./SquareHighlight";
+import { BoardGrid } from "./BoardGrid";
+import { moveArrow } from "./arrows";
 
 type Props = {
   game: GameController;
@@ -24,7 +23,6 @@ export function Chessboard({
   highlights,
 }: Props) {
   const { t } = useTranslation();
-  const highlightedSquare = useHighlightedSquare();
   const {
     flipped,
     position,
@@ -106,135 +104,80 @@ export function Chessboard({
               : "—"}
           </span>
         </div>
-        <div className="board-grid">
-          <div className="rank-labels" aria-hidden="true">
-            {ranks.map((rank) => (
-              <span key={rank}>{rank}</span>
-            ))}
-          </div>
-          <div
-            className={`chessboard ${boardPreview ? "previewing" : ""} ${freeDrag ? "free-placement" : ""}`}
-            role="group"
-            aria-label={
-              inspection
-                ? t("board.label.preview")
-                : reviewing
-                  ? t("board.label.history")
-                  : t("board.label.interactive")
-            }
-          >
-            {ranks.flatMap((rank) =>
-              files.map((file) => {
-                const square = `${file}${rank}` as Square;
-                const piece = position[square];
-                const legal = legalSquares.has(square);
-                const isSelected = !boardPreview && selected === square;
-                const last =
-                  game.playable &&
-                  (boardLastMove?.from === square ||
-                    boardLastMove?.to === square);
-                const strategy =
-                  explanationFocus?.squares.includes(square) ||
-                  (showStrategy && insight?.squares.includes(square));
-                const classes = [
-                  "square",
-                  (file.charCodeAt(0) + rank) % 2 === 0
-                    ? "dark-square"
-                    : "light-square",
-                  isSelected && "selected-square",
-                  freeDrag === square && "free-piece",
-                  last && "last-square",
-                  legal && piece && "capture-square",
-                  square === checkedKing && "king-in-check",
-                  strategy && "strategy-square",
-                  square === highlightedSquare && "reference-square",
-                  showWarning && watching.target === square && "warning-target",
-                  showWarning &&
-                    watching.attackers.includes(square) &&
-                    "warning-attacker",
-                ];
-                return (
-                  <button
-                    key={square}
-                    type="button"
-                    className={classes.filter(Boolean).join(" ")}
-                    aria-label={`${square}${piece ? ` ${pieceLabel(piece, t)}` : t("board.square.empty")}${square === checkedKing ? t("board.square.check") : ""}`}
-                    data-square={square}
-                    aria-pressed={isSelected}
-                    draggable={!!piece}
-                    onClick={() => squareClick(square)}
-                    onContextMenu={(event) => {
-                      event.preventDefault();
-                      if (piece) arrangePiece(square);
-                    }}
-                    onDragStart={(event) => board.startDrag(event, square)}
-                    onDragEnd={board.endDrag}
-                    onDragEnter={allowBoardDrop}
-                    onDragOver={allowBoardDrop}
-                    onDrop={(event) => dropPiece(event, square)}
-                  >
-                    {piece && (
-                      <img
-                        className="piece"
-                        src={pieceImage(piece)}
-                        alt=""
-                        draggable={false}
-                      />
-                    )}
-                    {legal && !piece && <span className="legal-dot" />}
-                  </button>
-                );
-              }),
-            )}
-            {arrows.length > 0 && (
-              <svg
-                className={`move-arrow ${explanationFocus ? "explanation-arrows" : ""}`}
-                viewBox="0 0 800 800"
-                aria-hidden="true"
-              >
-                <defs>
-                  <marker
-                    id={arrowhead}
-                    markerWidth="3.6"
-                    markerHeight="3.6"
-                    refX="2.4"
-                    refY="1.8"
-                    orient="auto"
-                  >
-                    <path d="M0,0 L3.6,1.8 L0,3.6 Z" fill="currentColor" />
-                  </marker>
-                </defs>
-                {arrows.map((line, index) => (
-                  <line
-                    key={index}
-                    {...line}
-                    markerEnd={`url(#${arrowhead})`}
-                  />
-                ))}
-              </svg>
-            )}
-          </div>
-          <div className="file-labels" aria-hidden="true">
-            {files.map((file) => (
-              <span key={file}>{file}</span>
-            ))}
-          </div>
-        </div>
+        <BoardGrid
+          position={position}
+          flipped={flipped}
+          label={t(
+            inspection
+              ? "board.label.preview"
+              : reviewing
+                ? "board.label.history"
+                : "board.label.interactive",
+          )}
+          className={`${boardPreview ? "previewing" : ""} ${freeDrag ? "free-placement" : ""}`}
+          lastMove={game.playable ? (boardLastMove ?? undefined) : undefined}
+          checkedKing={checkedKing ?? undefined}
+          squareProps={(square) => {
+            const piece = position[square];
+            const legal = legalSquares.has(square);
+            const isSelected = !boardPreview && selected === square;
+            const strategy =
+              explanationFocus?.squares.includes(square) ||
+              (showStrategy && insight?.squares.includes(square));
+            return {
+              className: [
+                isSelected && "selected-square",
+                freeDrag === square && "free-piece",
+                legal && piece && "capture-square",
+                strategy && "strategy-square",
+                showWarning && watching.target === square && "warning-target",
+                showWarning &&
+                  watching.attackers.includes(square) &&
+                  "warning-attacker",
+              ]
+                .filter(Boolean)
+                .join(" "),
+              "aria-pressed": isSelected,
+              draggable: !!piece,
+              onClick: () => squareClick(square),
+              onContextMenu: (event) => {
+                event.preventDefault();
+                if (piece) arrangePiece(square);
+              },
+              onDragStart: (event) => board.startDrag(event, square),
+              onDragEnd: board.endDrag,
+              onDragEnter: allowBoardDrop,
+              onDragOver: allowBoardDrop,
+              onDrop: (event) => dropPiece(event, square),
+              children: legal && !piece ? <span className="legal-dot" /> : null,
+            };
+          }}
+        >
+          {arrows.length > 0 && (
+            <svg
+              className={`move-arrow ${explanationFocus ? "explanation-arrows" : ""}`}
+              viewBox="0 0 800 800"
+              aria-hidden="true"
+            >
+              <defs>
+                <marker
+                  id={arrowhead}
+                  markerWidth="3.6"
+                  markerHeight="3.6"
+                  refX="2.4"
+                  refY="1.8"
+                  orient="auto"
+                >
+                  <path d="M0,0 L3.6,1.8 L0,3.6 Z" fill="currentColor" />
+                </marker>
+              </defs>
+              {arrows.map((line, index) => (
+                <line key={index} {...line} markerEnd={`url(#${arrowhead})`} />
+              ))}
+            </svg>
+          )}
+        </BoardGrid>
       </div>
     </div>
   );
-}
-
-function moveArrow(from: Square, to: Square, files: string[], ranks: number[]) {
-  const x1 = files.indexOf(from[0]) * 100 + 50,
-    y1 = ranks.indexOf(Number(from[1])) * 100 + 50;
-  const x2 = files.indexOf(to[0]) * 100 + 50,
-    y2 = ranks.indexOf(Number(to[1])) * 100 + 50;
-  const length = Math.hypot(x2 - x1, y2 - y1);
-  return {
-    x1,
-    y1,
-    x2: x2 - ((x2 - x1) / length) * 25,
-    y2: y2 - ((y2 - y1) / length) * 25,
-  };
 }
