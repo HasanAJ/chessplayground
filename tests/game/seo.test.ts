@@ -114,11 +114,14 @@ test("production pages contain translated content and reciprocal language metada
       document.querySelector(".site-intro h2")!.textContent,
       content.heading,
     );
-    assert.equal(
-      document.querySelector(".site-intro > p")!.textContent,
-      content.intro,
+    assert.deepEqual(
+      Array.from(
+        document.querySelectorAll(".site-intro > p"),
+        (p) => p.textContent,
+      ),
+      [content.intro, content.analysis],
     );
-    assert.equal(document.querySelectorAll(".site-intro li").length, 3);
+    assert.equal(document.querySelectorAll(".site-intro li").length, 0);
     assert.match(
       document.querySelector('script[type="module"]')!.getAttribute("src")!,
       /^\/assets\/.*\.js$/,

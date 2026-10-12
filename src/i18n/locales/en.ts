@@ -1,4 +1,13 @@
 const en = {
+  "intro.guide.show": "How to play",
+  "intro.guide.hide": "Hide instructions",
+  "board.editor.open": "Edit position",
+  "board.editor.close": "Done editing",
+  "board.preview.label": "Preview",
+  "board.preview.previous": "Previous preview move",
+  "board.preview.next": "Next preview move",
+  "coach.analysis.more": "More analysis",
+  "coach.analysis.less": "Less analysis",
   "engine.error.load":
     "The chess engine could not load. Check your connection and retry analysis.",
   "engine.error.loadTimeout":
@@ -31,11 +40,11 @@ const en = {
   "intro.heading.end": "explained.",
   "intro.tagline": "Explore the board. Understand the plan. Try a move.",
   "intro.guide.play":
-    "Click a piece and its destination to play a move, or drag pieces from the trays to build your own position.",
+    "Select a piece and its destination to play.",
   "intro.guide.analyze":
-    "Select “{0}” for suggestions and explanations, then preview a reply or try a move.",
-  "intro.guide.practice":
-    "Play both sides, or turn on the computer opponent to practice against it.",
+    "Choose “{0}”, then preview a reply or try the suggestion.",
+  "intro.guide.setup":
+    "Use the editing tools to build your own position.",
   "footer.tagline": "A good move starts with a little understanding.",
   "footer.engine": "Powered by Stockfish 19",
   "move.description.normal": "{0}{1} from {2} to {3}",

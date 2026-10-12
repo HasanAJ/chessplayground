@@ -212,7 +212,7 @@ export function useBoardInteractions(
     game.setError("");
   }
 
-  function scrollToBoard() {
+  function scrollToBoard({ alignToTop = false } = {}) {
     if (!ref.current) return;
     const bounds = ref.current.getBoundingClientRect();
     const controlsHeight = window.matchMedia("(max-width: 900px)").matches
@@ -220,7 +220,11 @@ export function useBoardInteractions(
           .querySelector(".calculation-controls")
           ?.getBoundingClientRect().height ?? 0)
       : 0;
-    if (bounds.top >= 0 && bounds.bottom <= window.innerHeight - controlsHeight)
+    if (
+      !alignToTop &&
+      bounds.top >= 0 &&
+      bounds.bottom <= window.innerHeight - controlsHeight
+    )
       return;
     ref.current.scrollIntoView({
       block: "start",
@@ -234,6 +238,11 @@ export function useBoardInteractions(
     if (game.revealBoard && window.matchMedia("(max-width: 900px)").matches)
       scrollToBoard();
   }, [game.revealBoard]);
+
+  useEffect(() => {
+    if (preview.pinned && window.matchMedia("(max-width: 900px)").matches)
+      scrollToBoard();
+  }, [preview.pinned, preview.inspection?.candidate, preview.inspection?.ply]);
 
   return {
     ref,

@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "intro.guide.show": "Come giocare",
+  "intro.guide.hide": "Nascondi istruzioni",
+  "board.editor.open": "Modifica posizione",
+  "board.editor.close": "Termina modifica",
+  "board.preview.label": "Anteprima",
+  "board.preview.previous": "Mossa precedente nell’anteprima",
+  "board.preview.next": "Mossa successiva nell’anteprima",
+  "coach.analysis.more": "Più analisi",
+  "coach.analysis.less": "Meno analisi",
   "engine.error.load":
     "Impossibile caricare il motore. Controlla la connessione e riprova l'analisi.",
   "engine.error.loadTimeout":
@@ -34,11 +43,11 @@ export default {
   "intro.tagline":
     "Esplora la scacchiera. Comprendi il piano. Prova una mossa.",
   "intro.guide.play":
-    "Fai clic su un pezzo e sulla casella di destinazione per giocare una mossa, oppure trascina i pezzi dai vassoi per creare la tua posizione.",
+    "Seleziona un pezzo e la casella di destinazione per giocare.",
   "intro.guide.analyze":
-    "Seleziona «{0}» per vedere suggerimenti e spiegazioni, poi visualizza una risposta in anteprima o prova una mossa.",
-  "intro.guide.practice":
-    "Gioca con entrambi i colori oppure attiva l’avversario controllato dal computer per allenarti.",
+    "Scegli «{0}», poi visualizza una risposta in anteprima o prova la mossa suggerita.",
+  "intro.guide.setup":
+    "Usa gli strumenti di modifica per creare una posizione.",
   "footer.tagline": "Una buona mossa inizia con un po' di comprensione.",
   "footer.engine": "Con Stockfish 19",
   "move.description.normal": "{0}{1} da {2} a {3}",

@@ -1,4 +1,4 @@
-import test from "node:test";
+import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
@@ -14,10 +14,13 @@ import { useCoachPresentation } from "../../src/features/coach/useCoachPresentat
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
 import { createTestRoot } from "../helpers/dom";
 
-test("hovered and pinned previews keep the board panel stable without scrolling", async (t) => {
+async function renderWorkspace(t: TestContext) {
   const { root, dom } = createTestRoot(t);
+  let mobile = true;
   Object.defineProperty(dom.window, "matchMedia", {
-    value: () => ({ matches: true }),
+    value: (query: string) => ({
+      matches: query === "(max-width: 900px)" && mobile,
+    }),
   });
   let scrolls = 0;
   dom.window.HTMLElement.prototype.scrollIntoView = () => scrolls++;
@@ -81,8 +84,32 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
   }
   await act(() => root.render(createElement(Harness)));
   const document = dom.window.document;
-  const left = document.querySelector(".board-panel")!;
+  const boardPanel = document.querySelector(".board-panel")!;
   const board = document.getElementById("board")!;
+  return {
+    dom,
+    document,
+    boardPanel,
+    board,
+    candidates,
+    get game() {
+      return currentGame;
+    },
+    get preview() {
+      return preview;
+    },
+    get scrolls() {
+      return scrolls;
+    },
+    setMobile(value: boolean) {
+      mobile = value;
+    },
+  };
+}
+
+test("hovered and pinned previews preserve board structure and square highlights", async (t) => {
+  const view = await renderWorkspace(t);
+  const { dom, document, boardPanel: left, board, candidates } = view;
   const coordinateLabels = () => ({
     ranks: left.querySelector(".rank-labels")!.textContent,
     files: left.querySelector(".file-labels")!.textContent,
@@ -99,11 +126,13 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
   const leftText = () => {
     const clone = left.cloneNode(true) as Element;
     clone.querySelector(".eval-number")!.remove();
+    clone.querySelector(".board-preview-controls")?.remove();
+    clone.querySelector(".mobile-coach-summary")?.remove();
     return clone.textContent;
   };
   const initialText = leftText();
   const initialChildren = Array.from(board.children);
-  const initialButtonCount = left.querySelectorAll("button").length;
+  const initialToolbar = left.querySelector(".board-toolbar")!.textContent;
   const arrowFrames = () =>
     Array.from(left.querySelectorAll(".move-arrow line"), (line) =>
       ["x1", "y1", "x2", "y2"].map((attribute) =>
@@ -125,15 +154,19 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
         );
       else link.click();
     });
-    assert.equal(preview.boardPreview, true);
-    assert.equal(preview.pinned, action === "click");
+    assert.equal(view.preview.boardPreview, true);
+    assert.equal(view.preview.pinned, action === "click");
     assert.deepEqual(Array.from(board.children), initialChildren);
     assert.equal(
       leftText(),
       initialText,
-      "previews must not add board-panel copy",
+      "previews must not replace the board or its controls",
     );
-    assert.equal(left.querySelectorAll("button").length, initialButtonCount);
+    assert.equal(
+      left.querySelectorAll(".board-preview-controls button").length,
+      action === "click" ? 3 : 0,
+    );
+    assert.equal(left.querySelector(".board-toolbar")!.textContent, initialToolbar);
     assert.equal(left.querySelectorAll(".square").length, 64);
     assert.ok(left.querySelectorAll(".strategy-square").length > 0);
     assert.ok(left.querySelector(".explanation-arrows"));
@@ -142,7 +175,7 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
       candidates[0].explanationFocus!.arrows.length,
     );
     assert.equal(
-      scrolls,
+      view.scrolls,
       0,
       "preview interactions must preserve the scroll position",
     );
@@ -164,11 +197,11 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
   );
   await act(() => flip.click());
   const exit = document.querySelector<HTMLButtonElement>(
-    ".coach-preview-exit",
+    ".board-preview-controls .preview-return",
   )!;
-  assert.ok(exit.closest(".coach-panel"));
   await act(() => exit.click());
-  assert.equal(preview.boardPreview, false);
+  assert.equal(view.preview.boardPreview, false);
+  assert.equal(left.querySelector(".board-preview-controls"), null);
   assert.equal(left.querySelector(".explanation-arrows"), null);
   assert.deepEqual(arrowFrames(), initialArrows);
   assert.equal(leftText(), initialText);
@@ -197,8 +230,8 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
   assert.deepEqual(highlighted(), ["f3"]);
   assert.deepEqual(Array.from(board.children), initialChildren);
   assert.equal(leftText(), initialText);
-  assert.equal(scrolls, 0);
-  assert.equal(preview.boardPreview, false);
+  assert.equal(view.scrolls, 0);
+  assert.equal(view.preview.boardPreview, false);
   await act(() =>
     destination.dispatchEvent(
       new dom.window.MouseEvent("mouseout", {
@@ -229,10 +262,87 @@ test("hovered and pinned previews keep the board panel stable without scrolling"
       new dom.window.MouseEvent("mouseover", { bubbles: true }),
     ),
   );
-  await act(() => currentGame.playMove("e2", "e4"));
+  await act(() => view.game.playMove("e2", "e4"));
   assert.deepEqual(
     highlighted(),
     [],
     "changing the position clears old square references",
   );
+});
+
+test("mobile preview controls navigate without changing the game and reveal an offscreen board", async (t) => {
+  const view = await renderWorkspace(t);
+  const { dom, boardPanel, candidates } = view;
+  const liveFen = view.game.fen;
+  await act(() =>
+    boardPanel.querySelector<HTMLButtonElement>(".mobile-coach-summary .plan-preview")!.click(),
+  );
+  assert.equal(view.preview.pinned, true);
+  assert.equal(view.preview.inspection?.ply, 2);
+  const previous = boardPanel.querySelector<HTMLButtonElement>(
+    '[aria-label="Previous preview move"]',
+  )!;
+  const next = boardPanel.querySelector<HTMLButtonElement>(
+    '[aria-label="Next preview move"]',
+  )!;
+  assert.equal(next.disabled, true);
+  await act(() => previous.click());
+  assert.equal(view.preview.inspection?.ply, 1);
+  assert.equal(previous.disabled, true);
+  await act(() => next.click());
+  assert.equal(view.preview.inspection?.ply, 2);
+  await act(() =>
+    boardPanel.querySelector<HTMLButtonElement>(".preview-return")!.click(),
+  );
+  assert.equal(boardPanel.querySelector(".board-preview-controls"), null);
+  assert.equal(view.preview.boardPreview, false);
+  assert.equal(view.scrolls, 0, "a visible board does not need scrolling");
+
+  boardPanel.querySelector(".board-with-eval")!.getBoundingClientRect = () =>
+    new dom.window.DOMRect(0, -100, 320, 324);
+  await act(() => view.preview.inspectMove(candidates[0], 1, "hover"));
+  assert.equal(view.scrolls, 0, "hover previews must never scroll the page");
+  await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
+  assert.equal(view.scrolls, 1, "a pinned mobile preview reveals an offscreen board");
+  await act(() => view.preview.clearPreview());
+  view.setMobile(false);
+  await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
+  assert.equal(view.scrolls, 1, "desktop previews preserve scroll position");
+  await act(() => view.preview.clearPreview());
+  assert.equal(view.game.fen, liveFen);
+  assert.equal(view.game.history.length, 0);
+});
+
+test("position editing and analysis disclosures preserve the game until a move is played", async (t) => {
+  const view = await renderWorkspace(t);
+  const { document, boardPanel } = view;
+  const liveFen = view.game.fen;
+  const edit = boardPanel.querySelector<HTMLButtonElement>(".position-editor-toggle")!;
+  for (const id of edit.getAttribute("aria-controls")!.split(" "))
+    assert.ok(document.getElementById(id), "every controlled editor region must exist");
+  await act(() => edit.click());
+  assert.equal(edit.getAttribute("aria-expanded"), "true");
+  await act(() =>
+    boardPanel.querySelector<HTMLButtonElement>('[aria-label="Place White knight"]')!.click(),
+  );
+  assert.equal(view.game.tool, "wn");
+  await act(() => edit.click());
+  assert.equal(edit.getAttribute("aria-expanded"), "false");
+  assert.equal(view.game.tool, "move");
+
+  const more = document.querySelector<HTMLButtonElement>(".analysis-details-toggle")!;
+  await act(() => more.click());
+  assert.equal(more.getAttribute("aria-expanded"), "true");
+  assert.ok(document.querySelector(".additional-analysis.is-open"));
+  await act(() => more.click());
+  assert.equal(more.getAttribute("aria-expanded"), "false");
+  assert.equal(view.game.fen, liveFen);
+  assert.equal(view.game.history.length, 0);
+
+  await act(() => more.click());
+  await act(() =>
+    boardPanel.querySelector<HTMLButtonElement>(".mobile-coach-summary .primary-button")!.click(),
+  );
+  assert.equal(view.game.history.at(-1)?.san, "Nf3");
+  assert.equal(more.getAttribute("aria-expanded"), "false");
 });

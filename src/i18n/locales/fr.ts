@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "intro.guide.show": "Comment jouer",
+  "intro.guide.hide": "Masquer les instructions",
+  "board.editor.open": "Modifier la position",
+  "board.editor.close": "Terminer la modification",
+  "board.preview.label": "Aperçu",
+  "board.preview.previous": "Coup précédent dans l’aperçu",
+  "board.preview.next": "Coup suivant dans l’aperçu",
+  "coach.analysis.more": "Plus d’analyse",
+  "coach.analysis.less": "Moins d’analyse",
   "engine.error.load":
     "Le moteur n’a pas pu se charger. Vérifiez votre connexion et relancez l’analyse.",
   "engine.error.loadTimeout":
@@ -33,11 +42,11 @@ export default {
   "intro.heading.end": "expliqué.",
   "intro.tagline": "Explorez l’échiquier. Comprenez le plan. Essayez un coup.",
   "intro.guide.play":
-    "Cliquez sur une pièce puis sur sa case de destination pour jouer un coup, ou faites glisser des pièces depuis les réserves pour créer votre propre position.",
+    "Sélectionnez une pièce puis sa case de destination pour jouer.",
   "intro.guide.analyze":
-    "Sélectionnez « {0} » pour voir des suggestions et des explications, puis prévisualisez une réponse ou essayez un coup.",
-  "intro.guide.practice":
-    "Jouez les deux camps ou activez l’adversaire contrôlé par l’ordinateur pour vous entraîner.",
+    "Choisissez « {0} », puis prévisualisez une réponse ou essayez le coup suggéré.",
+  "intro.guide.setup":
+    "Utilisez les outils de modification pour créer votre propre position.",
   "footer.tagline": "Un bon coup commence par un peu de compréhension.",
   "footer.engine": "Avec Stockfish 19",
   "move.description.normal": "{0}{1} de {2} à {3}",

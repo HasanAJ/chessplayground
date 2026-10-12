@@ -2,6 +2,7 @@ import { LanguageSelector } from "../i18n/LanguageSelector";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { languagePath } from "../i18n/routes";
 import { SiteIntro } from "./SiteIntro";
+import { PageHeading } from "./PageHeading";
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { ROOT } from "../chess/study";
@@ -81,12 +82,7 @@ export default function App() {
     game.setError("");
     recommendations.calculate();
     if (window.matchMedia("(max-width: 900px)").matches)
-      document.getElementById("coach")?.scrollIntoView({
-        block: "start",
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
+      board.scrollToBoard({ alignToTop: true });
   }
 
   return (
@@ -111,22 +107,7 @@ export default function App() {
       </header>
 
       <main>
-        <section className="page-heading">
-          <div>
-            <h1>
-              {t("intro.heading.start")} <span>{t("intro.heading.end")}</span>
-            </h1>
-            <p>{t("intro.tagline")}</p>
-          </div>
-          <p className="page-guide">
-            {t("intro.guide.play")}{" "}
-            {t(
-              "intro.guide.analyze",
-              t("coach.calculate.label.ready"),
-            )}{" "}
-            {t("intro.guide.practice")}
-          </p>
-        </section>
+        <PageHeading />
 
         <SaveNotice
           error={storageError}

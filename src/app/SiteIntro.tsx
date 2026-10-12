@@ -31,20 +31,7 @@ export function SiteIntro({
     <section className="site-intro" aria-labelledby="site-intro-heading">
       <h2 id="site-intro-heading">{content.heading}</h2>
       <p>{content.intro}</p>
-      <div className="site-intro-details">
-        <div>
-          <h3>{content.stepsHeading}</h3>
-          <ol>
-            {content.steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-        </div>
-        <div>
-          <h3>{content.analysisHeading}</h3>
-          <p>{content.analysis}</p>
-        </div>
-      </div>
+      <p>{content.analysis}</p>
       <nav className="language-links" aria-label={content.languagesLabel}>
         {Object.entries(languages).map(([code, name]) => (
           <a

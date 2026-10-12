@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "intro.guide.show": "So spielst du",
+  "intro.guide.hide": "Anleitung ausblenden",
+  "board.editor.open": "Stellung bearbeiten",
+  "board.editor.close": "Bearbeitung beenden",
+  "board.preview.label": "Vorschau",
+  "board.preview.previous": "Vorheriger Zug in der Vorschau",
+  "board.preview.next": "Nächster Zug in der Vorschau",
+  "coach.analysis.more": "Mehr Analyse",
+  "coach.analysis.less": "Weniger Analyse",
   "engine.error.load":
     "Die Schachengine konnte nicht geladen werden. Prüfe deine Verbindung und starte die Analyse erneut.",
   "engine.error.loadTimeout":
@@ -33,11 +42,11 @@ export default {
   "intro.heading.end": "erklärt.",
   "intro.tagline": "Erkunde das Brett. Verstehe den Plan. Probiere einen Zug.",
   "intro.guide.play":
-    "Klicke auf eine Figur und ihr Zielfeld, um einen Zug zu spielen, oder ziehe Figuren aus den Ablagen auf das Brett, um eine eigene Stellung aufzubauen.",
+    "Wähle eine Figur und ihr Zielfeld, um einen Zug zu spielen.",
   "intro.guide.analyze":
-    "Wähle „{0}“ für Zugvorschläge und Erklärungen. Sieh dir anschließend eine Antwort an oder probiere einen Zug aus.",
-  "intro.guide.practice":
-    "Spiele beide Seiten oder aktiviere den Computergegner, um gegen ihn zu üben.",
+    "Wähle „{0}“ und sieh dir eine Antwort an oder probiere den Zugvorschlag aus.",
+  "intro.guide.setup":
+    "Nutze die Bearbeitungswerkzeuge, um eine eigene Stellung aufzubauen.",
   "footer.tagline": "Ein guter Zug beginnt mit etwas Verständnis.",
   "footer.engine": "Mit Stockfish 19",
   "move.description.normal": "{0}{1} von {2} nach {3}",

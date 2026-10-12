@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "intro.guide.show": "Cómo jugar",
+  "intro.guide.hide": "Ocultar instrucciones",
+  "board.editor.open": "Editar posición",
+  "board.editor.close": "Terminar edición",
+  "board.preview.label": "Vista previa",
+  "board.preview.previous": "Jugada anterior de la vista previa",
+  "board.preview.next": "Siguiente jugada de la vista previa",
+  "coach.analysis.more": "Más análisis",
+  "coach.analysis.less": "Menos análisis",
   "engine.error.load":
     "El motor de ajedrez no se pudo cargar. Comprueba tu conexión y vuelve a analizar.",
   "engine.error.loadTimeout":
@@ -33,11 +42,11 @@ export default {
   "intro.heading.end": "explicada.",
   "intro.tagline": "Explora el tablero. Entiende el plan. Prueba una jugada.",
   "intro.guide.play":
-    "Haz clic en una pieza y en su casilla de destino para jugar, o arrastra piezas desde las bandejas para crear tu propia posición.",
+    "Selecciona una pieza y su casilla de destino para jugar.",
   "intro.guide.analyze":
-    "Selecciona «{0}» para ver sugerencias y explicaciones; después, previsualiza una respuesta o prueba una jugada.",
-  "intro.guide.practice":
-    "Juega con ambos bandos o activa el rival por ordenador para practicar contra él.",
+    "Elige «{0}» y previsualiza una respuesta o prueba la sugerencia.",
+  "intro.guide.setup":
+    "Usa las herramientas de edición para crear tu propia posición.",
   "footer.tagline": "Una buena jugada empieza con un poco de comprensión.",
   "footer.engine": "Con Stockfish 19",
   "move.description.normal": "{0}{1} de {2} a {3}",

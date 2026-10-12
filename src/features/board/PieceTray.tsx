@@ -4,11 +4,13 @@ import { pieceImage } from "./pieces";
 import { pieceNameKeys, sideName } from "../../chess/position";
 
 export function PieceTray({
+  id,
   color,
   selected,
   onSelect,
   onStartDrag,
 }: {
+  id?: string;
   color: Color;
   selected?: string;
   onSelect: (type: PieceSymbol) => void;
@@ -17,6 +19,7 @@ export function PieceTray({
   const { t } = useTranslation();
   return (
     <section
+      id={id}
       className="piece-tray"
       aria-label={t("board.tray.label", sideName(color, t))}
     >

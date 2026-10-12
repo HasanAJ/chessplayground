@@ -1,10 +1,12 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useState } from "react";
 import {
   ArrowDownUp,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
   Eraser,
+  Pencil,
   Plus,
 } from "lucide-react";
 import { setupFen } from "../../chess/position";
@@ -18,6 +20,8 @@ import type { BoardPreview } from "./useBoardPreview";
 import type { BoardController } from "./useBoardInteractions";
 import { Chessboard } from "./Chessboard";
 import { PieceTray } from "./PieceTray";
+import { BoardPreviewControls } from "./BoardPreviewControls";
+import { MobileCoachSummary } from "../coach/MobileCoachSummary";
 
 type Props = {
   game: GameController;
@@ -41,6 +45,7 @@ export function BoardPanel({
   onShowHistory: showHistory,
 }: Props) {
   const { t } = useTranslation();
+  const [editorOpen, setEditorOpen] = useState(false);
   const { flipped, setFlipped, choosePiece } = board;
   const { history, historyPly, tool, setTool, replaceGame, setNotice } = game;
   const clearBoard = () => {
@@ -49,9 +54,14 @@ export function BoardPanel({
     game.setBoardPosition({}, board.turn, "");
     setTool("move");
   };
+  const startPieceDrag = () => {
+    computer.disable();
+    setTool("move");
+  };
+  const best = analysis.thinking ? undefined : analysis.best;
   return (
     <section
-      className="board-panel"
+      className={`board-panel ${editorOpen ? "is-editing" : ""}`}
       aria-label={t("board.controls.label")}
     >
       <div className="board-toolbar">
@@ -59,12 +69,15 @@ export function BoardPanel({
           <button
             className="new-game-button"
             title={t("board.newGame.description")}
-            onClick={newGame}
+            onClick={() => {
+              setEditorOpen(false);
+              newGame();
+            }}
           >
             <Plus size={15} /> {t("board.newGame.label")}
           </button>
           <button
-            className="icon-button"
+            className="icon-button desktop-editor-action"
             onClick={clearBoard}
             title={t("board.clear")}
             aria-label={t("board.clear")}
@@ -107,13 +120,11 @@ export function BoardPanel({
       </div>
       <div className="board-surface">
         <PieceTray
+          id="board-top-tray"
           color={flipped ? "w" : "b"}
           selected={tool}
           onSelect={(type) => choosePiece(flipped ? "w" : "b", type)}
-          onStartDrag={() => {
-            computer.disable();
-            setTool("move");
-          }}
+          onStartDrag={startPieceDrag}
         />
 
         <Chessboard
@@ -125,20 +136,46 @@ export function BoardPanel({
         />
 
         <PieceTray
+          id="board-bottom-tray"
           color={flipped ? "b" : "w"}
           selected={tool}
           onSelect={(type) => choosePiece(flipped ? "b" : "w", type)}
-          onStartDrag={() => {
-            computer.disable();
-            setTool("move");
-          }}
+          onStartDrag={startPieceDrag}
         />
       </div>
 
-      <a className="mobile-coach-link" href="#coach">
-        {t("board.openCoach")}
-        <ArrowRight size={15} />
-      </a>
+      <BoardPreviewControls preview={preview} />
+      {best && !preview.boardPreview && (
+        <MobileCoachSummary
+          candidate={best}
+          onPlay={() =>
+            board.playSuggestedMove(
+              best.move.from,
+              best.move.to,
+              best.move.promotion,
+            )
+          }
+          onPreviewReply={() => preview.inspectMove(best, 2, "click")}
+        />
+      )}
+      <div className="board-secondary-actions">
+        <button
+          className="position-editor-toggle"
+          aria-expanded={editorOpen}
+          aria-controls="board-top-tray board-bottom-tray position-editor"
+          onClick={() => {
+            setEditorOpen(!editorOpen);
+            setTool("move");
+          }}
+        >
+          <Pencil size={14} />
+          {t(editorOpen ? "board.editor.close" : "board.editor.open")}
+        </button>
+        <a className="mobile-coach-link" href="#coach">
+          {t("board.openCoach")}
+          <ArrowRight size={15} />
+        </a>
+      </div>
       <div className="board-tools">
         {game.playable && (
           <MoveHistory
@@ -147,22 +184,28 @@ export function BoardPanel({
             onSelect={showHistory}
           />
         )}
-        <PositionLoader
-          fen={
-            game.draft
-              ? setupFen(
-                  game.draft.position,
-                  game.draft.turn,
-                  game.draft.rights,
-                )
-              : game.analysisFen
-          }
-          onLoad={(next) => {
-            replaceGame(next);
-            setNotice("Position loaded");
-          }}
-          onCopied={() => setNotice("Position copied")}
-        />
+        <div className="position-editor" id="position-editor">
+          <button className="mobile-editor-clear" onClick={clearBoard}>
+            <Eraser size={15} /> {t("board.clear")}
+          </button>
+          <PositionLoader
+            fen={
+              game.draft
+                ? setupFen(
+                    game.draft.position,
+                    game.draft.turn,
+                    game.draft.rights,
+                  )
+                : game.analysisFen
+            }
+            onLoad={(next) => {
+              replaceGame(next);
+              setEditorOpen(false);
+              setNotice("Position loaded");
+            }}
+            onCopied={() => setNotice("Position copied")}
+          />
+        </div>
       </div>
     </section>
   );

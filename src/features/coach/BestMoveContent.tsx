@@ -1,11 +1,13 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useState } from "react";
-import { ArrowRight, Eye, Lightbulb } from "lucide-react";
+import { Eye, Lightbulb } from "lucide-react";
 import { LikelyReply, Continuation } from "./MoveDetails";
 import type { MovePreviewProps } from "./previewEvents";
 import { moveDescription } from "../../chess/moves";
 import { ExplanationLink } from "./ExplanationLink";
 import { SquareText } from "../board/SquareHighlight";
+import { BestMoveHeading } from "./BestMoveHeading";
+import { PlayBestMoveButton } from "./PlayBestMoveButton";
 
 export function BestMoveContent({
   candidate,
@@ -24,8 +26,6 @@ export function BestMoveContent({
   const { onInspect } = previewProps;
   useEffect(() => () => onInspect(candidate, 0), [onInspect, candidate]);
   const hasReply = candidate.continuation.length > 1;
-  const title =
-    candidate.theme === "check" ? t("coach.best.escapeCheck") : candidate.title;
   return (
     <>
       <div className="card-eyebrow">
@@ -36,16 +36,7 @@ export function BestMoveContent({
           </span>
         )}
       </div>
-      <h3
-        className="best-move-heading"
-        aria-label={`${candidate.move.san} · ${title}`}
-      >
-        <span className="best-move-san">
-          <SquareText text={candidate.move.san} />
-        </span>
-        <span className="move-title-divider"> · </span>
-        <SquareText text={title} />
-      </h3>
+      <BestMoveHeading candidate={candidate} />
       <p className="move-description">
         <SquareText text={moveDescription(candidate.move, t)} />
       </p>
@@ -54,17 +45,7 @@ export function BestMoveContent({
       </p>
       <ExplanationLink candidate={candidate} {...previewProps} />
       <div className="plan-actions">
-        <button
-          className="primary-button"
-          aria-label={t("coach.best.play", candidate.move.san)}
-          onClick={onPlay}
-        >
-          <SquareText
-            text={t("coach.move.play", candidate.move.san)}
-            focusable={false}
-          />{" "}
-          <ArrowRight size={14} />
-        </button>
+        <PlayBestMoveButton san={candidate.move.san} onPlay={onPlay} />
         {hasReply && (
           <button
             className="plan-preview"
