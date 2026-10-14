@@ -68,13 +68,12 @@ export function AnalyticsConsent({
             <section
               className="analytics-choice"
               id="analytics-choice"
-              aria-labelledby="analytics-heading"
+              aria-label={t("analytics.heading")}
             >
-              <div>
-                <h2 id="analytics-heading">{t("analytics.heading")}</h2>
-                <p>{t("analytics.description")}</p>
+              <p>
+                {t("analytics.description")}{" "}
                 <a href="/privacy/">{t("analytics.privacy")}</a>
-              </div>
+              </p>
               <div className="analytics-actions">
                 <button onClick={() => choose("denied")}>
                   {t("analytics.decline")}

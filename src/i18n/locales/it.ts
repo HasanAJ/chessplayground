@@ -1,9 +1,9 @@
 import type { Catalog } from "./en";
 
 export default {
-  "analytics.heading": "Ci aiuti a migliorare Tempo?",
+  "analytics.heading": "Preferenze sui cookie",
   "analytics.description":
-    "Consenti i cookie di Google Analytics per misurare le visite e le lezioni più popolari. Le tue partite restano sul tuo dispositivo. Puoi cambiare questa scelta nel piè di pagina.",
+    "I cookie di analisi facoltativi ci aiutano a capire le visite e migliorare Tempo.",
   "analytics.accept": "Consenti",
   "analytics.decline": "Rifiuta",
   "analytics.settings": "Impostazioni di analisi",

@@ -1,7 +1,7 @@
 const en = {
-  "analytics.heading": "Help improve Tempo?",
+  "analytics.heading": "Cookie preferences",
   "analytics.description":
-    "Allow Google Analytics cookies to measure visits and popular lessons. Your games stay on your device. You can change this choice in the footer.",
+    "Optional analytics cookies help us understand visits and improve Tempo.",
   "analytics.accept": "Allow",
   "analytics.decline": "Decline",
   "analytics.settings": "Analytics settings",

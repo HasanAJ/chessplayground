@@ -1,9 +1,9 @@
 import type { Catalog } from "./en";
 
 export default {
-  "analytics.heading": "Tempo verbessern?",
+  "analytics.heading": "Cookie-Einstellungen",
   "analytics.description":
-    "Erlaube Google-Analytics-Cookies, um Besuche und beliebte Lektionen zu messen. Deine Partien bleiben auf deinem Gerät. Du kannst deine Wahl in der Fußzeile ändern.",
+    "Optionale Analyse-Cookies helfen uns, Besuche zu verstehen und Tempo zu verbessern.",
   "analytics.accept": "Erlauben",
   "analytics.decline": "Ablehnen",
   "analytics.settings": "Analyse-Einstellungen",

@@ -1,9 +1,9 @@
 import type { Catalog } from "./en";
 
 export default {
-  "analytics.heading": "Aider à améliorer Tempo ?",
+  "analytics.heading": "Préférences de cookies",
   "analytics.description":
-    "Autorisez les cookies Google Analytics pour mesurer les visites et les leçons populaires. Vos parties restent sur votre appareil. Vous pouvez modifier ce choix en bas de page.",
+    "Les cookies de mesure facultatifs nous aident à comprendre les visites et à améliorer Tempo.",
   "analytics.accept": "Autoriser",
   "analytics.decline": "Refuser",
   "analytics.settings": "Paramètres de mesure",
