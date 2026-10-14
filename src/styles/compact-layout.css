@@ -271,11 +271,7 @@
 }
 @media (max-width: 600px) {
   .board-toolbar {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .board-toolbar .turn-select {
-    grid-column: 1 / -1;
-    grid-row: 2;
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 }
 @media (max-width: 540px) {
@@ -349,16 +345,35 @@
     font-size: 16px;
   }
 }
+@media (max-width: 480px) {
+  .board-toolbar .new-game-button {
+    width: 44px;
+    padding-inline: 0;
+  }
+  .board-toolbar .new-game-button > span {
+    display: none;
+  }
+}
 @media (max-width: 360px) {
   .board-toolbar {
     gap: 4px;
   }
-  .board-toolbar .new-game-button {
-    padding-inline: 5px;
+  .board-toolbar .new-game-button,
+  .board-toolbar .flip-board-button {
+    width: 36px;
+  }
+  .board-navigation-actions {
+    gap: 4px;
   }
   .board-history-navigation {
     gap: 0;
     padding: 1px;
+  }
+  .board-history-navigation .icon-button {
+    width: 32px;
+  }
+  .turn-select select {
+    padding-inline: 8px 22px;
   }
 }
 

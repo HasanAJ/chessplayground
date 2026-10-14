@@ -72,13 +72,14 @@ export function BoardPanel({
         <div className="toolbar-actions">
           <button
             className="new-game-button"
+            aria-label={t("board.newGame.label")}
             title={t("board.newGame.description")}
             onClick={() => {
               setEditorOpen(false);
               newGame();
             }}
           >
-            <Plus size={15} /> {t("board.newGame.label")}
+            <Plus size={15} /> <span>{t("board.newGame.label")}</span>
           </button>
           <button
             className="icon-button desktop-editor-action"
