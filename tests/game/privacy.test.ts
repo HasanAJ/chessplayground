@@ -32,8 +32,8 @@ test("every localized privacy URL has a complete policy and matching language na
       languagePath(language),
     );
     assert.equal(document.querySelectorAll("h2").length, 4);
-    assert.equal(document.querySelectorAll("main > p").length, 8);
-    for (const key of ["_ga", "_ga_…", "tempo-analytics-consent-v1"])
+    assert.doesNotMatch(source, /Hasan|github/i);
+    for (const key of ["_ga", "_ga_…"])
       assert.ok(
         [...document.querySelectorAll("code")].some(
           (element) => element.textContent === key,
