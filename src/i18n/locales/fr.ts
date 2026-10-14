@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "analytics.heading": "Aider à améliorer Tempo ?",
+  "analytics.description":
+    "Autorisez les cookies Google Analytics pour mesurer les visites et les leçons populaires. Vos parties restent sur votre appareil. Vous pouvez modifier ce choix en bas de page.",
+  "analytics.accept": "Autoriser",
+  "analytics.decline": "Refuser",
+  "analytics.settings": "Paramètres de mesure",
+  "analytics.privacy": "Politique de confidentialité",
+  "analytics.storage":
+    "Votre choix s’applique à cette visite, mais n’a pas pu être enregistré pour la prochaine.",
   "workspace.tabs.label": "Espace de travail",
   "workspace.tabs.play": "Jouer",
   "workspace.tabs.opening": "Ouvertures",

@@ -1,4 +1,13 @@
 const en = {
+  "analytics.heading": "Help improve Tempo?",
+  "analytics.description":
+    "Allow Google Analytics cookies to measure visits and popular lessons. Your games stay on your device. You can change this choice in the footer.",
+  "analytics.accept": "Allow",
+  "analytics.decline": "Decline",
+  "analytics.settings": "Analytics settings",
+  "analytics.privacy": "Privacy policy",
+  "analytics.storage":
+    "Your analytics choice applies to this visit, but could not be saved for next time.",
   "workspace.tabs.label": "Workspace",
   "workspace.tabs.play": "Play",
   "workspace.tabs.opening": "Openings",

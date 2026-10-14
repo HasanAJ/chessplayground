@@ -1,6 +1,15 @@
 import type { Catalog } from "./en";
 
 export default {
+  "analytics.heading": "¿Nos ayudas a mejorar Tempo?",
+  "analytics.description":
+    "Permite las cookies de Google Analytics para medir las visitas y las lecciones más populares. Tus partidas se quedan en tu dispositivo. Puedes cambiar esta opción en el pie de página.",
+  "analytics.accept": "Permitir",
+  "analytics.decline": "Rechazar",
+  "analytics.settings": "Ajustes de analítica",
+  "analytics.privacy": "Política de privacidad",
+  "analytics.storage":
+    "Tu elección se aplica a esta visita, pero no se ha podido guardar para la próxima.",
   "workspace.tabs.label": "Espacio de trabajo",
   "workspace.tabs.play": "Jugar",
   "workspace.tabs.opening": "Aperturas",

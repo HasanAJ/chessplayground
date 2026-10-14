@@ -44,6 +44,8 @@ Configure these GitHub Actions settings on `HasanAJ/chessplayground`:
 
 `wrangler.jsonc` publishes `dist` as static assets and attaches the custom domain. Cloudflare provisions the HTTPS certificate. Enable **Always Use HTTPS** for the domain in Cloudflare so HTTP requests redirect to HTTPS. The site also sends a Strict-Transport-Security header. Neither a server script nor a database is required.
 
+Production deployments use Google Analytics 4 stream `G-2T14H8DDH6`, configured through `VITE_GA_MEASUREMENT_ID` in the deployment workflow. The tag loads only after a visitor allows analytics. The choice is saved locally and can be changed in the footer; declining stops collection and clears Analytics cookies. Page views follow translated routes and lessons, exclude URL queries and fragments, and wait for the correct page title. Enhanced measurement must remain off in this stream to avoid duplicate history-based page views. Advertising features are disabled. The privacy policy is at `/privacy/`. Development builds do not load Analytics; set `VITE_GA_MEASUREMENT_ID` when building locally to test production behavior.
+
 For a manual deployment with the same account and token available as environment variables:
 
 ```sh

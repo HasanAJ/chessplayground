@@ -30,6 +30,7 @@ import { usePanelFocus } from "./usePanelFocus";
 import { WorkspaceTabs } from "./WorkspaceTabs";
 import { navigate, useLocation } from "./navigation";
 import { OpeningBoundary } from "../features/openings/OpeningBoundary";
+import { AnalyticsConsent } from "./AnalyticsConsent";
 
 const OpeningWorkspace = lazy(
   () => import("../features/openings/OpeningWorkspace"),
@@ -218,6 +219,9 @@ export default function App() {
             <span className="footer-dot">·</span> {t("footer.engine")}{" "}
             <span className="footer-dot">·</span>
           </span>
+          <div className="footer-privacy">
+            <AnalyticsConsent />
+          </div>
         </footer>
       </main>
     </>

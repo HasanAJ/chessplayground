@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 15
     env:
       SITE_URL: https://chessplayground.app
+      VITE_GA_MEASUREMENT_ID: G-2T14H8DDH6
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
