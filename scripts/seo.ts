@@ -7,7 +7,11 @@ import {
   siteOrigin,
   type PageDetails,
 } from "../src/i18n/metadata";
-import { languageFromPath, languagePath } from "../src/i18n/routes";
+import {
+  languageFromPath,
+  languagePath,
+  privacyPath,
+} from "../src/i18n/routes";
 import { languages, type Language } from "../src/i18n/translate";
 import { openings, type OpeningLesson } from "../src/features/openings/lessons";
 import { openingMetadata } from "../src/features/openings/metadata";
@@ -46,14 +50,17 @@ function escapeHtml(value: string) {
 
 export function siteMetadata(siteUrl: string, language: Language = "en") {
   const origin = siteOrigin(siteUrl);
+  const paths = [
+    ...sitePages.map(
+      ({ language, page }) => languagePath(language) + (page?.path ?? ""),
+    ),
+    ...(Object.keys(languages) as Language[]).map(privacyPath),
+  ];
   return {
     ...pageMetadata(origin, language),
     robots: `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`,
-    sitemap: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages
-      .map(
-        ({ language, page }) =>
-          `<url><loc>${escapeHtml(origin + languagePath(language) + (page?.path ?? ""))}</loc></url>`,
-      )
+    sitemap: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths
+      .map((path) => `<url><loc>${escapeHtml(origin + path)}</loc></url>`)
       .join("")}</urlset>\n`,
   };
 }

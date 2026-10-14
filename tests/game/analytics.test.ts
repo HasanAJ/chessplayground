@@ -1,10 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { act, createElement } from "react";
+import { act, createElement, Fragment } from "react";
 import { createTestRoot } from "../helpers/dom";
 import { AnalyticsConsent } from "../../src/app/AnalyticsConsent";
 import { analyticsConsentKey, createAnalytics } from "../../src/app/analytics";
 import { updatePageMetadata } from "../../src/i18n/metadata";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider";
+import { LanguageSelector } from "../../src/i18n/LanguageSelector";
+import { languages, type Language } from "../../src/i18n/translate";
+import { privacyPath } from "../../src/i18n/routes";
 
 const measurementId = "G-TEST123456";
 function commands() {
@@ -24,6 +28,38 @@ function button(text: string) {
   assert.ok(found, text);
   return found;
 }
+
+test("banner and footer privacy links follow the selected site language", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  await act(() =>
+    root.render(
+      createElement(LanguageProvider, {
+        children: createElement(
+          Fragment,
+          null,
+          createElement(LanguageSelector),
+          createElement(AnalyticsConsent, { measurementId }),
+        ),
+      }),
+    ),
+  );
+  const select = document.querySelector<HTMLSelectElement>(
+    ".language-selector select",
+  )!;
+  for (const language of Object.keys(languages) as Language[]) {
+    await act(() => {
+      select.value = language;
+      select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+    });
+    assert.deepEqual(
+      [
+        ...document.querySelectorAll<HTMLAnchorElement>('a[href*="privacy/"]'),
+      ].map((link) => link.getAttribute("href")),
+      [privacyPath(language), privacyPath(language)],
+      language,
+    );
+  }
+});
 
 test("no Analytics script or commands run before consent or after declining", async (t) => {
   const { root } = createTestRoot(t);
@@ -48,7 +84,7 @@ test("allowing Analytics starts one tag and withdrawing permission clears cookie
   await act(() =>
     root.render(createElement(AnalyticsConsent, { measurementId })),
   );
-  await act(() => button("Allow").click());
+  await act(() => button("Accept").click());
   assert.equal(window.localStorage.getItem(analyticsConsentKey), "granted");
   assert.equal(
     document.querySelectorAll(`script[src$="id=${measurementId}"]`).length,
@@ -74,7 +110,7 @@ test("allowing Analytics starts one tag and withdrawing permission clears cookie
   await Promise.resolve();
   assert.equal(views().length, 1);
   await act(() => button("Analytics settings").click());
-  await act(() => button("Allow").click());
+  await act(() => button("Accept").click());
   assert.equal(Reflect.get(window, `ga-disable-${measurementId}`), false);
   assert.equal(document.querySelectorAll("script").length, 1);
   assert.equal(views().length, 2);

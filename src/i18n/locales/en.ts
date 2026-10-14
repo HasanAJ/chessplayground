@@ -2,7 +2,7 @@ const en = {
   "analytics.heading": "Cookie preferences",
   "analytics.description":
     "Optional analytics cookies help us understand visits and improve Tempo.",
-  "analytics.accept": "Allow",
+  "analytics.accept": "Accept",
   "analytics.decline": "Decline",
   "analytics.settings": "Analytics settings",
   "analytics.privacy": "Privacy policy",

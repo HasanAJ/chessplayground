@@ -4,6 +4,10 @@ export function languagePath(language: Language) {
   return language === "en" ? "/" : `/${language}/`;
 }
 
+export function privacyPath(language: Language) {
+  return `${languagePath(language)}privacy/`;
+}
+
 export function languageFromPath(pathname: string): Language | null {
   const path = pathname.endsWith("/") ? pathname : `${pathname}/`;
   const home = path.replace(/openings\/(?:[a-z0-9-]+\/)?$/, "");

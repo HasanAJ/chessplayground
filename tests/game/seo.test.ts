@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 import { JSDOM } from "jsdom";
 import { seoPlugin, siteMetadata, sitePages } from "../../scripts/seo";
 import { languages, type Language } from "../../src/i18n/translate";
-import { languagePath, openingPath } from "../../src/i18n/routes";
+import { languagePath, openingPath, privacyPath } from "../../src/i18n/routes";
 import { siteContent } from "../../src/i18n/siteContent";
 import { openings } from "../../src/features/openings/lessons";
 import { motifs } from "../../src/features/openings/content";
@@ -54,10 +54,15 @@ test("production pages contain translated content and reciprocal language metada
     [...sitemapDocument.window.document.querySelectorAll("loc")].map(
       (loc) => loc.textContent,
     ),
-    sitePages.map(
-      ({ language, page }) =>
-        `https://tempo.example.org${languagePath(language)}${page?.path ?? ""}`,
-    ),
+    [
+      ...sitePages.map(
+        ({ language, page }) =>
+          `https://tempo.example.org${languagePath(language)}${page?.path ?? ""}`,
+      ),
+      ...(Object.keys(languages) as Language[]).map(
+        (language) => `https://tempo.example.org${privacyPath(language)}`,
+      ),
+    ],
   );
   sitemapDocument.window.close();
   for (const language of Object.keys(languages) as Language[]) {

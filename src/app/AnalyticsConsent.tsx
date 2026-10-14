@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "../i18n/LanguageProvider";
+import { privacyPath } from "../i18n/routes";
 import {
   createAnalytics,
   analyticsConsentKey,
@@ -17,7 +18,7 @@ export function AnalyticsConsent({
 }: {
   measurementId?: string;
 }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [consent, setConsent] = useState(readAnalyticsConsent);
   const [open, setOpen] = useState(consent === null);
   const [saved, setSaved] = useState(true);
@@ -50,7 +51,7 @@ export function AnalyticsConsent({
 
   return (
     <>
-      <a className="privacy-link" href="/privacy/">
+      <a className="privacy-link" href={privacyPath(language)}>
         {t("analytics.privacy")}
       </a>
       {analytics && (
@@ -72,7 +73,7 @@ export function AnalyticsConsent({
             >
               <p>
                 {t("analytics.description")}{" "}
-                <a href="/privacy/">{t("analytics.privacy")}</a>
+                <a href={privacyPath(language)}>{t("analytics.privacy")}</a>
               </p>
               <div className="analytics-actions">
                 <button onClick={() => choose("denied")}>

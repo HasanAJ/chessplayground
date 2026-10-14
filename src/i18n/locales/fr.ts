@@ -4,7 +4,7 @@ export default {
   "analytics.heading": "Préférences de cookies",
   "analytics.description":
     "Les cookies de mesure facultatifs nous aident à comprendre les visites et à améliorer Tempo.",
-  "analytics.accept": "Autoriser",
+  "analytics.accept": "Accepter",
   "analytics.decline": "Refuser",
   "analytics.settings": "Paramètres de mesure",
   "analytics.privacy": "Politique de confidentialité",

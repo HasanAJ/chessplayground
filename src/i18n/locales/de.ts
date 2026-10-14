@@ -4,7 +4,7 @@ export default {
   "analytics.heading": "Cookie-Einstellungen",
   "analytics.description":
     "Optionale Analyse-Cookies helfen uns, Besuche zu verstehen und Tempo zu verbessern.",
-  "analytics.accept": "Erlauben",
+  "analytics.accept": "Akzeptieren",
   "analytics.decline": "Ablehnen",
   "analytics.settings": "Analyse-Einstellungen",
   "analytics.privacy": "Datenschutzerklärung",

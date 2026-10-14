@@ -4,7 +4,7 @@ export default {
   "analytics.heading": "Preferencias de cookies",
   "analytics.description":
     "Las cookies de analítica opcionales nos ayudan a entender las visitas y mejorar Tempo.",
-  "analytics.accept": "Permitir",
+  "analytics.accept": "Aceptar",
   "analytics.decline": "Rechazar",
   "analytics.settings": "Ajustes de analítica",
   "analytics.privacy": "Política de privacidad",
