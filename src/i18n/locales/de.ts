@@ -237,16 +237,16 @@ export default {
   "coach.alternatives.heading": "Weitere gute Züge",
   "coach.move.play": "{0} spielen",
   "coach.lesson.mateThreat.advice":
-    "Prüfe vor dem Zug, ob gegnerische Figuren deinen König auf {0} erreichen können. Hier beendet {1} die Partie.",
+    "Prüfe gegnerische Schachgebote und ob dein König eine sichere Antwort hat.",
   "coach.lesson.mateThreat.focus": "Mattdrohung ansehen",
   "coach.lesson.undefended.consequence":
     "lässt die eigene Figur ({0}) auf {1} ungedeckt. Die gegnerische Figur ({2}) kann sie mit {3} schlagen",
   "coach.lesson.defendedCapture.consequence":
     "ermöglicht es der gegnerischen Figur ({0}), deine Figur ({1}) auf {2} mit {3} zu schlagen. Sie ist gedeckt; verfolge den weiteren Abtausch",
   "coach.lesson.undefended.advice":
-    "Prüfe vor dem Zug, welche deiner Figuren geschlagen werden können und ob du zurückschlagen kannst.",
+    "Prüfe, welche deiner Figuren geschlagen werden können und ob du zurückschlagen kannst.",
   "coach.lesson.defendedCapture.advice":
-    "Vergleiche vor einem Abtausch die möglichen Schläge beider Seiten, einschließlich der nächsten Antwort.",
+    "Vergleiche die möglichen Schläge beider Seiten, einschließlich der nächsten Antwort.",
   "coach.lesson.capture.focus": "Bedrohte Figur ansehen",
   "coach.lesson.laterCapture.consequence":
     "führt in der gezeigten Variante zu {0}: Die gegnerische Figur ({1}) schlägt deine Figur ({2}) auf {3}. Weitere Abtäusche können folgen",
@@ -264,13 +264,13 @@ export default {
     "Achte auf Antworten, die zwei Figuren gleichzeitig angreifen. Wenn du eine rettest, bleibt die andere möglicherweise bedroht.",
   "coach.lesson.fork.focus": "Beide Angriffe ansehen",
   "coach.lesson.compareCapture":
-    "Vergleiche den Schlag auf {0} mit {1}. Sieh dir die Antwort an, bevor du den Schlag bewertest.",
+    "Suche nach Schlägen und verfolge die Antworten, bevor du einen Abtausch bewertest.",
   "coach.lesson.compareDefense":
-    "Prüfe, welche Figuren Schutz brauchen. {0} bietet eine andere Verteidigung deiner Stellung.",
+    "Prüfe, welche Figuren Schutz brauchen.",
   "coach.lesson.compareEscape":
-    "Prüfe bedrohte Figuren, bevor du einen neuen Plan beginnst. {0} bringt eine Figur in Sicherheit.",
+    "Prüfe bedrohte Figuren, bevor du einen neuen Plan beginnst.",
   "coach.lesson.compareAlternative":
-    "Prüfe gegnerische Schachgebote, Schläge und Angriffe vor deinem Zug. Sieh dir {0} zum Vergleich an.",
+    "Prüfe gegnerische Schachgebote, Schläge und Angriffe vor deinem Zug.",
   "coach.review.error.needsAnalysis":
     "Der Zug erfordert eine Analyse der resultierenden Stellung.",
   "coach.review.checkmate":
@@ -466,7 +466,9 @@ export default {
   "coach.feedback.pending":
     "Dein Zug und die besten Alternativen werden geprüft…",
   "coach.feedback.retry": "Zugbewertung erneut starten",
-  "coach.feedback.nextTime": "Fürs nächste Mal",
+  "coach.feedback.beforeYouMove": "Bevor du ziehst",
+  "coach.feedback.tryInstead": "Versuche stattdessen {0}",
+  "coach.feedback.previewMove": "{0} ansehen",
   "coach.feedback.likelyReply": "Mögliche Antwort des Gegners",
   "coach.feedback.quickReview": "Kurze Bewertung",
   "coach.feedback.evaluationDrop": "{0} Bewertungsverlust",

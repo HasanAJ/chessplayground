@@ -9,8 +9,9 @@ export function ExplanationLink({
   preview,
   onInspect,
   ply = 1,
-}: MovePreviewProps & { focus?: BoardFocus; ply?: number }) {
-  if (!focus) return null;
+  label = focus?.label,
+}: MovePreviewProps & { focus?: BoardFocus; ply?: number; label?: string }) {
+  if (!label) return null;
   const current =
     preview?.candidate === candidate &&
     preview.ply === ply &&
@@ -24,7 +25,7 @@ export function ExplanationLink({
       onClick={() => onInspect(candidate, ply, "click", focus)}
     >
       <Eye size={13} aria-hidden="true" />{" "}
-      <SquareText text={focus.label} focusable={false} />
+      <SquareText text={label} focusable={false} />
     </button>
   );
 }

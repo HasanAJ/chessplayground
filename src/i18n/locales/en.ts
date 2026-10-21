@@ -231,16 +231,16 @@ const en = {
   "coach.alternatives.heading": "Other good moves",
   "coach.move.play": "Play {0}",
   "coach.lesson.mateThreat.advice":
-    "Before moving, check whether their pieces can reach your king on {0}. Here, {1} ends the game.",
+    "Check your opponent’s checks and whether your king has a safe reply.",
   "coach.lesson.mateThreat.focus": "See their checkmate threat",
   "coach.lesson.undefended.consequence":
     "leaves your {0} on {1} with no defender. Their {2} can take it with {3}",
   "coach.lesson.defendedCapture.consequence":
     "allows their {0} to take your {1} on {2} with {3}. Your piece has a defender, so follow the rest of the trade",
   "coach.lesson.undefended.advice":
-    "Before moving, check which of your pieces they can capture and whether you can capture back.",
+    "Check which of your pieces they can capture and whether you can capture back.",
   "coach.lesson.defendedCapture.advice":
-    "Before accepting a trade, compare the pieces both sides can capture, including the next reply.",
+    "Compare the pieces both sides can capture, including the next reply.",
   "coach.lesson.capture.focus": "See the piece they can capture",
   "coach.lesson.laterCapture.consequence":
     "allows the shown line to reach {0}, where their {1} takes your {2} on {3}. Further trades may follow",
@@ -257,13 +257,13 @@ const en = {
     "Look for replies that attack two pieces at once. Moving or protecting one may leave the other under attack.",
   "coach.lesson.fork.focus": "See the two attacks",
   "coach.lesson.compareCapture":
-    "Compare the capture on {0} with {1}. Preview their reply before deciding whether the capture helps.",
+    "Look for captures and follow their replies before deciding whether a trade helps.",
   "coach.lesson.compareDefense":
-    "Check which of your pieces need protection. {0} offers another way to defend your position.",
+    "Check which of your pieces need protection.",
   "coach.lesson.compareEscape":
-    "Check whether a piece is under attack before starting another plan. {0} moves a piece out of danger.",
+    "Check whether a piece is under attack before starting another plan.",
   "coach.lesson.compareAlternative":
-    "Check their checks, captures, and attacks before choosing your move. Preview {0} to compare the alternative.",
+    "Check their checks, captures, and attacks before choosing your move.",
   "coach.review.error.needsAnalysis":
     "The move needs analysis of the resulting position.",
   "coach.review.checkmate":
@@ -450,7 +450,9 @@ const en = {
   "common.hide": "Hide",
   "coach.feedback.pending": "Looking at your move and the best alternatives…",
   "coach.feedback.retry": "Retry move review",
-  "coach.feedback.nextTime": "Next time",
+  "coach.feedback.beforeYouMove": "Before you move",
+  "coach.feedback.tryInstead": "Try {0} instead",
+  "coach.feedback.previewMove": "Preview {0}",
   "coach.feedback.likelyReply": "Opponent’s possible reply",
   "coach.feedback.quickReview": "Quick review",
   "coach.feedback.evaluationDrop": "{0} evaluation drop",

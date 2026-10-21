@@ -237,16 +237,16 @@ export default {
   "coach.alternatives.heading": "Autres bons coups",
   "coach.move.play": "Jouer {0}",
   "coach.lesson.mateThreat.advice":
-    "Avant de jouer, vérifiez si leurs pièces peuvent atteindre votre roi en {0}. Ici, {1} termine la partie.",
+    "Vérifiez les échecs adverses et si votre roi dispose d’une réponse sûre.",
   "coach.lesson.mateThreat.focus": "Voir leur menace de mat",
   "coach.lesson.undefended.consequence":
     "laisse votre {0} en {1} sans défense. Leur {2} peut capturer cette pièce avec {3}",
   "coach.lesson.defendedCapture.consequence":
     "permet à leur {0} de capturer votre {1} en {2} avec {3}. Votre pièce est défendue ; suivez la suite de l’échange",
   "coach.lesson.undefended.advice":
-    "Avant de jouer, vérifiez quelles pièces peuvent être capturées et si vous pouvez reprendre.",
+    "Vérifiez quelles pièces peuvent être capturées et si vous pouvez reprendre.",
   "coach.lesson.defendedCapture.advice":
-    "Avant d’accepter un échange, comparez les captures possibles des deux camps, y compris la réponse suivante.",
+    "Comparez les captures possibles des deux camps, y compris la réponse suivante.",
   "coach.lesson.capture.focus": "Voir la pièce qu’ils peuvent capturer",
   "coach.lesson.laterCapture.consequence":
     "permet d’atteindre {0} dans la ligne affichée, où leur {1} capture votre {2} en {3}. D’autres échanges peuvent suivre",
@@ -264,13 +264,13 @@ export default {
     "Cherchez les réponses qui attaquent deux pièces à la fois. En sauver une peut laisser l’autre sous attaque.",
   "coach.lesson.fork.focus": "Voir les deux attaques",
   "coach.lesson.compareCapture":
-    "Comparez la capture en {0} avec {1}. Regardez leur réponse avant de décider si la capture vous aide.",
+    "Cherchez les captures et suivez les réponses avant de juger un échange.",
   "coach.lesson.compareDefense":
-    "Vérifiez quelles pièces ont besoin de protection. {0} offre une autre façon de défendre votre position.",
+    "Vérifiez quelles pièces ont besoin de protection.",
   "coach.lesson.compareEscape":
-    "Vérifiez si une pièce est attaquée avant de lancer un autre plan. {0} met une pièce à l’abri.",
+    "Vérifiez si une pièce est attaquée avant de lancer un autre plan.",
   "coach.lesson.compareAlternative":
-    "Vérifiez leurs échecs, captures et attaques avant de choisir. Regardez {0} pour comparer l’alternative.",
+    "Vérifiez leurs échecs, captures et attaques avant de choisir.",
   "coach.review.error.needsAnalysis":
     "Le coup nécessite une analyse de la position résultante.",
   "coach.review.checkmate":
@@ -460,7 +460,9 @@ export default {
   "coach.feedback.pending":
     "Examen de votre coup et des meilleures alternatives…",
   "coach.feedback.retry": "Relancer l’examen du coup",
-  "coach.feedback.nextTime": "La prochaine fois",
+  "coach.feedback.beforeYouMove": "Avant de jouer",
+  "coach.feedback.tryInstead": "Essayez plutôt {0}",
+  "coach.feedback.previewMove": "Voir {0}",
   "coach.feedback.likelyReply": "Réponse possible de l’adversaire",
   "coach.feedback.quickReview": "Examen rapide",
   "coach.feedback.evaluationDrop": "{0} de baisse d’évaluation",

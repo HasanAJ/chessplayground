@@ -6,6 +6,7 @@ import { candidatesFor, type Candidate } from "./candidates";
 import { boardFocus, type BoardFocus } from "./explanations";
 
 export type ReviewLesson = {
+  kind: "consequence" | "alternative";
   text: string;
   consequence?: string;
   candidate: Candidate;
@@ -45,11 +46,8 @@ export function lessonFor(
       ([, piece]) => piece?.color === move.color && piece.type === "k",
     )![0] as Square;
     return {
-      text: t(
-        "coach.lesson.mateThreat.advice",
-        king,
-        response.san,
-      ),
+      kind: "consequence",
+      text: t("coach.lesson.mateThreat.advice"),
       candidate: preview,
       ply: 1,
       focus: boardFocus(t("coach.lesson.mateThreat.focus"), [
@@ -62,6 +60,7 @@ export function lessonFor(
     const target = capturedSquare(response);
     const undefended = !after.isAttacked(target, move.color);
     return {
+      kind: "consequence",
       consequence: undefended
         ? t(
             "coach.lesson.undefended.consequence",
@@ -99,6 +98,7 @@ export function lessonFor(
       .slice(1, laterCapture)
       .some((step) => step.color !== move.color && step.san.endsWith("+"));
     return {
+      kind: "consequence",
       consequence: t(
         "coach.lesson.laterCapture.consequence",
         capture.san,
@@ -138,6 +138,7 @@ export function lessonFor(
         )
         .join(t("common.join.and"));
       return {
+        kind: "consequence",
         consequence: t(
           "coach.lesson.fork.consequence",
           t(pieceNameKeys[response.promotion ?? response.piece]),
@@ -158,26 +159,14 @@ export function lessonFor(
     }
   }
   return {
+    kind: "alternative",
     text: best.move.captured
-      ? t(
-          "coach.lesson.compareCapture",
-          capturedSquare(best.move),
-          best.move.san,
-        )
+      ? t("coach.lesson.compareCapture")
       : best.theme === "support"
-        ? t(
-            "coach.lesson.compareDefense",
-            best.move.san,
-          )
+        ? t("coach.lesson.compareDefense")
         : best.theme === "piece-safety"
-          ? t(
-              "coach.lesson.compareEscape",
-              best.move.san,
-            )
-          : t(
-              "coach.lesson.compareAlternative",
-              best.move.san,
-            ),
+          ? t("coach.lesson.compareEscape")
+          : t("coach.lesson.compareAlternative"),
     candidate: best,
     ply: 1,
     focus: best.explanationFocus,

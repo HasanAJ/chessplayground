@@ -236,16 +236,16 @@ export default {
   "coach.alternatives.heading": "Otras buenas jugadas",
   "coach.move.play": "Jugar {0}",
   "coach.lesson.mateThreat.advice":
-    "Antes de mover, comprueba si sus piezas pueden llegar a tu rey en {0}. Aquí, {1} termina la partida.",
+    "Comprueba los jaques de tu rival y si tu rey tiene una respuesta segura.",
   "coach.lesson.mateThreat.focus": "Ver su amenaza de mate",
   "coach.lesson.undefended.consequence":
     "deja tu {0} en {1} sin defensa. Su {2} puede capturar esa pieza con {3}",
   "coach.lesson.defendedCapture.consequence":
     "permite que su {0} capture tu {1} en {2} con {3}. Tu pieza tiene defensa; sigue el resto del cambio",
   "coach.lesson.undefended.advice":
-    "Antes de mover, comprueba qué piezas pueden capturarte y si puedes recapturar.",
+    "Comprueba qué piezas pueden capturarte y si puedes recapturar.",
   "coach.lesson.defendedCapture.advice":
-    "Antes de aceptar un cambio, compara las capturas de ambos bandos, incluida la siguiente respuesta.",
+    "Compara las capturas de ambos bandos, incluida la siguiente respuesta.",
   "coach.lesson.capture.focus": "Ver la pieza que pueden capturar",
   "coach.lesson.laterCapture.consequence":
     "permite llegar a {0} en la línea mostrada, donde su {1} captura tu {2} en {3}. Pueden seguir más cambios",
@@ -262,13 +262,13 @@ export default {
     "Busca respuestas que ataquen dos piezas a la vez. Mover o proteger una puede dejar la otra atacada.",
   "coach.lesson.fork.focus": "Ver los dos ataques",
   "coach.lesson.compareCapture":
-    "Compara la captura en {0} con {1}. Mira su respuesta antes de decidir si te conviene capturar.",
+    "Busca capturas y sigue las respuestas antes de decidir si un cambio te conviene.",
   "coach.lesson.compareDefense":
-    "Comprueba qué piezas necesitan protección. {0} ofrece otra forma de defender tu posición.",
+    "Comprueba qué piezas necesitan protección.",
   "coach.lesson.compareEscape":
-    "Comprueba si tienes una pieza atacada antes de iniciar otro plan. {0} aparta una pieza del peligro.",
+    "Comprueba si tienes una pieza atacada antes de iniciar otro plan.",
   "coach.lesson.compareAlternative":
-    "Comprueba sus jaques, capturas y ataques antes de elegir. Mira {0} para comparar la alternativa.",
+    "Comprueba sus jaques, capturas y ataques antes de elegir.",
   "coach.review.error.needsAnalysis":
     "La jugada requiere analizar la posición resultante.",
   "coach.review.checkmate":
@@ -455,7 +455,9 @@ export default {
   "common.hide": "Ocultar",
   "coach.feedback.pending": "Revisando tu jugada y las mejores alternativas…",
   "coach.feedback.retry": "Reintentar revisión",
-  "coach.feedback.nextTime": "Para la próxima",
+  "coach.feedback.beforeYouMove": "Antes de mover",
+  "coach.feedback.tryInstead": "Prueba {0} en su lugar",
+  "coach.feedback.previewMove": "Ver {0}",
   "coach.feedback.likelyReply": "Posible respuesta del rival",
   "coach.feedback.quickReview": "Revisión rápida",
   "coach.feedback.evaluationDrop": "{0} de caída en la evaluación",

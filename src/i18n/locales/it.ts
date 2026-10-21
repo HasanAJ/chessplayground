@@ -237,16 +237,16 @@ export default {
   "coach.alternatives.heading": "Altre buone mosse",
   "coach.move.play": "Gioca {0}",
   "coach.lesson.mateThreat.advice":
-    "Prima di muovere, controlla se i pezzi avversari possono raggiungere il tuo re in {0}. Qui, {1} conclude la partita.",
+    "Controlla gli scacchi avversari e se il tuo re ha una risposta sicura.",
   "coach.lesson.mateThreat.focus": "Vedi la minaccia di matto",
   "coach.lesson.undefended.consequence":
     "lascia il tuo pezzo ({0}) in {1} senza difesa. Il pezzo avversario ({2}) può catturarlo con {3}",
   "coach.lesson.defendedCapture.consequence":
     "permette al pezzo avversario ({0}) di catturare il tuo pezzo ({1}) in {2} con {3}. Ha un difensore: segui il resto dello scambio",
   "coach.lesson.undefended.advice":
-    "Prima di muovere, controlla quali tuoi pezzi possono essere catturati e se puoi ricatturare.",
+    "Controlla quali tuoi pezzi possono essere catturati e se puoi ricatturare.",
   "coach.lesson.defendedCapture.advice":
-    "Prima di accettare uno scambio, confronta le catture di entrambi i lati, inclusa la risposta successiva.",
+    "Confronta le catture di entrambi i lati, inclusa la risposta successiva.",
   "coach.lesson.capture.focus": "Vedi il pezzo che possono catturare",
   "coach.lesson.laterCapture.consequence":
     "permette di arrivare a {0} nella linea mostrata, dove il pezzo avversario ({1}) cattura il tuo pezzo ({2}) in {3}. Possono seguire altri scambi",
@@ -263,13 +263,13 @@ export default {
     "Cerca risposte che attaccano due pezzi insieme. Muoverne o proteggerne uno può lasciare l'altro sotto attacco.",
   "coach.lesson.fork.focus": "Vedi i due attacchi",
   "coach.lesson.compareCapture":
-    "Confronta la cattura in {0} con {1}. Guarda la risposta prima di decidere se catturare ti aiuta.",
+    "Cerca catture e segui le risposte prima di valutare uno scambio.",
   "coach.lesson.compareDefense":
-    "Controlla quali pezzi hanno bisogno di protezione. {0} offre un altro modo di difendere la posizione.",
+    "Controlla quali pezzi hanno bisogno di protezione.",
   "coach.lesson.compareEscape":
-    "Controlla se un pezzo è sotto attacco prima di iniziare un altro piano. {0} lo allontana dal pericolo.",
+    "Controlla se un pezzo è sotto attacco prima di iniziare un altro piano.",
   "coach.lesson.compareAlternative":
-    "Controlla scacchi, catture e attacchi avversari prima di scegliere. Guarda {0} per confrontare l'alternativa.",
+    "Controlla scacchi, catture e attacchi avversari prima di scegliere.",
   "coach.review.error.needsAnalysis":
     "La mossa richiede l'analisi della posizione risultante.",
   "coach.review.checkmate":
@@ -463,7 +463,9 @@ export default {
   "coach.feedback.pending":
     "Esame della tua mossa e delle migliori alternative…",
   "coach.feedback.retry": "Riprova revisione",
-  "coach.feedback.nextTime": "La prossima volta",
+  "coach.feedback.beforeYouMove": "Prima di muovere",
+  "coach.feedback.tryInstead": "Prova invece {0}",
+  "coach.feedback.previewMove": "Vedi {0}",
   "coach.feedback.likelyReply": "Possibile risposta dell’avversario",
   "coach.feedback.quickReview": "Revisione rapida",
   "coach.feedback.evaluationDrop": "{0} di calo nella valutazione",

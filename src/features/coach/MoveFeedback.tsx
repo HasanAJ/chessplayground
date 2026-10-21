@@ -126,15 +126,11 @@ export function MoveFeedback({
                 <p className="move-description">
                   <SquareText text={moveDescription(review.move, t)} />
                 </p>
-                <p>
-                  <SquareText text={review.text} />
-                </p>
-                {review.lesson && (
-                  <div className="move-lesson">
-                    <span>{t("coach.feedback.nextTime")}</span>
-                    <p>
-                      <SquareText text={review.lesson.text} />
-                    </p>
+                <div className="feedback-explanation">
+                  <p>
+                    <SquareText text={review.text} />
+                  </p>
+                  {review.lesson?.kind === "consequence" ? (
                     <ExplanationLink
                       candidate={review.lesson.candidate}
                       focus={review.lesson.focus}
@@ -142,36 +138,67 @@ export function MoveFeedback({
                       preview={preview}
                       onInspect={onInspect}
                     />
-                  </div>
-                )}
-                <div className="feedback-footer">
-                  <div className="learning-actions">
-                    {review.reply && (
+                  ) : (
+                    review.reply && (
                       <button
                         className="text-action"
                         {...movePreviewEvents(onInspect, review.reply, 1)}
                         onClick={() => onInspect(review.reply!, 1, "click")}
                       >
-                        <Eye size={13} /> {t("coach.feedback.likelyReply")}
+                        <Eye size={13} aria-hidden="true" />{" "}
+                        {t("coach.feedback.likelyReply")}
                       </button>
-                    )}
-                  </div>
-                  {review.label !== "Best move" && review.loss !== null && (
-                    <details className="feedback-analysis-details">
-                      <summary>{t("coach.feedback.analysisDetails")}</summary>
-                      <p>
-                        {t(
-                          "coach.feedback.evaluationDrop",
-                          review.loss.toLocaleString(t.language, {
-                            minimumFractionDigits: 1,
-                            maximumFractionDigits: 1,
-                          }),
-                        )}
-                      </p>
-                      <small>{t("coach.feedback.quickReview")}</small>
-                    </details>
+                    )
                   )}
                 </div>
+                {review.lesson?.kind === "alternative" && (
+                  <div className="feedback-alternative">
+                    <p>
+                      <strong>
+                        <SquareText
+                          text={t(
+                            "coach.feedback.tryInstead",
+                            review.lesson.candidate.move.san,
+                          )}
+                        />
+                      </strong>
+                    </p>
+                    <ExplanationLink
+                      candidate={review.lesson.candidate}
+                      focus={review.lesson.focus}
+                      ply={review.lesson.ply}
+                      label={t(
+                        "coach.feedback.previewMove",
+                        review.lesson.candidate.move.san,
+                      )}
+                      preview={preview}
+                      onInspect={onInspect}
+                    />
+                  </div>
+                )}
+                {review.lesson && (
+                  <div className="move-lesson">
+                    <span>{t("coach.feedback.beforeYouMove")}</span>
+                    <p>
+                      <SquareText text={review.lesson.text} />
+                    </p>
+                  </div>
+                )}
+                {review.label !== "Best move" && review.loss !== null && (
+                  <details className="feedback-analysis-details">
+                    <summary>{t("coach.feedback.analysisDetails")}</summary>
+                    <p>
+                      {t(
+                        "coach.feedback.evaluationDrop",
+                        review.loss.toLocaleString(t.language, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        }),
+                      )}
+                    </p>
+                    <small>{t("coach.feedback.quickReview")}</small>
+                  </details>
+                )}
               </>
             )
           ))}

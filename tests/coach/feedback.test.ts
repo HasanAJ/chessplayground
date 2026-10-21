@@ -11,7 +11,7 @@ import { Continuation } from "../../src/features/coach/MoveDetails";
 import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
 import { PositionDetails } from "../../src/features/coach/PositionDetails";
 
-test("expanded move review shows its rating, explanation, and likely reply", () => {
+test("expanded move review puts the threat preview with the explanation", () => {
   const game = new Chess();
   game.move("f3");
   game.move("e5");
@@ -44,7 +44,9 @@ test("expanded move review shows its rating, explanation, and likely reply", () 
     revealed.replace(/<[^>]*>/g, ""),
     /They can checkmate with Qh4#/,
   );
-  assert.match(revealed, /Opponent’s possible reply/);
+  assert.match(revealed, /See their checkmate threat/);
+  assert.match(revealed, /Before you move/);
+  assert.doesNotMatch(revealed, /Opponent’s possible reply|Next time/);
   assert.doesNotMatch(revealed, /evaluation drop|99\.\d|100\.\d/);
 });
 

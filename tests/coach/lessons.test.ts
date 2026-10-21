@@ -90,6 +90,8 @@ test("en passant feedback marks the removed pawn and the diagonal capture path",
 test("a short line without a tactical cause keeps the lesson honest", () => {
   const result = review(new Chess().fen(), "e2e4", ["a2a3"]);
   assert.doesNotMatch(result.text, /no defender|fork|takes your/);
-  assert.match(result.lesson!.text, /Preview e4/);
+  assert.equal(result.lesson!.kind, "alternative");
+  assert.match(result.lesson!.text, /checks, captures, and attacks/);
+  assert.doesNotMatch(result.lesson!.text, /Preview|e4/);
   assert.equal(result.lesson!.candidate.move.san, "e4");
 });
