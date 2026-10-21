@@ -13,13 +13,13 @@ export default {
   "workspace.tabs.label": "Espace de travail",
   "workspace.tabs.play": "Jouer",
   "workspace.tabs.opening": "Ouvertures",
-  "opening.seo.title": "Pièges et attaques d’ouverture aux échecs — Tempo",
+  "opening.seo.title": "Pièges d’ouverture aux échecs : attaques et défenses | Tempo",
   "opening.seo.description":
-    "Apprenez les ouvertures d’attaque et les pièges courants pour joueurs débutants et intermédiaires. Explorez l’attaque et la défense, coup par coup.",
-  "opening.heading.start": "Tendez le piège.",
-  "opening.heading.end": "Comprenez l’attaque.",
+    "Explorez 30 pièges d’ouverture et idées d’attaque aux échecs avec des parcours interactifs. Comprenez l’erreur, sa punition et une défense qui évite le piège.",
+  "opening.heading.start": "Pièges d’ouverture aux échecs",
+  "opening.heading.end": "et comment les éviter",
   "opening.subtitle":
-    "Des ouvertures d’attaque qui exploitent des coups tentants mais trompeurs. Explorez l’attaque et la défense, coup par coup.",
+    "Explorez 30 idées d’attaque avec des parcours interactifs. Repérez le coup tentant mais fautif, comprenez sa punition et découvrez une réponse qui évite le piège.",
   "opening.loading": "Chargement des attaques…",
   "opening.error.title": "Impossible de charger les ouvertures",
   "opening.error.description":
@@ -132,8 +132,6 @@ export default {
   "board.preview.label": "Aperçu",
   "board.preview.previous": "Coup précédent dans l’aperçu",
   "board.preview.next": "Coup suivant dans l’aperçu",
-  "coach.analysis.more": "Plus d’analyse",
-  "coach.analysis.less": "Moins d’analyse",
   "engine.error.load":
     "Le moteur n’a pas pu se charger. Vérifiez votre connexion et relancez l’analyse.",
   "engine.error.loadTimeout":
@@ -162,9 +160,10 @@ export default {
   "chess.side.black": "Noirs",
   "header.home": "Accueil de Tempo",
   "header.tagline": "Votre terrain de jeu d’échecs",
-  "intro.heading.start": "Votre prochain coup,",
-  "intro.heading.end": "expliqué.",
-  "intro.tagline": "Explorez l’échiquier. Comprenez le plan. Essayez un coup.",
+  "intro.heading.start": "Analyse d’échecs,",
+  "intro.heading.end": "avec coups expliqués.",
+  "intro.tagline":
+    "Préparez une position, trouvez de bons coups et comprenez les captures et les menaces. Gratuit, dans votre navigateur.",
   "intro.guide.play":
     "Sélectionnez une pièce puis sa case de destination pour jouer.",
   "intro.guide.analyze":
@@ -235,9 +234,7 @@ export default {
   "board.square.check": " en échec",
   "board.tray.place": "Placer : {1} · {0}",
   "board.tray.add": "Ajouter : {1} · {0} · Cliquez ou glissez sur l’échiquier",
-  "coach.alternatives.heading": "Autres bonnes options",
-  "coach.evaluation.description":
-    "Estimation en pions : + favorise les Blancs, − les Noirs.",
+  "coach.alternatives.heading": "Autres bons coups",
   "coach.move.play": "Jouer {0}",
   "coach.lesson.mateThreat.advice":
     "Avant de jouer, vérifiez si leurs pièces peuvent atteindre votre roi en {0}. Ici, {1} termine la partie.",
@@ -362,8 +359,6 @@ export default {
   "coach.explanation.check.focus": "Voir l’attaque sur leur roi",
   "coach.explanation.develop.centerControl":
     "Depuis cette case, la pièce attaque {0}, vous aidant à contrôler le centre.",
-  "coach.explanation.develop.purpose":
-    "Sortir les pièces de leur rangée de départ vous donne plus de pièces disponibles pour les prochains coups.",
   "coach.explanation.develop.title": "Développez une autre pièce",
   "coach.explanation.develop.text":
     "Votre {0} quitte la rangée de départ pour {1}. {2}",
@@ -374,30 +369,17 @@ export default {
   "coach.explanation.center.focus": "Voir le contrôle central du pion",
   "coach.explanation.openFile.title":
     "Placez votre tour sur une colonne ouverte",
-  "coach.explanation.openFile.text":
-    "Aucun pion sur la colonne {0}, où se place votre tour. Cherchez les cases qu’elle peut atteindre avant qu’une autre pièce ne lui bloque le passage.",
+  "coach.explanation.openFile.text": "La colonne {0} est ouverte : elle ne contient aucun pion.",
   "coach.explanation.openFile.focus": "Voir la colonne ouverte",
-  "coach.explanation.rook.title": "Améliorez la position de votre tour",
-  "coach.explanation.rook.text":
-    "Essayez votre tour en {0}. Parcourez la réponse pour voir quelles lignes et cibles elle peut exploiter.",
+  "coach.explanation.rook.title": "Déplace ta tour en {0}",
   "coach.explanation.rook.focus": "Voir le coup de votre tour",
-  "coach.explanation.king.title": "Améliorez la position de votre roi",
-  "coach.explanation.king.text":
-    "Votre roi passe de {0} à {1}. Vérifiez les possibilités adverses avant de choisir sa prochaine case.",
+  "coach.explanation.king.title": "Déplace ton roi en {0}",
   "coach.explanation.king.focus": "Voir le coup de votre roi",
-  "coach.explanation.pawn.title": "Gagnez de l’espace avec votre pion",
-  "coach.explanation.pawn.text":
-    "Votre pion avance en {0} et gagne de l’espace. Surveillez les cases qu’il laisse derrière lui.",
+  "coach.explanation.pawn.title": "Avance ton pion en {0}",
   "coach.explanation.pawn.focus": "Voir l’avancée de votre pion",
   "coach.explanation.nearCenter.title": "Améliorez une pièce près du centre",
-  "coach.explanation.nearCenter.text":
-    "Votre {0} se place en {1}, près du centre. {2}",
-  "coach.explanation.nearCenter.reply":
-    "Regardez leur réponse avant de choisir le prochain coup de cette pièce.",
   "coach.explanation.nearCenter.focus": "Voir le coup près du centre",
-  "coach.explanation.reposition.title": "Replacez votre {0}",
-  "coach.explanation.reposition.text":
-    "Essayez votre {0} en {1}. Parcourez les prochains coups pour voir les réponses adverses et les positions finales de vos pièces.",
+  "coach.explanation.reposition.title": "Déplace ta pièce ({0}) en {1}",
   "coach.explanation.reposition.focus": "Voir le coup de votre {0}",
   "coach.reply.checkmate": "Ils peuvent mater avec {0} ({1} en {2}).",
   "coach.reply.castle": "roquer {0}",
@@ -409,20 +391,11 @@ export default {
   "coach.reply.promotion": " et promouvoir en {0}",
   "coach.reply.check": " et donner échec",
   "coach.reply.summary": "Ils peuvent {0}{1}{2} ({3}).",
-  "coach.warning.check":
-    "Répondez d’abord à l’échec. Cherchez un coup de roi, une capture de l’attaquant ou une pièce pour bloquer l’attaque.",
-  "coach.warning.undefended":
-    "Votre {0} en {1} subit une attaque sans défense. Pouvez-vous déplacer ou protéger cette pièce, ou créer une menace prioritaire ?",
-  "coach.warning.defended":
-    "Votre {0} en {1} subit une attaque. Une autre pièce assure sa défense, mais examinez l’échange avant de laisser cette pièce sur place.",
+  "coach.warning.check": "Ton roi est en échec. Tu dois parer l’échec.",
+  "coach.warning.undefended": "Ta pièce ({0}) en {1} est attaquée et sans défenseur.",
+  "coach.warning.defended": "Ta pièce ({0}) en {1} est attaquée et défendue. Vérifie l’échange avant de la laisser là.",
   "coach.warning.general":
     "Avant de jouer, regardez leurs échecs, captures et attaques sur les pièces non protégées. Commencez par la réponse probable sous votre coup.",
-  "coach.strategy.attack": "{0} met {1} sous l’attaque de votre {2}.",
-  "coach.piece.theirsOnSquare": "leur {0} en {1}",
-  "coach.strategy.undefended.singular":
-    "Votre {0} subit une attaque sans défense.",
-  "coach.strategy.undefended.plural":
-    "Vos pièces ({0}) sont attaquées sans défense.",
   "coach.strategy.center": "Vos pièces contrôlent {0} au centre.",
   "coach.strategy.line.checkmate": "{0} termine cette ligne par échec et mat.",
   "coach.strategy.line.capture":
@@ -435,37 +408,15 @@ export default {
     "Dans cette ligne possible, vous céderiez l’équivalent de {0} pion de matériel.",
   "coach.strategy.material.loss.plural":
     "Dans cette ligne possible, vous céderiez l’équivalent de {0} pions de matériel.",
-  "coach.strategy.material.even":
-    "L’équilibre matériel reste inchangé dans cette ligne.",
   "coach.strategy.change.check":
     "{0} met votre roi en échec. Sortir de l’échec est prioritaire.",
-  "coach.strategy.change.undefended":
-    "{0} laisse votre {1} en {2} sans défense face à une attaque. Occupez-vous-en avant de poursuivre votre plan.",
-  "coach.strategy.change.capture":
-    "Ils viennent de capturer votre {0} avec {1}. Regardez {2} avant de choisir votre réponse.",
-  "coach.strategy.change.center":
-    "{0} modifie leur contrôle de {1}. Essayez {2} et regardez leurs réponses possibles.",
-  "coach.strategy.change.move":
-    "Leur {0} est maintenant en {1}. Essayez {2}{3}.",
-  "coach.strategy.change.reply": " ; une réponse à examiner est {0}",
-  "coach.strategy.change.respond": " et regardez leur réponse",
-  "coach.strategy.compare.forced": "Cette position n’a qu’un seul coup légal.",
-  "coach.strategy.compare.onlyRecommendation":
-    "{0} est le seul coup recommandé ici. Les autres coups analysés concèdent trop en comparaison.",
-  "coach.strategy.compare.mate":
-    "Ici, les menaces de mat comptent plus qu’un petit écart de score. Parcourez {0} et {1} en suivant attentivement les échecs.",
-  "coach.strategy.compare.similar":
-    "{0} et {1} semblent tous deux bons. Parcourez leurs réponses et choisissez la position que vous préférez.",
-  "coach.strategy.compare.stronger":
-    "{0} semble plus fort que {1}. Parcourez les deux réponses pour comparer les positions.",
-  "coach.continuation.previewReply": "Aperçu de la réponse probable : {0}",
-  "coach.continuation.replyHeading": "RÉPONSE PROBABLE",
-  "coach.continuation.label": "Suite du moteur",
-  "coach.continuation.heading": "PROCHAINS COUPS POSSIBLES",
+  "coach.strategy.change.capture": "Le dernier coup adverse, {1}, a capturé ta pièce ({0}).",
+  "coach.continuation.replyHeading": "Réponse possible de l’adversaire",
+  "coach.continuation.label": "Une suite possible",
   "coach.continuation.previewMove": "Aperçu du coup {0} : les {1} jouent {2}",
   "engine.error.noLegalCandidates":
     "Le moteur n’a renvoyé aucun coup légal. Relancez l’analyse.",
-  "coach.position.heading": "À propos de cette position",
+  "coach.position.heading": "Détails de la position",
   "coach.position.changed": "CE QUI A CHANGÉ",
   "coach.position.hideSquares": "Masquer les cases clés",
   "coach.position.showSquares": "Surligner les cases clés",
@@ -478,26 +429,22 @@ export default {
     "Examen de {0}. L’analyse concerne cette position.",
   "coach.analysis.errorHeading": "Essayons à nouveau.",
   "coach.analysis.retry": "Relancer l’analyse",
-  "coach.analysis.label": "Meilleur coup et stratégie",
-  "coach.analysis.search.heading": "RECHERCHE DE VOTRE COUP",
+  "coach.analysis.label": "Coup suggéré et analyse",
+  "coach.analysis.search.heading": "Analyse en cours…",
   "coach.analysis.search.bestMove": "Recherche du meilleur coup des {0}…",
   "coach.analysis.search.history":
     "Examen de vos options et de leurs réponses depuis cette position antérieure.",
   "coach.analysis.search.live":
     "Examen de vos options et des réponses adverses. Vous pouvez continuer à jouer.",
-  "coach.analysis.search.depth": "Analyse approfondie · profondeur {0}",
+  "coach.analysis.search.depth": "Profondeur de recherche : {0}",
   "coach.analysis.search.estimate": "Généralement prêt en quelques secondes",
   "coach.warnings.heading": "Attention à",
   "coach.warnings.description":
     "Survolez ou placez le focus pour surligner la pièce menacée et ses attaquants.",
   "coach.best.escapeCheck": "Sortez de l’échec",
-  "coach.best.heading": "MEILLEUR COUP",
+  "coach.best.heading": "Coup suggéré",
   "coach.best.forced": "Seul coup légal",
-  "coach.best.continuity": "Le plan continue",
   "coach.best.play": "Jouer le meilleur coup {0}",
-  "coach.best.hideReply": "Masquer la réponse",
-  "coach.best.previewReply": "Voir la réponse",
-  "coach.best.explore": "Explorer les coups suivants",
   "coach.review.error.failed":
     "Le moteur n’a pas pu examiner ce coup. Réessayez.",
   "coach.review.error.comparison":
@@ -514,9 +461,7 @@ export default {
     "Examen de votre coup et des meilleures alternatives…",
   "coach.feedback.retry": "Relancer l’examen du coup",
   "coach.feedback.nextTime": "La prochaine fois",
-  "coach.feedback.likelyReply": "Réponse probable",
-  "coach.feedback.evaluationDescription":
-    "L’écart d’évaluation est mesuré en pions. Les notes tiennent compte de toute la position ; le mat n’a pas de valeur en pions.",
+  "coach.feedback.likelyReply": "Réponse possible de l’adversaire",
   "coach.feedback.quickReview": "Examen rapide",
   "coach.feedback.evaluationDrop": "{0} de baisse d’évaluation",
   "coach.explanation.matingAttack.title": "Poursuivez l’attaque de mat",
@@ -529,15 +474,9 @@ export default {
   "coach.explanation.mateDefense.focus": "Voir le coup défensif",
   "coach.reply.unavailable":
     "Cet aperçu ne contient pas de réponse. Essayez le coup pour explorer la suite.",
-  "coach.reply.continuation": " Vous pourriez poursuivre par {0} : {1}.",
   "coach.reply.terminal.checkmate":
     "C’est échec et mat. Ils n’ont aucune réponse.",
   "coach.reply.terminal.draw": "Ce coup termine la partie par la nulle.",
-  "coach.estimate.mate": "Mat forcé pour les {0}",
-  "coach.estimate.balanced": "Position équilibrée",
-  "coach.estimate.smallEdge": "Les {0} ont un léger avantage",
-  "coach.estimate.advantage": "Les {0} ont l’avantage",
-  "coach.estimate.winning": "Les {0} ont un avantage décisif",
   "coach.status.checkmate": "Échec et mat",
   "coach.status.draw": "Nulle",
   "coach.status.previewCheck": "Aperçu · Échec",
@@ -684,4 +623,11 @@ export default {
   "game.result.winner": "Les {0} gagnent !",
   "board.tray.label": "Pièces des {0}",
   "coach.alternatives.description": "Alternative : {0}. {1}. {2}",
+  "coach.exploration.open": "Explorer ce coup",
+  "coach.exploration.close": "Fermer l’exploration",
+  "coach.exploration.note": "Choisis un coup pour le voir sur l’échiquier. C’est une suite possible ; ta partie reste inchangée.",
+  "coach.position.evaluation": "Score de la position",
+  "coach.feedback.analysisDetails": "Détails de l’analyse",
+  "coach.calculate.refresh": "Actualiser l’analyse",
+  "coach.strategy.change.promotion": "Avec {0}, le pion adverse a été promu en {2} ({1}).",
 } satisfies Catalog;

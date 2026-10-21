@@ -214,9 +214,6 @@
     min-height: 34px;
     padding: 8px 10px;
   }
-  .candidates-heading {
-    margin: 12px 0 8px;
-  }
   .candidate-list {
     gap: 6px;
   }

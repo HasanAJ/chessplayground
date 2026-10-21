@@ -11,6 +11,14 @@ export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
   if (!pinnedInspection) return null;
   const { candidate, ply } = pinnedInspection;
   const inspectionMove = candidate.continuation[ply - 1];
+  function selectMove(nextPly: number) {
+    inspectMove(
+      candidate,
+      nextPly,
+      "click",
+      nextPly === 1 ? candidate.explanationFocus : undefined,
+    );
+  }
   return (
     <section
       className="board-preview-controls"
@@ -33,7 +41,7 @@ export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
           className="icon-button"
           aria-label={t("board.preview.previous")}
           disabled={ply === 1}
-          onClick={() => inspectMove(candidate, ply - 1, "click")}
+          onClick={() => selectMove(ply - 1)}
         >
           <ChevronLeft size={18} />
         </button>
@@ -41,7 +49,7 @@ export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
           className="icon-button"
           aria-label={t("board.preview.next")}
           disabled={ply === candidate.continuation.length}
-          onClick={() => inspectMove(candidate, ply + 1, "click")}
+          onClick={() => selectMove(ply + 1)}
         >
           <ChevronRight size={18} />
         </button>

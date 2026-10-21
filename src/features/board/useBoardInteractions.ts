@@ -212,7 +212,7 @@ export function useBoardInteractions(
     game.setError("");
   }
 
-  function scrollToBoard({ alignToTop = false } = {}) {
+  function scrollToBoard() {
     if (!ref.current) return;
     const bounds = ref.current.getBoundingClientRect();
     const controlsHeight = window.matchMedia("(max-width: 900px)").matches
@@ -221,7 +221,6 @@ export function useBoardInteractions(
           ?.getBoundingClientRect().height ?? 0)
       : 0;
     if (
-      !alignToTop &&
       bounds.top >= 0 &&
       bounds.bottom <= window.innerHeight - controlsHeight
     )

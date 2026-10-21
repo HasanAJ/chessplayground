@@ -1,7 +1,7 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import type { EngineLine } from "../../engine/uci";
-import { moveDescription, uciMove } from "../../chess/moves";
+import { uciMove } from "../../chess/moves";
 import {
   boardFocus,
   describeReply,
@@ -97,7 +97,7 @@ export function candidatesFor(
               break;
             }
           }
-          reply = `${describeReply(response, t)}${continuation[2] ? t("coach.reply.continuation", continuation[2].san, moveDescription(continuation[2], t)) : ""}`;
+          reply = describeReply(response, t);
         } else if (after.isGameOver())
           reply = after.isCheckmate()
             ? t("coach.reply.terminal.checkmate")
@@ -129,21 +129,4 @@ export function candidatesFor(
         return [];
       }
     });
-}
-
-export function positionSummary(
-  candidate: Candidate,
-  t: Translator = english,
-): string {
-  if (candidate.mate !== undefined)
-    return t(
-      "coach.estimate.mate",
-      candidate.whiteScore > 0 ? t("chess.side.white") : t("chess.side.black"),
-    );
-  const advantage = Math.abs(candidate.whiteScore),
-    side = candidate.whiteScore >= 0 ? t("chess.side.white") : t("chess.side.black");
-  if (advantage < 0.3) return t("coach.estimate.balanced");
-  if (advantage < 1) return t("coach.estimate.smallEdge", side);
-  if (advantage < 3) return t("coach.estimate.advantage", side);
-  return t("coach.estimate.winning", side);
 }

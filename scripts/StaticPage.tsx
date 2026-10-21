@@ -13,13 +13,11 @@ import {
 export function StaticPage({
   language,
   pathname,
-  title,
   openingPage,
   lesson,
 }: {
   language: Language;
   pathname: string;
-  title: string;
   openingPage: boolean;
   lesson?: OpeningLesson;
 }) {
@@ -85,7 +83,12 @@ export function StaticPage({
           </ol>
         </>
       ) : (
-        <h1>{title}</h1>
+        <>
+          <h1>
+            {t("intro.heading.start")} {t("intro.heading.end")}
+          </h1>
+          <p>{t("intro.tagline")}</p>
+        </>
       )}
       <SiteIntro language={language} pathname={pathname} />
       <noscript>

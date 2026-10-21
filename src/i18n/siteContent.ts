@@ -13,72 +13,71 @@ type SiteContent = {
 
 export const siteContent: Record<Language, SiteContent> = {
   en: {
-    title: "Tempo — Chess Coach & Position Playground",
+    title: "Free Chess Analysis with Move Explanations | Tempo",
     description:
-      "Free online chess analysis with Stockfish. Set up positions, explore explained moves, and practice against a computer in your browser.",
-    imageAlt: "Tempo chess coach: your next move, explained.",
-    heading: "About your chess coach",
+      "Analyze chess positions free with Stockfish. Explore suggested moves with plain-language explanations, set up a board, and practice against the computer.",
+    imageAlt: "Tempo: free chess analysis with move explanations.",
+    heading: "How to use Tempo",
     intro:
-      "Tempo uses Stockfish 19 Lite to suggest strong moves and explain captures, threats, and plans in plain language.",
+      "Set up a position on the board, calculate suggested moves with Stockfish, then preview replies or play a suggestion to explore what happens next.",
     analysis:
-      "Analysis runs in your browser, and your game saves locally when storage is available. Move reviews compare your choices with engine alternatives. Short searches are learning aids; deeper analysis can change a move’s grade.",
+      "The coach explains captures, threats, and other tactical features using short engine continuations. Analysis runs in your browser, and your game saves locally when storage is available. A deeper search may change the assessment.",
     languagesLabel: "Available languages",
     javascript:
       "Enable JavaScript to use the interactive chessboard and local engine.",
   },
   es: {
-    title: "Tempo — Entrenador de ajedrez y análisis de posiciones",
+    title: "Análisis de ajedrez gratis con jugadas explicadas | Tempo",
     description:
-      "Análisis de ajedrez gratis con Stockfish. Prepara posiciones, explora jugadas explicadas y practica contra el ordenador desde tu navegador.",
-    imageAlt: "Tempo, tu entrenador de ajedrez: tu próxima jugada, explicada.",
-    heading: "Sobre tu entrenador de ajedrez",
+      "Analiza posiciones de ajedrez gratis con Stockfish. Explora jugadas explicadas con palabras sencillas, prepara el tablero y practica contra el ordenador.",
+    imageAlt: "Tempo: análisis de ajedrez gratis con jugadas explicadas.",
+    heading: "Cómo usar Tempo",
     intro:
-      "Tempo usa Stockfish 19 Lite para sugerir buenas jugadas y explicar capturas, amenazas y planes con palabras sencillas.",
+      "Prepara una posición en el tablero, calcula jugadas con Stockfish y previsualiza respuestas o juega una sugerencia para explorar qué ocurre después.",
     analysis:
-      "El análisis se ejecuta en tu navegador y la partida se guarda localmente cuando el almacenamiento está disponible. Las revisiones comparan tus jugadas con las alternativas del motor. Las búsquedas breves ayudan a aprender; un análisis más profundo puede cambiar la valoración de una jugada.",
+      "El entrenador explica capturas, amenazas y otros aspectos tácticos a partir de variantes cortas del motor. El análisis se ejecuta en tu navegador y la partida se guarda localmente cuando el almacenamiento está disponible. Una búsqueda más profunda puede cambiar la valoración.",
     languagesLabel: "Idiomas disponibles",
     javascript:
       "Activa JavaScript para usar el tablero interactivo y el motor local.",
   },
   de: {
-    title: "Tempo — Schachtrainer und Stellungsanalyse",
+    title: "Kostenlose Schachanalyse mit erklärten Zügen | Tempo",
     description:
-      "Kostenlose Schachanalyse mit Stockfish. Baue Stellungen auf, erkunde erklärte Züge und übe gegen den Computer direkt im Browser.",
-    imageAlt: "Tempo Schachtrainer: Dein nächster Zug, erklärt.",
-    heading: "Über deinen Schachtrainer",
+      "Analysiere Schachstellungen kostenlos mit Stockfish. Entdecke verständlich erklärte Zugvorschläge, baue Stellungen auf und übe gegen den Computer.",
+    imageAlt: "Tempo: kostenlose Schachanalyse mit erklärten Zügen.",
+    heading: "So nutzt du Tempo",
     intro:
-      "Tempo nutzt Stockfish 19 Lite, um starke Züge vorzuschlagen und Schlagzüge, Drohungen und Pläne verständlich zu erklären.",
+      "Baue eine Stellung auf dem Brett auf, berechne Zugvorschläge mit Stockfish und sieh dir Antworten an oder spiele einen Vorschlag, um die Fortsetzung zu erkunden.",
     analysis:
-      "Die Analyse läuft in deinem Browser. Deine Partie wird lokal gespeichert, wenn der Browserspeicher verfügbar ist. Zugbewertungen vergleichen deine Wahl mit Alternativen der Engine. Kurze Suchen helfen beim Lernen; eine tiefere Analyse kann die Bewertung eines Zuges ändern.",
+      "Der Trainer erklärt Schlagzüge, Drohungen und andere taktische Merkmale anhand kurzer Engine-Varianten. Die Analyse läuft in deinem Browser, und deine Partie wird bei verfügbarem Browserspeicher lokal gespeichert. Eine tiefere Suche kann die Bewertung ändern.",
     languagesLabel: "Verfügbare Sprachen",
     javascript:
       "Aktiviere JavaScript, um das interaktive Schachbrett und die lokale Engine zu nutzen.",
   },
   it: {
-    title: "Tempo — Allenatore di scacchi e analisi delle posizioni",
+    title: "Analisi scacchistica gratuita con mosse spiegate | Tempo",
     description:
-      "Analisi scacchistica gratuita con Stockfish. Prepara posizioni, esplora mosse spiegate e allenati contro il computer nel browser.",
-    imageAlt:
-      "Tempo, il tuo allenatore di scacchi: la tua prossima mossa, spiegata.",
-    heading: "Il tuo allenatore di scacchi",
+      "Analizza posizioni di scacchi gratis con Stockfish. Esplora mosse spiegate con parole semplici, prepara la scacchiera e allenati contro il computer.",
+    imageAlt: "Tempo: analisi scacchistica gratuita con mosse spiegate.",
+    heading: "Come usare Tempo",
     intro:
-      "Tempo usa Stockfish 19 Lite per suggerire buone mosse e spiegare catture, minacce e piani con parole semplici.",
+      "Prepara una posizione sulla scacchiera, calcola le mosse con Stockfish, poi visualizza le risposte o gioca un suggerimento per esplorare il seguito.",
     analysis:
-      "L’analisi viene eseguita nel browser e la partita viene salvata localmente quando lo spazio di archiviazione è disponibile. Le revisioni confrontano le tue mosse con le alternative del motore. Le ricerche brevi aiutano a imparare; un’analisi più approfondita può cambiare la valutazione di una mossa.",
+      "L’allenatore spiega catture, minacce e altri aspetti tattici usando brevi varianti del motore. L’analisi viene eseguita nel browser e la partita viene salvata localmente quando lo spazio di archiviazione è disponibile. Una ricerca più approfondita può cambiare la valutazione.",
     languagesLabel: "Lingue disponibili",
     javascript:
       "Attiva JavaScript per usare la scacchiera interattiva e il motore locale.",
   },
   fr: {
-    title: "Tempo — Coach d’échecs et analyse de positions",
+    title: "Analyse d’échecs gratuite avec coups expliqués | Tempo",
     description:
-      "Analyse d’échecs gratuite avec Stockfish. Préparez des positions, explorez des coups expliqués et entraînez-vous contre l’ordinateur dans votre navigateur.",
-    imageAlt: "Tempo, votre coach d’échecs : votre prochain coup, expliqué.",
-    heading: "À propos de votre coach d’échecs",
+      "Analysez des positions d’échecs gratuitement avec Stockfish. Découvrez des coups expliqués simplement, préparez l’échiquier et jouez contre l’ordinateur.",
+    imageAlt: "Tempo : analyse d’échecs gratuite avec coups expliqués.",
+    heading: "Comment utiliser Tempo",
     intro:
-      "Tempo utilise Stockfish 19 Lite pour suggérer de bons coups et expliquer les captures, les menaces et les plans avec des mots simples.",
+      "Préparez une position sur l’échiquier, calculez des coups avec Stockfish, puis prévisualisez les réponses ou jouez une suggestion pour explorer la suite.",
     analysis:
-      "L’analyse s’exécute dans votre navigateur et la partie est enregistrée localement quand le stockage est disponible. Les évaluations comparent vos choix aux alternatives du moteur. Les recherches courtes aident à apprendre ; une analyse plus poussée peut modifier la note d’un coup.",
+      "Le coach explique les captures, les menaces et d’autres aspects tactiques à partir de courtes variantes du moteur. L’analyse s’exécute dans votre navigateur et la partie est enregistrée localement quand le stockage est disponible. Une recherche plus poussée peut modifier l’évaluation.",
     languagesLabel: "Langues disponibles",
     javascript:
       "Activez JavaScript pour utiliser l’échiquier interactif et le moteur local.",

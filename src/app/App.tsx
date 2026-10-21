@@ -109,7 +109,12 @@ export default function App() {
     game.setError("");
     recommendations.calculate();
     if (window.matchMedia("(max-width: 900px)").matches)
-      board.scrollToBoard({ alignToTop: true });
+      document.getElementById("coach")?.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
   }
 
   return (

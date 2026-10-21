@@ -2,7 +2,7 @@ import { useTranslation } from "../../i18n/LanguageProvider";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import type { BoardController } from "../board/useBoardInteractions";
 import type { BoardPreview } from "../board/useBoardPreview";
-import { CandidateDetails } from "./MoveDetails";
+import { MoveExploration } from "./MoveDetails";
 import type { Candidate } from "./candidates";
 import type { CoachPresentation } from "./useCoachPresentation";
 import { moveDescription } from "../../chess/moves";
@@ -27,10 +27,11 @@ export function AlternativeMoves({
   const { playSuggestedMove: playMove } = board;
   if (candidates.length < 2) return null;
   return (
-    <section aria-label={t("coach.alternatives.heading")}>
-      <div className="candidates-heading">
-        <h3>{t("coach.alternatives.heading")}</h3>
-      </div>
+    <section
+      className="alternative-moves"
+      aria-label={t("coach.alternatives.heading")}
+    >
+      <h3>{t("coach.alternatives.heading")}</h3>
       <div className="candidate-list">
         {candidates.slice(1).map((candidate, index) => {
           const i = index + 1;
@@ -73,37 +74,40 @@ export function AlternativeMoves({
                     />
                   </span>
                 </div>
-                <span
-                  className="candidate-score"
-                  title={t("coach.evaluation.description")}
-                >
+                <span className="candidate-score">
                   {candidate.score}
                 </span>
                 <ChevronRight size={16} className="candidate-chevron" />
               </button>
               {active === i && (
                 <div className="candidate-body">
-                  <CandidateDetails
+                  {candidate.explanation && (
+                    <p className="move-explanation">
+                      <SquareText text={candidate.explanation} />
+                    </p>
+                  )}
+                  <MoveExploration
                     candidate={candidate}
                     preview={inspection}
                     onInspect={inspectMove}
-                  />
-                  <button
-                    className="play-move"
-                    onClick={() =>
-                      playMove(
-                        candidate.move.from,
-                        candidate.move.to,
-                        candidate.move.promotion,
-                      )
-                    }
                   >
-                    <SquareText
-                      text={t("coach.move.play", candidate.move.san)}
-                      focusable={false}
-                    />
-                    <ArrowRight size={15} />
-                  </button>
+                    <button
+                      className="primary-button"
+                      onClick={() =>
+                        playMove(
+                          candidate.move.from,
+                          candidate.move.to,
+                          candidate.move.promotion,
+                        )
+                      }
+                    >
+                      <SquareText
+                        text={t("coach.move.play", candidate.move.san)}
+                        focusable={false}
+                      />
+                      <ArrowRight size={15} />
+                    </button>
+                  </MoveExploration>
                 </div>
               )}
             </article>

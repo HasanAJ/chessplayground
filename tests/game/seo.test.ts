@@ -4,7 +4,7 @@ import { build } from "vite";
 import react from "@vitejs/plugin-react";
 import { JSDOM } from "jsdom";
 import { seoPlugin, siteMetadata, sitePages } from "../../scripts/seo";
-import { languages, type Language } from "../../src/i18n/translate";
+import { languages, translator, type Language } from "../../src/i18n/translate";
 import { languagePath, openingPath, privacyPath } from "../../src/i18n/routes";
 import { siteContent } from "../../src/i18n/siteContent";
 import { openings } from "../../src/features/openings/lessons";
@@ -174,12 +174,21 @@ test("production pages contain translated content and reciprocal language metada
     const dom = new JSDOM(String(asset.source));
     const document = dom.window.document;
     const content = siteContent[language];
+    const t = translator(language);
     assert.equal(document.documentElement.lang, language);
     assert.ok(
       document.querySelector(`a[href="${openingPath(language)}"]`),
       `${language}: discoverable library link`,
     );
     assert.equal(document.title, content.title);
+    assert.equal(
+      document.querySelector("h1")!.textContent,
+      `${t("intro.heading.start")} ${t("intro.heading.end")}`,
+    );
+    assert.equal(
+      document.querySelector("main > p")!.textContent,
+      t("intro.tagline"),
+    );
     assert.equal(
       document
         .querySelector('meta[name="description"]')!

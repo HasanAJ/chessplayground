@@ -5,6 +5,7 @@ import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
 const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
 
 type BoardWarning = {
+  kind: "check" | "undefended" | "defended" | "none";
   text: string;
   target: Square | null;
   attackers: Square[];
@@ -22,6 +23,7 @@ export function watchOutFor(
       ([, piece]) => piece?.color === color && piece.type === "k",
     )![0] as Square;
     return {
+      kind: "check",
       text: t("coach.warning.check"),
       target: king,
       attackers: game.attackers(king, enemy),
@@ -40,6 +42,7 @@ export function watchOutFor(
   );
   if (undefended)
     return {
+      kind: "undefended",
       text: t(
         "coach.warning.undefended",
         t(pieceNameKeys[undefended[1]!.type]),
@@ -50,6 +53,7 @@ export function watchOutFor(
     };
   if (pressure.length)
     return {
+      kind: "defended",
       text: t(
         "coach.warning.defended",
         t(pieceNameKeys[pressure[0][1]!.type]),
@@ -59,6 +63,7 @@ export function watchOutFor(
       attackers: game.attackers(pressure[0][0] as Square, enemy),
     };
   return {
+    kind: "none",
     text: t("coach.warning.general"),
     target: null,
     attackers: [],

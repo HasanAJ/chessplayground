@@ -343,7 +343,7 @@ function explainActivity(
         "coach.explanation.develop.centerControl",
         controlled.join(t("common.join.and")),
       )
-    : t("coach.explanation.develop.purpose");
+    : "";
   if (develop)
     return {
       title: t("coach.explanation.develop.title"),
@@ -401,11 +401,8 @@ function explainActivity(
         ),
       };
     return {
-      title: t("coach.explanation.rook.title"),
-      text: t(
-        "coach.explanation.rook.text",
-        move.to,
-      ),
+      title: t("coach.explanation.rook.title", move.to),
+      text: "",
       theme: "rook-activity",
       focus: boardFocus(t("coach.explanation.rook.focus"), [
         { from: move.from, to: move.to },
@@ -414,12 +411,8 @@ function explainActivity(
   }
   if (move.piece === "k")
     return {
-      title: t("coach.explanation.king.title"),
-      text: t(
-        "coach.explanation.king.text",
-        move.from,
-        move.to,
-      ),
+      title: t("coach.explanation.king.title", move.to),
+      text: "",
       theme: "king-activity",
       focus: boardFocus(t("coach.explanation.king.focus"), [
         { from: move.from, to: move.to },
@@ -430,11 +423,8 @@ function explainActivity(
     Number(move.to[1]) * direction > Number(move.from[1]) * direction
   )
     return {
-      title: t("coach.explanation.pawn.title"),
-      text: t(
-        "coach.explanation.pawn.text",
-        move.to,
-      ),
+      title: t("coach.explanation.pawn.title", move.to),
+      text: "",
       theme: "space",
       focus: boardFocus(t("coach.explanation.pawn.focus"), [
         { from: move.from, to: move.to },
@@ -443,14 +433,7 @@ function explainActivity(
   if (center.includes(move.to) || extendedCenter.includes(move.to))
     return {
       title: t("coach.explanation.nearCenter.title"),
-      text: t(
-        "coach.explanation.nearCenter.text",
-        piece,
-        move.to,
-        controlled.length
-          ? centerReason
-          : t("coach.explanation.nearCenter.reply"),
-      ),
+      text: centerReason,
       theme: "piece-activity",
       focus: boardFocus(
         t("coach.explanation.nearCenter.focus"),
@@ -459,12 +442,8 @@ function explainActivity(
       ),
     };
   return {
-    title: t("coach.explanation.reposition.title", piece),
-    text: t(
-      "coach.explanation.reposition.text",
-      piece,
-      move.to,
-    ),
+    title: t("coach.explanation.reposition.title", piece, move.to),
+    text: "",
     theme: "piece-activity",
     focus: boardFocus(t("coach.explanation.reposition.focus", piece), [
       { from: move.from, to: move.to },

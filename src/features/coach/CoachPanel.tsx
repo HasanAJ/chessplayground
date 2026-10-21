@@ -11,6 +11,7 @@ import {
   Sparkles,
   X,
   ArrowRight,
+  RotateCcw,
 } from "lucide-react";
 import { gameMoveLabel, sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
@@ -116,7 +117,18 @@ export function CoachPanel({
               ? t("coach.status.reviewing")
               : computer
                 ? t("coach.status.yourTurn")
-                : "";
+                : t(turn === "w" ? "board.turn.white" : "board.turn.black");
+  const showRefresh =
+    analysisRequested && game.playable && !analysisTerminal && !botTurn;
+  const calculateDisabled =
+    !game.playable || thinking || boardPreview || botTurn || !!analysisTerminal;
+  const refreshLabel = t(
+    thinking ? "coach.analysis.status.thinking" : "coach.calculate.refresh",
+  );
+  function calculate() {
+    setCollapsedFeedbackKey(feedback?.key ?? null);
+    calculateBestMoves();
+  }
   return (
     <aside
       className="coach-panel"
@@ -138,25 +150,43 @@ export function CoachPanel({
             {t("coach.panel.backToBoard")}
           </a>
         </div>
-        <CoachOptions
-          enabled={computer}
-          open={optionsOpen}
-          side={humanSide}
-          difficulty={difficulty}
-          startDisabled={
-            !game.playable || !!terminal || reviewing || boardPreview
-          }
-          failed={computer && botState === "error"}
-          status={computerStatus(game, settings, opponent, boardPreview, t)}
-          onSideChange={setHumanSide}
-          onDifficultyChange={setDifficulty}
-          onOpenChange={setOptionsOpen}
-          onEnabledChange={(enabled) => {
-            setComputer(enabled);
-            setError("");
-          }}
-          onRetry={opponent.retry}
-        />
+        <div className="coach-header-actions">
+          <CoachOptions
+            enabled={computer}
+            open={optionsOpen}
+            side={humanSide}
+            difficulty={difficulty}
+            startDisabled={
+              !game.playable || !!terminal || reviewing || boardPreview
+            }
+            failed={computer && botState === "error"}
+            status={computerStatus(game, settings, opponent, boardPreview, t)}
+            onSideChange={setHumanSide}
+            onDifficultyChange={setDifficulty}
+            onOpenChange={setOptionsOpen}
+            onEnabledChange={(enabled) => {
+              setComputer(enabled);
+              setError("");
+            }}
+            onRetry={opponent.retry}
+          />
+          {showRefresh && (
+            <button
+              type="button"
+              className="icon-button refresh-analysis calculate-button"
+              aria-label={refreshLabel}
+              title={refreshLabel}
+              disabled={calculateDisabled}
+              onClick={calculate}
+            >
+              {thinking ? (
+                <LoaderCircle size={16} className="spin" aria-hidden="true" />
+              ) : (
+                <RotateCcw size={16} aria-hidden="true" />
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {game.playable && feedback && feedbackMove && (
@@ -182,48 +212,41 @@ export function CoachPanel({
           }
         />
       )}
-      <div className="calculation-controls">
-        <button
-          className="primary-button calculate-button"
-          disabled={
-            !game.playable ||
-            thinking ||
-            boardPreview ||
-            botTurn ||
-            !!analysisTerminal
-          }
-          aria-label={
-            botTurn
-              ? t("coach.calculate.label.waiting")
-              : thinking
-                ? t("coach.calculate.label.thinking")
-                : t("coach.calculate.label.ready")
-          }
-          aria-describedby={calculateReason ? "calculation-reason" : undefined}
-          onClick={() => {
-            setCollapsedFeedbackKey(feedback?.key ?? null);
-            calculateBestMoves();
-          }}
-        >
-          {thinking || botBusy ? (
-            <LoaderCircle size={20} className="spin" />
-          ) : (
-            <Sparkles size={20} />
+      {!showRefresh && (
+        <div className="calculation-controls">
+          <button
+            className="primary-button calculate-button"
+            disabled={calculateDisabled}
+            aria-label={
+              botTurn
+                ? t("coach.calculate.label.waiting")
+                : thinking
+                  ? t("coach.calculate.label.thinking")
+                  : t("coach.calculate.label.ready")
+            }
+            aria-describedby={calculateReason ? "calculation-reason" : undefined}
+            onClick={calculate}
+          >
+            {thinking || botBusy ? (
+              <LoaderCircle size={20} className="spin" />
+            ) : (
+              <Sparkles size={20} />
+            )}
+            <span aria-hidden="true">
+              {botTurn
+                ? t("coach.calculate.text.waiting")
+                : thinking
+                  ? t("coach.calculate.text.thinking")
+                  : t("coach.calculate.label.ready")}
+            </span>
+          </button>
+          {calculateReason && (
+            <p className="calculation-reason" id="calculation-reason">
+              <SquareText text={calculateReason} />
+            </p>
           )}
-          <span aria-hidden="true">
-            {botTurn
-              ? t("coach.calculate.text.waiting")
-              : thinking
-                ? t("coach.calculate.text.thinking")
-                : t("coach.calculate.label.ready")}
-          </span>
-        </button>
-        {calculateReason && (
-          <p className="calculation-reason" id="calculation-reason">
-            <SquareText text={calculateReason} />
-          </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {notice && (
         <div className="panel-notice" role="status">

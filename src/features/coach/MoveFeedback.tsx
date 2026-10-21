@@ -156,14 +156,10 @@ export function MoveFeedback({
                       </button>
                     )}
                   </div>
-                  <small
-                    title={t("coach.feedback.evaluationDescription")}
-                  >
-                    {t("coach.feedback.quickReview")}
-                    {review.label !== "Best move" && review.loss !== null ? (
-                      <>
-                        {" "}
-                        ·{" "}
+                  {review.label !== "Best move" && review.loss !== null && (
+                    <details className="feedback-analysis-details">
+                      <summary>{t("coach.feedback.analysisDetails")}</summary>
+                      <p>
                         {t(
                           "coach.feedback.evaluationDrop",
                           review.loss.toLocaleString(t.language, {
@@ -171,11 +167,10 @@ export function MoveFeedback({
                             maximumFractionDigits: 1,
                           }),
                         )}
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </small>
+                      </p>
+                      <small>{t("coach.feedback.quickReview")}</small>
+                    </details>
+                  )}
                 </div>
               </>
             )

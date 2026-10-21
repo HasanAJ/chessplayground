@@ -42,8 +42,8 @@ export function OpeningCard({
           {t(`opening.level.${lesson.level}`)}
         </span>
       </span>
-      <span className="opening-family">{lesson.name[language]}</span>
-      <h2>{motif.title[language]}</h2>
+      <h2>{lesson.name[language]}</h2>
+      <span className="opening-family">{motif.title[language]}</span>
       <p>{motif.plan[language]}</p>
       <span className="opening-card-reward">
         {t(`opening.reward.${lesson.reward}`)}

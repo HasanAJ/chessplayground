@@ -2,6 +2,9 @@ import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
+import type { EngineLine } from "../../src/engine/uci";
+import App from "../../src/app/App";
+import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
 import { BoardPanel } from "../../src/features/board/BoardPanel";
 import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
@@ -14,8 +17,13 @@ import { useCoachPresentation } from "../../src/features/coach/useCoachPresentat
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
 import { createTestRoot } from "../helpers/dom";
 
-async function renderWorkspace(t: TestContext) {
+async function renderWorkspace(
+  t: TestContext,
+  fen = new Chess().fen(),
+  lines: EngineLine[] = [{ rank: 1, depth: 15, cp: 30, pv: ["g1f3", "d7d5"] }],
+) {
   const { root, dom } = createTestRoot(t);
+  dom.window.localStorage.setItem("tempo-position", fen);
   let mobile = true;
   Object.defineProperty(dom.window, "matchMedia", {
     value: (query: string) => ({
@@ -24,9 +32,7 @@ async function renderWorkspace(t: TestContext) {
   });
   let scrolls = 0;
   dom.window.HTMLElement.prototype.scrollIntoView = () => scrolls++;
-  const candidates = candidatesFor(new Chess().fen(), [
-    { rank: 1, depth: 15, cp: 30, pv: ["g1f3", "d7d5"] },
-  ]);
+  const candidates = candidatesFor(fen, lines);
   let preview!: ReturnType<typeof useBoardPreview>;
   let currentGame!: ReturnType<typeof useGameController>;
   let currentComputer!: ReturnType<typeof useComputerSettings>;
@@ -54,7 +60,6 @@ async function renderWorkspace(t: TestContext) {
         depth: 15,
         state: "ready",
       },
-      continuity: false,
       calculate() {},
       clear() {},
     };
@@ -195,11 +200,9 @@ test("hovered and pinned previews preserve board structure and square highlights
     const clone = left.cloneNode(true) as Element;
     clone.querySelector(".eval-number")!.remove();
     clone.querySelector(".board-preview-controls")?.remove();
-    clone.querySelector(".mobile-coach-summary")?.remove();
     return clone.textContent;
   };
   const initialText = leftText();
-  const initialSummary = left.querySelector(".mobile-coach-summary");
   const initialChildren = Array.from(board.children);
   const initialToolbar = left.querySelector(".board-toolbar")!.textContent;
   const arrowFrames = () =>
@@ -214,7 +217,7 @@ test("hovered and pinned previews preserve board structure and square highlights
     left.querySelector(".move-arrow line")!.getAttribute("marker-end"),
     "url(#arrowhead)",
   );
-  const link = document.querySelector<HTMLButtonElement>(".explanation-link")!;
+  const link = document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!;
   for (const action of ["hover", "click"] as const) {
     await act(() => {
       if (action === "hover")
@@ -225,11 +228,7 @@ test("hovered and pinned previews preserve board structure and square highlights
     });
     assert.equal(view.preview.boardPreview, true);
     assert.equal(view.preview.pinned, action === "click");
-    assert.equal(
-      left.querySelector(".mobile-coach-summary"),
-      action === "hover" ? initialSummary : null,
-      "temporary previews must keep the mobile summary in place",
-    );
+    assert.equal(document.querySelectorAll(".best-move-heading").length, 1);
     assert.deepEqual(Array.from(board.children), initialChildren);
     assert.equal(
       leftText(),
@@ -346,25 +345,30 @@ test("hovered and pinned previews preserve board structure and square highlights
 
 test("mobile preview controls navigate without changing the game and reveal an offscreen board", async (t) => {
   const view = await renderWorkspace(t);
-  const { dom, boardPanel, candidates } = view;
+  const { dom, document, boardPanel, candidates } = view;
   const liveFen = view.game.fen;
   await act(() =>
-    boardPanel.querySelector<HTMLButtonElement>(".mobile-coach-summary .plan-preview")!.click(),
+    document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!.click(),
   );
   assert.equal(view.preview.pinned, true);
-  assert.equal(view.preview.inspection?.ply, 2);
+  assert.equal(view.preview.inspection?.ply, 1);
   const previous = boardPanel.querySelector<HTMLButtonElement>(
     '[aria-label="Previous preview move"]',
   )!;
   const next = boardPanel.querySelector<HTMLButtonElement>(
     '[aria-label="Next preview move"]',
   )!;
-  assert.equal(next.disabled, true);
-  await act(() => previous.click());
-  assert.equal(view.preview.inspection?.ply, 1);
   assert.equal(previous.disabled, true);
   await act(() => next.click());
   assert.equal(view.preview.inspection?.ply, 2);
+  assert.equal(next.disabled, true);
+  await act(() => previous.click());
+  assert.equal(view.preview.inspection?.ply, 1);
+  assert.equal(
+    view.preview.inspection?.focus,
+    candidates[0].explanationFocus,
+    "returning to the first step restores its explanation arrows",
+  );
   await act(() =>
     boardPanel.querySelector<HTMLButtonElement>(".preview-return")!.click(),
   );
@@ -385,7 +389,6 @@ test("mobile preview controls navigate without changing the game and reveal an o
   assert.equal(view.preview.pinnedInspection?.ply, 1);
   assert.equal(boardPanel.querySelector(".board-preview-controls"), controls);
   assert.equal(controls!.textContent, controlsText);
-  assert.equal(boardPanel.querySelector(".mobile-coach-summary"), null);
   assert.equal(view.scrolls, 1, "hovering over a pinned preview must not scroll");
   await act(() => view.preview.inspectMove(candidates[0], 0, "hover"));
   assert.equal(view.preview.pinned, true);
@@ -417,19 +420,95 @@ test("position editing and analysis disclosures preserve the game until a move i
   assert.equal(edit.getAttribute("aria-expanded"), "false");
   assert.equal(view.game.tool, "move");
 
-  const more = document.querySelector<HTMLButtonElement>(".analysis-details-toggle")!;
-  await act(() => more.click());
-  assert.equal(more.getAttribute("aria-expanded"), "true");
-  assert.ok(document.querySelector(".additional-analysis.is-open"));
-  await act(() => more.click());
-  assert.equal(more.getAttribute("aria-expanded"), "false");
+  const details = document.querySelector<HTMLDetailsElement>(".position-details")!;
+  assert.equal(details.open, false);
+  await act(() => { details.open = true; });
+  assert.equal(details.open, true);
+  assert.doesNotMatch(details.textContent!, /Scores are measured in pawns/);
+  assert.equal(document.querySelector(".analysis-details-toggle"), null);
   assert.equal(view.game.fen, liveFen);
   assert.equal(view.game.history.length, 0);
 
-  await act(() => more.click());
   await act(() =>
-    boardPanel.querySelector<HTMLButtonElement>(".mobile-coach-summary .primary-button")!.click(),
+    document.querySelector<HTMLButtonElement>(".strategy-card .primary-button")!.click(),
   );
   assert.equal(view.game.history.at(-1)?.san, "Nf3");
-  assert.equal(more.getAttribute("aria-expanded"), "false");
+  assert.equal(document.querySelector<HTMLDetailsElement>(".position-details")!.open, false);
+});
+
+test("ready analysis keeps refresh secondary and alternatives visible; collapsing a move clears its preview", async (t) => {
+  const view = await renderWorkspace(t, new Chess().fen(), [
+    { rank: 1, depth: 15, cp: 30, pv: ["g1f3", "d7d5"] },
+    { rank: 2, depth: 15, cp: 20, pv: ["e2e4", "e7e5"] },
+  ]);
+  const { document } = view;
+  const refresh = document.querySelector<HTMLButtonElement>(".calculate-button")!;
+  assert.equal(refresh.getAttribute("aria-label"), "Refresh analysis");
+  assert.equal(refresh.closest(".coach-header-actions")?.parentElement?.className, "coach-header");
+  assert.equal(document.querySelector(".calculation-controls"), null);
+  assert.equal(refresh.classList.contains("primary-button"), false);
+  assert.equal(document.querySelector(".position-context"), null);
+  const alternatives = document.querySelector<HTMLElement>(".alternative-moves")!;
+  assert.equal(alternatives.tagName, "SECTION");
+  assert.equal(alternatives.querySelector("h3")!.textContent, "Other good moves");
+  assert.equal(alternatives.closest("details"), null);
+  assert.equal(alternatives.querySelectorAll(".candidate-toggle").length, 1);
+  await act(() => document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click());
+  const explore = document.querySelector<HTMLButtonElement>(".candidate-body .plan-preview")!;
+  await act(() => explore.click());
+  assert.equal(view.preview.pinnedInspection?.candidate, view.candidates[1]);
+  assert.equal(refresh.disabled, true, "refresh stays unavailable during a board preview");
+  await act(() => document.querySelectorAll<HTMLButtonElement>(".candidate-body .continuation-moves button")[1].click());
+  assert.equal(view.preview.pinnedInspection?.ply, 2);
+  assert.equal(view.game.history.length, 0);
+  await act(() => document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click());
+  assert.equal(view.preview.boardPreview, false, "collapsed move details must not leave a hidden preview pinned");
+  assert.equal(alternatives.querySelectorAll(".candidate-toggle").length, 1);
+});
+
+test("only check and undefended attacks are prominent; defended attacks stay in position details", async (t) => {
+  const cases = [
+    { name: "check", fen: "k3r3/8/8/8/1b6/8/8/4K3 w - - 0 1", pv: ["e1f1"], prominent: true },
+    { name: "undefended", fen: "4r2k/1b6/8/8/4Q3/8/8/6K1 w - - 0 1", pv: ["e4f4"], prominent: true },
+    { name: "defended", fen: "4r2k/8/8/8/4P3/3P4/8/6K1 w - - 0 1", pv: ["g1f1"], prominent: false },
+    { name: "Black", fen: "7k/8/8/4q3/8/8/8/4R2K b - - 0 1", pv: ["e5f5"], prominent: true },
+  ];
+  for (const fixture of cases) await t.test(fixture.name, async (t) => {
+    const view = await renderWorkspace(t, fixture.fen, [{ rank: 1, depth: 15, cp: 450, pv: fixture.pv }]);
+    const warnings = view.document.querySelectorAll(".strategy-warning");
+    assert.equal(warnings.length, 1, "each warning appears once");
+    assert.equal(!!warnings[0].closest(".position-details"), !fixture.prominent);
+  });
+});
+
+test("calculating on mobile reveals the coach; desktop calculation preserves the viewport", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  let mobile = true;
+  const scrolled: string[] = [];
+  Object.defineProperty(dom.window, "matchMedia", {
+    value: (query: string) => ({ matches: query === "(max-width: 900px)" && mobile }),
+  });
+  dom.window.HTMLElement.prototype.scrollIntoView = function () {
+    scrolled.push(this.id);
+  };
+  let callbacks!: Parameters<AnalysisEngine["analyze"]>[1];
+  t.mock.method(AnalysisEngine.prototype, "analyze", (_fen: string, next: typeof callbacks) => {
+    callbacks = next;
+    return () => {};
+  });
+  await act(() => root.render(createElement(App)));
+  const document = dom.window.document;
+  const clickCalculate = () => document.querySelector<HTMLButtonElement>(".calculate-button")!.click();
+  await act(clickCalculate);
+  assert.deepEqual(scrolled, ["coach"]);
+  assert.equal(document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled, true);
+  assert.equal(document.querySelector(".calculation-controls"), null);
+  await act(() => callbacks.onComplete([{ rank: 1, depth: 18, cp: 30, pv: ["e2e4", "e7e5"] }]));
+  assert.equal(document.querySelectorAll(".best-move-heading").length, 1);
+  assert.equal(document.querySelector(".refresh-analysis")!.getAttribute("aria-label"), "Refresh analysis");
+  mobile = false;
+  await act(clickCalculate);
+  assert.equal(document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled, true);
+  assert.equal(document.querySelector(".calculation-controls"), null);
+  assert.deepEqual(scrolled, ["coach"], "desktop refresh should not move the viewport");
 });

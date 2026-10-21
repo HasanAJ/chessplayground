@@ -26,7 +26,6 @@ export function useCoachPresentation(
         ? strategyInsight(
             game.analysisGame,
             best,
-            candidates[1],
             game.reviewing ? game.reviewedMove : game.lastMove,
             t,
           )
@@ -34,7 +33,6 @@ export function useCoachPresentation(
     [
       game.analysisGame,
       best,
-      candidates,
       game.reviewing,
       game.reviewedMove,
       game.lastMove,

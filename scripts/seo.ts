@@ -93,7 +93,6 @@ function renderSitePage(
     createElement(StaticPage, {
       language,
       pathname: path,
-      title: metadata.title,
       openingPage: !!route?.page,
       lesson: route?.lesson,
     }),

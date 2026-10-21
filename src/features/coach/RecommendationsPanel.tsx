@@ -1,7 +1,6 @@
 import { translateNotice } from "../../i18n/notices";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useId, useState } from "react";
-import { ChevronDown, LoaderCircle, RotateCcw, ShieldAlert } from "lucide-react";
+import { LoaderCircle, RotateCcw, ShieldAlert } from "lucide-react";
 import { sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
 import { GameOverCard } from "../game/GameOverCard";
@@ -37,8 +36,6 @@ export function RecommendationsPanel({
   onNewGame: newGame,
 }: Props) {
   const { t } = useTranslation();
-  const [expandedKey, setExpandedKey] = useState<string | null>(null);
-  const detailsId = useId();
   const {
     analysisGame,
     analysisKey,
@@ -53,19 +50,9 @@ export function RecommendationsPanel({
     thinking,
     requested: analysisRequested,
     current: isCurrent,
-    continuity,
   } = recommendations;
   const reviewLabel = translateNotice(rawReviewLabel, t);
-  const detailsOpen = expandedKey === analysisKey;
   const best = thinking ? undefined : candidate;
-  const cardClassName = [
-    "strategy-card",
-    thinking ? "strategy-loading" : "",
-    best ? "has-recommendation" : "",
-    detailsOpen ? "analysis-expanded" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
   const analysis = recommendations.analysis!;
   const turn = analysisGame.turn();
   const computer = settings.enabled,
@@ -84,6 +71,23 @@ export function RecommendationsPanel({
     setHoveredWarning,
     setFocusedWarning,
   } = presentation;
+  const warning = watching.target && (
+    <p
+      className="strategy-warning"
+      aria-label={t("coach.warnings.heading")}
+      tabIndex={!boardPreview ? 0 : undefined}
+      title={!boardPreview ? t("coach.warnings.description") : undefined}
+      onMouseEnter={() => setHoveredWarning(true)}
+      onMouseLeave={() => setHoveredWarning(false)}
+      onFocus={() => setFocusedWarning(true)}
+      onBlur={() => setFocusedWarning(false)}
+    >
+      <ShieldAlert size={16} />
+      <span>
+        <SquareText text={watching.text} />
+      </span>
+    </p>
+  );
   if (game.playable && analysisTerminal) {
     return (
       <GameOverCard
@@ -129,9 +133,11 @@ export function RecommendationsPanel({
         </div>
       ) : (
         <>
+          {best &&
+            (watching.kind === "check" || watching.kind === "undefended") &&
+            warning}
           <section
-            className={cardClassName}
-            id={`${detailsId}-best`}
+            className="strategy-card"
             aria-label={t("coach.analysis.label")}
             aria-busy={thinking}
             onMouseEnter={() => setHovered(0)}
@@ -147,7 +153,6 @@ export function RecommendationsPanel({
                 key={`${analysisKey}:${best.move.lan}`}
                 candidate={best}
                 forcedMove={forcedMove}
-                continuity={continuity}
                 preview={inspection}
                 onInspect={inspectMove}
                 onPlay={() =>
@@ -174,35 +179,26 @@ export function RecommendationsPanel({
                   <span />
                 </div>
                 <p className="analysis-timing">
-                  {analysis.depth > 0 && isCurrent
-                    ? t("coach.analysis.search.depth", analysis.depth)
-                    : t("coach.analysis.search.estimate")}
+                  {t("coach.analysis.search.estimate")}
                 </p>
               </>
             )}
           </section>
           {best && (
-            <button
-              className="analysis-details-toggle"
-              aria-expanded={detailsOpen}
-              aria-controls={`${detailsId}-best ${detailsId}-more`}
-              onClick={() => setExpandedKey(detailsOpen ? null : analysisKey)}
-            >
-              {t(detailsOpen ? "coach.analysis.less" : "coach.analysis.more")}
-              <ChevronDown size={14} />
-            </button>
-          )}
-          <div
-            className={`additional-analysis ${detailsOpen ? "is-open" : ""}`}
-            id={`${detailsId}-more`}
-          >
-            {best && (
+            <div className="additional-analysis">
+              <AlternativeMoves
+                key={analysisKey}
+                candidates={candidates}
+                board={board}
+                preview={preview}
+                presentation={presentation}
+              />
               <PositionDetails
                 key={`${analysisKey}:${best.move.lan}`}
                 candidate={best}
                 insight={insight}
-                forcedMove={forcedMove}
                 inCheck={analysisGame.inCheck()}
+                depth={analysis.depth}
                 highlighted={focusStrategy}
                 onHighlightPreviewChange={setPreviewStrategy}
                 onHighlightChange={(enabled) => {
@@ -214,38 +210,10 @@ export function RecommendationsPanel({
                   setFocusStrategy(enabled);
                 }}
               >
-                {watching.target && !analysisGame.inCheck() && (
-                  <p
-                    className="strategy-warning"
-                    aria-label={t("coach.warnings.heading")}
-                    tabIndex={!boardPreview ? 0 : undefined}
-                    title={
-                      !boardPreview
-                        ? t("coach.warnings.description")
-                        : undefined
-                    }
-                    onMouseEnter={() => setHoveredWarning(true)}
-                    onMouseLeave={() => setHoveredWarning(false)}
-                    onFocus={() => setFocusedWarning(true)}
-                    onBlur={() => setFocusedWarning(false)}
-                  >
-                    <ShieldAlert size={14} />
-                    <span>
-                      <SquareText text={`${watching.text.split(". ")[0]}.`} />
-                    </span>
-                  </p>
-                )}
+                {watching.kind === "defended" && warning}
               </PositionDetails>
-            )}
-            {!thinking && (
-              <AlternativeMoves
-                candidates={candidates}
-                board={board}
-                preview={preview}
-                presentation={presentation}
-              />
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </>

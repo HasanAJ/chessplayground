@@ -248,7 +248,6 @@ test("switching languages keeps the game and completed recommendations without a
           candidate: recommendations.best,
           preview: null,
           forcedMove: false,
-          continuity: false,
           onPlay() {},
           onInspect() {},
         }),

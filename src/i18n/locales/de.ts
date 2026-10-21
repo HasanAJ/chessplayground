@@ -13,13 +13,13 @@ export default {
   "workspace.tabs.label": "Arbeitsbereich",
   "workspace.tabs.play": "Spielen",
   "workspace.tabs.opening": "Eröffnungen",
-  "opening.seo.title": "Schacheröffnungen: Fallen und Angriffe — Tempo",
+  "opening.seo.title": "Schachfallen in der Eröffnung: Angriff und Abwehr | Tempo",
   "opening.seo.description":
-    "Lerne Angriffseröffnungen und typische Fallen für Anfänger und Fortgeschrittene. Erkunde Angriff und Verteidigung, Zug für Zug.",
-  "opening.heading.start": "Stelle die Falle.",
-  "opening.heading.end": "Verstehe den Angriff.",
+    "Erkunde 30 Schachfallen und Angriffsideen in interaktiven Anleitungen. Verstehe den Fehler, die taktische Antwort und eine Abwehr gegen die Falle.",
+  "opening.heading.start": "Schachfallen in der Eröffnung",
+  "opening.heading.end": "und wie du sie abwehrst",
   "opening.subtitle":
-    "Angriffseröffnungen, die scheinbar gute Züge als Fehler entlarven. Erkunde Angriff und Verteidigung, Zug für Zug.",
+    "Erkunde 30 Angriffsideen in interaktiven Anleitungen. Erkenne den verlockenden Fehler, verstehe die taktische Antwort und lerne einen Zug, der die Falle vermeidet.",
   "opening.loading": "Angriffe werden geladen…",
   "opening.error.title": "Die Eröffnungen konnten nicht geladen werden",
   "opening.error.description":
@@ -131,8 +131,6 @@ export default {
   "board.preview.label": "Vorschau",
   "board.preview.previous": "Vorheriger Zug in der Vorschau",
   "board.preview.next": "Nächster Zug in der Vorschau",
-  "coach.analysis.more": "Mehr Analyse",
-  "coach.analysis.less": "Weniger Analyse",
   "engine.error.load":
     "Die Schachengine konnte nicht geladen werden. Prüfe deine Verbindung und starte die Analyse erneut.",
   "engine.error.loadTimeout":
@@ -161,9 +159,10 @@ export default {
   "chess.side.black": "Schwarz",
   "header.home": "Tempo-Startseite",
   "header.tagline": "Dein Schachspielplatz",
-  "intro.heading.start": "Dein nächster Zug,",
-  "intro.heading.end": "erklärt.",
-  "intro.tagline": "Erkunde das Brett. Verstehe den Plan. Probiere einen Zug.",
+  "intro.heading.start": "Schachanalyse,",
+  "intro.heading.end": "mit erklärten Zügen.",
+  "intro.tagline":
+    "Baue eine Stellung auf, finde starke Züge und verstehe Schlagzüge und Drohungen. Kostenlos, in deinem Browser.",
   "intro.guide.play":
     "Wähle eine Figur und ihr Zielfeld, um einen Zug zu spielen.",
   "intro.guide.analyze":
@@ -235,9 +234,7 @@ export default {
   "board.square.check": " im Schach",
   "board.tray.place": "Setzen: {1} · {0}",
   "board.tray.add": "Hinzufügen: {1} · {0} · Klicken oder aufs Brett ziehen",
-  "coach.alternatives.heading": "Weitere gute Optionen",
-  "coach.evaluation.description":
-    "Bewertung in Bauerneinheiten: + für Weiß, − für Schwarz.",
+  "coach.alternatives.heading": "Weitere gute Züge",
   "coach.move.play": "{0} spielen",
   "coach.lesson.mateThreat.advice":
     "Prüfe vor dem Zug, ob gegnerische Figuren deinen König auf {0} erreichen können. Hier beendet {1} die Partie.",
@@ -367,8 +364,6 @@ export default {
   "coach.explanation.check.focus": "Angriff auf den gegnerischen König ansehen",
   "coach.explanation.develop.centerControl":
     "Von hier greift sie {0} an und hilft dir, das Zentrum zu kontrollieren.",
-  "coach.explanation.develop.purpose":
-    "Wenn du Figuren aus der Grundreihe entwickelst, stehen dir mehr Figuren für die nächsten Züge zur Verfügung.",
   "coach.explanation.develop.title": "Eine weitere Figur entwickeln",
   "coach.explanation.develop.text":
     "Deine Figur ({0}) entwickelt sich aus der Grundreihe nach {1}. {2}",
@@ -378,31 +373,18 @@ export default {
     "Dein Bauer gewinnt auf {0} Raum im Zentrum. Er greift {1} an und schränkt sichere Felder für gegnerische Figuren ein.",
   "coach.explanation.center.focus": "Zentrumskontrolle des Bauern ansehen",
   "coach.explanation.openFile.title": "Den Turm auf eine offene Linie stellen",
-  "coach.explanation.openFile.text":
-    "Auf der {0}-Linie, auf die dein Turm zieht, stehen keine Bauern. Prüfe, welche Felder er erreichen kann, bevor eine andere Figur den Weg blockiert.",
+  "coach.explanation.openFile.text": "Die {0}-Linie ist offen: In dieser Spalte stehen keine Bauern.",
   "coach.explanation.openFile.focus": "Offene Linie ansehen",
-  "coach.explanation.rook.title": "Die Turmstellung verbessern",
-  "coach.explanation.rook.text":
-    "Probiere deinen Turm auf {0}. Spiele die Antwort durch, um seine Linien und Ziele zu sehen.",
+  "coach.explanation.rook.title": "Ziehe deinen Turm nach {0}",
   "coach.explanation.rook.focus": "Turmzug ansehen",
-  "coach.explanation.king.title": "Die Königsstellung verbessern",
-  "coach.explanation.king.text":
-    "Dein König zieht von {0} nach {1}. Prüfe die Möglichkeiten des Gegners, bevor du sein nächstes Feld wählst.",
+  "coach.explanation.king.title": "Ziehe deinen König nach {0}",
   "coach.explanation.king.focus": "Königszug ansehen",
-  "coach.explanation.pawn.title": "Mit dem Bauern Raum gewinnen",
-  "coach.explanation.pawn.text":
-    "Dein Bauer rückt nach {0} vor und gewinnt Raum. Behalte die Felder im Blick, die er zurücklässt.",
+  "coach.explanation.pawn.title": "Ziehe deinen Bauern nach {0}",
   "coach.explanation.pawn.focus": "Bauernvorstoß ansehen",
   "coach.explanation.nearCenter.title":
     "Eine Figur nahe dem Zentrum verbessern",
-  "coach.explanation.nearCenter.text":
-    "Deine Figur ({0}) zieht nach {1}, nahe dem Zentrum. {2}",
-  "coach.explanation.nearCenter.reply":
-    "Sieh dir die gegnerische Antwort an, bevor du den nächsten Zug dieser Figur wählst.",
   "coach.explanation.nearCenter.focus": "Zug nahe dem Zentrum ansehen",
-  "coach.explanation.reposition.title": "Deine Figur ({0}) umgruppieren",
-  "coach.explanation.reposition.text":
-    "Probiere deine Figur ({0}) auf {1}. Spiele die nächsten Züge durch, um gegnerische Antworten und die entstehenden Figurenstellungen zu sehen.",
+  "coach.explanation.reposition.title": "Ziehe deine Figur ({0}) nach {1}",
   "coach.explanation.reposition.focus": "Zug deiner Figur ({0}) ansehen",
   "coach.reply.checkmate": "Sie können mit {0} mattsetzen ({1} nach {2}).",
   "coach.reply.castle": "{0} rochieren",
@@ -415,20 +397,11 @@ export default {
   "coach.reply.promotion": " und in {0} umwandeln",
   "coach.reply.check": " und Schach bieten",
   "coach.reply.summary": "Sie können {0}{1}{2} ({3}).",
-  "coach.warning.check":
-    "Wehre zuerst das Schach ab. Prüfe einen Königszug, das Schlagen des Angreifers oder das Dazwischenziehen einer Figur.",
-  "coach.warning.undefended":
-    "Deine Figur ({0}) auf {1} ist angegriffen und ungedeckt. Kannst du sie wegziehen, decken oder eine zwingende Gegendrohung aufstellen?",
-  "coach.warning.defended":
-    "Deine Figur ({0}) auf {1} ist angegriffen. Sie ist gedeckt, aber spiele den Abtausch durch, bevor du sie dort lässt.",
+  "coach.warning.check": "Dein König steht im Schach. Du musst das Schach abwehren.",
+  "coach.warning.undefended": "Deine Figur ({0}) auf {1} ist angegriffen und ungedeckt.",
+  "coach.warning.defended": "Deine Figur ({0}) auf {1} ist angegriffen und gedeckt. Prüfe den Abtausch, bevor du sie dort stehen lässt.",
   "coach.warning.general":
     "Prüfe vor deinem Zug gegnerische Schachgebote, Schläge und Angriffe auf ungedeckte Figuren. Beginne mit der wahrscheinlichen Antwort unter deinem Zug.",
-  "coach.strategy.attack": "{0} greift {1} mit deiner Figur ({2}) an.",
-  "coach.piece.theirsOnSquare": "die gegnerische Figur ({0}) auf {1}",
-  "coach.strategy.undefended.singular":
-    "Deine Figur ({0}) ist angegriffen und ungedeckt.",
-  "coach.strategy.undefended.plural":
-    "Deine Figuren ({0}) sind angegriffen und ungedeckt.",
   "coach.strategy.center": "Deine Figuren kontrollieren {0} im Zentrum.",
   "coach.strategy.line.checkmate": "{0} beendet diese Variante mit Schachmatt.",
   "coach.strategy.line.capture":
@@ -441,37 +414,15 @@ export default {
     "In dieser möglichen Variante würdest du Material im Wert von {0} Bauern abgeben.",
   "coach.strategy.material.loss.plural":
     "In dieser möglichen Variante würdest du Material im Wert von {0} Bauern abgeben.",
-  "coach.strategy.material.even":
-    "Die Materialbilanz bleibt in dieser Variante gleich.",
   "coach.strategy.change.check":
     "{0} setzt deinen König ins Schach. Die Abwehr hat Vorrang.",
-  "coach.strategy.change.undefended":
-    "{0} lässt deine Figur ({1}) auf {2} angegriffen und ungedeckt. Kümmere dich darum, bevor du deinen Plan fortsetzt.",
-  "coach.strategy.change.capture":
-    "Deine Figur ({0}) wurde gerade mit {1} geschlagen. Prüfe {2}, bevor du antwortest.",
-  "coach.strategy.change.center":
-    "{0} verändert die gegnerische Kontrolle über {1}. Probiere {2} und prüfe mögliche Antworten.",
-  "coach.strategy.change.move":
-    "Die gegnerische Figur ({0}) steht jetzt auf {1}. Probiere {2}{3}.",
-  "coach.strategy.change.reply": "; eine mögliche Antwort ist {0}",
-  "coach.strategy.change.respond": " und prüfe die Antwort",
-  "coach.strategy.compare.forced": "Diese Stellung hat nur einen legalen Zug.",
-  "coach.strategy.compare.onlyRecommendation":
-    "{0} ist hier der einzige empfohlene Zug. Die anderen untersuchten Züge geben im Vergleich zu viel auf.",
-  "coach.strategy.compare.mate":
-    "Hier zählen Mattdrohungen mehr als kleine Bewertungsunterschiede. Spiele {0} und {1} durch und beachte die Schachgebote genau.",
-  "coach.strategy.compare.similar":
-    "{0} und {1} sehen beide gut aus. Spiele die Antworten durch und wähle die Stellung, die dir lieber ist.",
-  "coach.strategy.compare.stronger":
-    "{0} sieht stärker aus als {1}. Spiele beide Antworten durch, um die Stellungen zu vergleichen.",
-  "coach.continuation.previewReply": "Wahrscheinliche Antwort ansehen: {0}",
-  "coach.continuation.replyHeading": "WAHRSCHEINLICHE ANTWORT",
-  "coach.continuation.label": "Engine-Variante",
-  "coach.continuation.heading": "MÖGLICHE NÄCHSTE ZÜGE",
+  "coach.strategy.change.capture": "Mit dem letzten Zug {1} wurde deine Figur ({0}) geschlagen.",
+  "coach.continuation.replyHeading": "Mögliche Antwort des Gegners",
+  "coach.continuation.label": "Eine mögliche Zugfolge",
   "coach.continuation.previewMove": "Zug {0} ansehen: {1} spielt {2}",
   "engine.error.noLegalCandidates":
     "Die Engine hat keine legalen Züge geliefert. Starte die Analyse erneut.",
-  "coach.position.heading": "Über diese Stellung",
+  "coach.position.heading": "Details zur Stellung",
   "coach.position.changed": "WAS SICH GEÄNDERT HAT",
   "coach.position.hideSquares": "Wichtige Felder ausblenden",
   "coach.position.showSquares": "Wichtige Felder markieren",
@@ -484,26 +435,22 @@ export default {
     "Rückblick auf {0}. Die Analyse gilt für diese Stellung.",
   "coach.analysis.errorHeading": "Versuchen wir es noch einmal.",
   "coach.analysis.retry": "Analyse erneut starten",
-  "coach.analysis.label": "Bester Zug und Strategie",
-  "coach.analysis.search.heading": "DEIN ZUG WIRD GESUCHT",
+  "coach.analysis.label": "Zugvorschlag und Analyse",
+  "coach.analysis.search.heading": "Analyse läuft…",
   "coach.analysis.search.bestMove": "Bester Zug für {0} wird gesucht…",
   "coach.analysis.search.history":
     "Deine Optionen und die Antworten aus dieser früheren Stellung werden geprüft.",
   "coach.analysis.search.live":
     "Deine Optionen und gegnerische Antworten werden geprüft. Du kannst weiterspielen.",
-  "coach.analysis.search.depth": "Tiefere Analyse · Tiefe {0}",
+  "coach.analysis.search.depth": "Suchtiefe: {0}",
   "coach.analysis.search.estimate": "Meist in wenigen Sekunden bereit",
   "coach.warnings.heading": "Achte auf",
   "coach.warnings.description":
     "Mit Maus oder Tastaturfokus die bedrohte Figur und ihre Angreifer markieren.",
   "coach.best.escapeCheck": "Schach abwehren",
-  "coach.best.heading": "BESTER ZUG",
+  "coach.best.heading": "Zugvorschlag",
   "coach.best.forced": "Einziger legaler Zug",
-  "coach.best.continuity": "Plan wird fortgesetzt",
   "coach.best.play": "Besten Zug {0} spielen",
-  "coach.best.hideReply": "Antwort ausblenden",
-  "coach.best.previewReply": "Antwort ansehen",
-  "coach.best.explore": "Nächste Züge erkunden",
   "coach.review.error.failed":
     "Die Engine konnte diesen Zug nicht bewerten. Versuche es erneut.",
   "coach.review.error.comparison":
@@ -520,9 +467,7 @@ export default {
     "Dein Zug und die besten Alternativen werden geprüft…",
   "coach.feedback.retry": "Zugbewertung erneut starten",
   "coach.feedback.nextTime": "Fürs nächste Mal",
-  "coach.feedback.likelyReply": "Wahrscheinliche Antwort",
-  "coach.feedback.evaluationDescription":
-    "Der Bewertungsunterschied wird in Bauerneinheiten gemessen. Die Zugnoten berücksichtigen die gesamte Stellung; Matt hat keinen Bauernwert.",
+  "coach.feedback.likelyReply": "Mögliche Antwort des Gegners",
   "coach.feedback.quickReview": "Kurze Bewertung",
   "coach.feedback.evaluationDrop": "{0} Bewertungsverlust",
   "coach.explanation.matingAttack.title": "Den Mattangriff fortsetzen",
@@ -535,15 +480,9 @@ export default {
   "coach.explanation.mateDefense.focus": "Verteidigungszug ansehen",
   "coach.reply.unavailable":
     "Diese Vorschau enthält keine Antwort. Probiere den Zug, um die Fortsetzung zu erkunden.",
-  "coach.reply.continuation": " Du könntest mit {0} fortsetzen: {1}.",
   "coach.reply.terminal.checkmate":
     "Das ist Schachmatt. Es gibt keine Antwort.",
   "coach.reply.terminal.draw": "Dieser Zug beendet die Partie mit Remis.",
-  "coach.estimate.mate": "Erzwungenes Matt für {0}",
-  "coach.estimate.balanced": "Ausgeglichene Stellung",
-  "coach.estimate.smallEdge": "{0} hat einen kleinen Vorteil",
-  "coach.estimate.advantage": "{0} hat Vorteil",
-  "coach.estimate.winning": "{0} hat einen Gewinnvorteil",
   "coach.status.checkmate": "Schachmatt",
   "coach.status.draw": "Remis",
   "coach.status.previewCheck": "Vorschau · Schach",
@@ -694,4 +633,11 @@ export default {
   "game.result.winner": "{0} gewinnt!",
   "board.tray.label": "Figuren von {0}",
   "coach.alternatives.description": "Alternative: {0}. {1}. {2}",
+  "coach.exploration.open": "Diesen Zug erkunden",
+  "coach.exploration.close": "Vorschau schließen",
+  "coach.exploration.note": "Wähle einen Zug für die Brettvorschau. Dies ist eine mögliche Zugfolge; deine Partie bleibt unverändert.",
+  "coach.position.evaluation": "Stellungsbewertung",
+  "coach.feedback.analysisDetails": "Analysedetails",
+  "coach.calculate.refresh": "Analyse aktualisieren",
+  "coach.strategy.change.promotion": "Mit {0} wurde der gegnerische Bauer auf {2} umgewandelt ({1}).",
 } satisfies Catalog;

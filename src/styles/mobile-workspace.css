@@ -1,17 +1,14 @@
 .guide-toggle,
 .position-editor-toggle,
 .mobile-editor-clear,
-.board-preview-controls,
-.mobile-coach-summary,
-.analysis-details-toggle {
+.board-preview-controls {
   display: none;
 }
 
 @media (max-width: 900px) {
   .guide-toggle,
   .position-editor-toggle,
-  .mobile-editor-clear,
-  .analysis-details-toggle {
+  .mobile-editor-clear {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -29,16 +26,14 @@
     padding-inline: 0;
   }
 
-  .guide-toggle[aria-expanded="true"] svg,
-  .analysis-details-toggle[aria-expanded="true"] svg {
+  .guide-toggle[aria-expanded="true"] svg {
     transform: rotate(180deg);
   }
 
   .page-heading:not(.guide-open) .page-guide,
   .board-panel:not(.is-editing) .piece-tray,
   .board-panel:not(.is-editing) .position-editor,
-  .desktop-editor-action,
-  .additional-analysis:not(.is-open) {
+  .desktop-editor-action {
     display: none;
   }
 
@@ -100,17 +95,8 @@
     padding: 14px;
   }
 
-  .strategy-card.has-recommendation:not(.analysis-expanded) {
-    display: none;
-  }
-
   .strategy-card > p {
     line-height: 1.6;
-  }
-
-  .analysis-details-toggle {
-    width: 100%;
-    margin-top: 4px;
   }
 
   .plan-actions {
@@ -123,8 +109,7 @@
     flex: 1 1 auto;
   }
 
-  .board-preview-controls,
-  .mobile-coach-summary {
+  .board-preview-controls {
     display: block;
     margin: 8px 0 4px 36px;
     padding: 12px;
@@ -140,29 +125,14 @@
     color: #554170;
   }
 
-  .mobile-coach-summary .card-eyebrow {
-    gap: 5px;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    color: var(--purple-dark);
+  .position-details > summary,
+  .feedback-analysis-details > summary {
+    min-height: 44px;
+    align-content: center;
   }
 
-  .mobile-coach-summary h3 {
-    margin: 3px 0 6px;
-    font-family: var(--heading);
-    font-size: 17px;
-    letter-spacing: -0.4px;
-  }
-
-  .mobile-coach-summary .best-move-san,
-  .mobile-coach-summary .move-title-divider {
-    color: inherit;
-    font-weight: inherit;
-  }
-
-  .mobile-coach-summary p {
-    line-height: 1.6;
-    color: #655773;
+  .continuation-moves button {
+    min-height: 44px;
   }
 
   .board-tools .history-heading {

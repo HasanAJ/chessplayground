@@ -1,6 +1,5 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Color } from "chess.js";
+import { useEffect, useMemo, useState } from "react";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
 import type { GameController } from "../game/useGameController";
 import {
@@ -26,8 +25,6 @@ export function useRecommendations(game: GameController, paused: boolean) {
     attempt: number;
   } | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
-  const [continuity, setContinuity] = useState(false);
-  const previousPlans = useRef<Partial<Record<Color, string>>>({});
   const requested = request?.key === game.analysisKey;
   const current =
     requested && analysis?.key === game.analysisKey && game.playable;
@@ -46,16 +43,12 @@ export function useRecommendations(game: GameController, paused: boolean) {
     !game.analysisTerminal &&
     (!current || analysis.state === "thinking");
   useEffect(() => {
-    previousPlans.current = {};
-  }, [game.study.id]);
-  useEffect(() => {
     setRequest(null);
   }, [game.analysisKey, game.playable]);
   useEffect(() => {
     if (!game.playable || game.analysisTerminal || !requested || paused) return;
     const key = game.analysisKey;
     setAnalysis({ key, candidates: [], depth: 0, state: "thinking" });
-    setContinuity(false);
     return engine.current!.analyze(
       game.analysisFen,
       {
@@ -82,11 +75,6 @@ export function useRecommendations(game: GameController, paused: boolean) {
             depth: lines[0].depth,
             state: "ready",
           });
-          if (!game.reviewing) {
-            const turn = game.analysisGame.turn();
-            setContinuity(previousPlans.current[turn] === next[0].theme);
-            previousPlans.current[turn] = next[0].theme;
-          }
         },
         onError: (error) =>
           setAnalysis({ key, candidates: [], depth: 0, state: "error", error }),
@@ -129,7 +117,6 @@ export function useRecommendations(game: GameController, paused: boolean) {
     requested,
     current,
     analysis,
-    continuity,
     calculate,
     clear: () => setRequest(null),
   };

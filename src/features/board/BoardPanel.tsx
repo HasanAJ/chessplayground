@@ -23,7 +23,6 @@ import type { BoardController } from "./useBoardInteractions";
 import { Chessboard } from "./Chessboard";
 import { PieceTray } from "./PieceTray";
 import { BoardPreviewControls } from "./BoardPreviewControls";
-import { MobileCoachSummary } from "../coach/MobileCoachSummary";
 
 type Props = {
   game: GameController;
@@ -62,7 +61,6 @@ export function BoardPanel({
     computer.disable();
     setTool("move");
   };
-  const best = analysis.thinking ? undefined : analysis.best;
   return (
     <section
       className={`board-panel ${editorOpen ? "is-editing" : ""}`}
@@ -173,19 +171,6 @@ export function BoardPanel({
       </div>
 
       <BoardPreviewControls preview={preview} />
-      {best && !preview.pinnedInspection && (
-        <MobileCoachSummary
-          candidate={best}
-          onPlay={() =>
-            board.playSuggestedMove(
-              best.move.from,
-              best.move.to,
-              best.move.promotion,
-            )
-          }
-          onPreviewReply={() => preview.inspectMove(best, 2, "click")}
-        />
-      )}
       <div className="board-secondary-actions">
         <button
           className="position-editor-toggle"

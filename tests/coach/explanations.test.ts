@@ -78,3 +78,15 @@ test("a discovered checking capture attributes check to the rook", () => {
   assert.match(candidate.explanation, /knight takes the pawn on c3/);
   assert.match(candidate.explanation, /rook on e1 gives check/);
 });
+
+test("quiet moves name the destination without inventing a strategic reason", () => {
+  for (const [fen, uci, destination] of [
+    ["4k3/8/8/8/8/P7/8/R3K3 w - - 0 1", "a1a2", "a2"],
+    ["4k3/8/8/8/8/8/8/R3K3 w - - 0 1", "e1d1", "d1"],
+    ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "a2a3", "a3"],
+  ]) {
+    const candidate = candidatesFor(fen, [{ rank: 1, depth: 15, cp: 0, pv: [uci] }])[0];
+    assert.ok(candidate.title.includes(destination));
+    assert.equal(candidate.explanation, "");
+  }
+});

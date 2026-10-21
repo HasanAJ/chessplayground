@@ -166,25 +166,6 @@
 .learning-pending svg {
   flex-shrink: 0;
 }
-.best-move-reply {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid #e0d6ed;
-}
-.best-move-reply .reply-box {
-  background: #fff9;
-}
-.continuation-details {
-  margin-top: 12px;
-}
-.continuation-details > summary {
-  cursor: pointer;
-  color: #695183;
-  font-size: var(--text-sm);
-  font-weight: 550;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .position-details {
   margin-top: 10px;
   border: 1px solid var(--line);
@@ -233,10 +214,6 @@
 }
 .plan-change p {
   margin-top: 4px;
-}
-.plan-comparison {
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
 }
 .save-notice {
   padding: 14px;
@@ -329,7 +306,6 @@
   margin-top: 4px;
 }
 .continuation-moves button {
-  flex: 1 1 135px;
   text-align: left;
 }
 .continuation-moves .continuation-description {
@@ -406,19 +382,40 @@ button .square-reference {
   outline: 2px solid #087f80;
   outline-offset: 2px;
 }
-.candidate-score[title],
-.feedback-footer small[title],
-.strategy-warning[title] > span,
-.detail-preview > span:first-child {
+.strategy-warning[title] > span {
   text-decoration: underline dotted;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
 }
-.candidate-score[title],
-.feedback-footer small[title] {
-  cursor: help;
-}
 .mobile-board-link {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.feedback-analysis-details {
+  width: 100%;
+  font-size: var(--text-sm);
+  color: #53677b;
+}
+.feedback-analysis-details > summary {
+  cursor: pointer;
+  min-height: 32px;
+  padding-block: 6px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.feedback-analysis-details > p {
+  margin-top: 6px;
+  font-size: var(--text-sm);
+}
+.position-details .analysis-depth {
+  margin-top: 8px;
+  font-size: var(--text-sm);
+}
+.position-details .strategy-warning {
+  margin: 12px 0 0;
+  color: #6a5c75;
+  background: transparent;
+  border: 0;
+  padding: 0;
 }

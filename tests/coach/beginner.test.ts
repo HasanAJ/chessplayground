@@ -17,7 +17,6 @@ test("the best-move card pairs notation with a plain move description and the re
     createElement(BestMoveContent, {
       candidate,
       forcedMove: false,
-      continuity: false,
       preview: null,
       onInspect() {},
       onPlay() {},
@@ -103,7 +102,6 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
       createElement(BestMoveContent, {
         candidate,
         forcedMove: false,
-        continuity: false,
         preview: preview.inspection,
         onInspect: preview.inspectMove,
         onPlay() {},
@@ -113,7 +111,7 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
   }
   await act(() => root.render(createElement(Harness)));
   const link =
-    dom.window.document.querySelector<HTMLButtonElement>(".explanation-link")!;
+    dom.window.document.querySelector<HTMLButtonElement>(".plan-preview")!;
   await act(() =>
     preview.inspectMove(candidate, 1, "hover", candidate.explanationFocus),
   );
@@ -130,7 +128,14 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
   assert.equal(preview.previewGame?.get("f3")?.type, "n");
   assert.equal(preview.previewGame?.get("g1"), undefined);
   assert.equal(preview.inspection?.focus, candidate.explanationFocus);
-  assert.equal(link.getAttribute("aria-pressed"), "true");
+  assert.equal(link.getAttribute("aria-expanded"), "true");
+  await act(() => preview.inspectMove(candidate, 2, "click"));
+  await act(() =>
+    link.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })),
+  );
+  assert.equal(preview.inspection?.ply, 2, "hovering Close must preserve the selected step");
+  await act(() => link.focus());
+  assert.equal(preview.inspection?.ply, 2, "focusing Close must preserve the selected step");
   await act(() =>
     dom.window.document.dispatchEvent(
       new dom.window.KeyboardEvent("keydown", { key: "Escape" }),
@@ -138,6 +143,9 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
   );
   assert.equal(preview.inspection, null);
   await act(() => link.click());
+  assert.equal(preview.inspection, null, "closing exploration clears its preview");
+  await act(() => link.click());
+  assert.equal(preview.pinned, true);
   key = "different-position";
   await act(() => root.render(createElement(Harness)));
   assert.equal(preview.inspection, null);

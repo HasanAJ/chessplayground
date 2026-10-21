@@ -7,7 +7,6 @@ import {
   recommendedCandidates,
 } from "../../src/features/coach/candidates";
 import { type EngineLine } from "../../src/engine/uci";
-import { strategyInsight } from "../../src/features/coach/strategy";
 
 function candidates(
   scores: Pick<EngineLine, "cp" | "mate">[],
@@ -66,9 +65,7 @@ test("a clear best move is shown alone, even when several other moves are legal"
   const evaluated = candidates([0, -100, -250].map((cp) => ({ cp })));
   const result = recommendedCandidates(evaluated);
   assert.deepEqual(result, [evaluated[0]]);
-  const insight = strategyInsight(new Chess(), result[0]);
-  assert.match(insight.comparison, /only recommended move/);
-  assert.doesNotMatch(insight.comparison, /only one legal move/);
+  assert.ok(new Chess().moves().length > 1, "one recommendation does not mean one legal move");
 });
 
 test("a losing position still shows the best defense and comparable alternatives", () => {
@@ -103,11 +100,11 @@ test("when mate is unavoidable, weaker defenses are omitted", () => {
   );
 });
 
-test("a position with only one legal move still explains the forced choice", () => {
+test("a position with only one legal move retains its best defense", () => {
   const game = new Chess("7k/4K3/5B2/8/8/8/8/7R b - - 0 1");
   const best = candidatesFor(game.fen(), [
     { rank: 1, depth: 15, mate: -1, pv: ["h8g8", "h1h8"] },
   ])[0];
   assert.deepEqual(recommendedCandidates([best]), [best]);
-  assert.match(strategyInsight(game, best).comparison, /only one legal move/);
+  assert.equal(game.moves().length, 1);
 });

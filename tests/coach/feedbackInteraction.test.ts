@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
 import { CoachPanel } from "../../src/features/coach/CoachPanel";
+import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
 import { candidatesFor } from "../../src/features/coach/candidates";
 import { reviewMove } from "../../src/features/coach/grading";
 import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
@@ -49,7 +50,6 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
       requested: false,
       current: false,
       analysis: null,
-      continuity: false,
       calculate() {},
       clear() {},
     };
@@ -100,7 +100,7 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
   assert.equal(body().hidden, false);
   assert.match(body().textContent!, /Pawn from e2 to e4/);
   const reply = Array.from(body().querySelectorAll("button")).find((button) =>
-    button.textContent?.includes("Likely reply"),
+    button.textContent?.includes("Opponent’s possible reply"),
   )!;
   await act(() => reply.click());
   assert.equal(preview.pinned, true);
@@ -114,4 +114,32 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
   assert.equal(toggle().getAttribute("aria-expanded"), "true");
   assert.equal(body().hidden, false);
   assert.match(toggle().textContent!, /1… e5/);
+});
+
+test("Inaccuracy stays visible while the numeric evaluation drop is secondary", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  const game = new Chess();
+  const best = candidatesFor(game.fen(), [{ rank: 1, depth: 15, cp: 0, pv: ["g1f3"] }])[0];
+  const move = game.move("a3");
+  const reply = candidatesFor(game.fen(), [{ rank: 1, depth: 15, cp: 70, pv: ["e7e5"] }])[0];
+  const review = reviewMove(move, best, reply);
+  assert.equal(review.label, "Inaccuracy");
+  await act(() => root.render(createElement(MoveFeedback, {
+    result: { key: "inaccuracy", state: "ready", review },
+    moveLabel: "1. a3 · White",
+    collapsed: false,
+    onToggle() {},
+    onReanalyze() {},
+    onInspect() {},
+  })));
+  const document = dom.window.document;
+  assert.equal(document.querySelector(".quality-badge")!.textContent, "Inaccuracy");
+  const details = document.querySelector<HTMLDetailsElement>(".feedback-analysis-details")!;
+  assert.equal(details.open, false);
+  assert.match(details.textContent!, /0.7 evaluation drop/);
+  const visibleBody = document.querySelector(".feedback-body")!.cloneNode(true) as Element;
+  visibleBody.querySelector(".feedback-analysis-details")!.remove();
+  assert.doesNotMatch(visibleBody.textContent!, /evaluation drop/);
+  await act(() => { details.open = true; });
+  assert.equal(details.open, true);
 });

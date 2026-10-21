@@ -10,13 +10,15 @@ test("general warnings do not invent board highlights", () => {
     warning.text,
     /checks, captures, and attacks on unprotected pieces/,
   );
+  assert.equal(warning.kind, "none");
   assert.equal(warning.target, null);
   assert.deepEqual(warning.attackers, []);
 });
 
 test("check highlights the king and every checking piece", () => {
   const warning = watchOutFor(checkedGame("k3r3/8/8/8/1b6/8/8/4K3 w - - 0 1"));
-  assert.match(warning.text, /Deal with the check/);
+  assert.match(warning.text, /king is in check/);
+  assert.equal(warning.kind, "check");
   assert.equal(warning.target, "e1");
   assert.deepEqual(new Set(warning.attackers), new Set(["e8", "b4"]));
 });
@@ -26,6 +28,7 @@ test("an undefended piece warning identifies its target and multiple attackers",
     checkedGame("4r2k/1b6/8/8/4Q3/8/8/6K1 w - - 0 1"),
   );
   assert.match(warning.text, /queen on e4 is under attack/);
+  assert.equal(warning.kind, "undefended");
   assert.equal(warning.target, "e4");
   assert.deepEqual(new Set(warning.attackers), new Set(["e8", "b7"]));
 });
@@ -36,6 +39,7 @@ test("defended piece warnings highlight the attack described in the text", () =>
   );
   assert.match(warning.text, /pawn on e4 is under attack/);
   assert.match(warning.text, /has a defender/);
+  assert.equal(warning.kind, "defended");
   assert.equal(warning.target, "e4");
   assert.deepEqual(warning.attackers, ["e8"]);
 });

@@ -1,15 +1,15 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useState, type ReactNode } from "react";
 import { Eye } from "lucide-react";
-import { positionSummary, type Candidate } from "./candidates";
+import type { Candidate } from "./candidates";
 import type { StrategyInsight } from "./strategy";
 import { SquareText } from "../board/SquareHighlight";
 
 export function PositionDetails({
   candidate,
   insight,
-  forcedMove,
   inCheck,
+  depth,
   highlighted,
   onHighlightChange,
   onHighlightPreviewChange,
@@ -17,8 +17,8 @@ export function PositionDetails({
 }: {
   candidate: Candidate;
   insight: StrategyInsight | null;
-  forcedMove: boolean;
   inCheck: boolean;
+  depth: number;
   highlighted: boolean;
   onHighlightChange: (enabled: boolean) => void;
   onHighlightPreviewChange: (enabled: boolean) => void;
@@ -45,11 +45,10 @@ export function PositionDetails({
       <summary>{t("coach.position.heading")}</summary>
       <div className="position-details-body">
         <div className="strategy-foot">
-          <span>
-            <SquareText text={positionSummary(candidate, t)} />
-          </span>
+          <span>{t("coach.position.evaluation")}</span>
           <span className="score-pill">{candidate.score}</span>
         </div>
+        <p className="analysis-depth">{t("coach.analysis.search.depth", depth)}</p>
         {children}
         {insight && (
           <>
@@ -61,17 +60,14 @@ export function PositionDetails({
                 </p>
               </div>
             )}
-            <ul>
-              {insight.facts.map((fact) => (
-                <li key={fact}>
-                  <SquareText text={fact} />
-                </li>
-              ))}
-            </ul>
-            {!forcedMove && (
-              <p className="plan-comparison">
-                <SquareText text={insight.comparison} />
-              </p>
+            {insight.facts.length > 0 && (
+              <ul>
+                {insight.facts.map((fact) => (
+                  <li key={fact}>
+                    <SquareText text={fact} />
+                  </li>
+                ))}
+              </ul>
             )}
             {insight.squares.length > 0 && (
               <button
