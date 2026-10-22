@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { checkedGame } from "./position";
+import { checkedGame, gameOutcome } from "./position";
 import { uciMove } from "./moves";
 
 type StudyNode = { id: string; parent: string; uci: string };
@@ -46,18 +46,27 @@ export function nodePath(study: Study, id = study.tipId): StudyNode[] {
 }
 
 export function gameAt(study: Study, id = study.tipId): Chess {
-  const game = checkedGame(study.rootFen);
-  for (const node of nodePath(study, id)) uciMove(game, node.uci);
-  return game;
+  return replayStudy(study, id).game;
 }
 
+/** Collect move details during replay instead of traversing the history again. */
+export function replayStudy(study: Study, id = study.tipId) {
+  const game = checkedGame(study.rootFen);
+  const outcomes = [gameOutcome(game)];
+  const history = nodePath(study, id).map((node) => {
+    const move = uciMove(game, node.uci);
+    outcomes.push(gameOutcome(game));
+    return move;
+  });
+  return { game, history, outcomes };
+}
+
+/** Record a legal UCI move already validated at the parent position. */
 export function addStudyMove(study: Study, parent: string, uci: string): Study {
-  const game = gameAt(study, parent);
-  const move = uciMove(game, uci);
   const existing = study.nodes.find(
-    (node) => node.parent === parent && node.uci === move.lan,
+    (node) => node.parent === parent && node.uci === uci,
   );
-  const node = existing ?? { id: crypto.randomUUID(), parent, uci: move.lan };
+  const node = existing ?? { id: crypto.randomUUID(), parent, uci };
   return {
     ...study,
     nodes: existing ? study.nodes : [...study.nodes, node],

@@ -10,7 +10,6 @@ import {
   arrangementIssue,
   checkedGame,
   editPosition,
-  ending,
   gameMoveLabel,
   opposite,
   pieceLimitError,
@@ -21,26 +20,27 @@ import {
   type Position,
 } from "../../chess/position";
 import {
-  addStudyMove,
   createStudy,
-  gameAt,
   nodePath,
   ROOT,
   SESSION_KEY,
   type Study,
 } from "../../chess/study";
+import { StudySession } from "../../chess/StudySession";
 import { preserveRecovery, readSavedSession } from "./storage";
 
 type PieceTool = "move" | `${Color}${PieceSymbol}`;
 
 export function useGameController(onEdit: () => void) {
   const [savedSession] = useState(readSavedSession);
-  const [study, setStudy] = useState(savedSession.study);
+  const [{ session, snapshot }, setGameState] = useState(() => {
+    const session = new StudySession(savedSession.study);
+    return { session, snapshot: session.snapshot };
+  });
+  const { study, positionGame, history, outcomes } = snapshot;
   const [recovery, setRecovery] = useState(savedSession.recovery);
   const [autosavePaused, setAutosavePaused] = useState(!!savedSession.recovery);
-  const game = useMemo(() => gameAt(study), [study]);
-  const fen = game.fen();
-  const history = useMemo(() => game.history({ verbose: true }), [game]);
+  const fen = positionGame.fen();
   const path = useMemo(() => nodePath(study), [study]);
   const [draft, setDraft] = useState<{
     position: Position;
@@ -63,13 +63,16 @@ export function useGameController(onEdit: () => void) {
   const reviewing = historyPly !== null && playable;
   const nodeId = reviewing ? (path[historyPly - 1]?.id ?? ROOT) : study.tipId;
   const analysisGame = useMemo(
-    () => (reviewing ? gameAt(study, nodeId) : game),
-    [study, nodeId, reviewing, game],
+    () =>
+      reviewing
+        ? new Chess(history[historyPly - 1]?.after ?? study.rootFen)
+        : positionGame,
+    [study.rootFen, history, historyPly, reviewing, positionGame],
   );
   const analysisFen = analysisGame.fen();
   const analysisKey = `${study.id}:${nodeId}:${analysisFen}`;
-  const terminal = useMemo(() => ending(game), [game]);
-  const analysisTerminal = useMemo(() => ending(analysisGame), [analysisGame]);
+  const terminal = outcomes.at(-1)!.terminal;
+  const analysisTerminal = outcomes[historyPly ?? history.length].terminal;
   const lastMove = history.at(-1) ?? null;
   const reviewedMove = reviewing ? history[historyPly - 1] : null;
   const reviewLabel = reviewedMove
@@ -122,11 +125,15 @@ export function useGameController(onEdit: () => void) {
     setPromotion(null);
   }
 
-  function openStudy(next: Study) {
-    setStudy(next);
+  function openSession(next: StudySession) {
+    setGameState({ session: next, snapshot: next.snapshot });
     setDraft(null);
     setTool("move");
     resetBoardControls();
+  }
+
+  function openStudy(next: Study) {
+    openSession(new StudySession(next));
   }
 
   function replaceGame(next: Chess) {
@@ -158,13 +165,11 @@ export function useGameController(onEdit: () => void) {
       setPromotion({ from, to });
       return;
     }
-    const next = addStudyMove(study, nodeId, `${from}${to}${promote ?? ""}`);
-    openStudy(next);
-    if (byComputer)
-      setComputerMove(
-        choices.find((move) => move.lan === `${from}${to}${promote ?? ""}`) ??
-          null,
-      );
+    const move = choices.find((choice) => choice.promotion === promote);
+    if (!move) return;
+    session.play(nodeId, move.lan);
+    openSession(session);
+    if (byComputer) setComputerMove(move);
     else setRevealBoard((value) => value + 1);
     if (reviewing) {
       onEdit();
@@ -239,9 +244,10 @@ export function useGameController(onEdit: () => void) {
 
   return {
     study,
-    game,
+    positionGame,
     fen,
     history,
+    outcomes,
     path,
     draft,
     playable,

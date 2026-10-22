@@ -1,7 +1,14 @@
 import type { AnalysisEngine } from "../../engine/AnalysisEngine";
 import { candidatesFor, type Candidate } from "./candidates";
 import { reviewMove, type MoveReview } from "./grading";
-import { gameAt, nodePath, type Study } from "../../chess/study";
+import type { Move } from "chess.js";
+
+export type ReviewPosition = {
+  move: Move;
+  history: { rootFen: string; moves: string[] };
+  terminal: string | null;
+  drawn: boolean;
+};
 
 export type ReviewState = { key: string } & (
   | { state: "thinking" }
@@ -32,20 +39,15 @@ function replyAfter(played: Candidate): Candidate | undefined {
 
 export function startMoveReview(
   engine: Pick<AnalysisEngine, "analyze">,
-  study: Study,
-  nodeId: string,
+  { move, history, terminal, drawn }: ReviewPosition,
   callbacks: {
     onComplete: (review: MoveReview) => void;
     onError: (message: string) => void;
   },
 ): () => void {
-  const path = nodePath(study, nodeId);
-  const before = gameAt(study, path.at(-1)!.parent);
-  const after = gameAt(study, nodeId);
-  const move = after.history({ verbose: true }).at(-1)!;
   const beforeHistory = {
-    rootFen: study.rootFen,
-    moves: path.slice(0, -1).map((item) => item.uci),
+    rootFen: history.rootFen,
+    moves: history.moves.slice(0, -1),
   };
   let canceled = false;
   let cancel: (() => void) | undefined;
@@ -53,13 +55,13 @@ export function startMoveReview(
     if (!canceled) callbacks.onError(message);
   };
   cancel = engine.analyze(
-    before.fen(),
+    move.before,
     {
       onProgress() {},
       onError: fail,
       onComplete(lines) {
         if (canceled) return;
-        const best = candidatesFor(before.fen(), lines)[0];
+        const best = candidatesFor(move.before, lines)[0];
         if (!best) {
           fail("The engine could not review this move. Try again.");
           return;
@@ -68,13 +70,13 @@ export function startMoveReview(
           // Compare both choices in the same position, at the same search depth.
           // This avoids grading differences between two independent short searches.
           cancel = engine.analyze(
-            before.fen(),
+            move.before,
             {
               onProgress() {},
               onError: fail,
               onComplete(comparison) {
                 if (canceled) return;
-                const choices = candidatesFor(before.fen(), comparison);
+                const choices = candidatesFor(move.before, comparison);
                 const played = choices.find(
                   (choice) => choice.move.lan === move.lan,
                 );
@@ -95,8 +97,8 @@ export function startMoveReview(
                   reviewMove(
                     move,
                     choices[0],
-                    after.isGameOver() ? undefined : replyAfter(played),
-                    after.isDraw(),
+                    terminal ? undefined : replyAfter(played),
+                    drawn,
                     played,
                   ),
                 );
@@ -112,20 +114,20 @@ export function startMoveReview(
           );
           return;
         }
-        if (after.isGameOver()) {
+        if (terminal) {
           callbacks.onComplete(
-            reviewMove(move, best, undefined, after.isDraw()),
+            reviewMove(move, best, undefined, drawn),
           );
           return;
         }
         cancel = engine.analyze(
-          after.fen(),
+          move.after,
           {
             onProgress() {},
             onError: fail,
             onComplete(nextLines) {
               if (canceled) return;
-              const reply = candidatesFor(after.fen(), nextLines)[0];
+              const reply = candidatesFor(move.after, nextLines)[0];
               if (!reply) {
                 fail("The engine could not check the reply. Try again.");
                 return;
@@ -133,10 +135,7 @@ export function startMoveReview(
               callbacks.onComplete(reviewMove(move, best, reply));
             },
           },
-          {
-            rootFen: study.rootFen,
-            moves: path.map((item) => item.uci),
-          },
+          history,
           { multiPV: 1, depth: 18, movetime: 1000 },
         );
       },

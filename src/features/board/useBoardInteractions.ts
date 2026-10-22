@@ -34,8 +34,13 @@ export function useBoardInteractions(
   const rights =
     game.draft?.rights ?? displayedGame!.fen().split(" ")[2].replace("-", "");
   const terminal = useMemo(
-    () => (displayedGame ? ending(displayedGame) : null),
-    [displayedGame],
+    () => {
+      if (!displayedGame) return null;
+      return preview.previewGame
+        ? ending(preview.previewGame)
+        : game.analysisTerminal;
+    },
+    [displayedGame, preview.previewGame, game.analysisTerminal],
   );
   const checkedKing = displayedGame?.isCheck()
     ? (Object.entries(position).find(

@@ -11,7 +11,6 @@ import { SiteIntro } from "./SiteIntro";
 import { PageHeading } from "./PageHeading";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
-import { ROOT } from "../chess/study";
 import { BoardPanel } from "../features/board/BoardPanel";
 import { useBoardInteractions } from "../features/board/useBoardInteractions";
 import { useBoardPreview } from "../features/board/useBoardPreview";
@@ -56,7 +55,7 @@ export default function App() {
     computer.enabled &&
     !computer.open &&
     !game.reviewing &&
-    game.game.turn() !== computer.side;
+    game.positionGame.turn() !== computer.side;
   const recommendations = useRecommendations(game, botTurn || openingActive);
   const presentation = useCoachPresentation(game, recommendations, preview);
   const board = useBoardInteractions(game, preview, computer, botTurn);
@@ -76,10 +75,8 @@ export default function App() {
         )
       : (game.historyPly ?? game.history.length);
   const feedback = useMoveReview(
-    game.study,
-    game.playable && !openingActive
-      ? (game.path[feedbackPly - 1]?.id ?? ROOT)
-      : null,
+    game,
+    game.playable && !openingActive ? feedbackPly : null,
     reviewRetry,
   );
   const storageError = game.storageError || computer.storageError;
@@ -107,7 +104,7 @@ export default function App() {
     game.setTool("move");
     game.setSelected(null);
     game.setError("");
-    recommendations.calculate();
+    recommendations.calculate(recommendations.requested);
     if (window.matchMedia("(max-width: 900px)").matches)
       document.getElementById("coach")?.scrollIntoView({
         block: "start",

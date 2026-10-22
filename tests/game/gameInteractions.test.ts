@@ -75,7 +75,7 @@ test("manual legal drags retain study identity, history, counters and autosave",
   await act(() => read().game.playMove("e2", "e4"));
   await act(() => read().board.dropPiece(drop("e7"), "e5"));
   assert.equal(read().game.study.id, id);
-  assert.deepEqual(read().game.game.history(), ["e4", "e5"]);
+  assert.deepEqual(read().game.history.map((move) => move.san), ["e4", "e5"]);
   assert.equal(read().game.fen.split(" ")[5], "2");
   assert.equal(
     JSON.parse(dom.window.localStorage.getItem(SESSION_KEY)!).nodes.length,
@@ -99,7 +99,7 @@ test("legal drags use chess rules for castling, en passant and promotion", async
       await act(() => read().board.playMove(from, to, "n"));
     }
     assert.equal(read().game.study.id, id);
-    assert.deepEqual(read().game.game.history(), [san]);
+    assert.deepEqual(read().game.history.map((move) => move.san), [san]);
   }
 });
 
@@ -133,7 +133,7 @@ test("kept previews clear when playing a suggestion or changing the position", a
   await act(() => read().preview.inspectMove(candidate, 2, "click"));
   await act(() => read().board.playSuggestedMove("e2", "e4"));
   assert.equal(read().preview.boardPreview, false);
-  assert.deepEqual(read().game.game.history(), ["e4"]);
+  assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
   await act(() => read().preview.inspectMove(candidate, 1, "click"));
   await act(() => read().game.newGame());
   assert.equal(read().preview.boardPreview, false);
@@ -198,7 +198,7 @@ test("quota failures keep recovery paused and expose a complete save warning", a
 test("ordinary autosave failures keep play usable and show a live save warning", async (t) => {
   const { read, dom } = await mount(t, {}, true);
   await act(() => read().game.playMove("e2", "e4"));
-  assert.deepEqual(read().game.game.history(), ["e4"]);
+  assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
   const notice = dom.window.document.querySelector(".save-notice")!;
   assert.equal(notice.getAttribute("role"), "status");
   assert.match(
@@ -206,4 +206,28 @@ test("ordinary autosave failures keep play usable and show a live save warning",
     /Your latest changes may not survive a reload/,
   );
   assert.equal(notice.querySelector("button"), null);
+});
+
+test("repetition outcomes follow the displayed history and a continued branch", async (t) => {
+  const { read } = await mount(t);
+  for (const [from, to] of [
+    ["g1", "f3"], ["g8", "f6"], ["f3", "g1"], ["f6", "g8"],
+    ["g1", "f3"], ["g8", "f6"], ["f3", "g1"], ["f6", "g8"],
+  ] as const)
+    await act(() => read().game.playMove(from, to));
+  assert.match(read().game.terminal!, /repetition/i);
+  assert.equal(read().board.terminal, read().game.terminal);
+  const finished = read().game.study;
+  await act(() => read().game.playMove("e2", "e4"));
+  assert.equal(read().game.study, finished, "terminal games reject further moves");
+  await act(() => read().game.showHistory(4));
+  assert.equal(read().game.analysisTerminal, null);
+  assert.equal(read().board.terminal, null);
+  await act(() => read().game.playMove("e2", "e4"));
+  assert.equal(read().game.terminal, null);
+  assert.equal(read().board.terminal, null);
+  assert.equal(read().game.study.id, finished.id);
+  assert.equal(read().game.study.mainTipId, finished.tipId);
+  assert.equal(read().game.study.nodes.length, 9);
+  assert.deepEqual(read().game.history.map((move) => move.san), ["Nf3", "Nf6", "Ng1", "Ng8", "e4"]);
 });

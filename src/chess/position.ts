@@ -251,3 +251,8 @@ export function ending(game: Chess, t: Translator = english): string | null {
   if (game.isDrawByFiftyMoves()) return t("game.ending.fiftyMoves");
   return null;
 }
+
+export function gameOutcome(game: Chess) {
+  const terminal = ending(game);
+  return { terminal, drawn: terminal !== null && !game.isCheckmate() };
+}

@@ -80,7 +80,7 @@ Storage failures warn that changes may not survive reload. Unreadable data pause
 
 Stockfish 19 Lite ranks moves; local rules turn board patterns and legal continuations into English explanations. Everything runs in the browser, with no LLM or API key. Short searches favor quick feedback, so suggestions and grades remain estimates.
 
-**Recommendations.** Calculations search for up to 1.8 seconds, depth 18, with MultiPV five. The worker stays warm; position changes hide suggestions and cancel the search, awaiting the engine’s acknowledgement before another starts. The board stays usable during analysis, and candidates appear together from the same completed depth.
+**Recommendations.** Calculations search for up to 1.8 seconds, depth 18, with MultiPV five. The worker stays warm; position changes hide suggestions and cancel the search, awaiting the engine’s acknowledgement before another starts. The last 64 completed calculations are cached for the session by starting position, move history, and search settings. Calculate reuses a matching result; the refresh button starts a new search. Failed and canceled searches remain retryable. Explanations are generated once for the calculation’s language and translated when the language changes. The board stays usable during analysis, and candidates appear together from the same completed depth.
 
 The best move always qualifies. Alternatives must be within 50 centipawns (half a pawn) from the side-to-move perspective. If the best move forces mate, only mating alternatives qualify; if all lines lose to mate, defenses must match the best mate distance. Fewer legal moves and filtering can reduce the five-candidate list. These search results do not guarantee perfect play.
 
@@ -92,7 +92,7 @@ Grades use [Lichess’s evaluation-to-outlook curve](https://lichess.org/page/ac
 
 **Computer play and game state.** A separate cancellable worker uses Stockfish’s `bestmove` at the selected Skill Level. Five levels express relative strength, without calibrated Elo ratings. Moves wait at least one second from turn start, including search time. Arrangements and previews cancel pending moves; outdated searches cannot replace current analysis. Workers are disposed on unmount, and engine failures offer Retry.
 
-The engine receives the loaded position and played moves to account for repetition. The interface keeps a game snapshot. Legal history is reconstructed when switching positions or lines. Checkmate and draws show the final score and Play again; win celebrations respect reduced motion. Evaluation uses White’s perspective: positive favors White, negative Black; mate scores identify the side with calculated forced mate. Positions and analysis stay local. Optional Google Fonts have offline system fallbacks; pieces and engine files are served locally.
+The engine receives the loaded position and played moves to account for repetition. A private rules engine applies each new move incrementally; the interface and move reviews use separate position snapshots and recorded outcomes. History is reconstructed when loading a game or continuing from another line. Checkmate and draws show the final score and Play again; win celebrations respect reduced motion. Evaluation uses White’s perspective: positive favors White, negative Black; mate scores identify the side with calculated forced mate. Positions and analysis stay local. Optional Google Fonts have offline system fallbacks; pieces and engine files are served locally.
 
 ## Structure
 
@@ -115,7 +115,7 @@ src/
 
 The main controllers are:
 
-- `features/game/useGameController.ts`: owns the saved study, selected history position, incomplete board arrangements, and game transitions. The current board and history are derived from the study.
+- `features/game/useGameController.ts`: owns the saved study, selected history position, incomplete board arrangements, and game transitions. The private rules engine in `chess/StudySession.ts` applies moves and publishes position, history, and outcome snapshots.
 - `features/board/useBoardInteractions.ts`: translates clicks, drags, tray placement, and off-board drops into game actions. `useBoardPreview.ts` owns temporary hover/focus and kept click previews separately from the saved game.
 - `features/coach/useRecommendations.ts`: starts a search only after Calculate and cancels it when its position changes. `useCoachPresentation.ts` owns expanded alternatives and board highlights.
 - `features/coach/useMoveReview.ts`: caches automatic move reviews for the current game. `moveReview.ts` compares the played move and best alternative at a common root/depth; `grading.ts` assigns the rating.

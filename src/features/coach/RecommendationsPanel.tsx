@@ -125,7 +125,7 @@ export function RecommendationsPanel({
           </p>
           <button
             className="primary-button"
-            onClick={recommendations.calculate}
+            onClick={() => recommendations.calculate(true)}
           >
             {t("coach.analysis.retry")}
             <RotateCcw size={15} />

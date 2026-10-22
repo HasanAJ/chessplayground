@@ -287,7 +287,7 @@ test("switching languages keeps the game and completed recommendations without a
     assert.equal(current.game.study, study);
     assert.equal(current.game.analysisKey, analysisKey);
     assert.equal(current.game.fen, fen);
-    assert.deepEqual(current.game.game.history(), ["e4"]);
+    assert.deepEqual(current.game.history.map((move) => move.san), ["e4"]);
     assert.equal(current.recommendations.thinking, false);
     assert.equal(current.recommendations.best?.move.san, "e5");
     assert.equal(searches, 1);

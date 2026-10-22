@@ -9,7 +9,9 @@ import {
   createStudy,
   addStudyMove,
   nodePath,
+  replayStudy,
   ROOT,
+  type Study,
 } from "../../src/chess/study";
 
 function studyAfter(...moves: string[]) {
@@ -17,6 +19,15 @@ function studyAfter(...moves: string[]) {
     (study, uci) => addStudyMove(study, study.tipId, uci),
     createStudy(START_FEN),
   );
+}
+
+function reviewPosition(study: Study, id = study.tipId) {
+  const { history, outcomes } = replayStudy(study, id);
+  return {
+    move: history.at(-1)!,
+    history: { rootFen: study.rootFen, moves: history.map((move) => move.lan) },
+    ...outcomes.at(-1)!,
+  };
 }
 
 class ReviewEngine {
@@ -52,7 +63,7 @@ test("non-best moves are compared at the same root and depth, including selected
     observed = observe();
   const study = studyAfter("e2e4", "e7e5", "g1f3", "b8c6");
   const node = nodePath(study)[2];
-  startMoveReview(engine, study, node.id, observed);
+  startMoveReview(engine, reviewPosition(study, node.id), observed);
   engine.complete(0, [{ rank: 1, depth: 18, cp: 40, pv: ["d2d4", "e5d4"] }]);
   const initial = engine.requests[0].args,
     comparison = engine.requests[1].args;
@@ -75,7 +86,7 @@ test("best moves retain a legal reply preview without a comparison search", () =
   const engine = new ReviewEngine(),
     observed = observe();
   const study = studyAfter("e2e4");
-  startMoveReview(engine, study, study.tipId, observed);
+  startMoveReview(engine, reviewPosition(study), observed);
   engine.complete(0, [{ rank: 1, depth: 18, cp: 30, pv: ["e2e4", "e7e5"] }]);
   assert.equal(engine.requests[1].args[3]?.multiPV, 1);
   assert.equal(engine.requests[1].args[3]?.searchMoves, undefined);
@@ -92,7 +103,7 @@ test("mate distance and perspective stay correct in a reply derived from the pla
     const engine = new ReviewEngine(),
       observed = observe();
     const study = studyAfter("e2e3");
-    startMoveReview(engine, study, study.tipId, observed);
+    startMoveReview(engine, reviewPosition(study), observed);
     engine.complete(0, [{ rank: 1, depth: 18, mate, pv: ["e2e4", "e7e5"] }]);
     engine.complete(1, [
       { rank: 1, depth: 20, mate, pv: ["e2e4", "e7e5"] },
@@ -108,7 +119,7 @@ test("cancellation stops a paired comparison and ignores its late result", () =>
   const engine = new ReviewEngine(),
     observed = observe();
   const study = studyAfter("e2e3");
-  const cancel = startMoveReview(engine, study, study.tipId, observed);
+  const cancel = startMoveReview(engine, reviewPosition(study), observed);
   engine.complete(0, [{ rank: 1, depth: 18, cp: 30, pv: ["e2e4"] }]);
   cancel();
   assert.equal(engine.requests[1].canceled, true);
@@ -124,7 +135,7 @@ test("incomplete comparisons report an error instead of assigning a harsh grade"
   const engine = new ReviewEngine(),
     observed = observe();
   const study = studyAfter("e2e3");
-  startMoveReview(engine, study, study.tipId, observed);
+  startMoveReview(engine, reviewPosition(study), observed);
   engine.complete(0, [{ rank: 1, depth: 18, cp: 30, pv: ["e2e4"] }]);
   engine.complete(1, [{ rank: 1, depth: 20, cp: 30, pv: ["e2e4"] }]);
   assert.equal(observed.reviews.length, 0);
@@ -139,9 +150,21 @@ test("a mating move finishes its review without searching a terminal position", 
     ROOT,
     "f1f8",
   );
-  startMoveReview(engine, study, study.tipId, observed);
+  startMoveReview(engine, reviewPosition(study), observed);
   engine.complete(0, [{ rank: 1, depth: 18, mate: 1, pv: ["f1f8"] }]);
   assert.equal(observed.reviews[0].label, "Best move");
+  assert.equal(observed.reviews[0].reply, undefined);
+  assert.equal(engine.requests.length, 1);
+});
+
+test("a repetition draw is reviewed from its snapshot without searching a reply", () => {
+  const engine = new ReviewEngine(), observed = observe();
+  const position = reviewPosition(studyAfter(
+    "g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8",
+  ));
+  startMoveReview(engine, position, observed);
+  engine.complete(0, [{ rank: 1, depth: 18, cp: 0, pv: ["f6g8"] }]);
+  assert.equal(observed.reviews[0].drawn, true);
   assert.equal(observed.reviews[0].reply, undefined);
   assert.equal(engine.requests.length, 1);
 });

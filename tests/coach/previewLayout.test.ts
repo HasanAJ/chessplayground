@@ -46,7 +46,7 @@ async function renderWorkspace(
       computer.enabled &&
       !computer.open &&
       !game.reviewing &&
-      game.game.turn() !== computer.side;
+      game.positionGame.turn() !== computer.side;
     const board = useBoardInteractions(game, preview, computer, botTurn);
     const recommendations: Recommendations = {
       candidates,
@@ -149,7 +149,7 @@ test("the board turn selector follows the displayed position and preserves editi
   assert.equal(select.disabled, false);
 
   await choose("b");
-  assert.equal(view.game.game.turn(), "b");
+  assert.equal(view.game.positionGame.turn(), "b");
   assert.equal(select.selectedOptions[0].textContent, "Black to move");
   await choose("w");
   await act(() => view.game.playMove("e2", "e4"));
@@ -157,7 +157,7 @@ test("the board turn selector follows the displayed position and preserves editi
   assert.ok(select.title.includes("clears the move history"));
   await choose("w");
   assert.equal(view.game.history.length, 0);
-  assert.equal(view.game.game.get("e4")?.type, "p");
+  assert.equal(view.game.positionGame.get("e4")?.type, "p");
   assert.equal(select.parentElement!.classList.contains("is-black"), false);
 
   await act(() => {
