@@ -1,9 +1,10 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { memo } from "react";
 import type { Move } from "chess.js";
 import { gameMoveLabel } from "../../chess/position";
 import { SquareText } from "../board/SquareHighlight";
 
-export function MoveHistory({
+export const MoveHistory = memo(function MoveHistory({
   history,
   selectedPly,
   onSelect,
@@ -53,4 +54,4 @@ export function MoveHistory({
       </div>
     </>
   );
-}
+});

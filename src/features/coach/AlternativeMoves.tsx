@@ -1,6 +1,6 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import type { BoardController } from "../board/useBoardInteractions";
+import type { GameController } from "../game/useGameController";
 import type { BoardPreview } from "../board/useBoardPreview";
 import { MoveExploration } from "./MoveDetails";
 import type { Candidate } from "./candidates";
@@ -10,21 +10,20 @@ import { SquareText } from "../board/SquareHighlight";
 
 type Props = {
   candidates: Candidate[];
-  board: BoardController;
+  onPlayMove: GameController["playMove"];
   preview: BoardPreview;
   presentation: CoachPresentation;
 };
 
 export function AlternativeMoves({
   candidates,
-  board,
+  onPlayMove,
   preview,
   presentation,
 }: Props) {
   const { t } = useTranslation();
   const { active, setActive, setHovered } = presentation;
   const { inspection, inspectMove, clearPreview } = preview;
-  const { playSuggestedMove: playMove } = board;
   if (candidates.length < 2) return null;
   return (
     <section
@@ -94,7 +93,7 @@ export function AlternativeMoves({
                     <button
                       className="primary-button"
                       onClick={() =>
-                        playMove(
+                        onPlayMove(
                           candidate.move.from,
                           candidate.move.to,
                           candidate.move.promotion,

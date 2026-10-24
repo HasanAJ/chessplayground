@@ -12,15 +12,18 @@ import type { GameController } from "../game/useGameController";
 import type { ComputerSettings } from "../computer/useComputerOpponent";
 import type { BoardPreview } from "./useBoardPreview";
 import { useComputerMoveAnimation } from "./useComputerMoveAnimation";
+import { scrollToBoard } from "./scrollToBoard";
 
 export function useBoardInteractions(
   game: GameController,
   preview: BoardPreview,
   computer: ComputerSettings,
   botTurn: boolean,
+  selectionReset: number,
 ) {
   const ref = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+  const [selected, setSelected] = useState<Square | null>(null);
   const [freeDrag, setFreeDrag] = useState<Square | null>(null);
   const [flipped, setFlipped] = useState(false);
   const displayedGame = game.playable
@@ -49,14 +52,14 @@ export function useBoardInteractions(
     : undefined;
   const legalMoves = useMemo(
     () =>
-      game.playable && !preview.boardPreview && !botTurn && game.selected
-        ? game.analysisGame.moves({ square: game.selected, verbose: true })
+      game.playable && !preview.boardPreview && !botTurn && selected
+        ? game.analysisGame.moves({ square: selected, verbose: true })
         : [],
     [
       game.playable,
       preview.boardPreview,
       botTurn,
-      game.selected,
+      selected,
       game.analysisGame,
     ],
   );
@@ -72,6 +75,16 @@ export function useBoardInteractions(
   useEffect(() => {
     setFreeDrag(null);
   }, [game.analysisKey, game.playable, preview.boardPreview, botTurn]);
+  useEffect(() => {
+    setSelected(null);
+  }, [
+    game.analysisKey,
+    game.draft,
+    game.tool,
+    preview.boardPreview,
+    botTurn,
+    selectionReset,
+  ]);
 
   function arrangePiece(
     square: Square,
@@ -79,7 +92,7 @@ export function useBoardInteractions(
     from?: Square,
   ) {
     setFreeDrag(null);
-    game.setSelected(null);
+    setSelected(null);
     if (from && (!piece || from === square)) return;
     preview.clearPreview();
     game.arrangePiece(position, turn, rights, square, piece, from);
@@ -87,7 +100,7 @@ export function useBoardInteractions(
 
   function placeFreely(from: Square, to?: Square) {
     setFreeDrag(null);
-    game.setSelected(null);
+    setSelected(null);
     if (from === to || !position[from]) return;
     arrangePiece(
       to ?? from,
@@ -130,12 +143,8 @@ export function useBoardInteractions(
   }, []);
 
   function playMove(from: Square, to: Square, promote?: PieceSymbol) {
-    if (!preview.boardPreview && !botTurn) game.playMove(from, to, promote);
-  }
-
-  function playSuggestedMove(from: Square, to: Square, promote?: PieceSymbol) {
-    if (botTurn) return;
-    preview.clearPreview();
+    if (preview.boardPreview || botTurn) return;
+    setSelected(null);
     game.playMove(from, to, promote);
   }
 
@@ -156,10 +165,10 @@ export function useBoardInteractions(
     )
       return;
     game.setError("");
-    if (game.selected === square) game.setSelected(null);
+    if (selected === square) setSelected(null);
     else if (position[square]?.color === game.analysisGame.turn())
-      game.setSelected(square);
-    else if (game.selected) playMove(game.selected, square);
+      setSelected(square);
+    else if (selected) playMove(selected, square);
   }
 
   function allowBoardDrop(event: DragEvent) {
@@ -199,7 +208,7 @@ export function useBoardInteractions(
     event.dataTransfer.setData("text/plain", square);
     event.dataTransfer.effectAllowed = "move";
     game.setTool("move");
-    game.setSelected(null);
+    setSelected(null);
     setFreeDrag(square);
   }
 
@@ -213,39 +222,18 @@ export function useBoardInteractions(
   function choosePiece(color: Color, type: PieceSymbol) {
     computer.disable();
     game.setTool(game.tool === `${color}${type}` ? "move" : `${color}${type}`);
-    game.setSelected(null);
+    setSelected(null);
     game.setError("");
-  }
-
-  function scrollToBoard() {
-    if (!ref.current) return;
-    const bounds = ref.current.getBoundingClientRect();
-    const controlsHeight = window.matchMedia("(max-width: 900px)").matches
-      ? (document
-          .querySelector(".calculation-controls")
-          ?.getBoundingClientRect().height ?? 0)
-      : 0;
-    if (
-      bounds.top >= 0 &&
-      bounds.bottom <= window.innerHeight - controlsHeight
-    )
-      return;
-    ref.current.scrollIntoView({
-      block: "start",
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-    });
   }
 
   useEffect(() => {
     if (game.revealBoard && window.matchMedia("(max-width: 900px)").matches)
-      scrollToBoard();
+      scrollToBoard(ref.current);
   }, [game.revealBoard]);
 
   useEffect(() => {
     if (preview.pinnedInspection && window.matchMedia("(max-width: 900px)").matches)
-      scrollToBoard();
+      scrollToBoard(ref.current);
   }, [preview.pinnedInspection]);
 
   return {
@@ -257,18 +245,17 @@ export function useBoardInteractions(
     legalMoves,
     lastMove,
     freeDrag,
+    selected,
     flipped,
     setFlipped,
     arrangePiece,
     playMove,
-    playSuggestedMove,
     squareClick,
     allowBoardDrop,
     dropPiece,
     startDrag,
     endDrag,
     choosePiece,
-    scrollToBoard,
   };
 }
 

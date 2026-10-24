@@ -1,5 +1,5 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Color } from "chess.js";
 import {
   ArrowDownUp,
@@ -19,14 +19,15 @@ import type { ComputerSettings } from "../computer/useComputerOpponent";
 import type { Recommendations } from "../coach/useRecommendations";
 import type { CoachPresentation } from "../coach/useCoachPresentation";
 import type { BoardPreview } from "./useBoardPreview";
-import type { BoardController } from "./useBoardInteractions";
+import { useBoardInteractions } from "./useBoardInteractions";
 import { Chessboard } from "./Chessboard";
 import { PieceTray } from "./PieceTray";
 import { BoardPreviewControls } from "./BoardPreviewControls";
 
 type Props = {
   game: GameController;
-  board: BoardController;
+  onDraggingChange: (dragging: boolean) => void;
+  selectionReset: number;
   preview: BoardPreview;
   computer: ComputerSettings;
   botTurn: boolean;
@@ -38,7 +39,8 @@ type Props = {
 
 export function BoardPanel({
   game,
-  board,
+  onDraggingChange,
+  selectionReset,
   preview,
   computer,
   botTurn,
@@ -48,6 +50,16 @@ export function BoardPanel({
   onShowHistory: showHistory,
 }: Props) {
   const { t } = useTranslation();
+  const board = useBoardInteractions(
+    game,
+    preview,
+    computer,
+    botTurn,
+    selectionReset,
+  );
+  useEffect(() => {
+    onDraggingChange(!!board.freeDrag);
+  }, [onDraggingChange, board.freeDrag]);
   const [editorOpen, setEditorOpen] = useState(false);
   const { flipped, setFlipped, choosePiece } = board;
   const { history, historyPly, tool, setTool, replaceGame, setNotice } = game;

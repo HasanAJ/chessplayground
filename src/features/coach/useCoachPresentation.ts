@@ -43,7 +43,10 @@ export function useCoachPresentation(
     () => watchOutFor(game.analysisGame, t),
     [game.analysisGame, t],
   );
-  const forcedMove = !!best && game.analysisGame.moves().length === 1;
+  const forcedMove = useMemo(
+    () => !!best && game.analysisGame.moves().length === 1,
+    [game.analysisGame, best],
+  );
   const shownCandidate =
     candidates[hovered ?? (bestFocused ? 0 : (active ?? 0))];
   const showWarning =

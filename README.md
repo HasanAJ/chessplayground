@@ -86,7 +86,7 @@ The best move always qualifies. Alternatives must be within 50 centipawns (half 
 
 **Explanations.** Rules recognize king safety, checks, captures, development, central control, defended pieces, joint attacks, open files, and promotion. Explanations describe observed features and possible continuations, with limited insight into strategic intent. Quiet moves without a concrete explanation show their action without generic strategic advice. Position details show current features and meaningful continuation outcomes. Warnings follow the side to move.
 
-**Move reviews.** A separate warm worker finds the strongest move in a single-line search of up to 1.2 seconds, then compares best and played moves from the same position in a two-line search of up to 1.8 seconds, sharing depth and budget. Playing the first choice instead triggers a reply search of up to one second. Previews use the played line; stale results are canceled. Numeric comparisons show the evaluation difference between best and played moves. Finished checkmates and draws are handled directly.
+**Move reviews.** A separate warm worker finds the strongest move in a single-line search of up to 1.2 seconds, then compares best and played moves from the same position in a two-line search of up to 1.8 seconds, sharing depth and budget. Playing the first choice instead triggers a reply search of up to one second. Automatic reviews wait during computer turns, requested calculations, board drags, and visits to Openings; completed feedback stays cached. Previews use the played line; stale results are canceled. Numeric comparisons show the evaluation difference between best and played moves. Finished checkmates and draws are handled directly.
 
 Grades use [Lichess’s evaluation-to-outlook curve](https://lichess.org/page/accuracy) with Tempo’s forgiving bands: losing fewer than four percentage points is Good, 4–12 Inaccuracy, 12–25 Mistake, and 25 or more Blunder. These are heuristics, not personal winning probabilities. Equal pawn losses matter less in overwhelmingly won or lost positions. Mate is compared by outcome, with explicit checkmate and draw handling.
 
@@ -96,7 +96,7 @@ The engine receives the loaded position and played moves to account for repetiti
 
 ## Structure
 
-Code is grouped by responsibility. `src/main.tsx` starts the app; `src/app/App.tsx` connects the feature controllers and panels.
+Code is grouped by responsibility. `src/main.tsx` starts the app; `src/app/App.tsx` owns navigation and the site shell. `features/game/PlayWorkspace.tsx` connects the game controllers and panels, keeping game updates separate from Openings and the site shell. Piece selection, drag state, and board orientation live inside the board panel, and the move list skips updates when its inputs are unchanged. Coach results render at lower priority than board input.
 
 ```text
 src/

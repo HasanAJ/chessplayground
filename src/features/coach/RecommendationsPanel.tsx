@@ -5,7 +5,6 @@ import { sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
 import { GameOverCard } from "../game/GameOverCard";
 import type { ComputerSettings } from "../computer/useComputerOpponent";
-import type { BoardController } from "../board/useBoardInteractions";
 import type { BoardPreview } from "../board/useBoardPreview";
 import type { Recommendations } from "./useRecommendations";
 import type { CoachPresentation } from "./useCoachPresentation";
@@ -16,7 +15,7 @@ import { SquareText } from "../board/SquareHighlight";
 
 type Props = {
   game: GameController;
-  board: BoardController;
+  onPlayMove: GameController["playMove"];
   preview: BoardPreview;
   computer: ComputerSettings;
   botTurn: boolean;
@@ -27,7 +26,7 @@ type Props = {
 
 export function RecommendationsPanel({
   game,
-  board,
+  onPlayMove,
   preview,
   computer: settings,
   botTurn,
@@ -58,7 +57,6 @@ export function RecommendationsPanel({
   const computer = settings.enabled,
     humanSide = settings.side;
   const { inspection, inspectMove, clearPreview, boardPreview } = preview;
-  const { playSuggestedMove: playMove } = board;
   const {
     forcedMove,
     setHovered,
@@ -156,7 +154,7 @@ export function RecommendationsPanel({
                 preview={inspection}
                 onInspect={inspectMove}
                 onPlay={() =>
-                  playMove(
+                  onPlayMove(
                     best.move.from,
                     best.move.to,
                     best.move.promotion,
@@ -189,7 +187,7 @@ export function RecommendationsPanel({
               <AlternativeMoves
                 key={analysisKey}
                 candidates={candidates}
-                board={board}
+                onPlayMove={onPlayMove}
                 preview={preview}
                 presentation={presentation}
               />

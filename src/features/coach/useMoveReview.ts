@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
 import { startMoveReview, type ReviewState } from "./moveReview";
 import type { GameController } from "../game/useGameController";
@@ -7,6 +7,7 @@ export function useMoveReview(
   game: GameController,
   ply: number | null,
   retry: number,
+  paused: boolean,
 ) {
   const engine = useAnalysisEngine();
   const { study, history, path, outcomes } = game;
@@ -27,6 +28,7 @@ export function useMoveReview(
       setResult(saved);
       return;
     }
+    if (paused) return;
     setResult({ key, state: "thinking" });
     return startMoveReview(
       engine.current!,
@@ -42,14 +44,14 @@ export function useMoveReview(
         onComplete(review) {
           const ready: ReviewState = { key, state: "ready", review };
           cache.current.set(key, ready);
-          setResult(ready);
+          startTransition(() => setResult(ready));
         },
         onError(error) {
           setResult({ key, state: "error", error });
         },
       },
     );
-  }, [study.id, nodeId, retry]);
+  }, [study.id, nodeId, retry, paused]);
   return result?.key === key
     ? result
     : nodeId

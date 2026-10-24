@@ -1,7 +1,7 @@
 import { translateNotice } from "../../i18n/notices";
 import type { Translator } from "../../i18n/translate";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Check,
   Clock3,
@@ -13,14 +13,13 @@ import {
   ArrowRight,
   RotateCcw,
 } from "lucide-react";
-import { gameMoveLabel, sideName } from "../../chess/position";
+import { ending, gameMoveLabel, sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
 import { CoachOptions } from "../computer/CoachOptions";
 import type {
   ComputerSettings,
   ComputerTurn,
 } from "../computer/useComputerOpponent";
-import type { BoardController } from "../board/useBoardInteractions";
 import type { BoardPreview } from "../board/useBoardPreview";
 import { PromotionCard } from "../game/PromotionCard";
 import { MoveFeedback } from "./MoveFeedback";
@@ -32,7 +31,7 @@ import { SquareText } from "../board/SquareHighlight";
 
 type Props = {
   game: GameController;
-  board: BoardController;
+  onPlayMove: GameController["playMove"];
   preview: BoardPreview;
   computer: ComputerSettings;
   opponent: ComputerTurn;
@@ -48,7 +47,7 @@ type Props = {
 
 export function CoachPanel({
   game,
-  board,
+  onPlayMove,
   preview,
   computer: settings,
   opponent,
@@ -81,7 +80,15 @@ export function CoachPanel({
   } = game;
   const { thinking, requested: analysisRequested } = recommendations;
   const { boardPreview, inspectionMove, inspectMove } = preview;
-  const { checkedKing, terminal: displayedEnding } = board;
+  const displayedGame = preview.previewGame ?? analysisGame;
+  const checkedKing = game.playable && displayedGame.isCheck();
+  const displayedEnding = useMemo(
+    () => {
+      if (!game.playable) return null;
+      return preview.previewGame ? ending(preview.previewGame) : analysisTerminal;
+    },
+    [game.playable, preview.previewGame, analysisTerminal],
+  );
   const { turn: botTurn, busy: botBusy, state: botState } = opponent;
   const {
     enabled: computer,
@@ -271,9 +278,10 @@ export function CoachPanel({
         <PromotionCard
           color={analysisGame.turn()}
           onClose={() => setPromotion(null)}
-          onChoose={(type) =>
-            board.playMove(promotion.from, promotion.to, type)
-          }
+          onChoose={(type) => {
+            if (!boardPreview && !botTurn)
+              game.playMove(promotion.from, promotion.to, type);
+          }}
         />
       )}
       {reviewing && (
@@ -303,7 +311,7 @@ export function CoachPanel({
 
       <RecommendationsPanel
         game={game}
-        board={board}
+        onPlayMove={onPlayMove}
         preview={preview}
         computer={settings}
         botTurn={botTurn}

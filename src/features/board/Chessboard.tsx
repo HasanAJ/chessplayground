@@ -25,6 +25,7 @@ export function Chessboard({
   const { t } = useTranslation();
   const {
     flipped,
+    selected,
     position,
     legalMoves,
     checkedKing,
@@ -36,7 +37,7 @@ export function Chessboard({
     lastMove: boardLastMove,
   } = board;
   const { boardPreview, inspection, inspectionMove } = preview;
-  const { selected, reviewing } = game;
+  const { reviewing } = game;
   const { best } = analysis;
   const hiddenAnalysis = !analysis.requested;
   const {

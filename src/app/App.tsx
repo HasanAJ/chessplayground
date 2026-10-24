@@ -8,24 +8,9 @@ import {
 } from "../i18n/routes";
 import { updatePageMetadata } from "../i18n/metadata";
 import { SiteIntro } from "./SiteIntro";
-import { PageHeading } from "./PageHeading";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
-import { BoardPanel } from "../features/board/BoardPanel";
-import { useBoardInteractions } from "../features/board/useBoardInteractions";
-import { useBoardPreview } from "../features/board/useBoardPreview";
-import { SquareHighlightProvider } from "../features/board/SquareHighlight";
-import { CoachPanel } from "../features/coach/CoachPanel";
-import { useCoachPresentation } from "../features/coach/useCoachPresentation";
-import { useMoveReview } from "../features/coach/useMoveReview";
-import { useRecommendations } from "../features/coach/useRecommendations";
-import {
-  useComputerSettings,
-  useComputerTurn,
-} from "../features/computer/useComputerOpponent";
-import { useGameController } from "../features/game/useGameController";
-import { SaveNotice } from "../features/game/SaveNotice";
-import { usePanelFocus } from "./usePanelFocus";
+import { PlayWorkspace } from "../features/game/PlayWorkspace";
 import { WorkspaceTabs } from "./WorkspaceTabs";
 import { navigate, useLocation } from "./navigation";
 import { OpeningBoundary } from "../features/openings/OpeningBoundary";
@@ -48,71 +33,6 @@ export default function App() {
       lastOpeningPath.current = pathname;
     } else updatePageMetadata(language);
   }, [openingActive, pathname, language]);
-  const computer = useComputerSettings();
-  const game = useGameController(computer.disable);
-  const preview = useBoardPreview(game.analysisKey, game.playable);
-  const botTurn =
-    computer.enabled &&
-    !computer.open &&
-    !game.reviewing &&
-    game.positionGame.turn() !== computer.side;
-  const recommendations = useRecommendations(game, botTurn || openingActive);
-  const presentation = useCoachPresentation(game, recommendations, preview);
-  const board = useBoardInteractions(game, preview, computer, botTurn);
-  const opponent = useComputerTurn(
-    game,
-    computer,
-    botTurn,
-    openingActive || preview.boardPreview || !!board.freeDrag,
-  );
-  const [reviewRetry, setReviewRetry] = useState(0);
-  const feedbackPly =
-    computer.enabled && !game.reviewing
-      ? game.history.reduce(
-          (ply, move, index) =>
-            move.color === computer.side ? index + 1 : ply,
-          game.history.length,
-        )
-      : (game.historyPly ?? game.history.length);
-  const feedback = useMoveReview(
-    game,
-    game.playable && !openingActive ? feedbackPly : null,
-    reviewRetry,
-  );
-  const storageError = game.storageError || computer.storageError;
-  usePanelFocus(game.promotion, () => game.setPromotion(null));
-  useEffect(() => {
-    if (!game.playable) computer.setOpen(false);
-  }, [game.playable]);
-
-  function newGame() {
-    preview.clearPreview();
-    game.newGame();
-    computer.setOpen(false);
-  }
-
-  function showHistory(ply: number) {
-    preview.clearPreview();
-    recommendations.clear();
-    game.showHistory(ply);
-    board.scrollToBoard();
-  }
-
-  function calculateBestMoves() {
-    if (!game.playable) return;
-    preview.clearPreview();
-    game.setTool("move");
-    game.setSelected(null);
-    game.setError("");
-    recommendations.calculate(recommendations.requested);
-    if (window.matchMedia("(max-width: 900px)").matches)
-      document.getElementById("coach")?.scrollIntoView({
-        block: "start",
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
-  }
 
   return (
     <>
@@ -146,53 +66,7 @@ export default function App() {
             );
           }}
         />
-        <section
-          id="play-workspace"
-          role="tabpanel"
-          aria-labelledby="play-tab"
-          hidden={openingActive}
-        >
-          <PageHeading />
-
-          <SaveNotice
-            error={storageError}
-            recovery={game.recovery}
-            paused={game.autosavePaused}
-            onResume={game.resumeAutosave}
-            onDismiss={game.dismissRecovery}
-          />
-
-          <SquareHighlightProvider positionKey={game.analysisKey}>
-            <div className="workspace">
-              <BoardPanel
-                game={game}
-                board={board}
-                preview={preview}
-                computer={computer}
-                botTurn={botTurn}
-                analysis={recommendations}
-                highlights={presentation}
-                onNewGame={newGame}
-                onShowHistory={showHistory}
-              />
-              <CoachPanel
-                game={game}
-                board={board}
-                preview={preview}
-                computer={computer}
-                opponent={opponent}
-                recommendations={recommendations}
-                presentation={presentation}
-                feedback={feedback}
-                feedbackPly={feedbackPly}
-                onReviewRetry={() => setReviewRetry((value) => value + 1)}
-                onCalculate={calculateBestMoves}
-                onNewGame={newGame}
-                onShowHistory={showHistory}
-              />
-            </div>
-          </SquareHighlightProvider>
-        </section>
+        <PlayWorkspace active={!openingActive} />
         <section
           id="opening-workspace"
           role="tabpanel"

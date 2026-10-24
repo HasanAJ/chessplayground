@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Chess,
   type Color,
@@ -48,7 +48,6 @@ export function useGameController(onEdit: () => void) {
     rights: string;
   } | null>(null);
   const [historyPly, setHistoryPly] = useState<number | null>(null);
-  const [selected, setSelected] = useState<Square | null>(null);
   const [tool, setTool] = useState<PieceTool>("move");
   const [promotion, setPromotion] = useState<{
     from: Square;
@@ -120,7 +119,6 @@ export function useGameController(onEdit: () => void) {
   function resetBoardControls() {
     setComputerMove(null);
     setHistoryPly(null);
-    setSelected(null);
     setError("");
     setPromotion(null);
   }
@@ -157,10 +155,7 @@ export function useGameController(onEdit: () => void) {
     const choices = analysisGame
       .moves({ square: from, verbose: true })
       .filter((move) => move.to === to);
-    if (from === to || !choices.length) {
-      setSelected(null);
-      return;
-    }
+    if (from === to || !choices.length) return;
     if (choices.some((move) => move.promotion) && !promote) {
       setPromotion({ from, to });
       return;
@@ -234,13 +229,15 @@ export function useGameController(onEdit: () => void) {
     }
   }
 
-  function showHistory(ply: number) {
-    setComputerMove(null);
-    setHistoryPly(ply === history.length ? null : ply);
-    setSelected(null);
-    setPromotion(null);
-    setError("");
-  }
+  const showHistory = useCallback(
+    (ply: number) => {
+      setComputerMove(null);
+      setHistoryPly(ply === history.length ? null : ply);
+      setPromotion(null);
+      setError("");
+    },
+    [history.length],
+  );
 
   return {
     study,
@@ -252,7 +249,6 @@ export function useGameController(onEdit: () => void) {
     draft,
     playable,
     historyPly,
-    selected,
     tool,
     promotion,
     computerMove,
@@ -274,7 +270,6 @@ export function useGameController(onEdit: () => void) {
     reviewedMove,
     reviewLabel,
     positionIssue,
-    setSelected,
     setTool,
     setPromotion,
     setError,

@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -13,10 +14,10 @@ import { useTranslation } from "../../i18n/LanguageProvider";
 type Input = "hover" | "focus";
 type Highlight = { square: Square; owner: string; key: string };
 const SquareHighlightContext = createContext<{
-  square: Square | null;
   show: (square: Square, owner: string, input: Input) => void;
   clear: (owner: string, input?: Input) => void;
 } | null>(null);
+const HighlightedSquareContext = createContext<Square | null>(null);
 
 export function SquareHighlightProvider({
   positionKey,
@@ -57,15 +58,18 @@ export function SquareHighlightProvider({
     document.addEventListener("keydown", dismiss);
     return () => document.removeEventListener("keydown", dismiss);
   }, [square]);
+  const actions = useMemo(() => ({ show, clear }), [show, clear]);
   return (
-    <SquareHighlightContext.Provider value={{ square, show, clear }}>
-      {children}
+    <SquareHighlightContext.Provider value={actions}>
+      <HighlightedSquareContext.Provider value={square}>
+        {children}
+      </HighlightedSquareContext.Provider>
     </SquareHighlightContext.Provider>
   );
 }
 
 export function useHighlightedSquare() {
-  return useContext(SquareHighlightContext)?.square ?? null;
+  return useContext(HighlightedSquareContext);
 }
 
 export function SquareText({

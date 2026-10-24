@@ -1,5 +1,12 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Language } from "../../i18n/translate";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
 import type { GameController } from "../game/useGameController";
@@ -86,9 +93,11 @@ export function useRecommendations(game: GameController, paused: boolean) {
       {
         onProgress: (depth) => {
           if (cancelled) return;
-          setAnalysis((previous) =>
-            previous?.key === key ? { ...previous, depth } : previous,
-          );
+          startTransition(() => {
+            setAnalysis((previous) =>
+              previous?.key === key ? { ...previous, depth } : previous,
+            );
+          });
         },
         onComplete(lines) {
           if (cancelled) return;
@@ -114,7 +123,7 @@ export function useRecommendations(game: GameController, paused: boolean) {
           cache.current.set(cacheKey, ready);
           if (cache.current.size > MAX_CACHED_ANALYSES)
             cache.current.delete(cache.current.keys().next().value!);
-          setAnalysis(ready);
+          startTransition(() => setAnalysis(ready));
         },
         onError(error) {
           if (!cancelled)
@@ -158,6 +167,8 @@ export function useRecommendations(game: GameController, paused: boolean) {
     );
   }
 
+  const clear = useCallback(() => setRequest(null), []);
+
   return {
     candidates,
     best: candidates.at(0),
@@ -166,7 +177,7 @@ export function useRecommendations(game: GameController, paused: boolean) {
     current,
     analysis,
     calculate,
-    clear: () => setRequest(null),
+    clear,
   };
 }
 

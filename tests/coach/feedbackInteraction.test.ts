@@ -9,7 +9,6 @@ import { reviewMove } from "../../src/features/coach/grading";
 import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
 import { useComputerSettings } from "../../src/features/computer/useComputerOpponent";
 import { useGameController } from "../../src/features/game/useGameController";
 import { createTestRoot } from "../helpers/dom";
@@ -42,7 +41,6 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
     const game = useGameController(computer.disable);
     currentGame = game;
     preview = useBoardPreview(game.analysisKey, game.playable);
-    const board = useBoardInteractions(game, preview, computer, false);
     const recommendations: Recommendations = {
       candidates: [],
       best: undefined,
@@ -56,7 +54,7 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
     const presentation = useCoachPresentation(game, recommendations, preview);
     return createElement(CoachPanel, {
       game,
-      board,
+      onPlayMove: game.playMove,
       preview,
       computer,
       recommendations,

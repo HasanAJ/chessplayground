@@ -6,7 +6,6 @@ import type { EngineLine } from "../../src/engine/uci";
 import App from "../../src/app/App";
 import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
 import { BoardPanel } from "../../src/features/board/BoardPanel";
-import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
 import { SquareHighlightProvider } from "../../src/features/board/SquareHighlight";
 import { useComputerSettings } from "../../src/features/computer/useComputerOpponent";
@@ -47,7 +46,6 @@ async function renderWorkspace(
       !computer.open &&
       !game.reviewing &&
       game.positionGame.turn() !== computer.side;
-    const board = useBoardInteractions(game, preview, computer, botTurn);
     const recommendations: Recommendations = {
       candidates,
       best: candidates[0],
@@ -69,7 +67,8 @@ async function renderWorkspace(
       { positionKey: game.analysisKey, children: null },
       createElement(BoardPanel, {
         game,
-        board,
+        onDraggingChange() {},
+        selectionReset: 0,
         preview,
         computer,
         botTurn,
@@ -80,7 +79,11 @@ async function renderWorkspace(
       }),
       createElement(CoachPanel, {
         game,
-        board,
+        onPlayMove(from, to, promotion) {
+          if (botTurn) return;
+          preview.clearPreview();
+          game.playMove(from, to, promotion);
+        },
         preview,
         computer,
         opponent: { turn: botTurn, busy: false, state: "idle", retry() {} },

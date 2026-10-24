@@ -38,7 +38,7 @@ async function mount(
     const computer = useComputerSettings();
     const game = useGameController(computer.disable);
     const preview = useBoardPreview(game.analysisKey, game.playable);
-    const board = useBoardInteractions(game, preview, computer, false);
+    const board = useBoardInteractions(game, preview, computer, false, 0);
     current = { game, board, preview };
     return createElement(
       "div",
@@ -128,10 +128,10 @@ test("clicked previews survive blur and temporary hover, then Escape restores th
   assert.equal(read().preview.boardPreview, false);
 });
 
-test("kept previews clear when playing a suggestion or changing the position", async (t) => {
+test("kept previews clear when playing a move or changing the position", async (t) => {
   const { read, candidate } = await mount(t);
   await act(() => read().preview.inspectMove(candidate, 2, "click"));
-  await act(() => read().board.playSuggestedMove("e2", "e4"));
+  await act(() => read().game.playMove("e2", "e4"));
   assert.equal(read().preview.boardPreview, false);
   assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
   await act(() => read().preview.inspectMove(candidate, 1, "click"));
