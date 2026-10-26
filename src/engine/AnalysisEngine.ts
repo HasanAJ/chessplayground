@@ -3,7 +3,11 @@ import { parseInfo, type EngineLine } from "./uci";
 
 type Callbacks = {
   onProgress: (depth: number) => void;
-  onComplete: (lines: EngineLine[], bestMove?: string) => void;
+  onComplete: (
+    lines: EngineLine[],
+    bestMove?: string,
+    bestLine?: EngineLine,
+  ) => void;
   onError: (message: string) => void;
 };
 type Search = Callbacks & {
@@ -167,9 +171,19 @@ export class AnalysisEngine {
       this.active = null;
       this.phase = "idle";
       if (!search.cancelled) {
-        if (search.latest.length)
-          search.onComplete(search.latest, line.split(/\s+/)[1]);
-        else
+        if (search.latest.length) {
+          const bestMove = line.split(/\s+/)[1];
+          let bestLine: EngineLine | undefined;
+          // Preserve comparable lines, but also return the final move's newest PV.
+          for (const batch of search.depths.values())
+            for (const candidate of batch.values())
+              if (
+                candidate.pv[0] === bestMove &&
+                (!bestLine || candidate.depth >= bestLine.depth)
+              )
+                bestLine = candidate;
+          search.onComplete(search.latest, bestMove, bestLine);
+        } else
           search.onError(
             "No complete analysis was returned. Try this position again.",
           );

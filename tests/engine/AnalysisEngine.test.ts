@@ -40,12 +40,18 @@ function observer() {
   const result = {
     progress: [] as number[],
     completed: [] as EngineLine[][],
+    bestMoves: [] as (string | undefined)[],
+    bestLines: [] as (EngineLine | undefined)[],
     errors: [] as string[],
   };
   return {
     result,
     onProgress: (depth: number) => result.progress.push(depth),
-    onComplete: (lines: EngineLine[]) => result.completed.push(lines),
+    onComplete(lines: EngineLine[], bestMove?: string, bestLine?: EngineLine) {
+      result.completed.push(lines);
+      result.bestMoves.push(bestMove);
+      result.bestLines.push(bestLine);
+    },
     onError: (message: string) => result.errors.push(message),
   };
 }
@@ -219,7 +225,7 @@ test("canceling a queued search keeps both stale searches out of the UI", (t) =>
   );
 });
 
-test("an incomplete deeper iteration cannot mix rankings from different depths", (t) => {
+test("an incomplete iteration returns the final best line separately from comparable rankings", (t) => {
   const worker = new FakeWorker();
   const engine = new AnalysisEngine(() => worker as unknown as Worker);
   t.after(() => engine.dispose());
@@ -235,6 +241,31 @@ test("an incomplete deeper iteration cannot mix rankings from different depths",
     observed.result.completed[0].map((line) => line.depth),
     [9, 9, 9],
   );
+  assert.equal(observed.result.bestMoves[0], "g1f3");
+  assert.deepEqual(observed.result.bestLines[0], {
+    rank: 1, depth: 10, cp: 30, pv: ["g1f3"],
+  });
+  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 1);
+});
+
+test("the final best line can be outside the completed candidates and excludes score bounds", (t) => {
+  const worker = new FakeWorker();
+  const engine = new AnalysisEngine(() => worker as unknown as Worker);
+  t.after(() => engine.dispose());
+  const observed = observer();
+  engine.analyze(START_FEN, observed);
+  worker.ready();
+  for (const [index, move] of ["e2e4", "d2d4", "g1f3"].entries())
+    worker.emit(`info depth 9 multipv ${index + 1} score cp 20 pv ${move}`);
+  worker.emit("info depth 10 multipv 1 score cp 30 pv c2c4 e7e5");
+  worker.emit("info depth 11 multipv 1 score cp 40 pv c2c4 g8f6");
+  worker.emit("info depth 12 multipv 1 score cp 50 lowerbound pv c2c4 e7e5");
+  worker.emit("bestmove c2c4 ponder g8f6");
+  assert.deepEqual(observed.result.bestLines[0], {
+    rank: 1, depth: 11, cp: 40, pv: ["c2c4", "g8f6"],
+  });
+  assert.deepEqual(observed.result.completed[0].map((line) => line.depth), [9, 9, 9]);
+  assert.equal(observed.result.bestMoves[0], "c2c4");
 });
 
 test("duplicate candidates are rejected instead of presented as a complete batch", (t) => {

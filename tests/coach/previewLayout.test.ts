@@ -515,3 +515,38 @@ test("calculating on mobile reveals the coach; desktop calculation preserves the
   assert.equal(document.querySelector(".calculation-controls"), null);
   assert.deepEqual(scrolled, ["coach"], "desktop refresh should not move the viewport");
 });
+
+test("the suggestion, board arrow, exploration, and Play use the engine's final move", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  dom.window.HTMLElement.prototype.scrollIntoView = () => {};
+  const requests: Parameters<AnalysisEngine["analyze"]>[] = [];
+  t.mock.method(AnalysisEngine.prototype, "analyze", (...args: Parameters<AnalysisEngine["analyze"]>) => {
+    requests.push(args);
+    return () => {};
+  });
+  await act(() => root.render(createElement(App)));
+  const document = dom.window.document;
+  const click = async (selector: string) => {
+    const button = document.querySelector<HTMLButtonElement>(selector);
+    assert.ok(button, selector);
+    await act(() => button.click());
+  };
+  await click(".calculate-button");
+  await act(() => requests[0][1].onComplete([
+    { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] },
+    { rank: 2, depth: 12, cp: 25, pv: ["g1f3", "g8f6"] },
+  ], "g1f3", { rank: 1, depth: 13, cp: 40, pv: ["g1f3", "d7d5"] }));
+  assert.equal(document.querySelector(".best-move-san")?.textContent, "Nf3");
+  assert.equal(document.querySelector(".move-arrow line")?.getAttribute("x1"), "650");
+  assert.equal(document.querySelector(".move-arrow line")?.getAttribute("y1"), "750");
+  await click(".strategy-card .plan-preview");
+  assert.ok(document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'));
+  assert.match(document.querySelector(".continuation-moves")?.textContent ?? "", /d5/);
+  assert.equal((document.querySelector(".move-history")?.textContent ?? "").includes("Nf3"), false);
+  await click(".preview-return");
+  await click('[aria-label="Play best move Nf3"]');
+  assert.ok(document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'));
+  assert.equal(document.querySelector('[data-square="g1"] img'), null);
+  assert.match(document.querySelector(".move-history")?.textContent ?? "", /Nf3/);
+  assert.equal(document.querySelector(".best-move-heading"), null);
+});

@@ -262,8 +262,9 @@ test("switching languages keeps the game and completed recommendations without a
   await act(() => current.recommendations.calculate());
   await act(() =>
     callbacks.onComplete([
-      { rank: 1, depth: 12, cp: 24, pv: ["e7e5", "g1f3"] },
-    ]),
+      { rank: 1, depth: 12, cp: 25, pv: ["c7c5", "g1f3"] },
+      { rank: 2, depth: 12, cp: 24, pv: ["e7e5", "g1f3"] },
+    ], "e7e5"),
   );
   assert.equal(searches, 1);
   const { study, analysisKey, fen } = current.game;

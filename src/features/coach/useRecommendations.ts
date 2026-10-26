@@ -99,10 +99,19 @@ export function useRecommendations(game: GameController, paused: boolean) {
             );
           });
         },
-        onComplete(lines) {
+        onComplete(lines, bestMove, bestLine) {
           if (cancelled) return;
-          const next = candidatesFor(game.analysisFen, lines, t);
-          if (!next.length || next.length !== lines.length) {
+          let selectedLines = lines;
+          if (bestMove && lines[0]?.pv[0] !== bestMove) {
+            const selected =
+              bestLine?.pv[0] === bestMove
+                ? bestLine
+                : lines.find((line) => line.pv[0] === bestMove);
+            // Older alternatives cannot be compared with an unfinished iteration.
+            selectedLines = selected ? [{ ...selected, rank: 1 }] : [];
+          }
+          const next = candidatesFor(game.analysisFen, selectedLines, t);
+          if (!next.length || next.length !== selectedLines.length) {
             setAnalysis({
               key,
               candidates: [],
@@ -116,7 +125,7 @@ export function useRecommendations(game: GameController, paused: boolean) {
           const ready: CompletedAnalysis = {
             key,
             candidates: next,
-            depth: lines[0].depth,
+            depth: selectedLines[0].depth,
             state: "ready",
             language: t.language,
           };

@@ -41,12 +41,75 @@ async function mount(t: TestContext) {
   return {
     read: () => current,
     requests,
-    complete: (index: number, lines: EngineLine[]) =>
-      act(() => requests[index].args[1].onComplete(lines)),
+    complete: (
+      index: number,
+      lines: EngineLine[],
+      bestMove = lines[0]?.pv[0],
+      bestLine?: EngineLine,
+    ) => act(() => requests[index].args[1].onComplete(lines, bestMove, bestLine)),
   };
 }
 
 const openingLine = { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] };
+
+test("the final best move replaces an older first choice without another search", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  const finalLine = { rank: 1, depth: 13, cp: 40, pv: ["g1f3", "d7d5"] };
+  await complete(0, [
+    openingLine,
+    { rank: 2, depth: 12, cp: 25, pv: ["g1f3", "g8f6"] },
+  ], "g1f3", finalLine);
+  assert.equal(read().recommendations.best?.move.san, "Nf3");
+  assert.deepEqual(read().recommendations.best?.pv, finalLine.pv);
+  assert.equal(read().recommendations.best?.cp, 40);
+  assert.equal(read().recommendations.analysis?.depth, 13);
+  assert.equal(read().recommendations.candidates.length, 1, "older alternatives must not use mismatched scores");
+  await act(() => read().recommendations.clear());
+  await act(() => read().recommendations.calculate());
+  assert.equal(read().recommendations.best?.move.san, "Nf3");
+  assert.equal(requests.length, 1);
+  assert.deepEqual(requests[0].args[3], { depth: 18, movetime: 1800, multiPV: 5 });
+});
+
+test("a newly discovered final move uses its own line even outside the completed candidates", async (t) => {
+  const { read, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [openingLine], "c2c4", {
+    rank: 1, depth: 13, cp: 45, pv: ["c2c4", "g8f6"],
+  });
+  assert.equal(read().recommendations.best?.move.san, "c4");
+  assert.deepEqual(read().recommendations.best?.continuation.map((move) => move.san), ["c4", "Nf6"]);
+  assert.equal(read().recommendations.analysis?.state, "ready");
+});
+
+test("an unchanged final choice retains alternatives from the completed depth", async (t) => {
+  const { read, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [
+    openingLine,
+    { rank: 2, depth: 12, cp: 25, pv: ["d2d4", "d7d5"] },
+  ], "e2e4", { ...openingLine, depth: 13 });
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["e4", "d4"]);
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.depth), [12, 12]);
+});
+
+test("a missing or illegal final line reports an error instead of suggesting another move", async (t) => {
+  const { read, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [openingLine], "c2c4");
+  assert.equal(read().recommendations.best, undefined);
+  assert.equal(read().recommendations.analysis?.state, "error");
+  await act(() => read().recommendations.calculate());
+  await complete(1, [openingLine], "c2c5", {
+    rank: 1, depth: 13, cp: 45, pv: ["c2c5"],
+  });
+  assert.equal(read().recommendations.best, undefined);
+  assert.equal(read().recommendations.analysis?.state, "error");
+  await act(() => read().recommendations.calculate());
+  await complete(2, [openingLine]);
+  assert.equal(read().recommendations.best?.move.san, "e4");
+});
 
 test("completed calculations parse each continuation once and repeated Calculate reuses the result", async (t) => {
   const { read, requests, complete } = await mount(t);
