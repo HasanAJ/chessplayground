@@ -1,4 +1,4 @@
-import type { AnalysisEngine } from "../../engine/AnalysisEngine";
+import type { AnalysisClient } from "../../engine/analysis";
 
 export const COMPUTER_LEVELS = {
   beginner: {
@@ -15,7 +15,7 @@ export const COMPUTER_LEVELS = {
 export type ComputerLevel = keyof typeof COMPUTER_LEVELS;
 
 export function startComputerTurn(
-  engine: Pick<AnalysisEngine, "analyze">,
+  engine: AnalysisClient,
   fen: string,
   history: { rootFen: string; moves: string[] },
   level: ComputerLevel,

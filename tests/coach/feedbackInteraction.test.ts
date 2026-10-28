@@ -9,11 +9,11 @@ import { reviewMove } from "../../src/features/coach/grading";
 import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { useComputerSettings } from "../../src/features/computer/useComputerOpponent";
+import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
 import { useGameController } from "../../src/features/game/useGameController";
 import { createTestRoot } from "../helpers/dom";
 
-test("calculation collapses a pending review, keeps it collapsed when ready, and new moves reopen it", async (t) => {
+test("calculation hides the last move review until the next move, including when refreshing", async (t) => {
   const { root, dom } = createTestRoot(t);
   const fixture = new Chess();
   const reviews = ["e4", "e5"].map((san) => {
@@ -34,6 +34,7 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
   });
   let pending = true;
   let calculations = 0;
+  let requested = false;
   let currentGame!: ReturnType<typeof useGameController>;
   let preview!: ReturnType<typeof useBoardPreview>;
   function Harness() {
@@ -41,13 +42,21 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
     const game = useGameController(computer.disable);
     currentGame = game;
     preview = useBoardPreview(game.analysisKey, game.playable);
+    const candidates = requested
+      ? candidatesFor(game.analysisFen, [{
+          rank: 1, depth: 15, cp: 20,
+          pv: [game.analysisGame.moves({ verbose: true })[0].lan],
+        }])
+      : [];
     const recommendations: Recommendations = {
-      candidates: [],
-      best: undefined,
+      candidates,
+      best: candidates[0],
       thinking: false,
-      requested: false,
+      requested,
       current: false,
-      analysis: null,
+      analysis: requested
+        ? { key: game.analysisKey, candidates, best: candidates[0], language: "en", state: "ready" }
+        : null,
       calculate() {},
       clear() {},
     };
@@ -73,6 +82,7 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
       onReviewRetry() {},
       onCalculate() {
         calculations++;
+        requested = true;
       },
       onNewGame() {},
       onShowHistory() {},
@@ -89,14 +99,14 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
     document.querySelector<HTMLButtonElement>(".calculate-button")!.click(),
   );
   assert.equal(calculations, 1);
-  assert.equal(body().hidden, true);
+  assert.equal(document.querySelector(".move-feedback"), null);
   pending = false;
   await act(() => root.render(createElement(Harness)));
-  assert.equal(body().hidden, true);
-  assert.match(toggle().textContent!, /Last move.*1\. e4.*Best move/);
-  await act(() => toggle().click());
+  assert.equal(document.querySelector(".move-feedback"), null);
+  await act(() => currentGame.playMove("e7", "e5"));
+  assert.equal(toggle().getAttribute("aria-expanded"), "true");
   assert.equal(body().hidden, false);
-  assert.match(body().textContent!, /Pawn from e2 to e4/);
+  assert.match(toggle().textContent!, /Last move.*Pawn from e7 to e5.*Best move/);
   const reply = Array.from(body().querySelectorAll("button")).find((button) =>
     button.textContent?.includes("Opponent’s possible reply"),
   )!;
@@ -108,13 +118,17 @@ test("calculation collapses a pending review, keeps it collapsed when ready, and
     false,
     "collapsing clears previews from the hidden review",
   );
-  await act(() => currentGame.playMove("e7", "e5"));
+  await act(() => toggle().click());
   assert.equal(toggle().getAttribute("aria-expanded"), "true");
   assert.equal(body().hidden, false);
-  assert.match(toggle().textContent!, /1… e5/);
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".refresh-analysis")!.click(),
+  );
+  assert.equal(calculations, 2);
+  assert.equal(document.querySelector(".move-feedback"), null);
 });
 
-test("Inaccuracy stays visible while the numeric evaluation drop is secondary", async (t) => {
+test("Inaccuracy reviews keep the grade and position score without analysis details", async (t) => {
   const { root, dom } = createTestRoot(t);
   const game = new Chess();
   const best = candidatesFor(game.fen(), [{ rank: 1, depth: 15, cp: 0, pv: ["g1f3"] }])[0];
@@ -124,6 +138,7 @@ test("Inaccuracy stays visible while the numeric evaluation drop is secondary", 
   assert.equal(review.label, "Inaccuracy");
   await act(() => root.render(createElement(MoveFeedback, {
     result: { key: "inaccuracy", state: "ready", review },
+    move,
     moveLabel: "1. a3 · White",
     collapsed: false,
     onToggle() {},
@@ -132,19 +147,15 @@ test("Inaccuracy stays visible while the numeric evaluation drop is secondary", 
   })));
   const document = dom.window.document;
   assert.equal(document.querySelector(".quality-badge")!.textContent, "Inaccuracy");
-  const details = document.querySelector<HTMLDetailsElement>(".feedback-analysis-details")!;
-  assert.equal(details.open, false);
-  assert.match(details.textContent!, /0.7 evaluation drop/);
-  const visibleBody = document.querySelector(".feedback-body")!.cloneNode(true) as Element;
-  visibleBody.querySelector(".feedback-analysis-details")!.remove();
-  assert.doesNotMatch(visibleBody.textContent!, /evaluation drop/);
-  await act(() => { details.open = true; });
-  assert.equal(details.open, true);
+  assert.equal(document.querySelector(".feedback-position-score strong")!.textContent, "−0.70");
+  assert.equal(document.querySelector(".feedback-explanation p")!.textContent, review.text);
+  assert.doesNotMatch(document.querySelector(".feedback-body")!.textContent!, /Analysis details|evaluation drop|Quick review/);
 });
 
 test("consequence previews stay with the explanation and preserve the tactical position", async (t) => {
   for (const [name, fen, bestMove, line] of [
     ["capture", "4k3/8/8/8/8/2b5/1R6/6K1 w - - 0 1", "b2b3", ["g1h1", "c3b2"]],
+    ["defended capture", "4k3/8/8/8/8/2b5/1R6/1R4K1 w - - 0 1", "b2b3", ["g1h1", "c3b2"]],
     ["fork", "4k3/8/8/8/3n4/8/7P/R3K3 w - - 0 1", "e1f1", ["h2h3", "d4c2"]],
     ["later capture", "r3q1k1/p1R5/2p5/2P2Q2/4P3/8/Pb6/2K5 w - - 0 11", "c1d2", ["c1b2", "e8b8", "b2c1", "b8c7"]],
     ["checkmate", "rnbqkbnr/pppp1ppp/8/4p3/8/5P2/PPPPP1PP/RNBQKBNR w KQkq - 0 2", "g2g3", ["g2g4", "d8h4"]],
@@ -166,6 +177,7 @@ test("consequence previews stay with the explanation and preserve the tactical p
         preview = useBoardPreview(played.move.after, true);
         return createElement(MoveFeedback, {
           result: { key: name, state: "ready", review },
+          move: played.move,
           moveLabel: played.move.san,
           preview: preview.inspection,
           collapsed,
@@ -180,9 +192,6 @@ test("consequence previews stay with the explanation and preserve the tactical p
       assert.equal(explanation.querySelector("p")!.textContent, review.text);
       const button = explanation.querySelector<HTMLButtonElement>(".explanation-link")!;
       assert.equal(button.textContent!.trim(), lesson.focus!.label);
-      const tip = document.querySelector(".move-lesson")!;
-      assert.match(tip.textContent!, /^Before you move/);
-      assert.equal(tip.querySelector("button"), null);
       assert.equal(document.querySelector(".feedback-alternative"), null);
 
       await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
@@ -225,6 +234,7 @@ test("better-move previews name and show the alternative for both explained and 
         preview = useBoardPreview(played.move.after, true);
         return createElement(MoveFeedback, {
           result: { key: bestMove, state: "ready", review },
+          move: played.move,
           moveLabel: played.move.san,
           preview: preview.inspection,
           collapsed,
@@ -239,9 +249,6 @@ test("better-move previews name and show the alternative for both explained and 
       assert.equal(alternative.querySelector("p")!.textContent, `Try ${best.move.san} instead`);
       const button = alternative.querySelector<HTMLButtonElement>("button")!;
       assert.equal(button.textContent!.trim(), `Preview ${best.move.san}`);
-      const tip = document.querySelector(".move-lesson")!;
-      assert.equal(tip.querySelector("button"), null);
-      assert.doesNotMatch(tip.textContent!, /Preview|Try .* instead/);
 
       await act(() => button.focus());
       assert.equal(preview.inspection?.candidate, best);

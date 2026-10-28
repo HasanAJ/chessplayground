@@ -168,14 +168,6 @@ const en = {
   "footer.tagline": "A good move starts with a little understanding.",
   "footer.engine": "Powered by Stockfish 19",
   "move.description.normal": "{0}{1} from {2} to {3}",
-  "move.description.castle": "Castle: king {0} to {1}, rook {2}",
-  "move.description.kingsideRook": "h{0} to f{1}",
-  "move.description.queensideRook": "a{0} to d{1}",
-  "move.description.capture": ", taking the {0}{1}",
-  "move.description.enPassantSquare": " on {0} en passant",
-  "move.description.promotion": ", promoting to a {0}",
-  "move.description.checkmate": " — checkmate",
-  "move.description.check": " — check",
   "position.error.missingBothKings": "Add both kings to play or calculate.",
   "position.error.pawnOnEdge":
     "Move pawns off the first and last ranks to play or calculate.",
@@ -186,8 +178,6 @@ const en = {
     "The FEN’s move counters must be whole numbers within the supported range.",
   "position.error.castlingRights":
     "Castling availability must list each right (KQkq) once, or use “-” for none.",
-  "position.error.emptySquaresFen":
-    "Invalid FEN: piece data must use 1–8 for empty squares.",
   "position.error.enPassantCounter":
     "An en passant target needs a zero half-move counter because the last move was a pawn move.",
   "position.error.enPassantPawn":
@@ -215,8 +205,6 @@ const en = {
   "board.flip": "Flip board",
   "board.openCoach": "See your coach",
   "chess.piece.label": "{0} {1}",
-  "board.evaluation.calculateFirst":
-    "Calculate best moves to see the evaluation",
   "board.evaluation.previewPaused": "Evaluation paused during board preview",
   "board.evaluation.legend": "+ = White ahead · − = Black ahead",
   "board.evaluation.whiteScore": "White evaluation {0}",
@@ -230,134 +218,109 @@ const en = {
   "board.tray.add": "Add {0} {1} · Click or drag to board",
   "coach.alternatives.heading": "Other good moves",
   "coach.move.play": "Play {0}",
-  "coach.lesson.mateThreat.advice":
-    "Check your opponent’s checks and whether your king has a safe reply.",
   "coach.lesson.mateThreat.focus": "See their checkmate threat",
   "coach.lesson.undefended.consequence":
-    "leaves your {0} on {1} with no defender. Their {2} can take it with {3}",
+    "Your {0} on {1} has no defender. Their {2} can take it.",
   "coach.lesson.defendedCapture.consequence":
-    "allows their {0} to take your {1} on {2} with {3}. Your piece has a defender, so follow the rest of the trade",
-  "coach.lesson.undefended.advice":
-    "Check which of your pieces they can capture and whether you can capture back.",
-  "coach.lesson.defendedCapture.advice":
-    "Compare the pieces both sides can capture, including the next reply.",
+    "Their {0} can take your {1} on {2}. You may be able to capture back.",
   "coach.lesson.capture.focus": "See the piece they can capture",
   "coach.lesson.laterCapture.consequence":
-    "allows the shown line to reach {0}, where their {1} takes your {2} on {3}. Further trades may follow",
-  "coach.lesson.forcedReply.advice":
-    "Follow their checks as well as their captures. A check may force you to respond before you can protect another piece.",
-  "coach.lesson.laterCapture.advice":
-    "Look beyond their first reply: follow the next captures too before deciding whether a trade helps you.",
+    "Later in the line, their {0} takes your {1} on {2}. Further trades may follow.",
   "coach.lesson.laterCapture.focus": "See the later capture in this line",
   "coach.piece.yoursOnSquare": "your {0} on {1}",
   "common.join.and": " and ",
   "coach.lesson.fork.consequence":
-    "allows a fork: their {0} on {1} attacks {2} at once",
-  "coach.lesson.fork.advice":
-    "Look for replies that attack two pieces at once. Moving or protecting one may leave the other under attack.",
+    "Their {0} can move to {1} and attack {2} at once.",
   "coach.lesson.fork.focus": "See the two attacks",
-  "coach.lesson.compareCapture":
-    "Look for captures and follow their replies before deciding whether a trade helps.",
-  "coach.lesson.compareDefense":
-    "Check which of your pieces need protection.",
-  "coach.lesson.compareEscape":
-    "Check whether a piece is under attack before starting another plan.",
-  "coach.lesson.compareAlternative":
-    "Check their checks, captures, and attacks before choosing your move.",
   "coach.review.error.needsAnalysis":
     "The move needs analysis of the resulting position.",
-  "coach.review.checkmate":
-    "{0} delivers checkmate. Their king has no way out—you’ve finished the game.",
-  "coach.review.best": "{0} is the top choice here. {1}",
   "coach.review.good.draw":
-    "gets you a draw, close to the best result found here",
+    "This secures a draw.",
   "coach.review.good.winningMate":
-    "keeps your checkmate on track in the analyzed line",
+    "You still have a forced checkmate.",
   "coach.review.good.losingMate":
-    "holds up about as well as the best defense found here, though the analysis still finds mate against you",
+    "This is close to the best defense, but your king still faces checkmate.",
   "coach.review.good.winning":
-    "keeps your strong advantage. You’re still in a great position",
+    "You keep a strong advantage.",
   "coach.review.good.losing":
-    "holds up about as well as the best option in an already tough position",
-  "coach.review.good.balanced": "looks good here, with chances close to {0}",
+    "This is close to the best option in a difficult position.",
+  "coach.review.good.balanced":
+    "This keeps nearly the same chances as the best move.",
   "coach.review.consequence.draw":
-    "leads to a draw. {0} offered better chances",
+    "This ends the game in a draw. The best move offered better chances.",
   "coach.review.consequence.allowsMate":
-    "allows a forced checkmate in the analyzed line",
-  "coach.review.consequence.missesMate": "lets a forced checkmate slip away",
+    "Your opponent can force checkmate.",
+  "coach.review.consequence.missesMate":
+    "This misses a forced checkmate.",
   "coach.review.consequence.worseChances":
-    "gives your opponent better chances than {0} would",
-  "coach.review.response.draw":
-    "Try the other move to see what you could keep playing for.",
-  "coach.review.response.preview":
-    "Play through the reply to see what they could do next.",
+    "Your opponent gets better chances than after the best move.",
   "coach.explanation.pressure.title": "Build pressure on {0}",
   "coach.explanation.pressure.text":
-    "Your {0} joins another piece in attacking their {1} on {2}. They now have more than one attacker to deal with.",
+    "Your {0} joins another piece in attacking their {1} on {2}.",
   "coach.explanation.attack.focus": "See the attack on their {0}",
   "coach.explanation.supportCenter.title": "Support your center",
   "coach.explanation.defend.title": "Defend your {0}",
   "coach.explanation.defend.text":
-    "Your {0} on {1} now defends the {2} on {3}. If they capture it, your {4} may be able to capture back; check the reply before trading.",
+    "Your {0} now defends your {1} on {2}.",
   "coach.explanation.defend.focus": "See the defense of your {0}",
   "coach.explanation.escapeAttack.title": "Move your {0} out of danger",
   "coach.explanation.escapeAttack.text":
-    "Your {0} was under attack on {1}. On {2}, none of their pieces currently attack it.",
+    "Your {0} is no longer under attack.",
   "coach.explanation.escapeAttack.focus": "See your {0} move out of danger",
+  "coach.explanation.attack.text":
+    "Your {0} now attacks their {1} on {2}.",
   "coach.explanation.attack.title": "Attack the {0}",
-  "coach.explanation.attack.existing":
-    "Your {0} on {1} attacks their {2} on {3}. Watch for a retreat, a defense, or a threat of their own.",
-  "coach.explanation.attack.new":
-    "Your {0} on {1} now attacks their {2} on {3}. They may move it or defend it, so look at the reply before counting on a capture.",
   "coach.piece.onSquare": "{0} on {1}",
   "coach.explanation.check.plural": "Your {0} give check.",
   "coach.explanation.check.singular": "Your {0} gives check.",
+  "coach.explanation.promotion.check":
+    "Your pawn promotes to a {0} on {1} with check.",
+  "coach.explanation.promotion.checkmate":
+    "Your pawn promotes to a {0} on {1} and gives checkmate.",
   "coach.explanation.promotion.prefix": "Your pawn promotes to a {0} on {1}. ",
   "coach.explanation.checkmate.title": "Finish with checkmate",
   "coach.explanation.checkmate.plural":
-    "{0}Your {1} deliver checkmate. Their king has no way out.",
+    "{0}Your {1} give checkmate.",
   "coach.explanation.checkmate.singular":
-    "{0}Your {1} delivers checkmate. Their king has no way out.",
+    "{0}Your {1} gives checkmate.",
   "coach.explanation.checkmate.focus": "See the checkmate",
   "coach.explanation.promotion.title": "Promote your pawn",
-  "coach.explanation.promotion.text":
-    "You now have a {0} in place of that pawn. Look at the reply to see how they respond.",
   "coach.explanation.promotion.focus": "See the promotion",
   "coach.explanation.castle.title": "Castle and bring your rook into play",
   "coach.explanation.castle.text":
     "Castling moves your king away from the center and brings your rook toward the middle.{0}",
   "coach.explanation.castle.focus": "See the king and rook move",
   "coach.explanation.escapeCheck.title": "Get your king out of check",
-  "coach.explanation.escapeCheck.text": "{0} gets you out of check{1}.{2}",
-  "coach.explanation.escapeCheck.capture": " and takes the {0} on {1}",
+  "coach.explanation.escapeCheck.text":
+    "You escape check{0}.{1}",
+  "coach.explanation.escapeCheck.capture":
+    " by taking their {0} on {1}",
   "coach.explanation.escapeCheck.block":
     " by blocking the attack with your {0}",
   "coach.explanation.escapeCheck.kingMove": " by moving your king to {0}",
-  "coach.explanation.escapeCheck.safe":
-    " Your king is no longer under attack, so you can continue playing.",
   "coach.explanation.escapeCheck.focus": "See how you escape check",
   "coach.explanation.captureCheck.title": "Capture with check",
+  "coach.explanation.captureCheck.text":
+    "Your {0} takes their {1} on {2}{3} and gives check.",
   "coach.explanation.capture.title": "Capture the {0}",
-  "coach.explanation.capture.text": "Your {0} takes the {1} on {2}{3}. {4}",
+  "coach.explanation.capture.text":
+    "Your {0} takes their {1} on {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant, landing on ",
-  "coach.explanation.capture.attacked":
-    "Their pieces attack your {0} on {1}; preview the reply to check whether they capture back.",
-  "coach.explanation.capture.safe":
-    "None of their pieces currently attack your {0} on {1}.",
   "coach.explanation.capture.focus": "See the capture and possible attackers",
+  "coach.explanation.materialRisk.text":
+    "In this line, you give up more material than you take.",
+  "coach.explanation.materialRisk.focus": "See the possible capture",
   "coach.explanation.check.title": "Give check",
-  "coach.explanation.check.text":
-    "{0} Your opponent has to deal with the attack on their king.",
   "coach.explanation.check.focus": "See the attack on their king",
   "coach.explanation.develop.centerControl":
     "From here, it attacks {0}, helping you control the center.",
   "coach.explanation.develop.title": "Bring another piece into play",
   "coach.explanation.develop.text":
-    "Your {0} comes off the back rank to {1}. {2}",
+    "Your {0} comes into play. {1}",
   "coach.explanation.develop.focus": "See your piece and the center squares",
   "coach.explanation.center.title": "Claim the center",
   "coach.explanation.center.text":
-    "Your pawn takes space in the center on {0}. It attacks {1}, helping limit where their pieces can move safely.",
+    "Your pawn takes space in the center and attacks {0}.",
   "coach.explanation.center.focus": "See the pawn’s control of the center",
   "coach.explanation.openFile.title": "Put your rook on an open file",
   "coach.explanation.openFile.text": "The {0}-file is an open file: a column with no pawns.",
@@ -372,52 +335,31 @@ const en = {
   "coach.explanation.nearCenter.focus": "See the move near the center",
   "coach.explanation.reposition.title": "Move your {0} to {1}",
   "coach.explanation.reposition.focus": "See your {0}’s move",
-  "coach.reply.checkmate": "They can checkmate with {0} ({1} to {2}).",
-  "coach.reply.castle": "castle {0}",
+  "coach.reply.checkmate":
+    "Their {0} can move to {1}{2} and give checkmate.",
+  "coach.reply.castle":
+    "They can castle {0}{1}.",
   "chess.castling.kingside": "kingside",
   "chess.castling.queenside": "queenside",
-  "coach.reply.capture": "take your {0} on {1}{2} with their {3}",
+  "coach.reply.recapture":
+    "Their {0} can take your {1} in return{2}{3}.",
+  "coach.reply.capture":
+    "Their {0} can take your {1} on {2}{3}{4}{5}.",
   "coach.reply.enPassant": " en passant",
-  "coach.reply.move": "move their {0} to {1}",
+  "coach.reply.move":
+    "Their {0} can move to {1}{2}{3}.",
   "coach.reply.promotion": " and promote to a {0}",
   "coach.reply.check": " and give check",
-  "coach.reply.summary": "They may {0}{1}{2} ({3}).",
   "coach.warning.check": "Your king is in check. You must get out of check.",
   "coach.warning.undefended": "Your {0} on {1} is under attack with no defender.",
-  "coach.warning.defended": "Your {0} on {1} is under attack and has a defender. Check the exchange before leaving it there.",
-  "coach.warning.general":
-    "Before you move, take a quick look at their checks, captures, and attacks on unprotected pieces. Start with the likely reply below your move.",
-  "coach.strategy.center": "Your pieces cover {0} in the center.",
-  "coach.strategy.line.checkmate": "{0} finishes this line with checkmate.",
-  "coach.strategy.line.capture":
-    "The preview ends with {0} playing {1}, a capture. The exchange may continue.",
-  "coach.strategy.material.gain.singular":
-    "In this possible line, you’d gain the equivalent of {0} pawn in material.",
-  "coach.strategy.material.gain.plural":
-    "In this possible line, you’d gain the equivalent of {0} pawns in material.",
-  "coach.strategy.material.loss.singular":
-    "In this possible line, you’d give up the equivalent of {0} pawn in material.",
-  "coach.strategy.material.loss.plural":
-    "In this possible line, you’d give up the equivalent of {0} pawns in material.",
-  "coach.strategy.change.check":
-    "{0} puts your king in check. Getting out of check comes first.",
-  "coach.strategy.change.capture": "Their last move, {1}, captured your {0}.",
   "coach.continuation.replyHeading": "Opponent’s possible reply",
   "coach.continuation.label": "One possible line of play",
-  "coach.continuation.previewMove": "Preview move {0}: {1} plays {2}",
+  "coach.continuation.previewMove": "Preview move {0}: {1}, {2}",
   "engine.error.noLegalCandidates":
     "The engine returned no legal candidates. Please retry analysis.",
-  "coach.position.heading": "Position details",
-  "coach.position.changed": "WHAT CHANGED",
-  "coach.position.hideSquares": "Hide key squares",
-  "coach.position.showSquares": "Highlight key squares",
-  "coach.position.squaresDescription":
-    "Teal outlines mark the squares discussed above: {0}.",
   "coach.analysis.status.thinking": "Analyzing…",
   "coach.analysis.status.unavailable": "Engine unavailable",
   "coach.analysis.status.ready": "Recommendations ready",
-  "coach.analysis.reviewingPosition":
-    "Reviewing {0}. Analysis is for this position.",
   "coach.analysis.errorHeading": "Let’s try that again.",
   "coach.analysis.retry": "Retry analysis",
   "coach.analysis.label": "Suggested move and analysis",
@@ -427,12 +369,9 @@ const en = {
     "Looking at your options and their replies from this earlier position.",
   "coach.analysis.search.live":
     "Checking your options and your opponent’s replies. Feel free to keep playing.",
-  "coach.analysis.search.depth": "Search depth: {0}",
-  "coach.analysis.search.estimate": "Usually ready in a couple of seconds",
   "coach.warnings.heading": "Watch out for",
   "coach.warnings.description":
     "Hover or focus to highlight the threatened piece and its attackers.",
-  "coach.best.escapeCheck": "Escape check",
   "coach.best.heading": "Suggested move",
   "coach.best.forced": "Only legal move",
   "coach.best.play": "Play best move {0}",
@@ -450,24 +389,17 @@ const en = {
   "common.hide": "Hide",
   "coach.feedback.pending": "Looking at your move and the best alternatives…",
   "coach.feedback.retry": "Retry move review",
-  "coach.feedback.beforeYouMove": "Before you move",
   "coach.feedback.tryInstead": "Try {0} instead",
   "coach.feedback.previewMove": "Preview {0}",
   "coach.feedback.likelyReply": "Opponent’s possible reply",
-  "coach.feedback.quickReview": "Quick review",
-  "coach.feedback.evaluationDrop": "{0} evaluation drop",
   "coach.explanation.matingAttack.title": "Keep the mating attack going",
   "coach.explanation.matingAttack.text":
-    "There’s a checkmate in {0} moves starting with {1}, according to this analysis. Play through the replies to see how the attack works.",
+    "This starts a forced checkmate in {0} moves.",
   "coach.explanation.matingAttack.focus": "See the start of the mating attack",
   "coach.explanation.mateDefense.title": "Find the toughest defense",
   "coach.explanation.mateDefense.text":
-    "Your king is in serious trouble: this analysis still finds a forced checkmate after {0}. Play through their checks to see where the danger comes from.",
+    "Your king still faces a forced checkmate.",
   "coach.explanation.mateDefense.focus": "See the defensive move",
-  "coach.reply.unavailable":
-    "No reply is included in this preview. Try the move to explore what comes next.",
-  "coach.reply.terminal.checkmate": "That’s checkmate. They have no reply.",
-  "coach.reply.terminal.draw": "This move ends the game in a draw.",
   "coach.status.checkmate": "Checkmate",
   "coach.status.draw": "Draw",
   "coach.status.previewCheck": "Preview · Check",
@@ -480,25 +412,16 @@ const en = {
   "coach.status.yourTurn": "Your turn",
   "coach.panel.label": "Position analysis",
   "coach.panel.heading": "Your coach",
-  "coach.panel.backToBoard": "Back to board ↑",
   "coach.calculate.label.waiting": "Waiting for computer",
   "coach.calculate.label.thinking": "Calculating best moves",
   "coach.calculate.label.ready": "Calculate best moves",
   "coach.calculate.text.waiting": "Waiting for computer…",
   "coach.calculate.text.thinking": "Calculating…",
   "common.dismissError": "Dismiss error",
-  "game.history.controls": "Move history controls",
   "game.history.backToLatest": "Back to latest",
   "coach.context.preview": "Preview · {0}",
-  "coach.context.reviewingUpdating":
-    "Reviewing {0} · Updating this position’s analysis",
-  "coach.context.reviewingReady":
-    "Reviewing {0} · Analysis is for this position",
-  "coach.context.reviewingIdle":
-    "Reviewing {0} · Calculate when you want guidance",
   "computer.status.movingSoon": "Computer moves in a moment…",
   "computer.status.choosingReply": "Computer is choosing a reply…",
-  "coach.context.updating": "Updating {0}’s analysis · You can keep playing",
   "coach.panel.returnToGame": "Return to game",
   "computer.status.invalidPosition":
     "Arrange a legal position with both kings to play the computer.",
@@ -520,7 +443,6 @@ const en = {
   "computer.settings.difficulty": "Your challenge",
   "common.retry": "Retry",
   "common.done": "Done",
-  "game.history.startingPosition": "Starting position",
   "game.save.error.unavailable":
     "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
   "game.save.error.backup":
@@ -585,7 +507,6 @@ const en = {
   "coach.grade.blunder": "Blunder",
   "coach.feedback.context.yourLastMove": "Your last move",
   "coach.feedback.context.selectedMove": "Selected move",
-  "page.title": "Tempo — Your next move, explained.",
   "position.fen.fields": "must contain six space-delimited fields",
   "position.fen.moveNumber": "move number must be a positive integer",
   "position.fen.halfMoveCounter":
@@ -606,14 +527,12 @@ const en = {
   "position.fen.emptySquares": "piece data must use 1–8 for empty squares.",
   "game.result.winner": "{0} wins!",
   "board.tray.label": "{0} pieces",
-  "coach.alternatives.description": "Alternative: {0}. {1}. {2}",
+  "coach.alternatives.description": "Alternative: {0}",
   "coach.exploration.open": "Explore this move",
   "coach.exploration.close": "Close exploration",
   "coach.exploration.note": "Select a move to preview it on the board. This is one possible line; your game stays unchanged.",
   "coach.position.evaluation": "Position score",
-  "coach.feedback.analysisDetails": "Analysis details",
   "coach.calculate.refresh": "Refresh analysis",
-  "coach.strategy.change.promotion": "With {0}, their pawn became a {1} on {2}.",
 } as const;
 
 export type Catalog = { [Key in keyof typeof en]: string };

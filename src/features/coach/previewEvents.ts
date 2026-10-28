@@ -1,7 +1,7 @@
 import type { FocusEvent } from "react";
 import type { InspectMove, MovePreview } from "../board/useBoardPreview";
 import type { Candidate } from "./candidates";
-import type { BoardFocus } from "./explanations";
+import type { BoardFocus } from "./boardFocus";
 
 export type MovePreviewProps = {
   candidate: Candidate;

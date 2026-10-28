@@ -52,6 +52,26 @@ async function mount(t: TestContext) {
 
 const openingLine = { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] };
 
+test("the screenshot keeps Stockfish's ranking and capture warning when reusing a cached calculation", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().game.replaceGame(new Chess("8/8/n5p1/P7/6P1/4BK1k/8/8 b - - 0 1")));
+  await act(() => read().recommendations.calculate());
+  await complete(0, [
+    { rank: 1, depth: 16, cp: -700, pv: ["g6g5", "e3g5", "a6b8", "g5d2"] },
+    { rank: 2, depth: 16, cp: -718, pv: ["a6b4", "g4g5"] },
+  ], "g6g5");
+  assert.equal(read().recommendations.best?.move.san, "g5");
+  assert.match(read().recommendations.best!.explanation, /bishop can take your pawn on g5/);
+  assert.equal(read().recommendations.analysis?.candidates[0].move.san, "g5");
+  await act(() => read().recommendations.clear());
+  await act(() => read().recommendations.calculate());
+  assert.equal(read().recommendations.best?.move.san, "g5");
+  assert.equal(requests.length, 1);
+  const best = read().recommendations.best!;
+  await act(() => read().game.playMove(best.move.from, best.move.to));
+  assert.equal(read().game.history.at(-1)?.san, "g5");
+});
+
 test("the final best move replaces an older first choice without another search", async (t) => {
   const { read, requests, complete } = await mount(t);
   await act(() => read().recommendations.calculate());
@@ -63,13 +83,14 @@ test("the final best move replaces an older first choice without another search"
   assert.equal(read().recommendations.best?.move.san, "Nf3");
   assert.deepEqual(read().recommendations.best?.pv, finalLine.pv);
   assert.equal(read().recommendations.best?.cp, 40);
-  assert.equal(read().recommendations.analysis?.depth, 13);
-  assert.equal(read().recommendations.candidates.length, 1, "older alternatives must not use mismatched scores");
+  assert.equal(read().recommendations.best?.depth, 13);
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["Nf3", "e4"]);
   await act(() => read().recommendations.clear());
   await act(() => read().recommendations.calculate());
   assert.equal(read().recommendations.best?.move.san, "Nf3");
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["Nf3", "e4"]);
   assert.equal(requests.length, 1);
-  assert.deepEqual(requests[0].args[3], { depth: 18, movetime: 1800, multiPV: 5 });
+  assert.deepEqual(requests[0].args[3], { depth: null, movetime: 2000, multiPV: 5 });
 });
 
 test("a newly discovered final move uses its own line even outside the completed candidates", async (t) => {
@@ -79,6 +100,7 @@ test("a newly discovered final move uses its own line even outside the completed
     rank: 1, depth: 13, cp: 45, pv: ["c2c4", "g8f6"],
   });
   assert.equal(read().recommendations.best?.move.san, "c4");
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["c4", "e4"]);
   assert.deepEqual(read().recommendations.best?.continuation.map((move) => move.san), ["c4", "Nf6"]);
   assert.equal(read().recommendations.analysis?.state, "ready");
 });
@@ -89,9 +111,56 @@ test("an unchanged final choice retains alternatives from the completed depth", 
   await complete(0, [
     openingLine,
     { rank: 2, depth: 12, cp: 25, pv: ["d2d4", "d7d5"] },
-  ], "e2e4", { ...openingLine, depth: 13 });
+  ], "e2e4", openingLine);
   assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["e4", "d4"]);
   assert.deepEqual(read().recommendations.candidates.map((line) => line.depth), [12, 12]);
+});
+
+test("an unchanged best move keeps its newer score and useful completed alternatives", async (t) => {
+  const { read, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  const finalLine = { ...openingLine, depth: 13, cp: -50, pv: ["e2e4", "c7c5"] };
+  await complete(0, [
+    openingLine,
+    { rank: 2, depth: 12, cp: 25, pv: ["d2d4", "d7d5"] },
+  ], "e2e4", finalLine);
+  assert.equal(read().recommendations.best?.cp, -50);
+  assert.deepEqual(read().recommendations.best?.pv, finalLine.pv);
+  assert.equal(read().recommendations.best?.depth, 13);
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["e4", "d4"]);
+});
+
+test("the default search retains all five starting-position options when the best line deepens", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [
+    { rank: 1, depth: 17, cp: 23, pv: ["e2e4", "e7e5"] },
+    { rank: 2, depth: 17, cp: 20, pv: ["d2d4", "d7d5"] },
+    { rank: 3, depth: 17, cp: 20, pv: ["g1f3", "d7d5"] },
+    { rank: 4, depth: 17, cp: 13, pv: ["e2e3", "e7e5"] },
+    { rank: 5, depth: 17, cp: 11, pv: ["c2c4", "e7e5"] },
+  ], "e2e4", { rank: 1, depth: 18, cp: 32, pv: ["e2e4", "c7c5"] });
+  assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["e4", "d4", "Nf3", "e3", "c4"]);
+  assert.equal(read().recommendations.best?.cp, 32);
+  assert.deepEqual(read().recommendations.best?.pv, ["e2e4", "c7c5"]);
+  assert.equal(requests.length, 1, "retaining the alternatives adds no searches");
+});
+
+test("position changes cancel a running search and ignore its late result", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await act(() => read().game.playMove("e2", "e4"));
+  assert.equal(requests[0].cancelled, true);
+  assert.equal(read().recommendations.requested, false);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [{ ...openingLine, depth: 24 }]);
+  assert.equal(read().recommendations.best, undefined);
+  assert.equal(read().recommendations.thinking, true);
+  await complete(1, [{ rank: 1, depth: 12, cp: -30, pv: ["e7e5", "g1f3"] }]);
+  assert.equal(read().recommendations.best?.move.san, "e5");
+  await act(() => read().game.newGame());
+  await act(() => read().recommendations.calculate());
+  assert.equal(requests.length, 3, "the canceled result did not enter the cache");
 });
 
 test("a missing or illegal final line reports an error instead of suggesting another move", async (t) => {

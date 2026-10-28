@@ -16,13 +16,6 @@
 .text-action:hover {
   color: #3b236e;
 }
-.learning-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  align-items: center;
-  margin-top: 10px;
-}
 .move-feedback {
   --feedback-badge: #e2eaf2;
   --feedback-accent: #40566e;
@@ -100,16 +93,23 @@
   line-height: 1.4;
 }
 .feedback-move > strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: #24384d;
   font-family: var(--heading);
   font-size: 19px;
   font-weight: 600;
   line-height: 1.3;
 }
+.feedback-piece {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
 .feedback-body > p,
 .feedback-explanation,
 .feedback-alternative,
-.feedback-body > .feedback-analysis-details,
 .feedback-body > .text-action {
   margin: 12px 16px;
 }
@@ -131,14 +131,17 @@
   line-height: 1.65;
   color: #3e5063;
 }
-.feedback-body > .move-description {
-  color: #536b83;
+.move-feedback .feedback-position-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   font-size: var(--text-sm);
-}
-.move-feedback small {
-  font-size: var(--text-xs);
-  line-height: 1.6;
   color: #53677b;
+}
+.feedback-position-score strong {
+  color: #24384d;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
 }
 .move-feedback .text-action {
   color: #355d82;
@@ -160,58 +163,6 @@
   gap: 8px;
   align-items: center;
   margin-top: 0;
-}
-.learning-pending svg {
-  flex-shrink: 0;
-}
-.position-details {
-  margin-top: 10px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #faf9fb;
-  padding: 12px 14px;
-}
-.position-details > summary {
-  font-weight: 550;
-  font-size: var(--text-sm);
-  cursor: pointer;
-  color: #6a5c75;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.position-details-body {
-  padding-top: 12px;
-}
-.position-details p,
-.position-details li {
-  font-size: var(--text-body);
-  line-height: 1.7;
-  color: #6a5c75;
-}
-.position-details ul {
-  padding-left: 18px;
-  margin: 12px 0;
-}
-.position-details li + li {
-  margin-top: 8px;
-}
-.strategy-card .analysis-timing {
-  margin-top: 10px;
-  font-size: var(--text-xs);
-}
-.plan-change {
-  border-left: 3px solid #bba9e0;
-  padding-left: 12px;
-  margin-top: 14px;
-}
-.plan-change > span {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: #79589a;
-}
-.plan-change p {
-  margin-top: 4px;
 }
 .save-notice {
   padding: 14px;
@@ -247,11 +198,6 @@
   font-size: var(--text-sm);
   font-weight: 600;
 }
-.history-heading small {
-  font-size: var(--text-xs);
-  color: var(--muted);
-  font-weight: 400;
-}
 .strategy-card .card-eyebrow {
   color: #6a558a;
 }
@@ -283,35 +229,18 @@
 .plan-preview:hover {
   background: #fff;
 }
-.mobile-coach-link,
-.mobile-board-link {
+.mobile-coach-link {
   display: none;
 }
 
-.move-description,
-.candidate-move-description {
-  display: block;
-  color: #7a6b88;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-}
-.strategy-card > .move-description {
-  margin: 0 0 9px;
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-.candidate-move-description {
-  margin-top: 4px;
-}
 .continuation-moves button {
   text-align: left;
 }
 .continuation-moves .continuation-description {
   display: block;
-  margin-top: 3px;
   font-size: var(--text-sm);
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 600;
 }
 .explanation-link {
   min-height: 36px;
@@ -319,18 +248,6 @@
 }
 .explanation-link[aria-pressed="true"] {
   color: #087f80;
-}
-.move-lesson {
-  margin: 12px 16px;
-  padding-top: 12px;
-  border-top: 1px solid #d5dfe8;
-}
-.move-lesson > span {
-  display: block;
-  margin-bottom: 4px;
-  color: #40566e;
-  font-size: var(--text-sm);
-  font-weight: 650;
 }
 .move-arrow.explanation-arrows {
   color: #087f80;
@@ -382,35 +299,4 @@ button .square-reference {
   text-decoration: underline dotted;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
-}
-.mobile-board-link {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.feedback-analysis-details {
-  font-size: var(--text-sm);
-  color: #53677b;
-}
-.feedback-analysis-details > summary {
-  cursor: pointer;
-  min-height: 32px;
-  padding-block: 6px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.feedback-analysis-details > p {
-  margin-top: 6px;
-  font-size: var(--text-sm);
-}
-.position-details .analysis-depth {
-  margin-top: 8px;
-  font-size: var(--text-sm);
-}
-.position-details .strategy-warning {
-  margin: 12px 0 0;
-  color: #6a5c75;
-  background: transparent;
-  border: 0;
-  padding: 0;
 }

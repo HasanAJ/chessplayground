@@ -111,7 +111,10 @@ test("mate distance and perspective stay correct in a reply derived from the pla
     ]);
     assert.equal(observed.reviews[0].reply?.mate, replyMate);
     assert.equal(observed.reviews[0].reply?.whiteScore, mate > 0 ? 100 : -100);
-    assert.equal(observed.reviews[0].loss, null);
+    assert.deepEqual(observed.reviews[0].evaluation, {
+      whiteScore: mate > 0 ? 100 : -100,
+      mate: replyMate,
+    });
   }
 });
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
 import type { Candidate } from "../coach/candidates";
-import type { BoardFocus } from "../coach/explanations";
+import type { BoardFocus } from "../coach/boardFocus";
 
 export type MovePreview = {
   candidate: Candidate;

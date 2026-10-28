@@ -4,13 +4,12 @@ import { LoaderCircle, RotateCcw, ShieldAlert } from "lucide-react";
 import { sideName } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
 import { GameOverCard } from "../game/GameOverCard";
-import type { ComputerSettings } from "../computer/useComputerOpponent";
+import type { ComputerSettings } from "../computer/useComputerSettings";
 import type { BoardPreview } from "../board/useBoardPreview";
 import type { Recommendations } from "./useRecommendations";
 import type { CoachPresentation } from "./useCoachPresentation";
 import { BestMoveContent } from "./BestMoveContent";
 import { AlternativeMoves } from "./AlternativeMoves";
-import { PositionDetails } from "./PositionDetails";
 import { SquareText } from "../board/SquareHighlight";
 
 type Props = {
@@ -40,7 +39,6 @@ export function RecommendationsPanel({
     analysisKey,
     analysisTerminal,
     reviewing,
-    reviewLabel: rawReviewLabel,
     lastMove,
   } = game;
   const {
@@ -50,22 +48,17 @@ export function RecommendationsPanel({
     requested: analysisRequested,
     current: isCurrent,
   } = recommendations;
-  const reviewLabel = translateNotice(rawReviewLabel, t);
   const best = thinking ? undefined : candidate;
-  const analysis = recommendations.analysis!;
+  const analysis = recommendations.analysis;
   const turn = analysisGame.turn();
   const computer = settings.enabled,
     humanSide = settings.side;
-  const { inspection, inspectMove, clearPreview, boardPreview } = preview;
+  const { inspection, inspectMove, boardPreview } = preview;
   const {
     forcedMove,
     setHovered,
     setBestFocused,
-    insight,
     watching,
-    focusStrategy,
-    setFocusStrategy,
-    setPreviewStrategy,
     setHoveredWarning,
     setFocusedWarning,
   } = presentation;
@@ -98,7 +91,7 @@ export function RecommendationsPanel({
       />
     );
   }
-  if (!game.playable || !analysisRequested || botTurn) return null;
+  if (!game.playable || !analysisRequested || botTurn || !analysis) return null;
 
   return (
     <>
@@ -109,17 +102,12 @@ export function RecommendationsPanel({
             ? t("coach.analysis.status.unavailable")
             : t("coach.analysis.status.ready")}
       </div>
-      {reviewing && (
-        <p className="analysis-context">
-          <SquareText text={t("coach.analysis.reviewingPosition", reviewLabel)} />
-        </p>
-      )}
       {isCurrent && analysis.state === "error" ? (
         <div className="engine-error" role="alert">
           <ShieldAlert size={22} />
           <h3>{t("coach.analysis.errorHeading")}</h3>
           <p>
-            <SquareText text={translateNotice(analysis.error ?? "", t)} />
+            <SquareText text={translateNotice(analysis.error, t)} />
           </p>
           <button
             className="primary-button"
@@ -131,9 +119,7 @@ export function RecommendationsPanel({
         </div>
       ) : (
         <>
-          {best &&
-            (watching.kind === "check" || watching.kind === "undefended") &&
-            warning}
+          {best && warning}
           <section
             className="strategy-card"
             aria-label={t("coach.analysis.label")}
@@ -176,41 +162,17 @@ export function RecommendationsPanel({
                 <div className="analysis-progress" aria-hidden="true">
                   <span />
                 </div>
-                <p className="analysis-timing">
-                  {t("coach.analysis.search.estimate")}
-                </p>
               </>
             )}
           </section>
           {best && (
-            <div className="additional-analysis">
-              <AlternativeMoves
-                key={analysisKey}
-                candidates={candidates}
-                onPlayMove={onPlayMove}
-                preview={preview}
-                presentation={presentation}
-              />
-              <PositionDetails
-                key={`${analysisKey}:${best.move.lan}`}
-                candidate={best}
-                insight={insight}
-                inCheck={analysisGame.inCheck()}
-                depth={analysis.depth}
-                highlighted={focusStrategy}
-                onHighlightPreviewChange={setPreviewStrategy}
-                onHighlightChange={(enabled) => {
-                  if (enabled) clearPreview();
-                  else {
-                    setHoveredWarning(false);
-                    setFocusedWarning(false);
-                  }
-                  setFocusStrategy(enabled);
-                }}
-              >
-                {watching.kind === "defended" && warning}
-              </PositionDetails>
-            </div>
+            <AlternativeMoves
+              key={analysisKey}
+              candidates={candidates}
+              onPlayMove={onPlayMove}
+              preview={preview}
+              presentation={presentation}
+            />
           )}
         </>
       )}

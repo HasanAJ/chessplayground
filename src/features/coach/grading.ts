@@ -1,29 +1,28 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
+import type { PositionEvaluation } from "../../chess/evaluation";
 import { candidatesFor, type Candidate } from "./candidates";
-import { describeReply } from "./explanations";
+import { explainMove } from "./explanations";
+import { describeReply } from "./replyDescription";
 import { lessonFor, type ReviewLesson } from "./lessons";
+import {
+  moveQuality,
+  outlook,
+  type MoveGrade,
+  type ReviewOutcome,
+} from "./moveQuality";
 
 export type MoveReview = {
   move: Move;
   best: Candidate;
   reply?: Candidate;
-  label: "Best move" | "Good move" | "Inaccuracy" | "Mistake" | "Blunder";
-  loss: number | null;
-  impact: number;
+  label: MoveGrade;
   text: string;
   lesson?: ReviewLesson;
   played?: Candidate;
   drawn: boolean;
+  evaluation: PositionEvaluation;
 };
-
-// Lichess's published evaluation-to-outlook curve, with Tempo's own grade bands.
-// https://lichess.org/page/accuracy
-function outlook(candidate: Candidate, sign: number): number {
-  if (candidate.mate !== undefined)
-    return candidate.whiteScore * sign > 0 ? 1 : 0;
-  return 1 / (1 + Math.exp(-0.368208 * candidate.whiteScore * sign));
-}
 
 export function reviewMove(
   move: Move,
@@ -37,52 +36,39 @@ export function reviewMove(
   const sign = move.color === "w" ? 1 : -1;
   const isDraw = drawn || after.isDraw();
   const result = played ?? reply;
-  if (!after.isCheckmate() && !isDraw && !result)
-    throw new Error(t("coach.review.error.needsAnalysis"));
-  const resultingOutlook = after.isCheckmate()
-    ? 1
-    : isDraw
-      ? 0.5
-      : outlook(result!, sign);
-  const impact = Math.max(0, (outlook(best, sign) - resultingOutlook) * 100);
-  const resultingScore = after.isCheckmate()
-    ? null
-    : isDraw
-      ? 0
-      : result!.mate === undefined
-        ? result!.whiteScore
-        : null;
-  const loss =
-    best.mate === undefined && resultingScore !== null
-      ? Math.max(0, (best.whiteScore - resultingScore) * sign)
-      : null;
+  let outcome: ReviewOutcome;
+  if (after.isCheckmate()) outcome = { kind: "checkmate" };
+  else if (isDraw) outcome = { kind: "draw" };
+  else if (result)
+    outcome = {
+      kind: "ongoing",
+      evaluation: result,
+      source: played ? "played" : "reply",
+    };
+  else throw new Error(t("coach.review.error.needsAnalysis"));
+  const { evaluation, resultingOutlook, label } = moveQuality(
+    move,
+    best,
+    outcome,
+  );
   const same = move.lan === best.move.lan;
-  const label =
-    same || after.isCheckmate()
-      ? "Best move"
-      : impact < 4
-        ? "Good move"
-        : impact < 12
-          ? "Inaccuracy"
-          : impact < 25
-            ? "Mistake"
-            : "Blunder";
   let text: string;
   const lesson =
     !isDraw && label !== "Best move" && label !== "Good move"
       ? lessonFor(move, best, reply, played, t)
       : undefined;
   if (after.isCheckmate())
+    text = explainMove(new Chess(move.before), after, move, t).text;
+  else if (isDraw)
     text = t(
-      "coach.review.checkmate",
-      move.san,
+      label === "Best move" || label === "Good move"
+        ? "coach.review.good.draw"
+        : "coach.review.consequence.draw",
     );
-  else if (same)
-    text = t("coach.review.best", move.san, best.explanation);
+  else if (same) text = best.explanation;
   else if (label === "Good move") {
-    const description = isDraw
-      ? t("coach.review.good.draw")
-      : result!.mate !== undefined
+    const description =
+      result?.mate !== undefined
         ? resultingOutlook === 1
           ? t("coach.review.good.winningMate")
           : t("coach.review.good.losingMate")
@@ -90,38 +76,40 @@ export function reviewMove(
           ? t("coach.review.good.winning")
           : resultingOutlook < 0.1
             ? t("coach.review.good.losing")
-            : t("coach.review.good.balanced", best.move.san);
-    text = `${move.san} ${description}.`;
+            : t("coach.review.good.balanced");
+    const idea =
+      played?.explanation ??
+      explainMove(new Chess(move.before), after, move, t).text;
+    text = [
+      idea,
+      !played && reply?.move.captured ? describeReply(reply.move, t, move) : "",
+      !idea ? description : "",
+    ].filter(Boolean).join(" ");
   } else {
-    const consequence = isDraw
-      ? t("coach.review.consequence.draw", best.move.san)
-      : result!.mate !== undefined && resultingOutlook === 0
+    const consequence =
+      result?.mate !== undefined && resultingOutlook === 0
         ? t("coach.review.consequence.allowsMate")
         : best.mate !== undefined && outlook(best, sign) === 1
           ? t("coach.review.consequence.missesMate")
           : (lesson?.consequence ??
-            t(
-              "coach.review.consequence.worseChances",
-              best.move.san,
-            ));
-    const response = reply
-      ? (played?.reply ?? describeReply(reply.move, t))
-      : isDraw
-        ? t("coach.review.response.draw")
-        : t("coach.review.response.preview");
-    text = `${move.san} ${consequence}.${lesson?.consequence ? "" : ` ${response}`}`;
+            t("coach.review.consequence.worseChances"));
+    const response = reply ? describeReply(reply.move, t, move) : "";
+    text = reply?.move.san.endsWith("#")
+      ? response
+      : [consequence, !lesson?.consequence ? response : ""]
+          .filter(Boolean)
+          .join(" ");
   }
   return {
     move,
     best,
     reply,
     label,
-    loss,
-    impact,
     text,
     lesson,
     played,
     drawn: isDraw,
+    evaluation,
   };
 }
 

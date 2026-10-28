@@ -3,15 +3,14 @@ import assert from "node:assert/strict";
 import { act, createElement, type DragEvent } from "react";
 import type { Square } from "chess.js";
 import { checkedGame, START_FEN } from "../../src/chess/position";
-import { SESSION_KEY } from "../../src/chess/study";
 import { useGameController } from "../../src/features/game/useGameController";
 import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { useComputerSettings } from "../../src/features/computer/useComputerOpponent";
+import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
 import { candidatesFor } from "../../src/features/coach/candidates";
 import { Continuation } from "../../src/features/coach/MoveDetails";
 import { SaveNotice } from "../../src/features/game/SaveNotice";
-import { RECOVERY_PREFIX } from "../../src/features/game/storage";
+import { RECOVERY_PREFIX, SESSION_KEY } from "../../src/features/game/storage";
 import { createTestRoot } from "../helpers/dom";
 
 async function mount(
@@ -96,7 +95,7 @@ test("legal drags use chess rules for castling, en passant and promotion", async
     if (from === "a7") {
       assert.deepEqual(read().game.promotion, { from, to });
       assert.equal(read().game.history.length, 0);
-      await act(() => read().board.playMove(from, to, "n"));
+      await act(() => read().game.playMove(from, to, "n"));
     }
     assert.equal(read().game.study.id, id);
     assert.deepEqual(read().game.history.map((move) => move.san), [san]);
@@ -216,16 +215,13 @@ test("repetition outcomes follow the displayed history and a continued branch", 
   ] as const)
     await act(() => read().game.playMove(from, to));
   assert.match(read().game.terminal!, /repetition/i);
-  assert.equal(read().board.terminal, read().game.terminal);
   const finished = read().game.study;
   await act(() => read().game.playMove("e2", "e4"));
   assert.equal(read().game.study, finished, "terminal games reject further moves");
   await act(() => read().game.showHistory(4));
   assert.equal(read().game.analysisTerminal, null);
-  assert.equal(read().board.terminal, null);
   await act(() => read().game.playMove("e2", "e4"));
   assert.equal(read().game.terminal, null);
-  assert.equal(read().board.terminal, null);
   assert.equal(read().game.study.id, finished.id);
   assert.equal(read().game.study.mainTipId, finished.tipId);
   assert.equal(read().game.study.nodes.length, 9);

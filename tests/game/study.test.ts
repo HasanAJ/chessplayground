@@ -4,7 +4,7 @@ import { START_FEN } from "../../src/chess/position";
 import {
   createStudy,
   addStudyMove,
-  gameAt,
+  replayStudy,
   nodePath,
   parseStudy,
   ROOT,
@@ -18,8 +18,8 @@ test("branches retain the original line and reuse an existing move", () => {
   const main = study.tipId;
   study = addStudyMove(study, e4, "c7c5");
   assert.equal(study.mainTipId, main);
-  assert.deepEqual(gameAt(study, main).history(), ["e4", "e5"]);
-  assert.deepEqual(gameAt(study).history(), ["e4", "c5"]);
+  assert.deepEqual(replayStudy(study, main).history.map((move) => move.san), ["e4", "e5"]);
+  assert.deepEqual(replayStudy(study).history.map((move) => move.san), ["e4", "c5"]);
   const reused = addStudyMove(study, e4, "c7c5");
   assert.equal(reused.nodes.length, study.nodes.length);
   assert.equal(reused.tipId, study.tipId);
@@ -40,7 +40,7 @@ test("serialized studies restore branches, current line, and repetition", () => 
   ])
     study = addStudyMove(study, study.tipId, move);
   const restored = parseStudy(JSON.parse(JSON.stringify(study)));
-  assert.equal(gameAt(restored).isThreefoldRepetition(), true);
+  assert.equal(replayStudy(restored).game.isThreefoldRepetition(), true);
   assert.equal(restored.tipId, study.tipId);
 });
 

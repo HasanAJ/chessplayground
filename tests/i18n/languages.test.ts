@@ -150,8 +150,7 @@ test("special moves and cached reviews translate without changing notation, eval
     const review = reviewMove(move, best, reply, false, played);
     const localized = localizeReview(review, t);
     assert.equal(localized.label, review.label);
-    assert.equal(localized.loss, review.loss);
-    assert.equal(localized.impact, review.impact);
+    assert.deepEqual(localized.evaluation, review.evaluation);
     assert.deepEqual(localized.reply?.pv, review.reply?.pv);
     assert.notEqual(localized.text, review.text);
     assert.doesNotMatch(localized.text, /\{\d+\}/);
@@ -206,7 +205,6 @@ test("raw engine and saved-game diagnostics resolve through descriptive keys", (
       "Your computer difficulty could not be saved in this browser.",
       "computer.error.saveDifficulty",
     ],
-    ["Starting position", "game.history.startingPosition"],
     ["Position loaded", "position.notice.loaded"],
   ];
   for (const language of Object.keys(languages) as (keyof typeof languages)[]) {
@@ -264,7 +262,7 @@ test("switching languages keeps the game and completed recommendations without a
     callbacks.onComplete([
       { rank: 1, depth: 12, cp: 25, pv: ["c7c5", "g1f3"] },
       { rank: 2, depth: 12, cp: 24, pv: ["e7e5", "g1f3"] },
-    ], "e7e5"),
+    ], "e7e5", { rank: 1, depth: 13, cp: 30, pv: ["e7e5", "g1f3"] }),
   );
   assert.equal(searches, 1);
   const { study, analysisKey, fen } = current.game;
@@ -291,6 +289,9 @@ test("switching languages keeps the game and completed recommendations without a
     assert.deepEqual(current.game.history.map((move) => move.san), ["e4"]);
     assert.equal(current.recommendations.thinking, false);
     assert.equal(current.recommendations.best?.move.san, "e5");
+    assert.equal(current.recommendations.best?.depth, 13);
+    assert.equal(dom.window.document.querySelector(".move-strategy-tag")!.textContent, current.recommendations.best?.title);
+    assert.deepEqual(current.recommendations.candidates.map((candidate) => candidate.move.san), ["e5", "c5"]);
     assert.equal(searches, 1);
     assert.match(
       dom.window.document.querySelector(".best-move-heading")!.textContent!,
@@ -324,7 +325,8 @@ test("translated repetition reviews keep the original draw outcome", () => {
   ])[0];
   const review = reviewMove(move, best, undefined, true);
   const localized = localizeReview(review, translator("fr"));
-  assert.equal(localized.loss, review.loss);
+  assert.deepEqual(localized.evaluation, review.evaluation);
   assert.equal(localized.label, review.label);
-  assert.match(localized.text, /Ng8/);
+  assert.match(localized.text, /nulle/);
+  assert.doesNotMatch(localized.text, /Ng8/);
 });

@@ -52,7 +52,6 @@ test("large raw drops in overwhelmingly winning or losing positions are not blun
     [-9, -12],
   ]) {
     const review = reviewScores(best, played);
-    assert.equal(review.loss, 3);
     assert.equal(review.label, "Good move");
   }
   assert.equal(reviewScores(6, -2).label, "Blunder");
@@ -68,41 +67,33 @@ test("the same evaluation change gets the same grade for either color", () => {
     const white = reviewScores(best, played);
     const black = reviewScores(best, played, "b");
     assert.equal(white.label, black.label);
-    assert.equal(white.impact, black.impact);
-    assert.equal(white.loss, black.loss);
+    assert.equal(white.evaluation.whiteScore, -black.evaluation.whiteScore);
   }
 });
 
 test("keeping a huge advantage instead of a calculated mate is not an automatic blunder", () => {
   const review = reviewScores(0, 12, "w", 4);
   assert.equal(review.label, "Good move");
-  assert.equal(review.loss, null);
   assert.match(review.text, /strong advantage/);
 });
 
-test("different mating distances do not invent a pawn loss", () => {
+test("different mating distances preserve the grade for the same outcome", () => {
   const winning = reviewScores(0, 0, "w", 2, 5);
   assert.equal(winning.label, "Good move");
-  assert.equal(winning.loss, null);
-  assert.equal(winning.impact, 0);
   const losing = reviewScores(0, 0, "b", -8, -2);
   assert.equal(losing.label, "Good move");
-  assert.equal(losing.loss, null);
-  assert.equal(losing.impact, 0);
 });
 
 test("allowing a new forced mate remains a blunder", () => {
   const review = reviewScores(0, 0, "w", undefined, -3);
   assert.equal(review.label, "Blunder");
-  assert.equal(review.loss, null);
-  assert.match(review.text, /allows a forced checkmate/);
+  assert.match(review.text, /can force checkmate/);
 });
 
-test("a comparison favoring the played move does not assign a negative loss", () => {
+test("a comparison favoring the played move keeps a good grade", () => {
   const review = reviewScores(0.2, 0.6);
   assert.equal(review.label, "Good move");
-  assert.equal(review.loss, 0);
-  assert.equal(review.impact, 0);
+  assert.equal(review.evaluation.whiteScore, 0.6);
 });
 
 test("the bishop capture trap still receives a serious grade", () => {

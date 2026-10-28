@@ -7,9 +7,9 @@ import {
   type DragEvent,
 } from "react";
 import type { Color, PieceSymbol, Square } from "chess.js";
-import { ending, positionOf, type Position } from "../../chess/position";
+import { positionOf, type Position } from "../../chess/position";
 import type { GameController } from "../game/useGameController";
-import type { ComputerSettings } from "../computer/useComputerOpponent";
+import type { ComputerSettings } from "../computer/useComputerSettings";
 import type { BoardPreview } from "./useBoardPreview";
 import { useComputerMoveAnimation } from "./useComputerMoveAnimation";
 import { scrollToBoard } from "./scrollToBoard";
@@ -36,15 +36,6 @@ export function useBoardInteractions(
   const turn = game.draft?.turn ?? displayedGame!.turn();
   const rights =
     game.draft?.rights ?? displayedGame!.fen().split(" ")[2].replace("-", "");
-  const terminal = useMemo(
-    () => {
-      if (!displayedGame) return null;
-      return preview.previewGame
-        ? ending(preview.previewGame)
-        : game.analysisTerminal;
-    },
-    [displayedGame, preview.previewGame, game.analysisTerminal],
-  );
   const checkedKing = displayedGame?.isCheck()
     ? (Object.entries(position).find(
         ([, piece]) => piece?.type === "k" && piece.color === turn,
@@ -240,7 +231,6 @@ export function useBoardInteractions(
     ref,
     position,
     turn,
-    terminal,
     checkedKing,
     legalMoves,
     lastMove,
@@ -249,7 +239,6 @@ export function useBoardInteractions(
     flipped,
     setFlipped,
     arrangePiece,
-    playMove,
     squareClick,
     allowBoardDrop,
     dropPiece,

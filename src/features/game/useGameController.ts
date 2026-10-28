@@ -10,7 +10,6 @@ import {
   arrangementIssue,
   checkedGame,
   editPosition,
-  gameMoveLabel,
   opposite,
   pieceLimitError,
   positionOf,
@@ -23,11 +22,11 @@ import {
   createStudy,
   nodePath,
   ROOT,
-  SESSION_KEY,
   type Study,
 } from "../../chess/study";
 import { StudySession } from "../../chess/StudySession";
-import { preserveRecovery, readSavedSession } from "./storage";
+import { readSavedSession } from "./storage";
+import { useStudyPersistence } from "./useStudyPersistence";
 
 type PieceTool = "move" | `${Color}${PieceSymbol}`;
 
@@ -38,9 +37,8 @@ export function useGameController(onEdit: () => void) {
     return { session, snapshot: session.snapshot };
   });
   const { study, positionGame, history, outcomes } = snapshot;
-  const [recovery, setRecovery] = useState(savedSession.recovery);
-  const [autosavePaused, setAutosavePaused] = useState(!!savedSession.recovery);
   const fen = positionGame.fen();
+  const persistence = useStudyPersistence(study, fen, savedSession);
   const path = useMemo(() => nodePath(study), [study]);
   const [draft, setDraft] = useState<{
     position: Position;
@@ -57,7 +55,6 @@ export function useGameController(onEdit: () => void) {
   const [revealBoard, setRevealBoard] = useState(0);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [storageError, setStorageError] = useState(savedSession.storageError);
   const playable = !draft;
   const reviewing = historyPly !== null && playable;
   const nodeId = reviewing ? (path[historyPly - 1]?.id ?? ROOT) : study.tipId;
@@ -74,41 +71,11 @@ export function useGameController(onEdit: () => void) {
   const analysisTerminal = outcomes[historyPly ?? history.length].terminal;
   const lastMove = history.at(-1) ?? null;
   const reviewedMove = reviewing ? history[historyPly - 1] : null;
-  const reviewLabel = reviewedMove
-    ? gameMoveLabel(reviewedMove)
-    : "Starting position";
   const positionIssue = useMemo(
     () =>
       draft ? arrangementIssue(draft.position, draft.turn, draft.rights) : null,
     [draft],
   );
-
-  useEffect(() => {
-    if (autosavePaused) return;
-    try {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(study));
-      localStorage.setItem("tempo-position", fen);
-      setStorageError("");
-    } catch {
-      setStorageError(
-        "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
-      );
-    }
-  }, [study, fen, autosavePaused]);
-
-  function resumeAutosave() {
-    if (!recovery) return;
-    try {
-      // Never overwrite the original until an exact recovery copy is stored.
-      preserveRecovery(recovery);
-      setAutosavePaused(false);
-      setStorageError("");
-    } catch {
-      setStorageError(
-        "The original save could not be backed up. Autosave remains paused. Your latest changes may not survive a reload.",
-      );
-    }
-  }
 
   useEffect(() => {
     if (!notice) return;
@@ -255,11 +222,7 @@ export function useGameController(onEdit: () => void) {
     revealBoard,
     error,
     notice,
-    storageError,
-    recovery,
-    autosavePaused,
-    resumeAutosave,
-    dismissRecovery: () => setRecovery(null),
+    ...persistence,
     reviewing,
     analysisGame,
     analysisFen,
@@ -268,7 +231,6 @@ export function useGameController(onEdit: () => void) {
     analysisTerminal,
     lastMove,
     reviewedMove,
-    reviewLabel,
     positionIssue,
     setTool,
     setPromotion,

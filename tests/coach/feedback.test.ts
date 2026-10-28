@@ -5,11 +5,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Chess } from "chess.js";
 import { candidatesFor } from "../../src/features/coach/candidates";
 import { reviewMove } from "../../src/features/coach/grading";
-import { strategyInsight } from "../../src/features/coach/strategy";
 import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import { Continuation } from "../../src/features/coach/MoveDetails";
 import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
-import { PositionDetails } from "../../src/features/coach/PositionDetails";
 
 test("expanded move review puts the threat preview with the explanation", () => {
   const game = new Chess();
@@ -25,6 +23,7 @@ test("expanded move review puts the threat preview with the explanation", () => 
   const review = reviewMove(move, best, reply);
   const props = {
     result: { key: "test", state: "ready" as const, review },
+    move,
     moveLabel: "2. g4 · White",
     context: "coach.feedback.context.yourLastMove" as const,
     collapsed: false,
@@ -33,27 +32,29 @@ test("expanded move review puts the threat preview with the explanation", () => 
     onInspect() {},
   };
   const revealed = renderToStaticMarkup(createElement(MoveFeedback, props));
-  assert.match(revealed, /<section[^>]*class="move-feedback"/);
-  assert.doesNotMatch(revealed, /<details|<summary/);
   assert.match(revealed, /Blunder/);
+  assert.match(revealed, /class="feedback-piece" src="\/pieces\/wP.svg"/);
   assert.match(revealed, /class="feedback-context">Your last move<\/span>/);
   assert.match(revealed, /aria-expanded="true"/);
   assert.match(revealed.replace(/<[^>]*>/g, ""), /2\. g4 · White/);
-  assert.match(revealed, /Qh4#/);
+  assert.doesNotMatch(revealed, /Qh4#|top choice/);
   assert.match(
     revealed.replace(/<[^>]*>/g, ""),
-    /They can checkmate with Qh4#/,
+    /Their queen can move to h4 and give checkmate/,
   );
   assert.match(revealed, /See their checkmate threat/);
-  assert.match(revealed, /Before you move/);
-  assert.doesNotMatch(revealed, /Opponent’s possible reply|Next time/);
-  assert.doesNotMatch(revealed, /evaluation drop|99\.\d|100\.\d/);
+  assert.doesNotMatch(revealed, /Before you move/);
+  assert.doesNotMatch(revealed, /Opponent’s possible reply/);
 });
 
 test("pending automatic review identifies the selected move without stale feedback", () => {
+  const game = new Chess();
+  game.move("e4");
+  const move = game.move("e5");
   const pending = renderToStaticMarkup(
     createElement(MoveFeedback, {
       result: { key: "pending", state: "thinking" },
+      move,
       moveLabel: "1… e5 · Black",
       context: "coach.feedback.context.selectedMove",
       collapsed: false,
@@ -66,6 +67,7 @@ test("pending automatic review identifies the selected move without stale feedba
   assert.match(pending.replace(/<[^>]*>/g, ""), /1… e5 · Black/);
   assert.match(pending, /aria-busy="true"/);
   assert.match(pending, /Reviewing…/);
+  assert.match(pending, /class="feedback-piece" src="\/pieces\/bP.svg"/);
   assert.doesNotMatch(pending, /Opponent’s possible reply|Best move/);
 });
 
@@ -77,6 +79,7 @@ test("failed automatic review offers a retry and keeps the move identified", () 
         state: "error",
         error: "The engine could not start.",
       },
+      move: new Chess().move("e4"),
       moveLabel: "1. e4 · White",
       collapsed: false,
       onToggle() {},
@@ -106,68 +109,19 @@ test("the best move starts compact, with its reply and continuation hidden", () 
   );
   assert.match(
     card.replace(/<[^>]*>/g, ""),
-    /Your pawn takes space in the center on e4/,
+    /Your pawn takes space in the center and attacks d5 and f5/,
   );
   assert.match(card.replace(/<[^>]*>/g, ""), /Play e4/);
   assert.match(card, /aria-expanded="false"/);
   assert.match(card, /Explore this move/);
+  assert.match(card, /class="score-pill" aria-label="Position score: \+0\.30"/);
   assert.doesNotMatch(
     card,
-    /LIKELY REPLY|Engine continuation|Only legal move|score-pill|About this position/,
+    /continuation-moves|Only legal move/,
   );
 });
 
-test("position analysis is a separate closed disclosure with evaluation and highlights", () => {
-  const game = new Chess();
-  game.move("e4");
-  game.move("e5");
-  const candidate = candidatesFor(game.fen(), [
-    { rank: 1, depth: 18, cp: 30, pv: ["g1f3", "b8c6", "f1c4"] },
-  ])[0];
-  const details = renderToStaticMarkup(
-    createElement(PositionDetails, {
-      candidate,
-      insight: strategyInsight(game, candidate),
-      depth: 18,
-      inCheck: false,
-      highlighted: false,
-      onHighlightChange() {},
-      onHighlightPreviewChange() {},
-    }),
-  );
-  assert.equal((details.match(/<details\b/g) ?? []).length, 1);
-  assert.doesNotMatch(details, /<details[^>]*\bopen=/);
-  assert.match(details, /Position details/);
-  assert.match(details, /score-pill/);
-  assert.doesNotMatch(details, /Scores are measured in pawns/);
-  assert.match(details, /Search depth: 18/);
-  assert.match(details, /Highlight key squares/);
-  assert.doesNotMatch(details, /LIKELY REPLY|Engine continuation/);
-});
-
-test("position details omit the highlight control when no concrete squares are discussed", () => {
-  const game = new Chess("4k3/8/8/8/8/8/8/R3K3 w - - 0 1");
-  const candidate = candidatesFor(game.fen(), [
-    { rank: 1, depth: 18, cp: 500, pv: ["a1a2"] },
-  ])[0];
-  const details = renderToStaticMarkup(
-    createElement(PositionDetails, {
-      candidate,
-      insight: strategyInsight(game, candidate),
-      depth: 18,
-      inCheck: false,
-      highlighted: false,
-      onHighlightChange() {},
-      onHighlightPreviewChange() {},
-    }),
-  );
-  assert.doesNotMatch(
-    details,
-    /Highlight key squares|Hide key squares|key-squares-note/,
-  );
-});
-
-test("forced moves get a prominent label without repeating check advice in position details", () => {
+test("forced moves keep their label alongside the score from White's perspective", () => {
   const game = new Chess("7k/4K3/5B2/8/8/8/8/7R b - - 0 1");
   const candidate = candidatesFor(game.fen(), [
     { rank: 1, depth: 18, cp: -800, pv: ["h8g8", "h1h8"] },
@@ -182,26 +136,9 @@ test("forced moves get a prominent label without repeating check advice in posit
     }),
   );
   assert.match(card, /Only legal move/);
-  assert.match(card.replace(/<[^>]*>/g, ""), /Escape check/);
-  assert.doesNotMatch(card, /Plan continues|Your king needs attention first/);
-  const details = renderToStaticMarkup(
-    createElement(PositionDetails, {
-      candidate,
-      insight: {
-        ...strategyInsight(game, candidate),
-        change: "The king is in check.",
-      },
-      depth: 18,
-      inCheck: true,
-      highlighted: false,
-      onHighlightChange() {},
-      onHighlightPreviewChange() {},
-    }),
-  );
-  assert.doesNotMatch(
-    details,
-    /only one legal move|WHAT CHANGED|The king is in check/,
-  );
+  assert.match(card, /src="\/pieces\/bK\.svg" alt="" draggable="false"/);
+  assert.match(card, /class="score-pill" aria-label="Position score: \+8\.00"/);
+  assert.match(card.replace(/<[^>]*>/g, ""), /King from h8 to g8/);
 });
 
 test("a mating move can be explored without inventing a reply", () => {
@@ -220,6 +157,7 @@ test("a mating move can be explored without inventing a reply", () => {
     }),
   );
   assert.match(card.replace(/<[^>]*>/g, ""), /Play Rh8/);
+  assert.match(card, /class="score-pill" aria-label="Position score: \+M1"/);
   assert.match(card, /Explore this move/);
   assert.doesNotMatch(card, /Opponent’s possible reply/);
 });
@@ -241,7 +179,7 @@ test("shared continuation details select the preview step only for the matching 
   assert.equal((selected.match(/aria-pressed="true"/g) ?? []).length, 1);
   assert.match(
     selected,
-    /class="current-step" aria-label="Preview move 2: Black plays e5"/,
+    /class="current-step" aria-label="Preview move 2: Black, Pawn from e7 to e5"/,
   );
   assert.doesNotMatch(render(1), /aria-pressed="true"|current-step/);
 });

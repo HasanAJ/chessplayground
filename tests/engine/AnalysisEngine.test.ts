@@ -133,6 +133,28 @@ test("coaching can request five distinct moves and keeps only a complete depth",
   assert.equal(observed.result.errors.length, 0);
 });
 
+test("time-limited analysis omits the depth ceiling and allows its full search budget", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const worker = new FakeWorker();
+  const engine = new AnalysisEngine(() => worker as unknown as Worker);
+  t.after(() => engine.dispose());
+  const observed = observer();
+  engine.analyze(START_FEN, observed, undefined, {
+    depth: null,
+    movetime: 15000,
+  });
+  worker.ready();
+  assert.equal(worker.commands.at(-1), "go movetime 15000");
+  t.mock.timers.tick(15001);
+  assert.equal(observed.result.errors.length, 0);
+  worker.complete(24);
+  assert.equal(observed.result.completed[0][0].depth, 24);
+  const stalled = observer();
+  engine.analyze(START_FEN, stalled, undefined, { depth: null, movetime: 15000 });
+  t.mock.timers.tick(17001);
+  assert.match(stalled.result.errors[0], /too long to respond/);
+});
+
 test("paired move reviews restrict the root search and expect only those two lines", (t) => {
   const worker = new FakeWorker();
   const engine = new AnalysisEngine(() => worker as unknown as Worker);
@@ -282,6 +304,28 @@ test("duplicate candidates are rejected instead of presented as a complete batch
   assert.equal(observed.result.errors.length, 1);
 });
 
+test("out-of-order ranks and older depths preserve comparable results and progress", (t) => {
+  const worker = new FakeWorker();
+  const engine = new AnalysisEngine(() => worker as unknown as Worker);
+  t.after(() => engine.dispose());
+  const observed = observer();
+  engine.analyze(START_FEN, observed);
+  worker.ready();
+
+  const moves = ["e2e4", "d2d4", "g1f3"];
+  for (const depth of [9, 6, 12]) {
+    for (const rank of [3, 1, 2])
+      worker.emit(`info depth ${depth} multipv ${rank} score cp 20 pv ${moves[rank - 1]}`);
+  }
+  worker.emit("info depth 13 multipv 4 score cp 30 pv c2c4");
+  worker.emit("bestmove e2e4");
+
+  assert.deepEqual(observed.result.progress, [9, 12]);
+  assert.deepEqual(observed.result.completed[0].map((line) => line.pv[0]), moves);
+  assert.deepEqual(observed.result.completed[0].map((line) => line.depth), [12, 12, 12]);
+  assert.equal(observed.result.bestLines[0]?.depth, 12);
+});
+
 test("positions with one legal move finish with a single candidate", (t) => {
   const worker = new FakeWorker();
   const engine = new AnalysisEngine(() => worker as unknown as Worker);
@@ -371,4 +415,26 @@ test("a stalled canceled search reports the timeout to the latest waiting reques
   t.mock.timers.tick(10001);
   assert.equal(old.result.errors.length, 0);
   assert.match(latest.result.errors[0], /too long to respond/);
+});
+
+test("disposal cancels active and queued work, including late worker events and timeouts", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const worker = new FakeWorker();
+  const engine = new AnalysisEngine(() => worker as unknown as Worker);
+  const active = observer(), queued = observer();
+  engine.analyze(START_FEN, active);
+  worker.ready();
+  engine.analyze(START_FEN, queued);
+  engine.dispose();
+
+  worker.complete();
+  worker.error();
+  t.mock.timers.tick(20000);
+
+  assert.equal(worker.terminated, true);
+  for (const { result } of [active, queued]) {
+    assert.deepEqual(result.completed, []);
+    assert.deepEqual(result.progress, []);
+    assert.deepEqual(result.errors, []);
+  }
 });

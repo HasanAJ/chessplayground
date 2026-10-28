@@ -83,14 +83,6 @@
     margin: 0;
   }
 
-  .mobile-board-link {
-    display: none;
-  }
-
-  .coach-status:has(> span:empty):not(:has(button)) {
-    display: none;
-  }
-
   .strategy-card {
     padding: 14px;
   }
@@ -123,12 +115,6 @@
     padding: 10px;
     border-color: #ded3f3;
     color: #554170;
-  }
-
-  .position-details > summary,
-  .feedback-analysis-details > summary {
-    min-height: 44px;
-    align-content: center;
   }
 
   .continuation-moves button {
@@ -165,6 +151,7 @@
   .board-preview-controls p {
     margin: 6px 0;
     line-height: 1.5;
+    font-weight: 600;
   }
 
   .board-preview-actions .icon-button {

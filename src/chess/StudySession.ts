@@ -14,12 +14,16 @@ export type StudySnapshot = {
 /** Own the mutable rules engine; views and reviews receive separate snapshots. */
 export class StudySession {
   private game: Chess;
-  snapshot: StudySnapshot;
+  private current: StudySnapshot;
+
+  get snapshot(): StudySnapshot {
+    return this.current;
+  }
 
   constructor(study: Study) {
     const { game, history, outcomes } = replayStudy(study);
     this.game = game;
-    this.snapshot = {
+    this.current = {
       study,
       positionGame: new Chess(game.fen()),
       history,
@@ -39,7 +43,7 @@ export class StudySession {
     }
     const move = uciMove(game, uci);
     this.game = game;
-    this.snapshot = {
+    this.current = {
       study: addStudyMove(study, parent, move.lan),
       positionGame: new Chess(move.after),
       history: [...history, move],

@@ -1,11 +1,9 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Square } from "chess.js";
 import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
-
-const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
+import { pieceValues } from "../../chess/material";
 
 type BoardWarning = {
-  kind: "check" | "undefended" | "defended" | "none";
   text: string;
   target: Square | null;
   attackers: Square[];
@@ -23,26 +21,22 @@ export function watchOutFor(
       ([, piece]) => piece?.color === color && piece.type === "k",
     )![0] as Square;
     return {
-      kind: "check",
       text: t("coach.warning.check"),
       target: king,
       attackers: game.attackers(king, enemy),
     };
   }
-  const pressure = Object.entries(position)
+  const undefended = Object.entries(position)
     .filter(
       ([sq, p]) =>
         p?.color === color &&
         p.type !== "k" &&
-        game.isAttacked(sq as Square, enemy),
+        game.isAttacked(sq as Square, enemy) &&
+        !game.isAttacked(sq as Square, color),
     )
-    .sort((a, b) => values[b[1]!.type] - values[a[1]!.type]);
-  const undefended = pressure.find(
-    ([sq]) => !game.isAttacked(sq as Square, color),
-  );
+    .sort((a, b) => pieceValues[b[1]!.type] - pieceValues[a[1]!.type])[0];
   if (undefended)
     return {
-      kind: "undefended",
       text: t(
         "coach.warning.undefended",
         t(pieceNameKeys[undefended[1]!.type]),
@@ -51,20 +45,8 @@ export function watchOutFor(
       target: undefended[0] as Square,
       attackers: game.attackers(undefended[0] as Square, enemy),
     };
-  if (pressure.length)
-    return {
-      kind: "defended",
-      text: t(
-        "coach.warning.defended",
-        t(pieceNameKeys[pressure[0][1]!.type]),
-        pressure[0][0],
-      ),
-      target: pressure[0][0] as Square,
-      attackers: game.attackers(pressure[0][0] as Square, enemy),
-    };
   return {
-    kind: "none",
-    text: t("coach.warning.general"),
+    text: "",
     target: null,
     attackers: [],
   };

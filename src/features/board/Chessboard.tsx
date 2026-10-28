@@ -6,12 +6,15 @@ import type { BoardController } from "./useBoardInteractions";
 import type { BoardPreview } from "./useBoardPreview";
 import { BoardGrid } from "./BoardGrid";
 import { moveArrow } from "./arrows";
+import type { PositionEvaluation } from "../../chess/evaluation";
+import { EvaluationBar } from "./EvaluationBar";
 
 type Props = {
   game: GameController;
   board: BoardController;
   preview: BoardPreview;
   analysis: Recommendations;
+  reviewEvaluation?: PositionEvaluation;
   highlights: CoachPresentation;
 };
 
@@ -20,6 +23,7 @@ export function Chessboard({
   board,
   preview,
   analysis,
+  reviewEvaluation,
   highlights,
 }: Props) {
   const { t } = useTranslation();
@@ -40,26 +44,13 @@ export function Chessboard({
   const { reviewing } = game;
   const { best } = analysis;
   const hiddenAnalysis = !analysis.requested;
-  const {
-    focusStrategy,
-    previewStrategy,
-    insight,
-    showWarning,
-    watching,
-    shownCandidate,
-  } = highlights;
+  const { showWarning, watching, shownCandidate } = highlights;
   const files = (flipped ? "hgfedcba" : "abcdefgh").split("");
   const ranks = flipped ? [1, 2, 3, 4, 5, 6, 7, 8] : [8, 7, 6, 5, 4, 3, 2, 1];
   const legalSquares = new Set(legalMoves.map((move) => move.to));
-  const evaluation = hiddenAnalysis || boardPreview ? undefined : best;
-  const whitePercent = evaluation
-    ? Math.max(4, Math.min(96, 50 + 46 * Math.tanh(evaluation.whiteScore / 4)))
-    : 50;
-  const evaluationNotice = hiddenAnalysis
-    ? t("board.evaluation.calculateFirst")
-    : boardPreview
-      ? t("board.evaluation.previewPaused")
-      : undefined;
+  const evaluation = !game.playable || boardPreview
+    ? undefined
+    : best ?? reviewEvaluation;
   const arrowMove =
     inspectionMove ?? (hiddenAnalysis ? undefined : shownCandidate?.move);
   const arrow =
@@ -75,36 +66,14 @@ export function Chessboard({
       ? [arrow]
       : [];
   const arrowhead = explanationFocus ? "explanation-arrowhead" : "arrowhead";
-  const showStrategy =
-    (focusStrategy || previewStrategy) && !hiddenAnalysis && !boardPreview;
   return (
     <div id="board" className="board-position">
       <div className="board-with-eval" ref={board.ref}>
-        <div
-          className="eval-track"
-          title={evaluationNotice ?? t("board.evaluation.legend")}
-          aria-label={
-            evaluationNotice ??
-            (best
-              ? t("board.evaluation.whiteScore", best.score)
-              : t("board.evaluation.pending"))
-          }
-        >
-          <div
-            className="eval-white"
-            style={{
-              height: `${whitePercent}%`,
-              ...(flipped ? { top: 0, bottom: "auto" } : {}),
-            }}
-          />
-          <span className="eval-number">
-            {evaluation
-              ? evaluation.mate !== undefined
-                ? evaluation.score
-                : `${evaluation.whiteScore >= 0 ? "+" : "−"}${Math.abs(evaluation.whiteScore).toLocaleString(t.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`
-              : "—"}
-          </span>
-        </div>
+        <EvaluationBar
+          evaluation={evaluation}
+          paused={boardPreview}
+          flipped={flipped}
+        />
         <BoardGrid
           position={position}
           flipped={flipped}
@@ -122,15 +91,12 @@ export function Chessboard({
             const piece = position[square];
             const legal = legalSquares.has(square);
             const isSelected = !boardPreview && selected === square;
-            const strategy =
-              explanationFocus?.squares.includes(square) ||
-              (showStrategy && insight?.squares.includes(square));
             return {
               className: [
                 isSelected && "selected-square",
                 freeDrag === square && "free-piece",
                 legal && piece && "capture-square",
-                strategy && "strategy-square",
+                explanationFocus?.squares.includes(square) && "strategy-square",
                 showWarning && watching.target === square && "warning-target",
                 showWarning &&
                   watching.attackers.includes(square) &&

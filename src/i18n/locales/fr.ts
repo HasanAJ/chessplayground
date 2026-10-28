@@ -173,14 +173,6 @@ export default {
   "footer.tagline": "Un bon coup commence par un peu de compréhension.",
   "footer.engine": "Avec Stockfish 19",
   "move.description.normal": "{0}{1} de {2} à {3}",
-  "move.description.castle": "Roque : roi de {0} à {1}, tour {2}",
-  "move.description.kingsideRook": "de h{0} à f{1}",
-  "move.description.queensideRook": "de a{0} à d{1}",
-  "move.description.capture": ", avec capture de {0}{1}",
-  "move.description.enPassantSquare": " en {0} en passant",
-  "move.description.promotion": ", avec promotion en {0}",
-  "move.description.checkmate": " — échec et mat",
-  "move.description.check": " — échec",
   "position.error.missingBothKings":
     "Ajoutez les deux rois pour jouer ou analyser.",
   "position.error.pawnOnEdge":
@@ -192,8 +184,6 @@ export default {
     "Les compteurs du FEN doivent être des nombres entiers dans la plage prise en charge.",
   "position.error.castlingRights":
     "Chaque droit de roque (KQkq) ne doit apparaître qu’une fois ; utilisez «-» pour aucun.",
-  "position.error.emptySquaresFen":
-    "FEN non valide : utilisez 1–8 pour les cases vides.",
   "position.error.enPassantCounter":
     "Une case en passant exige un compteur de demi-coups à zéro, car le dernier coup était un mouvement de pion.",
   "position.error.enPassantPawn":
@@ -221,8 +211,6 @@ export default {
   "board.flip": "Retourner l’échiquier",
   "board.openCoach": "Voir votre coach",
   "chess.piece.label": "{1} · {0}",
-  "board.evaluation.calculateFirst":
-    "Calculez les meilleurs coups pour voir l’évaluation",
   "board.evaluation.previewPaused": "Évaluation en pause pendant l’aperçu",
   "board.evaluation.legend": "+ = avantage aux Blancs · − = avantage aux Noirs",
   "board.evaluation.whiteScore": "Évaluation côté Blancs : {0}",
@@ -236,136 +224,111 @@ export default {
   "board.tray.add": "Ajouter : {1} · {0} · Cliquez ou glissez sur l’échiquier",
   "coach.alternatives.heading": "Autres bons coups",
   "coach.move.play": "Jouer {0}",
-  "coach.lesson.mateThreat.advice":
-    "Vérifiez les échecs adverses et si votre roi dispose d’une réponse sûre.",
   "coach.lesson.mateThreat.focus": "Voir leur menace de mat",
   "coach.lesson.undefended.consequence":
-    "laisse votre {0} en {1} sans défense. Leur {2} peut capturer cette pièce avec {3}",
+    "Votre {0} en {1} n’a pas de défenseur. Leur {2} peut capturer cette pièce.",
   "coach.lesson.defendedCapture.consequence":
-    "permet à leur {0} de capturer votre {1} en {2} avec {3}. Votre pièce est défendue ; suivez la suite de l’échange",
-  "coach.lesson.undefended.advice":
-    "Vérifiez quelles pièces peuvent être capturées et si vous pouvez reprendre.",
-  "coach.lesson.defendedCapture.advice":
-    "Comparez les captures possibles des deux camps, y compris la réponse suivante.",
+    "Leur {0} peut capturer votre {1} en {2}. Vous pourrez peut-être reprendre.",
   "coach.lesson.capture.focus": "Voir la pièce qu’ils peuvent capturer",
   "coach.lesson.laterCapture.consequence":
-    "permet d’atteindre {0} dans la ligne affichée, où leur {1} capture votre {2} en {3}. D’autres échanges peuvent suivre",
-  "coach.lesson.forcedReply.advice":
-    "Suivez leurs échecs autant que leurs captures. Un échec peut vous obliger à répondre avant de protéger une autre pièce.",
-  "coach.lesson.laterCapture.advice":
-    "Regardez au-delà de leur première réponse : suivez les captures suivantes avant de juger un échange.",
+    "Plus loin, leur {0} capture votre {1} en {2}. D’autres échanges peuvent suivre.",
   "coach.lesson.laterCapture.focus":
     "Voir la capture ultérieure dans cette ligne",
   "coach.piece.yoursOnSquare": "votre {0} en {1}",
   "common.join.and": " et ",
   "coach.lesson.fork.consequence":
-    "permet une fourchette : leur {0} en {1} attaque {2} à la fois",
-  "coach.lesson.fork.advice":
-    "Cherchez les réponses qui attaquent deux pièces à la fois. En sauver une peut laisser l’autre sous attaque.",
+    "Leur {0} peut aller en {1} et attaquer {2} à la fois.",
   "coach.lesson.fork.focus": "Voir les deux attaques",
-  "coach.lesson.compareCapture":
-    "Cherchez les captures et suivez les réponses avant de juger un échange.",
-  "coach.lesson.compareDefense":
-    "Vérifiez quelles pièces ont besoin de protection.",
-  "coach.lesson.compareEscape":
-    "Vérifiez si une pièce est attaquée avant de lancer un autre plan.",
-  "coach.lesson.compareAlternative":
-    "Vérifiez leurs échecs, captures et attaques avant de choisir.",
   "coach.review.error.needsAnalysis":
     "Le coup nécessite une analyse de la position résultante.",
-  "coach.review.checkmate":
-    "{0} donne échec et mat. Leur roi n’a aucune issue : vous avez terminé la partie.",
-  "coach.review.best": "{0} est le meilleur choix ici. {1}",
   "coach.review.good.draw":
-    "obtient la nulle, proche du meilleur résultat trouvé ici",
-  "coach.review.good.winningMate": "préserve le mat dans la ligne analysée",
+    "Ce coup assure la nulle.",
+  "coach.review.good.winningMate":
+    "Vous avez toujours un mat forcé.",
   "coach.review.good.losingMate":
-    "résiste presque aussi bien que la meilleure défense trouvée, même si l’analyse voit toujours un mat contre vous",
+    "Ce coup est proche de la meilleure défense, mais votre roi reste menacé de mat.",
   "coach.review.good.winning":
-    "préserve votre net avantage. Votre position reste excellente",
+    "Vous gardez un net avantage.",
   "coach.review.good.losing":
-    "résiste presque aussi bien que la meilleure option dans une position déjà difficile",
+    "Ce coup est proche du meilleur choix dans une position difficile.",
   "coach.review.good.balanced":
-    "semble bon ici, avec des chances proches de {0}",
+    "Ce coup conserve presque les mêmes chances que le meilleur coup.",
   "coach.review.consequence.draw":
-    "mène à la nulle. {0} offrait de meilleures chances",
+    "La partie se termine par la nulle. Le meilleur coup offrait de meilleures chances.",
   "coach.review.consequence.allowsMate":
-    "permet un mat forcé dans la ligne analysée",
-  "coach.review.consequence.missesMate": "laisse échapper un mat forcé",
+    "Votre adversaire peut forcer le mat.",
+  "coach.review.consequence.missesMate":
+    "Ce coup manque un mat forcé.",
   "coach.review.consequence.worseChances":
-    "donne à l’adversaire de meilleures chances que {0}",
-  "coach.review.response.draw":
-    "Essayez l’autre coup pour voir ce que vous pourriez encore viser.",
-  "coach.review.response.preview":
-    "Parcourez la réponse pour voir ce qu’ils pourraient faire ensuite.",
+    "Votre adversaire obtient de meilleures chances qu’après le meilleur coup.",
   "coach.explanation.pressure.title": "Accentuez la pression sur {0}",
   "coach.explanation.pressure.text":
-    "Votre {0} rejoint une autre pièce pour attaquer leur {1} en {2}. Ils doivent maintenant faire face à plusieurs attaquants.",
+    "Votre {0} rejoint une autre pièce pour attaquer leur {1} en {2}.",
   "coach.explanation.attack.focus": "Voir l’attaque sur leur {0}",
   "coach.explanation.supportCenter.title": "Soutenez votre centre",
   "coach.explanation.defend.title": "Défendez votre {0}",
   "coach.explanation.defend.text":
-    "Votre {0} en {1} défend maintenant votre {2} en {3}. En cas de capture, votre {4} pourrait reprendre ; vérifiez la réponse avant d’échanger.",
+    "Votre {0} défend maintenant votre {1} en {2}.",
   "coach.explanation.defend.focus": "Voir la défense de votre {0}",
   "coach.explanation.escapeAttack.title": "Mettez votre {0} à l’abri",
   "coach.explanation.escapeAttack.text":
-    "Une attaque visait votre {0} en {1}. En {2}, aucune pièce adverse ne l’attaque actuellement.",
+    "Votre {0} n’est plus sous attaque.",
   "coach.explanation.escapeAttack.focus": "Voir votre {0} se mettre à l’abri",
+  "coach.explanation.attack.text":
+    "Votre {0} attaque maintenant leur {1} en {2}.",
   "coach.explanation.attack.title": "Attaquez leur {0}",
-  "coach.explanation.attack.existing":
-    "Votre {0} en {1} attaque leur {2} en {3}. Surveillez une retraite, une défense ou une menace adverse.",
-  "coach.explanation.attack.new":
-    "Votre {0} en {1} attaque maintenant leur {2} en {3}. Ils peuvent déplacer cette pièce ou la défendre ; regardez la réponse avant de compter sur une capture.",
   "coach.piece.onSquare": "{0} en {1}",
   "coach.explanation.check.plural": "Vos pièces ({0}) donnent échec.",
   "coach.explanation.check.singular": "Votre {0} donne échec.",
+  "coach.explanation.promotion.check":
+    "Votre pion se promeut en {0} en {1} avec échec.",
+  "coach.explanation.promotion.checkmate":
+    "Votre pion se promeut en {0} en {1} et donne échec et mat.",
   "coach.explanation.promotion.prefix": "Votre pion se promeut en {0} en {1}. ",
   "coach.explanation.checkmate.title": "Terminez par échec et mat",
   "coach.explanation.checkmate.plural":
-    "{0}Vos pièces ({1}) donnent échec et mat. Leur roi n’a aucune issue.",
+    "{0}Vos pièces ({1}) donnent échec et mat.",
   "coach.explanation.checkmate.singular":
-    "{0}Votre {1} donne échec et mat. Leur roi n’a aucune issue.",
+    "{0}Votre {1} donne échec et mat.",
   "coach.explanation.checkmate.focus": "Voir l’échec et mat",
   "coach.explanation.promotion.title": "Promouvez votre pion",
-  "coach.explanation.promotion.text":
-    "Vous avez maintenant une pièce ({0}) à la place du pion. Regardez leur réponse.",
   "coach.explanation.promotion.focus": "Voir la promotion",
   "coach.explanation.castle.title": "Roquez et activez votre tour",
   "coach.explanation.castle.text":
     "Le roque éloigne votre roi du centre et rapproche votre tour du milieu.{0}",
   "coach.explanation.castle.focus": "Voir le déplacement du roi et de la tour",
   "coach.explanation.escapeCheck.title": "Sortez votre roi de l’échec",
-  "coach.explanation.escapeCheck.text": "{0} vous sort de l’échec{1}.{2}",
-  "coach.explanation.escapeCheck.capture": " et capture leur {0} en {1}",
+  "coach.explanation.escapeCheck.text":
+    "Vous sortez de l’échec{0}.{1}",
+  "coach.explanation.escapeCheck.capture":
+    " en capturant leur {0} en {1}",
   "coach.explanation.escapeCheck.block":
     " en bloquant l’attaque avec votre {0}",
   "coach.explanation.escapeCheck.kingMove": " en déplaçant votre roi en {0}",
-  "coach.explanation.escapeCheck.safe":
-    " Votre roi n’est plus attaqué, vous pouvez continuer à jouer.",
   "coach.explanation.escapeCheck.focus": "Voir comment sortir de l’échec",
   "coach.explanation.captureCheck.title": "Capturez avec échec",
+  "coach.explanation.captureCheck.text":
+    "Votre {0} capture leur {1} en {2}{3} et donne échec.",
   "coach.explanation.capture.title": "Capturez leur {0}",
-  "coach.explanation.capture.text": "Votre {0} capture leur {1} en {2}{3}. {4}",
+  "coach.explanation.capture.text":
+    "Votre {0} capture leur {1} en {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant, en arrivant en ",
-  "coach.explanation.capture.attacked":
-    "Leurs pièces attaquent votre {0} en {1} ; regardez la réponse pour vérifier s’ils reprennent.",
-  "coach.explanation.capture.safe":
-    "Aucune pièce adverse n’attaque actuellement votre {0} en {1}.",
   "coach.explanation.capture.focus":
     "Voir la capture et les attaquants possibles",
+  "coach.explanation.materialRisk.text":
+    "Dans cette ligne, vous cédez plus de matériel que vous n’en capturez.",
+  "coach.explanation.materialRisk.focus": "Voir la capture possible",
   "coach.explanation.check.title": "Donnez échec",
-  "coach.explanation.check.text":
-    "{0} Votre adversaire doit répondre à l’attaque sur son roi.",
   "coach.explanation.check.focus": "Voir l’attaque sur leur roi",
   "coach.explanation.develop.centerControl":
     "Depuis cette case, la pièce attaque {0}, vous aidant à contrôler le centre.",
   "coach.explanation.develop.title": "Développez une autre pièce",
   "coach.explanation.develop.text":
-    "Votre {0} quitte la rangée de départ pour {1}. {2}",
+    "Votre {0} entre en jeu. {1}",
   "coach.explanation.develop.focus": "Voir votre pièce et les cases centrales",
   "coach.explanation.center.title": "Occupez le centre",
   "coach.explanation.center.text":
-    "Votre pion gagne de l’espace au centre en {0}. Il attaque {1}, limitant les cases sûres pour leurs pièces.",
+    "Votre pion gagne de l’espace au centre et attaque {0}.",
   "coach.explanation.center.focus": "Voir le contrôle central du pion",
   "coach.explanation.openFile.title":
     "Placez votre tour sur une colonne ouverte",
@@ -381,52 +344,31 @@ export default {
   "coach.explanation.nearCenter.focus": "Voir le coup près du centre",
   "coach.explanation.reposition.title": "Déplace ta pièce ({0}) en {1}",
   "coach.explanation.reposition.focus": "Voir le coup de votre {0}",
-  "coach.reply.checkmate": "Ils peuvent mater avec {0} ({1} en {2}).",
-  "coach.reply.castle": "roquer {0}",
+  "coach.reply.checkmate":
+    "Leur {0} peut aller en {1}{2} et donner échec et mat.",
+  "coach.reply.castle":
+    "Ils peuvent roquer {0}{1}.",
   "chess.castling.kingside": "du petit côté",
   "chess.castling.queenside": "du grand côté",
-  "coach.reply.capture": "capturer votre {0} en {1}{2} avec leur {3}",
+  "coach.reply.recapture":
+    "Leur {0} peut capturer votre {1} en retour{2}{3}.",
+  "coach.reply.capture":
+    "Leur {0} peut capturer votre {1} en {2}{3}{4}{5}.",
   "coach.reply.enPassant": " en passant",
-  "coach.reply.move": "déplacer leur {0} en {1}",
+  "coach.reply.move":
+    "Leur {0} peut aller en {1}{2}{3}.",
   "coach.reply.promotion": " et promouvoir en {0}",
   "coach.reply.check": " et donner échec",
-  "coach.reply.summary": "Ils peuvent {0}{1}{2} ({3}).",
   "coach.warning.check": "Ton roi est en échec. Tu dois parer l’échec.",
   "coach.warning.undefended": "Ta pièce ({0}) en {1} est attaquée et sans défenseur.",
-  "coach.warning.defended": "Ta pièce ({0}) en {1} est attaquée et défendue. Vérifie l’échange avant de la laisser là.",
-  "coach.warning.general":
-    "Avant de jouer, regardez leurs échecs, captures et attaques sur les pièces non protégées. Commencez par la réponse probable sous votre coup.",
-  "coach.strategy.center": "Vos pièces contrôlent {0} au centre.",
-  "coach.strategy.line.checkmate": "{0} termine cette ligne par échec et mat.",
-  "coach.strategy.line.capture":
-    "L’aperçu se termine par une capture : les {0} jouent {1}. L’échange peut continuer.",
-  "coach.strategy.material.gain.singular":
-    "Dans cette ligne possible, vous gagneriez l’équivalent de {0} pion de matériel.",
-  "coach.strategy.material.gain.plural":
-    "Dans cette ligne possible, vous gagneriez l’équivalent de {0} pions de matériel.",
-  "coach.strategy.material.loss.singular":
-    "Dans cette ligne possible, vous céderiez l’équivalent de {0} pion de matériel.",
-  "coach.strategy.material.loss.plural":
-    "Dans cette ligne possible, vous céderiez l’équivalent de {0} pions de matériel.",
-  "coach.strategy.change.check":
-    "{0} met votre roi en échec. Sortir de l’échec est prioritaire.",
-  "coach.strategy.change.capture": "Le dernier coup adverse, {1}, a capturé ta pièce ({0}).",
   "coach.continuation.replyHeading": "Réponse possible de l’adversaire",
   "coach.continuation.label": "Une suite possible",
-  "coach.continuation.previewMove": "Aperçu du coup {0} : les {1} jouent {2}",
+  "coach.continuation.previewMove": "Aperçu du coup {0} : {1}, {2}",
   "engine.error.noLegalCandidates":
     "Le moteur n’a renvoyé aucun coup légal. Relancez l’analyse.",
-  "coach.position.heading": "Détails de la position",
-  "coach.position.changed": "CE QUI A CHANGÉ",
-  "coach.position.hideSquares": "Masquer les cases clés",
-  "coach.position.showSquares": "Surligner les cases clés",
-  "coach.position.squaresDescription":
-    "Les contours turquoise indiquent les cases évoquées : {0}.",
   "coach.analysis.status.thinking": "Analyse en cours…",
   "coach.analysis.status.unavailable": "Moteur indisponible",
   "coach.analysis.status.ready": "Recommandations prêtes",
-  "coach.analysis.reviewingPosition":
-    "Examen de {0}. L’analyse concerne cette position.",
   "coach.analysis.errorHeading": "Essayons à nouveau.",
   "coach.analysis.retry": "Relancer l’analyse",
   "coach.analysis.label": "Coup suggéré et analyse",
@@ -436,12 +378,9 @@ export default {
     "Examen de vos options et de leurs réponses depuis cette position antérieure.",
   "coach.analysis.search.live":
     "Examen de vos options et des réponses adverses. Vous pouvez continuer à jouer.",
-  "coach.analysis.search.depth": "Profondeur de recherche : {0}",
-  "coach.analysis.search.estimate": "Généralement prêt en quelques secondes",
   "coach.warnings.heading": "Attention à",
   "coach.warnings.description":
     "Survolez ou placez le focus pour surligner la pièce menacée et ses attaquants.",
-  "coach.best.escapeCheck": "Sortez de l’échec",
   "coach.best.heading": "Coup suggéré",
   "coach.best.forced": "Seul coup légal",
   "coach.best.play": "Jouer le meilleur coup {0}",
@@ -460,25 +399,17 @@ export default {
   "coach.feedback.pending":
     "Examen de votre coup et des meilleures alternatives…",
   "coach.feedback.retry": "Relancer l’examen du coup",
-  "coach.feedback.beforeYouMove": "Avant de jouer",
   "coach.feedback.tryInstead": "Essayez plutôt {0}",
   "coach.feedback.previewMove": "Voir {0}",
   "coach.feedback.likelyReply": "Réponse possible de l’adversaire",
-  "coach.feedback.quickReview": "Examen rapide",
-  "coach.feedback.evaluationDrop": "{0} de baisse d’évaluation",
   "coach.explanation.matingAttack.title": "Poursuivez l’attaque de mat",
   "coach.explanation.matingAttack.text":
-    "Selon cette analyse, il y a un mat en {0} coups en commençant par {1}. Parcourez les réponses pour comprendre l’attaque.",
+    "Ce coup commence un mat forcé en {0} coups.",
   "coach.explanation.matingAttack.focus": "Voir le début de l’attaque de mat",
   "coach.explanation.mateDefense.title": "Trouvez la défense la plus tenace",
   "coach.explanation.mateDefense.text":
-    "Votre roi est en grand danger : l’analyse trouve toujours un mat forcé après {0}. Parcourez leurs échecs pour comprendre le danger.",
+    "Votre roi reste menacé par un mat forcé.",
   "coach.explanation.mateDefense.focus": "Voir le coup défensif",
-  "coach.reply.unavailable":
-    "Cet aperçu ne contient pas de réponse. Essayez le coup pour explorer la suite.",
-  "coach.reply.terminal.checkmate":
-    "C’est échec et mat. Ils n’ont aucune réponse.",
-  "coach.reply.terminal.draw": "Ce coup termine la partie par la nulle.",
   "coach.status.checkmate": "Échec et mat",
   "coach.status.draw": "Nulle",
   "coach.status.previewCheck": "Aperçu · Échec",
@@ -491,25 +422,16 @@ export default {
   "coach.status.yourTurn": "À vous de jouer",
   "coach.panel.label": "Analyse de position",
   "coach.panel.heading": "Votre coach",
-  "coach.panel.backToBoard": "Retour à l’échiquier ↑",
   "coach.calculate.label.waiting": "En attente de l’ordinateur",
   "coach.calculate.label.thinking": "Calcul des meilleurs coups",
   "coach.calculate.label.ready": "Calculer les meilleurs coups",
   "coach.calculate.text.waiting": "En attente de l’ordinateur…",
   "coach.calculate.text.thinking": "Calcul en cours…",
   "common.dismissError": "Fermer l’erreur",
-  "game.history.controls": "Commandes de l’historique",
   "game.history.backToLatest": "Revenir au présent",
   "coach.context.preview": "Aperçu · {0}",
-  "coach.context.reviewingUpdating": "Examen de {0} · Mise à jour de l’analyse",
-  "coach.context.reviewingReady":
-    "Examen de {0} · L’analyse concerne cette position",
-  "coach.context.reviewingIdle":
-    "Examen de {0} · Lancez l’analyse pour des conseils",
   "computer.status.movingSoon": "L’ordinateur va jouer dans un instant…",
   "computer.status.choosingReply": "L’ordinateur choisit une réponse…",
-  "coach.context.updating":
-    "Mise à jour de l’analyse des {0} · Vous pouvez continuer à jouer",
   "coach.panel.returnToGame": "Revenir à la partie",
   "computer.status.invalidPosition":
     "Créez une position légale avec les deux rois pour jouer contre l’ordinateur.",
@@ -533,7 +455,6 @@ export default {
   "computer.settings.difficulty": "Votre défi",
   "common.retry": "Réessayer",
   "common.done": "Terminé",
-  "game.history.startingPosition": "Position initiale",
   "game.save.error.unavailable":
     "Le stockage du navigateur est indisponible ou plein. Vos dernières modifications pourraient être perdues au rechargement.",
   "game.save.error.backup":
@@ -600,7 +521,6 @@ export default {
   "coach.grade.blunder": "Gaffe",
   "coach.feedback.context.yourLastMove": "Votre dernier coup",
   "coach.feedback.context.selectedMove": "Coup sélectionné",
-  "page.title": "Tempo — Votre prochain coup, expliqué.",
   "position.fen.fields": "doit contenir six champs séparés par des espaces",
   "position.fen.moveNumber": "le numéro du coup doit être un entier positif",
   "position.fen.halfMoveCounter":
@@ -624,12 +544,10 @@ export default {
   "position.fen.emptySquares": "utilisez 1–8 pour les cases vides",
   "game.result.winner": "Les {0} gagnent !",
   "board.tray.label": "Pièces des {0}",
-  "coach.alternatives.description": "Alternative : {0}. {1}. {2}",
+  "coach.alternatives.description": "Alternative : {0}",
   "coach.exploration.open": "Explorer ce coup",
   "coach.exploration.close": "Fermer l’exploration",
   "coach.exploration.note": "Choisis un coup pour le voir sur l’échiquier. C’est une suite possible ; ta partie reste inchangée.",
   "coach.position.evaluation": "Score de la position",
-  "coach.feedback.analysisDetails": "Détails de l’analyse",
   "coach.calculate.refresh": "Actualiser l’analyse",
-  "coach.strategy.change.promotion": "Avec {0}, le pion adverse a été promu en {2} ({1}).",
 } satisfies Catalog;

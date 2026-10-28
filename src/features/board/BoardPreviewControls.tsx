@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { gameMoveLabel } from "../../chess/position";
 import { moveDescription } from "../../chess/moves";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { SquareText } from "./SquareHighlight";
@@ -26,9 +25,6 @@ export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
     >
       <div className="board-preview-heading">
         <span>{t("board.preview.label")}</span>
-        <strong>
-          <SquareText text={gameMoveLabel(inspectionMove)} />
-        </strong>
         <span>
           {ply} / {candidate.continuation.length}
         </span>

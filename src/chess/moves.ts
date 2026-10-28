@@ -5,38 +5,16 @@ import { pieceNameKeys } from "./position";
 export const capturedSquare = (move: Move) =>
   (move.isEnPassant() ? `${move.to[0]}${move.from[1]}` : move.to) as Move["to"];
 
-/** Keep notation visible while giving new players the complete move in words. */
+/** Keep move titles to the moving piece and its source and destination. */
 export function moveDescription(move: Move, t: Translator = english): string {
   const piece = t(pieceNameKeys[move.piece]);
-  let text = t(
+  return t(
     "move.description.normal",
     piece[0].toUpperCase(),
     piece.slice(1),
     move.from,
     move.to,
   );
-  if (move.isKingsideCastle() || move.isQueensideCastle()) {
-    const rank = move.from[1];
-    text = t(
-      "move.description.castle",
-      move.from,
-      move.to,
-      move.isKingsideCastle()
-        ? t("move.description.kingsideRook", rank, rank)
-        : t("move.description.queensideRook", rank, rank),
-    );
-  } else if (move.captured) {
-    text += t(
-      "move.description.capture",
-      t(pieceNameKeys[move.captured]),
-      move.isEnPassant() ? t("move.description.enPassantSquare", capturedSquare(move)) : "",
-    );
-  }
-  if (move.promotion)
-    text += t("move.description.promotion", t(pieceNameKeys[move.promotion]));
-  if (move.san.endsWith("#")) text += t("move.description.checkmate");
-  else if (move.san.endsWith("+")) text += t("move.description.check");
-  return text;
 }
 
 export function uciMove(game: Chess, uci: string): Move {

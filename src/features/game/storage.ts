@@ -2,21 +2,23 @@ import { START_FEN } from "../../chess/position";
 import {
   createStudy,
   parseStudy,
-  SESSION_KEY,
   type Study,
 } from "../../chess/study";
 
+export const SESSION_KEY = "tempo-session-v1";
+const POSITION_KEY = "tempo-position";
 export const RECOVERY_PREFIX = "tempo-recovery-v1:";
 export type SaveRecovery = {
   data: Record<string, string>;
   message: string;
 };
-
-export function readSavedSession(storage?: Pick<Storage, "getItem">): {
+export type SavedSession = {
   study: Study;
   recovery: SaveRecovery | null;
   storageError: string;
-} {
+};
+
+export function readSavedSession(storage?: Pick<Storage, "getItem">): SavedSession {
   const data: Record<string, string> = {};
   let storageError = "";
   const read = (key: string) => {
@@ -41,7 +43,7 @@ export function readSavedSession(storage?: Pick<Storage, "getItem">): {
     }
   }
   // A broken session must not prevent recovery of the separately saved FEN.
-  const fallbackFen = read("tempo-position");
+  const fallbackFen = read(POSITION_KEY);
   let study = createStudy(START_FEN);
   let restoredPosition = false;
   if (fallbackFen !== null) {
@@ -49,7 +51,7 @@ export function readSavedSession(storage?: Pick<Storage, "getItem">): {
       study = createStudy(fallbackFen);
       restoredPosition = true;
     } catch {
-      data["tempo-position"] = fallbackFen;
+      data[POSITION_KEY] = fallbackFen;
     }
   }
   const recovery = Object.keys(data).length
@@ -61,6 +63,15 @@ export function readSavedSession(storage?: Pick<Storage, "getItem">): {
       }
     : null;
   return { study, recovery, storageError };
+}
+
+export function writeSavedSession(
+  study: Study,
+  fen: string,
+  storage: Pick<Storage, "setItem"> = localStorage,
+) {
+  storage.setItem(SESSION_KEY, JSON.stringify(study));
+  storage.setItem(POSITION_KEY, fen);
 }
 
 export function preserveRecovery(

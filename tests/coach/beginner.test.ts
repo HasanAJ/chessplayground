@@ -9,7 +9,7 @@ import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
 import { createTestRoot } from "../helpers/dom";
 
-test("the best-move card pairs notation with a plain move description and the reason", () => {
+test("the best-move card has one descriptive title followed by the reason", () => {
   const candidate = candidatesFor(new Chess().fen(), [
     { rank: 1, depth: 15, pv: ["g1f3", "d7d5"] },
   ])[0];
@@ -23,47 +23,48 @@ test("the best-move card pairs notation with a plain move description and the re
     }),
   );
   const text = html.replace(/<[^>]*>/g, "");
-  assert.match(text, /Nf3/);
-  assert.match(text, /Knight from g1 to f3/);
+  const heading = html.match(/<h3\b[^>]*>(.*?)<\/h3>/s)![1].replace(/<[^>]*>/g, "");
+  assert.equal(heading, "Knight from g1 to f3");
+  assert.match(html, /class="move-strategy-tag"[^>]*>Bring another piece into play<\/span>/);
   assert.match(text, /attacks d4 and e5, helping you control the center/);
-  assert.doesNotMatch(html, /term-trigger|term-definition|Explain center/);
   assert.deepEqual(candidate.explanationFocus?.arrows, [
     { from: "f3", to: "d4" },
     { from: "f3", to: "e5" },
   ]);
 });
 
-test("plain move labels explain castling, capture, en passant, promotion and checkmate", () => {
+test("move titles keep only the original piece and from/to squares for special moves", () => {
   const cases = [
     [
       "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
       "O-O",
-      /king e1 to g1, rook h1 to f1/,
+      "King from e1 to g1",
     ],
     [
       "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1",
       "O-O-O",
-      /king e8 to c8, rook a8 to d8/,
+      "King from e8 to c8",
     ],
     [
       "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1",
       "exd6",
-      /Pawn from e5 to d6, taking the pawn on d5 en passant/,
+      "Pawn from e5 to d6",
     ],
     [
       "4k3/8/8/8/3Pp3/8/8/4K3 b - d3 0 1",
       "exd3",
-      /Pawn from e4 to d3, taking the pawn on d4 en passant/,
+      "Pawn from e4 to d3",
     ],
     [
       "7k/P7/6K1/8/8/8/8/8 w - - 0 1",
       "a8=Q#",
-      /promoting to a queen — checkmate/,
+      "Pawn from a7 to a8",
     ],
-    ["7k/P7/8/8/8/8/8/4K3 w - - 0 1", "a8=N", /promoting to a knight/],
+    ["7k/P7/8/8/8/8/8/4K3 w - - 0 1", "a8=N", "Pawn from a7 to a8"],
+    ["8/k5q1/8/8/8/8/6Q1/7K b - - 0 1", "Qxg2+", "Queen from g7 to g2"],
   ] as const;
   for (const [fen, san, expected] of cases)
-    assert.match(moveDescription(new Chess(fen).move(san)), expected);
+    assert.equal(moveDescription(new Chess(fen).move(san)), expected);
 });
 
 test("explanation highlights follow the actual checking pieces and defense", () => {

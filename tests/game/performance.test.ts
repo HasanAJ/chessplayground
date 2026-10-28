@@ -4,7 +4,8 @@ import { act, createElement, StrictMode } from "react";
 import { Chess } from "chess.js";
 import App from "../../src/app/App";
 import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { addStudyMove, createStudy, SESSION_KEY } from "../../src/chess/study";
+import { addStudyMove, createStudy } from "../../src/chess/study";
+import { SESSION_KEY } from "../../src/features/game/storage";
 import { createTestRoot } from "../helpers/dom";
 
 test("playing a long game applies only the new move, including automatic review", async (t) => {

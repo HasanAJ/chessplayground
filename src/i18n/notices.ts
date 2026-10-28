@@ -39,7 +39,6 @@ const noticeKeys: Record<string, MessageKey> = {
     "coach.review.error.reply",
   "Your computer difficulty could not be saved in this browser.":
     "computer.error.saveDifficulty",
-  "Starting position": "game.history.startingPosition",
   "Browser storage is unavailable or full. Your latest changes may not survive a reload.":
     "game.save.error.unavailable",
   "The original save could not be backed up. Autosave remains paused. Your latest changes may not survive a reload.":

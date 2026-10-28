@@ -7,28 +7,19 @@ import {
   useRef,
   useState,
 } from "react";
-import type { Language } from "../../i18n/translate";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
 import type { GameController } from "../game/useGameController";
+import { MAX_RECOMMENDED_MOVES } from "./candidates";
 import {
-  candidatesFor,
-  MAX_RECOMMENDED_MOVES,
-  recommendedCandidates,
-  type Candidate,
-} from "./candidates";
+  completeAnalysis,
+  localizeCandidates,
+  type CompletedAnalysis,
+  type RecommendationAnalysis,
+} from "./recommendationAnalysis";
 
-type Analysis = {
-  key: string;
-  candidates: Candidate[];
-  depth: number;
-  state: "thinking" | "ready" | "error";
-  language?: Language;
-  error?: string;
-};
-type CompletedAnalysis = Analysis & { state: "ready"; language: Language };
 const SEARCH_OPTIONS = {
-  depth: 18,
-  movetime: 1800,
+  depth: null,
+  movetime: 2000,
   multiPV: MAX_RECOMMENDED_MOVES,
 };
 const MAX_CACHED_ANALYSES = 64;
@@ -41,7 +32,7 @@ export function useRecommendations(game: GameController, paused: boolean) {
     key: string;
     attempt: number;
   } | null>(null);
-  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [analysis, setAnalysis] = useState<RecommendationAnalysis | null>(null);
   const history = useMemo(
     () => ({
       rootFen: game.study.rootFen,
@@ -52,24 +43,14 @@ export function useRecommendations(game: GameController, paused: boolean) {
     [game.study.rootFen, game.history, game.historyPly],
   );
   // FEN alone cannot distinguish positions with different repetition histories.
-  const cacheKey = useMemo(
-    () => JSON.stringify([history, SEARCH_OPTIONS]),
-    [history],
-  );
+  const cacheKey = useMemo(() => JSON.stringify(history), [history]);
   const requested = request?.key === game.analysisKey;
   const current =
     requested && analysis?.key === game.analysisKey && game.playable;
-  const candidates = useMemo(
-    () =>
-      current
-        ? recommendedCandidates(
-            analysis.language === t.language
-              ? analysis.candidates
-              : candidatesFor(game.analysisFen, analysis.candidates, t),
-          )
-        : [],
-    [current, analysis, game.analysisFen, t],
-  );
+  const candidates = useMemo(() => {
+    if (!current || analysis.state !== "ready") return [];
+    return localizeCandidates(analysis, game.analysisFen, t);
+  }, [current, analysis, game.analysisFen, t]);
   const thinking =
     game.playable &&
     requested &&
@@ -87,48 +68,20 @@ export function useRecommendations(game: GameController, paused: boolean) {
       return;
     }
     let cancelled = false;
-    setAnalysis({ key, candidates: [], depth: 0, state: "thinking" });
+    setAnalysis({ key, candidates: [], state: "thinking" });
     const cancelSearch = engine.current!.analyze(
       game.analysisFen,
       {
-        onProgress: (depth) => {
-          if (cancelled) return;
-          startTransition(() => {
-            setAnalysis((previous) =>
-              previous?.key === key ? { ...previous, depth } : previous,
-            );
-          });
-        },
+        onProgress() {},
         onComplete(lines, bestMove, bestLine) {
           if (cancelled) return;
-          let selectedLines = lines;
-          if (bestMove && lines[0]?.pv[0] !== bestMove) {
-            const selected =
-              bestLine?.pv[0] === bestMove
-                ? bestLine
-                : lines.find((line) => line.pv[0] === bestMove);
-            // Older alternatives cannot be compared with an unfinished iteration.
-            selectedLines = selected ? [{ ...selected, rank: 1 }] : [];
-          }
-          const next = candidatesFor(game.analysisFen, selectedLines, t);
-          if (!next.length || next.length !== selectedLines.length) {
-            setAnalysis({
-              key,
-              candidates: [],
-              depth: 0,
-              state: "error",
-              error:
-                "The engine returned no legal candidates. Please retry analysis.",
-            });
+          const ready = completeAnalysis(
+            key, game.analysisFen, lines, bestMove, bestLine, t,
+          );
+          if (ready.state !== "ready") {
+            setAnalysis(ready);
             return;
           }
-          const ready: CompletedAnalysis = {
-            key,
-            candidates: next,
-            depth: selectedLines[0].depth,
-            state: "ready",
-            language: t.language,
-          };
           cache.current.set(cacheKey, ready);
           if (cache.current.size > MAX_CACHED_ANALYSES)
             cache.current.delete(cache.current.keys().next().value!);
@@ -136,7 +89,7 @@ export function useRecommendations(game: GameController, paused: boolean) {
         },
         onError(error) {
           if (!cancelled)
-            setAnalysis({ key, candidates: [], depth: 0, state: "error", error });
+            setAnalysis({ key, candidates: [], state: "error", error });
         },
       },
       history,
@@ -170,7 +123,6 @@ export function useRecommendations(game: GameController, paused: boolean) {
         : {
             key: game.analysisKey,
             candidates: [],
-            depth: 0,
             state: "thinking",
           },
     );

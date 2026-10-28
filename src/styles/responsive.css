@@ -9,10 +9,6 @@
   .strategy-card {
     padding: 20px;
   }
-  .candidate-toggle {
-    padding: 16px 13px;
-    gap: 9px;
-  }
 }
 @media (max-width: 900px) {
   .site-header {
@@ -27,9 +23,6 @@
   }
   .board-panel {
     padding: 22px;
-  }
-  .candidate-body {
-    padding: 0 20px 20px;
   }
   footer {
     flex-direction: column;
@@ -92,19 +85,8 @@
   .fen-controls .small-button {
     grid-column: 1 / -1;
   }
-  .candidate-toggle {
-    gap: 10px;
-  }
-  .candidate-body {
-    padding: 0 16px 16px;
-  }
   .continuation-moves button {
     min-height: 40px;
-  }
-  footer > span:last-child {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px;
   }
   .panel-dialog {
     padding: 14px;

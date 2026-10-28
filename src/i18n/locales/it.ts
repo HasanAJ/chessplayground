@@ -173,14 +173,6 @@ export default {
   "footer.tagline": "Una buona mossa inizia con un po' di comprensione.",
   "footer.engine": "Con Stockfish 19",
   "move.description.normal": "{0}{1} da {2} a {3}",
-  "move.description.castle": "Arrocco: re da {0} a {1}, torre {2}",
-  "move.description.kingsideRook": "da h{0} a f{1}",
-  "move.description.queensideRook": "da a{0} a d{1}",
-  "move.description.capture": ", catturando {0}{1}",
-  "move.description.enPassantSquare": " in {0} en passant",
-  "move.description.promotion": ", promuovendo a {0}",
-  "move.description.checkmate": " — scacco matto",
-  "move.description.check": " — scacco",
   "position.error.missingBothKings":
     "Aggiungi entrambi i re per giocare o analizzare.",
   "position.error.pawnOnEdge":
@@ -192,8 +184,6 @@ export default {
     "I contatori delle mosse nel FEN devono essere numeri interi nell'intervallo supportato.",
   "position.error.castlingRights":
     "Ogni diritto di arrocco (KQkq) va indicato una sola volta, oppure usa «-» per nessuno.",
-  "position.error.emptySquaresFen":
-    "FEN non valido: usa 1–8 per le caselle vuote.",
   "position.error.enPassantCounter":
     "Una casella en passant richiede un contatore delle semimosse a zero, perché l'ultima mossa era di pedone.",
   "position.error.enPassantPawn":
@@ -220,8 +210,6 @@ export default {
   "board.flip": "Ruota scacchiera",
   "board.openCoach": "Vai all'allenatore",
   "chess.piece.label": "{1} · {0}",
-  "board.evaluation.calculateFirst":
-    "Calcola le migliori mosse per vedere la valutazione",
   "board.evaluation.previewPaused": "Valutazione sospesa durante l'anteprima",
   "board.evaluation.legend":
     "+ = vantaggio del Bianco · − = vantaggio del Nero",
@@ -236,138 +224,111 @@ export default {
   "board.tray.add": "Aggiungi: {1} · {0} · Clicca o trascina sulla scacchiera",
   "coach.alternatives.heading": "Altre buone mosse",
   "coach.move.play": "Gioca {0}",
-  "coach.lesson.mateThreat.advice":
-    "Controlla gli scacchi avversari e se il tuo re ha una risposta sicura.",
   "coach.lesson.mateThreat.focus": "Vedi la minaccia di matto",
   "coach.lesson.undefended.consequence":
-    "lascia il tuo pezzo ({0}) in {1} senza difesa. Il pezzo avversario ({2}) può catturarlo con {3}",
+    "Il tuo pezzo ({0}) in {1} non ha difensori. Il pezzo avversario ({2}) può catturarlo.",
   "coach.lesson.defendedCapture.consequence":
-    "permette al pezzo avversario ({0}) di catturare il tuo pezzo ({1}) in {2} con {3}. Ha un difensore: segui il resto dello scambio",
-  "coach.lesson.undefended.advice":
-    "Controlla quali tuoi pezzi possono essere catturati e se puoi ricatturare.",
-  "coach.lesson.defendedCapture.advice":
-    "Confronta le catture di entrambi i lati, inclusa la risposta successiva.",
+    "Il pezzo avversario ({0}) può catturare il tuo pezzo ({1}) in {2}. Forse puoi ricatturare.",
   "coach.lesson.capture.focus": "Vedi il pezzo che possono catturare",
   "coach.lesson.laterCapture.consequence":
-    "permette di arrivare a {0} nella linea mostrata, dove il pezzo avversario ({1}) cattura il tuo pezzo ({2}) in {3}. Possono seguire altri scambi",
-  "coach.lesson.forcedReply.advice":
-    "Segui gli scacchi oltre alle catture. Uno scacco può costringerti a rispondere prima di proteggere un altro pezzo.",
-  "coach.lesson.laterCapture.advice":
-    "Guarda oltre la prima risposta: segui anche le catture successive prima di valutare lo scambio.",
+    "Più avanti, il pezzo avversario ({0}) cattura il tuo pezzo ({1}) in {2}. Possono seguire altri scambi.",
   "coach.lesson.laterCapture.focus": "Vedi la cattura successiva nella linea",
   "coach.piece.yoursOnSquare": "il tuo pezzo ({0}) in {1}",
   "common.join.and": " e ",
   "coach.lesson.fork.consequence":
-    "permette una forchetta: il pezzo avversario ({0}) in {1} attacca {2} contemporaneamente",
-  "coach.lesson.fork.advice":
-    "Cerca risposte che attaccano due pezzi insieme. Muoverne o proteggerne uno può lasciare l'altro sotto attacco.",
+    "Il pezzo avversario ({0}) può andare in {1} e attaccare {2} contemporaneamente.",
   "coach.lesson.fork.focus": "Vedi i due attacchi",
-  "coach.lesson.compareCapture":
-    "Cerca catture e segui le risposte prima di valutare uno scambio.",
-  "coach.lesson.compareDefense":
-    "Controlla quali pezzi hanno bisogno di protezione.",
-  "coach.lesson.compareEscape":
-    "Controlla se un pezzo è sotto attacco prima di iniziare un altro piano.",
-  "coach.lesson.compareAlternative":
-    "Controlla scacchi, catture e attacchi avversari prima di scegliere.",
   "coach.review.error.needsAnalysis":
     "La mossa richiede l'analisi della posizione risultante.",
-  "coach.review.checkmate":
-    "{0} dà scacco matto. Il re avversario non ha scampo: hai concluso la partita.",
-  "coach.review.best": "{0} è la scelta migliore qui. {1}",
   "coach.review.good.draw":
-    "ottiene una patta, vicina al miglior risultato trovato",
-  "coach.review.good.winningMate": "mantiene il matto nella linea analizzata",
+    "Questa mossa assicura la patta.",
+  "coach.review.good.winningMate":
+    "Hai ancora un matto forzato.",
   "coach.review.good.losingMate":
-    "resiste quasi quanto la miglior difesa trovata, anche se l'analisi vede ancora un matto contro di te",
+    "È vicina alla migliore difesa, ma il tuo re resta sotto minaccia di matto.",
   "coach.review.good.winning":
-    "mantiene il tuo forte vantaggio. La posizione resta ottima",
+    "Mantieni un netto vantaggio.",
   "coach.review.good.losing":
-    "resiste quasi quanto la migliore opzione in una posizione già difficile",
+    "È vicina alla migliore scelta in una posizione difficile.",
   "coach.review.good.balanced":
-    "sembra buona qui, con possibilità vicine a {0}",
+    "Mantiene quasi le stesse possibilità della mossa migliore.",
   "coach.review.consequence.draw":
-    "porta alla patta. {0} offriva migliori possibilità",
+    "La partita finisce in patta. La mossa migliore offriva più possibilità.",
   "coach.review.consequence.allowsMate":
-    "permette un matto forzato nella linea analizzata",
-  "coach.review.consequence.missesMate": "lascia sfuggire un matto forzato",
+    "Il tuo avversario può forzare il matto.",
+  "coach.review.consequence.missesMate":
+    "Questa mossa manca un matto forzato.",
   "coach.review.consequence.worseChances":
-    "offre all'avversario più possibilità rispetto a {0}",
-  "coach.review.response.draw":
-    "Prova l'altra mossa per vedere per cosa potresti continuare a giocare.",
-  "coach.review.response.preview":
-    "Segui la risposta per vedere cosa potrebbero fare dopo.",
+    "Il tuo avversario ottiene più possibilità rispetto alla mossa migliore.",
   "coach.explanation.pressure.title": "Aumenta la pressione su {0}",
   "coach.explanation.pressure.text":
-    "Il tuo pezzo ({0}) si unisce a un altro per attaccare il pezzo avversario ({1}) in {2}. Ora devono gestire più di un attaccante.",
+    "Il tuo pezzo ({0}) si unisce a un altro pezzo per attaccare il pezzo avversario ({1}) in {2}.",
   "coach.explanation.attack.focus": "Vedi l'attacco al pezzo avversario ({0})",
   "coach.explanation.supportCenter.title": "Sostieni il centro",
   "coach.explanation.defend.title": "Difendi il tuo pezzo ({0})",
   "coach.explanation.defend.text":
-    "Il tuo pezzo ({0}) in {1} ora difende il pezzo ({2}) in {3}. Se viene catturato, il tuo pezzo ({4}) potrebbe ricatturare: controlla la risposta prima dello scambio.",
+    "Il tuo pezzo ({0}) ora difende il pezzo ({1}) in {2}.",
   "coach.explanation.defend.focus": "Vedi la difesa del tuo pezzo ({0})",
   "coach.explanation.escapeAttack.title":
     "Allontana il tuo pezzo ({0}) dal pericolo",
   "coach.explanation.escapeAttack.text":
-    "Il tuo pezzo ({0}) era sotto attacco in {1}. In {2}, nessun pezzo avversario lo attacca al momento.",
+    "Il tuo pezzo ({0}) non è più sotto attacco.",
   "coach.explanation.escapeAttack.focus":
     "Vedi il tuo pezzo ({0}) uscire dal pericolo",
+  "coach.explanation.attack.text":
+    "Il tuo pezzo ({0}) ora attacca il pezzo avversario ({1}) in {2}.",
   "coach.explanation.attack.title": "Attacca il pezzo avversario ({0})",
-  "coach.explanation.attack.existing":
-    "Il tuo pezzo ({0}) in {1} attacca il pezzo avversario ({2}) in {3}. Attenzione a una ritirata, una difesa o una minaccia avversaria.",
-  "coach.explanation.attack.new":
-    "Il tuo pezzo ({0}) in {1} ora attacca il pezzo avversario ({2}) in {3}. Potrebbero spostarlo o difenderlo: guarda la risposta prima di contare sulla cattura.",
   "coach.piece.onSquare": "{0} in {1}",
   "coach.explanation.check.plural": "I tuoi pezzi ({0}) danno scacco.",
   "coach.explanation.check.singular": "Il tuo pezzo ({0}) dà scacco.",
+  "coach.explanation.promotion.check":
+    "Il tuo pedone promuove a {0} in {1} con scacco.",
+  "coach.explanation.promotion.checkmate":
+    "Il tuo pedone promuove a {0} in {1} e dà scacco matto.",
   "coach.explanation.promotion.prefix": "Il tuo pedone promuove a {0} in {1}. ",
   "coach.explanation.checkmate.title": "Concludi con scacco matto",
   "coach.explanation.checkmate.plural":
-    "{0}I tuoi pezzi ({1}) danno scacco matto. Il re avversario non ha scampo.",
+    "{0}I tuoi pezzi ({1}) danno scacco matto.",
   "coach.explanation.checkmate.singular":
-    "{0}Il tuo pezzo ({1}) dà scacco matto. Il re avversario non ha scampo.",
+    "{0}Il tuo pezzo ({1}) dà scacco matto.",
   "coach.explanation.checkmate.focus": "Vedi lo scacco matto",
   "coach.explanation.promotion.title": "Promuovi il pedone",
-  "coach.explanation.promotion.text":
-    "Ora hai un pezzo ({0}) al posto del pedone. Guarda la risposta avversaria.",
   "coach.explanation.promotion.focus": "Vedi la promozione",
   "coach.explanation.castle.title": "Arrocca e attiva la torre",
   "coach.explanation.castle.text":
     "L'arrocco allontana il re dal centro e avvicina la torre al centro.{0}",
   "coach.explanation.castle.focus": "Vedi il movimento di re e torre",
   "coach.explanation.escapeCheck.title": "Sottrai il re allo scacco",
-  "coach.explanation.escapeCheck.text": "{0} risolve lo scacco{1}.{2}",
+  "coach.explanation.escapeCheck.text":
+    "Esci dallo scacco{0}.{1}",
   "coach.explanation.escapeCheck.capture":
-    " e cattura il pezzo avversario ({0}) in {1}",
+    " catturando il pezzo avversario ({0}) in {1}",
   "coach.explanation.escapeCheck.block":
     " bloccando l'attacco con il tuo pezzo ({0})",
   "coach.explanation.escapeCheck.kingMove": " spostando il re in {0}",
-  "coach.explanation.escapeCheck.safe":
-    " Il re non è più sotto attacco e puoi continuare a giocare.",
   "coach.explanation.escapeCheck.focus": "Vedi come risolvere lo scacco",
   "coach.explanation.captureCheck.title": "Cattura con scacco",
+  "coach.explanation.captureCheck.text":
+    "Il tuo pezzo ({0}) cattura il pezzo avversario ({1}) in {2}{3} e dà scacco.",
   "coach.explanation.capture.title": "Cattura il pezzo avversario ({0})",
   "coach.explanation.capture.text":
-    "Il tuo pezzo ({0}) cattura il pezzo avversario ({1}) in {2}{3}. {4}",
+    "Il tuo pezzo ({0}) cattura il pezzo avversario ({1}) in {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant, arrivando in ",
-  "coach.explanation.capture.attacked":
-    "I pezzi avversari attaccano il tuo pezzo ({0}) in {1}: guarda la risposta per verificare se ricatturano.",
-  "coach.explanation.capture.safe":
-    "Nessun pezzo avversario attacca al momento il tuo pezzo ({0}) in {1}.",
   "coach.explanation.capture.focus": "Vedi la cattura e i possibili attaccanti",
+  "coach.explanation.materialRisk.text":
+    "In questa linea, cedi più materiale di quanto catturi.",
+  "coach.explanation.materialRisk.focus": "Vedi la possibile cattura",
   "coach.explanation.check.title": "Dai scacco",
-  "coach.explanation.check.text":
-    "{0} L'avversario deve rispondere all'attacco al re.",
   "coach.explanation.check.focus": "Vedi l'attacco al re avversario",
   "coach.explanation.develop.centerControl":
     "Da qui attacca {0}, aiutandoti a controllare il centro.",
   "coach.explanation.develop.title": "Sviluppa un altro pezzo",
   "coach.explanation.develop.text":
-    "Il tuo pezzo ({0}) lascia la traversa iniziale per {1}. {2}",
+    "Il tuo pezzo ({0}) entra in gioco. {1}",
   "coach.explanation.develop.focus": "Vedi il pezzo e le caselle centrali",
   "coach.explanation.center.title": "Occupa il centro",
   "coach.explanation.center.text":
-    "Il pedone guadagna spazio al centro in {0}. Attacca {1}, limitando le caselle sicure per i pezzi avversari.",
+    "Il pedone guadagna spazio al centro e attacca {0}.",
   "coach.explanation.center.focus": "Vedi il controllo centrale del pedone",
   "coach.explanation.openFile.title": "Porta la torre su una colonna aperta",
   "coach.explanation.openFile.text": "La colonna {0} è aperta: non ci sono pedoni su questa colonna.",
@@ -382,54 +343,31 @@ export default {
   "coach.explanation.nearCenter.focus": "Vedi la mossa vicino al centro",
   "coach.explanation.reposition.title": "Muovi il pezzo ({0}) in {1}",
   "coach.explanation.reposition.focus": "Vedi la mossa del tuo pezzo ({0})",
-  "coach.reply.checkmate": "Possono dare matto con {0} ({1} in {2}).",
-  "coach.reply.castle": "arroccare {0}",
+  "coach.reply.checkmate":
+    "Il pezzo avversario ({0}) può andare in {1}{2} e dare scacco matto.",
+  "coach.reply.castle":
+    "Possono arroccare {0}{1}.",
   "chess.castling.kingside": "corto",
   "chess.castling.queenside": "lungo",
+  "coach.reply.recapture":
+    "Il pezzo avversario ({0}) può catturare il tuo pezzo ({1}) in cambio{2}{3}.",
   "coach.reply.capture":
-    "catturare il tuo pezzo ({0}) in {1}{2} con il loro pezzo ({3})",
+    "Il pezzo avversario ({0}) può catturare il tuo pezzo ({1}) in {2}{3}{4}{5}.",
   "coach.reply.enPassant": " en passant",
-  "coach.reply.move": "spostare il loro pezzo ({0}) in {1}",
+  "coach.reply.move":
+    "Il pezzo avversario ({0}) può andare in {1}{2}{3}.",
   "coach.reply.promotion": " e promuovere a {0}",
   "coach.reply.check": " e dare scacco",
-  "coach.reply.summary": "Possono {0}{1}{2} ({3}).",
   "coach.warning.check": "Il tuo re è sotto scacco. Devi parare lo scacco.",
   "coach.warning.undefended": "Il tuo pezzo ({0}) in {1} è attaccato e non è difeso.",
-  "coach.warning.defended": "Il tuo pezzo ({0}) in {1} è attaccato e ha un difensore. Controlla lo scambio prima di lasciarlo lì.",
-  "coach.warning.general":
-    "Prima di muovere, controlla scacchi, catture e attacchi ai pezzi non protetti. Inizia dalla risposta probabile sotto la tua mossa.",
-  "coach.strategy.center": "I tuoi pezzi controllano {0} al centro.",
-  "coach.strategy.line.checkmate":
-    "{0} conclude questa linea con scacco matto.",
-  "coach.strategy.line.capture":
-    "L'anteprima termina con una cattura: {0} gioca {1}. Lo scambio può continuare.",
-  "coach.strategy.material.gain.singular":
-    "In questa possibile linea guadagneresti l'equivalente di {0} pedone di materiale.",
-  "coach.strategy.material.gain.plural":
-    "In questa possibile linea guadagneresti l'equivalente di {0} pedoni di materiale.",
-  "coach.strategy.material.loss.singular":
-    "In questa possibile linea cederesti l'equivalente di {0} pedone di materiale.",
-  "coach.strategy.material.loss.plural":
-    "In questa possibile linea cederesti l'equivalente di {0} pedoni di materiale.",
-  "coach.strategy.change.check":
-    "{0} mette il re sotto scacco. Risolvere lo scacco viene prima di tutto.",
-  "coach.strategy.change.capture": "Con l’ultima mossa, {1}, l’avversario ha catturato il tuo pezzo ({0}).",
   "coach.continuation.replyHeading": "Possibile risposta dell’avversario",
   "coach.continuation.label": "Una possibile continuazione",
-  "coach.continuation.previewMove": "Anteprima della mossa {0}: {1} gioca {2}",
+  "coach.continuation.previewMove": "Anteprima della mossa {0}: {1}, {2}",
   "engine.error.noLegalCandidates":
     "Il motore non ha restituito mosse legali. Riprova l'analisi.",
-  "coach.position.heading": "Dettagli della posizione",
-  "coach.position.changed": "COSA È CAMBIATO",
-  "coach.position.hideSquares": "Nascondi caselle chiave",
-  "coach.position.showSquares": "Evidenzia caselle chiave",
-  "coach.position.squaresDescription":
-    "I contorni verde acqua indicano le caselle descritte: {0}.",
   "coach.analysis.status.thinking": "Analisi in corso…",
   "coach.analysis.status.unavailable": "Motore non disponibile",
   "coach.analysis.status.ready": "Consigli pronti",
-  "coach.analysis.reviewingPosition":
-    "Revisione di {0}. L'analisi riguarda questa posizione.",
   "coach.analysis.errorHeading": "Riproviamo.",
   "coach.analysis.retry": "Riprova analisi",
   "coach.analysis.label": "Mossa suggerita e analisi",
@@ -439,12 +377,9 @@ export default {
     "Analisi delle tue opzioni e delle risposte da questa posizione precedente.",
   "coach.analysis.search.live":
     "Analisi delle tue opzioni e delle risposte avversarie. Puoi continuare a giocare.",
-  "coach.analysis.search.depth": "Profondità di ricerca: {0}",
-  "coach.analysis.search.estimate": "Di solito pronto in un paio di secondi",
   "coach.warnings.heading": "Fai attenzione a",
   "coach.warnings.description":
     "Passa il puntatore o usa il focus per evidenziare il pezzo minacciato e gli attaccanti.",
-  "coach.best.escapeCheck": "Esci dallo scacco",
   "coach.best.heading": "Mossa suggerita",
   "coach.best.forced": "Unica mossa legale",
   "coach.best.play": "Gioca la mossa migliore {0}",
@@ -463,24 +398,17 @@ export default {
   "coach.feedback.pending":
     "Esame della tua mossa e delle migliori alternative…",
   "coach.feedback.retry": "Riprova revisione",
-  "coach.feedback.beforeYouMove": "Prima di muovere",
   "coach.feedback.tryInstead": "Prova invece {0}",
   "coach.feedback.previewMove": "Vedi {0}",
   "coach.feedback.likelyReply": "Possibile risposta dell’avversario",
-  "coach.feedback.quickReview": "Revisione rapida",
-  "coach.feedback.evaluationDrop": "{0} di calo nella valutazione",
   "coach.explanation.matingAttack.title": "Continua l'attacco di matto",
   "coach.explanation.matingAttack.text":
-    "Secondo questa analisi, c'è matto in {0} mosse iniziando con {1}. Segui le risposte per capire l'attacco.",
+    "Questa mossa inizia un matto forzato in {0} mosse.",
   "coach.explanation.matingAttack.focus": "Vedi l'inizio dell'attacco di matto",
   "coach.explanation.mateDefense.title": "Trova la difesa più tenace",
   "coach.explanation.mateDefense.text":
-    "Il re è in grave pericolo: l'analisi trova ancora un matto forzato dopo {0}. Segui gli scacchi avversari per capire il pericolo.",
+    "Il tuo re resta sotto minaccia di un matto forzato.",
   "coach.explanation.mateDefense.focus": "Vedi la mossa difensiva",
-  "coach.reply.unavailable":
-    "L'anteprima non include una risposta. Prova la mossa per esplorare il seguito.",
-  "coach.reply.terminal.checkmate": "È scacco matto. Non hanno risposte.",
-  "coach.reply.terminal.draw": "Questa mossa conclude la partita in patta.",
   "coach.status.checkmate": "Scacco matto",
   "coach.status.draw": "Patta",
   "coach.status.previewCheck": "Anteprima · Scacco",
@@ -493,26 +421,16 @@ export default {
   "coach.status.yourTurn": "Tocca a te",
   "coach.panel.label": "Analisi della posizione",
   "coach.panel.heading": "Il tuo allenatore",
-  "coach.panel.backToBoard": "Torna alla scacchiera ↑",
   "coach.calculate.label.waiting": "In attesa del computer",
   "coach.calculate.label.thinking": "Calcolo delle migliori mosse",
   "coach.calculate.label.ready": "Calcola le migliori mosse",
   "coach.calculate.text.waiting": "In attesa del computer…",
   "coach.calculate.text.thinking": "Calcolo in corso…",
   "common.dismissError": "Chiudi errore",
-  "game.history.controls": "Controlli della cronologia",
   "game.history.backToLatest": "Torna all'ultima",
   "coach.context.preview": "Anteprima · {0}",
-  "coach.context.reviewingUpdating":
-    "Revisione di {0} · Aggiornamento dell'analisi",
-  "coach.context.reviewingReady":
-    "Revisione di {0} · L'analisi riguarda questa posizione",
-  "coach.context.reviewingIdle":
-    "Revisione di {0} · Analizza quando vuoi un consiglio",
   "computer.status.movingSoon": "Il computer muoverà tra poco…",
   "computer.status.choosingReply": "Il computer sta scegliendo una risposta…",
-  "coach.context.updating":
-    "Aggiornamento dell'analisi di {0} · Puoi continuare a giocare",
   "coach.panel.returnToGame": "Torna alla partita",
   "computer.status.invalidPosition":
     "Prepara una posizione legale con entrambi i re per giocare contro il computer.",
@@ -536,7 +454,6 @@ export default {
   "computer.settings.difficulty": "La tua sfida",
   "common.retry": "Riprova",
   "common.done": "Fatto",
-  "game.history.startingPosition": "Posizione iniziale",
   "game.save.error.unavailable":
     "Lo spazio del browser è pieno o non disponibile. Le ultime modifiche potrebbero andare perse ricaricando.",
   "game.save.error.backup":
@@ -602,7 +519,6 @@ export default {
   "coach.grade.blunder": "Grave errore",
   "coach.feedback.context.yourLastMove": "La tua ultima mossa",
   "coach.feedback.context.selectedMove": "Mossa selezionata",
-  "page.title": "Tempo — La tua prossima mossa, spiegata.",
   "position.fen.fields": "deve contenere sei campi separati da spazi",
   "position.fen.moveNumber":
     "il numero della mossa deve essere un intero positivo",
@@ -627,12 +543,10 @@ export default {
   "position.fen.emptySquares": "usa 1–8 per le caselle vuote",
   "game.result.winner": "{0} vince!",
   "board.tray.label": "Pezzi di {0}",
-  "coach.alternatives.description": "Alternativa: {0}. {1}. {2}",
+  "coach.alternatives.description": "Alternativa: {0}",
   "coach.exploration.open": "Esplora questa mossa",
   "coach.exploration.close": "Chiudi esplorazione",
   "coach.exploration.note": "Seleziona una mossa per vederla sulla scacchiera. È una possibile continuazione; la tua partita resta invariata.",
   "coach.position.evaluation": "Punteggio della posizione",
-  "coach.feedback.analysisDetails": "Dettagli dell’analisi",
   "coach.calculate.refresh": "Aggiorna analisi",
-  "coach.strategy.change.promotion": "Con {0}, il pedone avversario è stato promosso in {2} ({1}).",
 } satisfies Catalog;

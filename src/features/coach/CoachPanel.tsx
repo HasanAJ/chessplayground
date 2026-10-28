@@ -14,12 +14,11 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { ending, gameMoveLabel, sideName } from "../../chess/position";
+import { moveDescription } from "../../chess/moves";
 import type { GameController } from "../game/useGameController";
 import { CoachOptions } from "../computer/CoachOptions";
-import type {
-  ComputerSettings,
-  ComputerTurn,
-} from "../computer/useComputerOpponent";
+import type { ComputerSettings } from "../computer/useComputerSettings";
+import type { ComputerTurn } from "../computer/useComputerTurn";
 import type { BoardPreview } from "../board/useBoardPreview";
 import { PromotionCard } from "../game/PromotionCard";
 import { MoveFeedback } from "./MoveFeedback";
@@ -64,14 +63,13 @@ export function CoachPanel({
   const [collapsedFeedbackKey, setCollapsedFeedbackKey] = useState<
     string | null
   >(null);
+  const [hiddenFeedbackKey, setHiddenFeedbackKey] = useState<string | null>(null);
   const {
     analysisGame,
     analysisTerminal,
     terminal,
     history,
-    historyPly,
     reviewing,
-    reviewLabel: rawReviewLabel,
     notice,
     error,
     setError,
@@ -101,30 +99,21 @@ export function CoachPanel({
     setEnabled: setComputer,
   } = settings;
   const turn = analysisGame.turn();
-  const reviewLabel = translateNotice(rawReviewLabel, t);
   const feedbackMove = history[feedbackPly - 1];
   const calculateReason = translateNotice(game.positionIssue ?? "", t);
-  const turnStatus = displayedEnding
-    ? (boardPreview ? preview.previewGame! : analysisGame).isCheckmate()
-      ? t("coach.status.checkmate")
-      : t("coach.status.draw")
-    : boardPreview
-      ? checkedKing
-        ? t("coach.status.previewCheck")
-        : t("coach.status.preview")
-      : checkedKing
-        ? t("coach.status.check")
-        : computer && optionsOpen
-          ? t("coach.status.paused")
-          : botTurn
-            ? botState === "waiting"
-              ? t("coach.status.replying")
-              : t("coach.status.thinking")
-            : reviewing
-              ? t("coach.status.reviewing")
-              : computer
-                ? t("coach.status.yourTurn")
-                : t(turn === "w" ? "board.turn.white" : "board.turn.black");
+  function turnStatus() {
+    if (displayedEnding)
+      return t(displayedGame.isCheckmate() ? "coach.status.checkmate" : "coach.status.draw");
+    if (boardPreview)
+      return t(checkedKing ? "coach.status.previewCheck" : "coach.status.preview");
+    if (checkedKing) return t("coach.status.check");
+    if (computer && optionsOpen) return t("coach.status.paused");
+    if (botTurn)
+      return t(botState === "waiting" ? "coach.status.replying" : "coach.status.thinking");
+    if (reviewing) return t("coach.status.reviewing");
+    if (computer) return t("coach.status.yourTurn");
+    return t(turn === "w" ? "board.turn.white" : "board.turn.black");
+  }
   const showRefresh =
     analysisRequested && game.playable && !analysisTerminal && !botTurn;
   const calculateDisabled =
@@ -133,7 +122,7 @@ export function CoachPanel({
     thinking ? "coach.analysis.status.thinking" : "coach.calculate.refresh",
   );
   function calculate() {
-    setCollapsedFeedbackKey(feedback?.key ?? null);
+    setHiddenFeedbackKey(feedback?.key ?? null);
     calculateBestMoves();
   }
   return (
@@ -150,12 +139,9 @@ export function CoachPanel({
               className={`turn-status ${checkedKing ? "is-check" : ""}`}
               role="status"
             >
-              {turnStatus}
+              {turnStatus()}
             </span>
           </div>
-          <a className="mobile-board-link" href="#board">
-            {t("coach.panel.backToBoard")}
-          </a>
         </div>
         <div className="coach-header-actions">
           <CoachOptions
@@ -196,29 +182,33 @@ export function CoachPanel({
         </div>
       </div>
 
-      {game.playable && feedback && feedbackMove && (
-        <MoveFeedback
-          key={feedback.key}
-          result={feedback}
-          moveLabel={`${gameMoveLabel(feedbackMove)} · ${sideName(feedbackMove.color, t)}`}
-          context={
-            reviewing
-              ? "coach.feedback.context.selectedMove"
-              : computer && feedbackMove.color === humanSide
-                ? "coach.feedback.context.yourLastMove"
-                : "coach.feedback.context.lastMove"
-          }
-          onReanalyze={onReviewRetry}
-          onInspect={inspectMove}
-          preview={preview.inspection}
-          collapsed={collapsedFeedbackKey === feedback.key}
-          onToggle={() =>
-            setCollapsedFeedbackKey((key) =>
-              key === feedback.key ? null : feedback.key,
-            )
-          }
-        />
-      )}
+      {game.playable &&
+        feedback &&
+        feedbackMove &&
+        feedback.key !== hiddenFeedbackKey && (
+          <MoveFeedback
+            key={feedback.key}
+            result={feedback}
+            move={feedbackMove}
+            moveLabel={moveDescription(feedbackMove, t)}
+            context={
+              reviewing
+                ? "coach.feedback.context.selectedMove"
+                : computer && feedbackMove.color === humanSide
+                  ? "coach.feedback.context.yourLastMove"
+                  : "coach.feedback.context.lastMove"
+            }
+            onReanalyze={onReviewRetry}
+            onInspect={inspectMove}
+            preview={preview.inspection}
+            collapsed={collapsedFeedbackKey === feedback.key}
+            onToggle={() =>
+              setCollapsedFeedbackKey((key) =>
+                key === feedback.key ? null : feedback.key,
+              )
+            }
+          />
+        )}
       {!showRefresh && (
         <div className="calculation-controls">
           <button
@@ -285,28 +275,13 @@ export function CoachPanel({
         />
       )}
       {reviewing && (
-        <section
-          className="history-review"
-          aria-label={t("game.history.controls")}
+        <button
+          className="history-latest"
+          onClick={() => showHistory(history.length)}
         >
-          <p className="history-position-label" role="status">
-            <span>{t("coach.status.reviewing")}</span>
-            <strong>
-              <SquareText text={reviewLabel} />
-            </strong>
-          </p>
-          <span className="history-count">
-            {historyPly} / {history.length}
-          </span>
-          <button
-            className="history-latest"
-            aria-label={t("game.history.backToLatest")}
-            onClick={() => showHistory(history.length)}
-          >
-            <span>{t("game.history.backToLatest")}</span>
-            <ArrowRight size={14} />
-          </button>
-        </section>
+          {t("game.history.backToLatest")}
+          <ArrowRight size={14} />
+        </button>
       )}
 
       <RecommendationsPanel
@@ -319,49 +294,28 @@ export function CoachPanel({
         presentation={presentation}
         onNewGame={onNewGame}
       />
-      {game.playable && (
+      {game.playable && (boardPreview || botBusy) && (
         <div
           className={`coach-status ${thinking || botBusy ? "coach-status-thinking" : ""}`}
           role={thinking || botBusy ? "status" : undefined}
         >
-          {(boardPreview || reviewing || thinking || botBusy) &&
-            (boardPreview || reviewing ? (
-              <Eye size={14} />
-            ) : botBusy && botState === "waiting" ? (
-              <Clock3 size={14} />
-            ) : (
-              <LoaderCircle size={14} className="spin" />
-            ))}
+          {boardPreview ? (
+            <Eye size={14} />
+          ) : botState === "waiting" ? (
+            <Clock3 size={14} />
+          ) : (
+            <LoaderCircle size={14} className="spin" />
+          )}
           <span>
             <SquareText
               text={
                 inspectionMove
                   ? t("coach.context.preview", gameMoveLabel(inspectionMove))
-                  : reviewing
-                    ? thinking
-                      ? t(
-                          "coach.context.reviewingUpdating",
-                          reviewLabel,
-                        )
-                      : analysisRequested
-                        ? t(
-                            "coach.context.reviewingReady",
-                            reviewLabel,
-                          )
-                        : t(
-                            "coach.context.reviewingIdle",
-                            reviewLabel,
-                          )
-                    : botBusy
-                      ? botState === "waiting"
-                        ? t("computer.status.movingSoon")
-                        : t("computer.status.choosingReply")
-                      : thinking
-                        ? t(
-                            "coach.context.updating",
-                            sideName(turn, t),
-                          )
-                        : ""
+                  : botBusy
+                    ? botState === "waiting"
+                      ? t("computer.status.movingSoon")
+                      : t("computer.status.choosingReply")
+                    : ""
               }
             />
           </span>

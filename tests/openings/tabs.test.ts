@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import App from "../../src/app/App";
 import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { SESSION_KEY } from "../../src/chess/study";
+import { SESSION_KEY } from "../../src/features/game/storage";
 import { createTestRoot } from "../helpers/dom";
 
 test("opening lessons preserve the saved game and cancel a pending computer move until Play resumes", async (t) => {

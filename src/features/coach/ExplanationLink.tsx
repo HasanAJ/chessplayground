@@ -1,6 +1,6 @@
 import { Eye } from "lucide-react";
 import { SquareText } from "../board/SquareHighlight";
-import type { BoardFocus } from "./explanations";
+import type { BoardFocus } from "./boardFocus";
 import { movePreviewEvents, type MovePreviewProps } from "./previewEvents";
 
 export function ExplanationLink({

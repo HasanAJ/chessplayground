@@ -26,7 +26,7 @@ export function Continuation({ candidate, preview, onInspect }: MovePreviewProps
                 "coach.continuation.previewMove",
                 index + 1,
                 sideName(move.color, t),
-                move.san,
+                description,
               )}
               aria-pressed={current}
               {...movePreviewEvents(onInspect, candidate, index + 1, focus)}
@@ -38,13 +38,6 @@ export function Continuation({ candidate, preview, onInspect }: MovePreviewProps
                   : index === 1
                     ? t("coach.continuation.replyHeading")
                     : sideName(move.color, t)}
-              </span>
-              <span className="continuation-notation">
-                <small>
-                  {move.before.split(" ")[5]}
-                  {move.color === "w" ? "." : "…"}
-                </small>{" "}
-                <SquareText text={move.san} focusable={false} />
               </span>
               <span className="continuation-description">
                 <SquareText text={description} focusable={false} />

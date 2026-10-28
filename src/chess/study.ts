@@ -14,7 +14,6 @@ export type Study = {
   updatedAt: string;
 };
 export const ROOT = "root";
-export const SESSION_KEY = "tempo-session-v1";
 const MAX_STUDY_NODES = 10000;
 
 export function createStudy(fen: string, name = "Untitled game"): Study {
@@ -43,10 +42,6 @@ export function nodePath(study: Study, id = study.tipId): StudyNode[] {
     id = node.parent;
   }
   return path.reverse();
-}
-
-export function gameAt(study: Study, id = study.tipId): Chess {
-  return replayStudy(study, id).game;
 }
 
 /** Collect move details during replay instead of traversing the history again. */

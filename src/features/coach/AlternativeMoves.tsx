@@ -7,6 +7,7 @@ import type { Candidate } from "./candidates";
 import type { CoachPresentation } from "./useCoachPresentation";
 import { moveDescription } from "../../chess/moves";
 import { SquareText } from "../board/SquareHighlight";
+import { pieceImage } from "../board/pieces";
 
 type Props = {
   candidates: Candidate[];
@@ -34,6 +35,7 @@ export function AlternativeMoves({
       <div className="candidate-list">
         {candidates.slice(1).map((candidate, index) => {
           const i = index + 1;
+          const description = moveDescription(candidate.move, t);
           return (
             <article
               className={`candidate-card ${active === i ? "expanded" : ""}`}
@@ -50,33 +52,35 @@ export function AlternativeMoves({
                 onFocus={() => setHovered(i)}
                 onBlur={() => setHovered(null)}
                 aria-expanded={active === i}
-                aria-label={t(
-                  "coach.alternatives.description",
-                  candidate.move.san,
-                  moveDescription(candidate.move, t),
+                aria-label={[
+                  t("coach.alternatives.description", description),
                   candidate.title,
-                )}
+                  `${t("coach.position.evaluation")}: ${candidate.score}`,
+                ].join(", ")}
               >
+                <span className="candidate-piece" aria-hidden="true">
+                  <img
+                    src={pieceImage({ color: candidate.move.color, type: candidate.move.piece })}
+                    alt=""
+                    draggable={false}
+                  />
+                </span>
                 <div className="candidate-info">
-                  <div>
-                    <span className="move-san">
-                      <SquareText text={candidate.move.san} focusable={false} />
+                  <div className="candidate-copy">
+                    <span className="candidate-title">
+                      <SquareText text={description} focusable={false} />
+                    </span>
+                    <span className="move-strategy-tag">
+                      <SquareText text={candidate.title} focusable={false} />
                     </span>
                   </div>
-                  <span className="candidate-purpose">
-                    <SquareText text={candidate.title} focusable={false} />
-                  </span>
-                  <span className="candidate-move-description">
-                    <SquareText
-                      text={moveDescription(candidate.move, t)}
-                      focusable={false}
-                    />
+                  <span className="candidate-score" title={t("board.evaluation.legend")}>
+                    {candidate.score}
                   </span>
                 </div>
-                <span className="candidate-score">
-                  {candidate.score}
+                <span className="candidate-expand" aria-hidden="true">
+                  <ChevronRight size={14} className="candidate-chevron" />
                 </span>
-                <ChevronRight size={16} className="candidate-chevron" />
               </button>
               {active === i && (
                 <div className="candidate-body">

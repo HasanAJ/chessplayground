@@ -1,20 +1,13 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { moveDescription } from "../../chess/moves";
 import { SquareText } from "../board/SquareHighlight";
 import type { Candidate } from "./candidates";
 
 export function BestMoveHeading({ candidate }: { candidate: Candidate }) {
   const { t } = useTranslation();
-  const title =
-    candidate.theme === "check" ? t("coach.best.escapeCheck") : candidate.title;
+  const title = moveDescription(candidate.move, t);
   return (
-    <h3
-      className="best-move-heading"
-      aria-label={`${candidate.move.san} · ${title}`}
-    >
-      <span className="best-move-san">
-        <SquareText text={candidate.move.san} />
-      </span>
-      <span className="move-title-divider"> · </span>
+    <h3 className="best-move-heading" aria-label={title}>
       <SquareText text={title} />
     </h3>
   );

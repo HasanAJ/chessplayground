@@ -3,11 +3,10 @@ import { Chess, type Move, type Square } from "chess.js";
 import { capturedSquare } from "../../chess/moves";
 import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
 import { candidatesFor, type Candidate } from "./candidates";
-import { boardFocus, type BoardFocus } from "./explanations";
+import { boardFocus, type BoardFocus } from "./boardFocus";
 
 export type ReviewLesson = {
   kind: "consequence" | "alternative";
-  text: string;
   consequence?: string;
   candidate: Candidate;
   ply: number;
@@ -47,7 +46,6 @@ export function lessonFor(
     )![0] as Square;
     return {
       kind: "consequence",
-      text: t("coach.lesson.mateThreat.advice"),
       candidate: preview,
       ply: 1,
       focus: boardFocus(t("coach.lesson.mateThreat.focus"), [
@@ -67,18 +65,13 @@ export function lessonFor(
             t(pieceNameKeys[response.captured]),
             target,
             t(pieceNameKeys[response.piece]),
-            response.san,
           )
         : t(
             "coach.lesson.defendedCapture.consequence",
             t(pieceNameKeys[response.piece]),
             t(pieceNameKeys[response.captured]),
             target,
-            response.san,
           ),
-      text: undefended
-        ? t("coach.lesson.undefended.advice")
-        : t("coach.lesson.defendedCapture.advice"),
       candidate: preview,
       ply: 1,
       focus: boardFocus(
@@ -94,21 +87,14 @@ export function lessonFor(
   if (laterCapture > 0) {
     const capture = continuation[laterCapture];
     const target = capturedSquare(capture);
-    const checkInLine = continuation
-      .slice(1, laterCapture)
-      .some((step) => step.color !== move.color && step.san.endsWith("+"));
     return {
       kind: "consequence",
       consequence: t(
         "coach.lesson.laterCapture.consequence",
-        capture.san,
         t(pieceNameKeys[capture.piece]),
         t(pieceNameKeys[capture.captured!]),
         target,
       ),
-      text: checkInLine
-        ? t("coach.lesson.forcedReply.advice")
-        : t("coach.lesson.laterCapture.advice"),
       candidate: preview,
       ply: laterCapture,
       focus: boardFocus(
@@ -145,7 +131,6 @@ export function lessonFor(
           response.to,
           namedTargets,
         ),
-        text: t("coach.lesson.fork.advice"),
         candidate: preview,
         ply: 2,
         focus: boardFocus(
@@ -160,13 +145,6 @@ export function lessonFor(
   }
   return {
     kind: "alternative",
-    text: best.move.captured
-      ? t("coach.lesson.compareCapture")
-      : best.theme === "support"
-        ? t("coach.lesson.compareDefense")
-        : best.theme === "piece-safety"
-          ? t("coach.lesson.compareEscape")
-          : t("coach.lesson.compareAlternative"),
     candidate: best,
     ply: 1,
     focus: best.explanationFocus,

@@ -2,6 +2,8 @@ import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move, type Square } from "chess.js";
 import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
 import { capturedSquare } from "../../chess/moves";
+import { pieceValues } from "../../chess/material";
+import { boardFocus, type BoardFocus } from "./boardFocus";
 
 const center: Square[] = ["d4", "e4", "d5", "e5"];
 const extendedCenter: Square[] = [
@@ -18,31 +20,9 @@ const extendedCenter: Square[] = [
   "e6",
   "f6",
 ];
-const values = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
-export type BoardFocus = {
-  label: string;
-  squares: Square[];
-  arrows: { from: Square; to: Square }[];
-};
-
-export function boardFocus(
-  label: string,
-  arrows: BoardFocus["arrows"],
-  squares: Square[] = [],
-): BoardFocus {
-  return {
-    label,
-    arrows,
-    squares: [
-      ...new Set([...squares, ...arrows.flatMap(({ from, to }) => [from, to])]),
-    ],
-  };
-}
-
 export type Explanation = {
   title: string;
   text: string;
-  theme: string;
   focus?: BoardFocus;
 };
 
@@ -66,7 +46,7 @@ export function explainMove(
         after.attackers(sq as Square, color).includes(move.to) &&
         !before.attackers(sq as Square, color).includes(move.from),
     )
-    .sort((a, b) => values[b[1]!.type] - values[a[1]!.type]);
+    .sort((a, b) => pieceValues[b[1]!.type] - pieceValues[a[1]!.type]);
   const jointTarget = targets.find(
     ([sq]) => after.attackers(sq as Square, color).length > 1,
   );
@@ -80,7 +60,6 @@ export function explainMove(
         t(pieceNameKeys[target!.type]),
         sq,
       ),
-      theme: "pressure",
       focus: boardFocus(
         t("coach.explanation.attack.focus", t(pieceNameKeys[target!.type])),
         after
@@ -99,7 +78,7 @@ export function explainMove(
         !before.isAttacked(sq as Square, color) &&
         after.attackers(sq as Square, color).includes(move.to),
     )
-    .sort((a, b) => values[b[1]!.type] - values[a[1]!.type])[0];
+    .sort((a, b) => pieceValues[b[1]!.type] - pieceValues[a[1]!.type])[0];
   if (newlyDefended) {
     const [sq, supported] = newlyDefended;
     return {
@@ -109,12 +88,9 @@ export function explainMove(
       text: t(
         "coach.explanation.defend.text",
         piece,
-        move.to,
         t(pieceNameKeys[supported!.type]),
         sq,
-        piece,
       ),
-      theme: "support",
       focus: boardFocus(
         t("coach.explanation.defend.focus", t(pieceNameKeys[supported!.type])),
         [{ from: move.to, to: sq as Square }],
@@ -127,45 +103,21 @@ export function explainMove(
   )
     return {
       title: t("coach.explanation.escapeAttack.title", piece),
-      text: t(
-        "coach.explanation.escapeAttack.text",
-        piece,
-        move.from,
-        move.to,
-      ),
-      theme: "piece-safety",
+      text: t("coach.explanation.escapeAttack.text", piece),
       focus: boardFocus(t("coach.explanation.escapeAttack.focus", piece), [
         { from: move.from, to: move.to },
       ]),
-    };
-  if (targets[0] && values[targets[0][1]!.type] > values[move.piece])
-    return {
-      title: t("coach.explanation.attack.title", t(pieceNameKeys[targets[0][1]!.type])),
-      text: t(
-        "coach.explanation.attack.existing",
-        piece,
-        move.to,
-        t(pieceNameKeys[targets[0][1]!.type]),
-        targets[0][0],
-      ),
-      theme: "pressure",
-      focus: boardFocus(
-        t("coach.explanation.attack.focus", t(pieceNameKeys[targets[0][1]!.type])),
-        [{ from: move.to, to: targets[0][0] as Square }],
-      ),
     };
   if (targets[0]) {
     const [square, target] = targets[0];
     return {
       title: t("coach.explanation.attack.title", t(pieceNameKeys[target!.type])),
       text: t(
-        "coach.explanation.attack.new",
+        "coach.explanation.attack.text",
         piece,
-        move.to,
         t(pieceNameKeys[target!.type]),
         square,
       ),
-      theme: "pressure",
       focus: boardFocus(
         t("coach.explanation.attack.focus", t(pieceNameKeys[target!.type])),
         [{ from: move.to, to: square as Square }],
@@ -186,9 +138,12 @@ function explainForcingMove(
     ([, p]) => p?.type === "k" && p.color !== move.color,
   )?.[0] as Square;
   const checkers = after.isCheck() ? after.attackers(king, move.color) : [];
-  const checkingPieces = checkers
-    .map((square) => t("coach.piece.onSquare", t(pieceNameKeys[after.get(square)!.type]), square))
-    .join(t("common.join.and"));
+  const movedPieceChecks = checkers.length === 1 && checkers[0] === move.to;
+  const checkingPieces = movedPieceChecks
+    ? piece
+    : checkers
+        .map((square) => t("coach.piece.onSquare", t(pieceNameKeys[after.get(square)!.type]), square))
+        .join(t("common.join.and"));
   const check = checkers.length
     ? t(
         checkers.length > 1
@@ -203,14 +158,15 @@ function explainForcingMove(
   if (after.isCheckmate())
     return {
       title: t("coach.explanation.checkmate.title"),
-      text: t(
-        checkers.length > 1
-          ? "coach.explanation.checkmate.plural"
-          : "coach.explanation.checkmate.singular",
-        promotion,
-        checkingPieces,
-      ),
-      theme: "mate",
+      text: move.promotion && movedPieceChecks
+        ? t("coach.explanation.promotion.checkmate", piece, move.to)
+        : t(
+            checkers.length > 1
+              ? "coach.explanation.checkmate.plural"
+              : "coach.explanation.checkmate.singular",
+            promotion,
+            checkingPieces,
+          ),
       focus: boardFocus(
         t("coach.explanation.checkmate.focus"),
         checkers.map((from) => ({ from, to: king })),
@@ -219,8 +175,9 @@ function explainForcingMove(
   if (move.promotion)
     return {
       title: t("coach.explanation.promotion.title"),
-      text: `${promotion.trim()} ${check || t("coach.explanation.promotion.text", piece)}`,
-      theme: "promotion",
+      text: movedPieceChecks
+        ? t("coach.explanation.promotion.check", piece, move.to)
+        : `${promotion.trim()}${check ? ` ${check}` : ""}`,
       focus: boardFocus(
         t("coach.explanation.promotion.focus"),
         checkers.map((from) => ({ from, to: king })),
@@ -234,7 +191,6 @@ function explainForcingMove(
         "coach.explanation.castle.text",
         check ? ` ${check}` : "",
       ),
-      theme: "king-safety",
       focus: boardFocus(t("coach.explanation.castle.focus"), [
         { from: move.from, to: move.to },
         {
@@ -248,7 +204,6 @@ function explainForcingMove(
       title: t("coach.explanation.escapeCheck.title"),
       text: t(
         "coach.explanation.escapeCheck.text",
-        move.san,
         move.captured
           ? t(
               "coach.explanation.escapeCheck.capture",
@@ -258,11 +213,8 @@ function explainForcingMove(
           : move.piece !== "k"
             ? t("coach.explanation.escapeCheck.block", piece)
             : t("coach.explanation.escapeCheck.kingMove", move.to),
-        check
-          ? ` ${check}`
-          : t("coach.explanation.escapeCheck.safe"),
+        check ? ` ${check}` : "",
       ),
-      theme: "check",
       focus: boardFocus(
         t("coach.explanation.escapeCheck.focus"),
         [{ from: move.from, to: move.to }],
@@ -277,25 +229,15 @@ function explainForcingMove(
         ? t("coach.explanation.captureCheck.title")
         : t("coach.explanation.capture.title", t(pieceNameKeys[move.captured])),
       text: t(
-        "coach.explanation.capture.text",
+        movedPieceChecks
+          ? "coach.explanation.captureCheck.text"
+          : "coach.explanation.capture.text",
         piece,
         t(pieceNameKeys[move.captured]),
         capturedSquare(move),
         move.isEnPassant() ? t("coach.explanation.capture.enPassant") + move.to : "",
-        check ||
-          (after.isAttacked(move.to, opposite(move.color))
-            ? t(
-                "coach.explanation.capture.attacked",
-                piece,
-                move.to,
-              )
-            : t(
-                "coach.explanation.capture.safe",
-                piece,
-                move.to,
-              )),
+        check ? ` ${check}` : "",
       ),
-      theme: "material",
       focus: boardFocus(
         t("coach.explanation.capture.focus"),
         [
@@ -311,11 +253,7 @@ function explainForcingMove(
   if (/[+#]/.test(move.san))
     return {
       title: t("coach.explanation.check.title"),
-      text: t(
-        "coach.explanation.check.text",
-        check,
-      ),
-      theme: "forcing",
+      text: check,
       focus: boardFocus(
         t("coach.explanation.check.focus"),
         checkers.map((from) => ({ from, to: king })),
@@ -350,10 +288,8 @@ function explainActivity(
       text: t(
         "coach.explanation.develop.text",
         piece,
-        move.to,
         centerReason,
-      ),
-      theme: "development",
+      ).trim(),
       focus: boardFocus(
         t("coach.explanation.develop.focus"),
         controlled.map((to) => ({ from: move.to, to })),
@@ -369,10 +305,8 @@ function explainActivity(
       title: t("coach.explanation.center.title"),
       text: t(
         "coach.explanation.center.text",
-        move.to,
         pawnAttacks.join(t("common.join.and")),
       ),
-      theme: "center",
       focus: boardFocus(
         t("coach.explanation.center.focus"),
         pawnAttacks.map((to) => ({ from: move.to, to })),
@@ -390,7 +324,6 @@ function explainActivity(
           "coach.explanation.openFile.text",
           move.to[0],
         ),
-        theme: "rook-activity",
         focus: boardFocus(
           t("coach.explanation.openFile.focus"),
           [],
@@ -403,7 +336,6 @@ function explainActivity(
     return {
       title: t("coach.explanation.rook.title", move.to),
       text: "",
-      theme: "rook-activity",
       focus: boardFocus(t("coach.explanation.rook.focus"), [
         { from: move.from, to: move.to },
       ]),
@@ -413,7 +345,6 @@ function explainActivity(
     return {
       title: t("coach.explanation.king.title", move.to),
       text: "",
-      theme: "king-activity",
       focus: boardFocus(t("coach.explanation.king.focus"), [
         { from: move.from, to: move.to },
       ]),
@@ -425,7 +356,6 @@ function explainActivity(
     return {
       title: t("coach.explanation.pawn.title", move.to),
       text: "",
-      theme: "space",
       focus: boardFocus(t("coach.explanation.pawn.focus"), [
         { from: move.from, to: move.to },
       ]),
@@ -434,7 +364,6 @@ function explainActivity(
     return {
       title: t("coach.explanation.nearCenter.title"),
       text: centerReason,
-      theme: "piece-activity",
       focus: boardFocus(
         t("coach.explanation.nearCenter.focus"),
         controlled.map((to) => ({ from: move.to, to })),
@@ -444,41 +373,8 @@ function explainActivity(
   return {
     title: t("coach.explanation.reposition.title", piece, move.to),
     text: "",
-    theme: "piece-activity",
     focus: boardFocus(t("coach.explanation.reposition.focus", piece), [
       { from: move.from, to: move.to },
     ]),
   };
-}
-
-export function describeReply(move: Move, t: Translator = english): string {
-  if (move.san.endsWith("#"))
-    return t(
-      "coach.reply.checkmate",
-      move.san,
-      t(pieceNameKeys[move.promotion ?? move.piece]),
-      move.to,
-    );
-  const action =
-    move.isKingsideCastle() || move.isQueensideCastle()
-      ? t(
-          "coach.reply.castle",
-          move.isKingsideCastle()
-            ? t("chess.castling.kingside")
-            : t("chess.castling.queenside"),
-        )
-      : move.captured
-        ? t(
-            "coach.reply.capture",
-            t(pieceNameKeys[move.captured]),
-            capturedSquare(move),
-            move.isEnPassant() ? t("coach.reply.enPassant") : "",
-            t(pieceNameKeys[move.piece]),
-          )
-        : t("coach.reply.move", t(pieceNameKeys[move.piece]), move.to);
-  const promotion = move.promotion
-    ? t("coach.reply.promotion", t(pieceNameKeys[move.promotion]))
-    : "";
-  const check = move.san.endsWith("+") ? t("coach.reply.check") : "";
-  return t("coach.reply.summary", action, promotion, check, move.san);
 }

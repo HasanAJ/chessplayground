@@ -8,10 +8,8 @@ import { CoachPanel } from "../coach/CoachPanel";
 import { useCoachPresentation } from "../coach/useCoachPresentation";
 import { useMoveReview } from "../coach/useMoveReview";
 import { useRecommendations } from "../coach/useRecommendations";
-import {
-  useComputerSettings,
-  useComputerTurn,
-} from "../computer/useComputerOpponent";
+import { useComputerSettings } from "../computer/useComputerSettings";
+import { useComputerTurn } from "../computer/useComputerTurn";
 import { SaveNotice } from "./SaveNotice";
 import { usePanelFocus } from "../../app/usePanelFocus";
 import { PageHeading } from "../../app/PageHeading";
@@ -55,6 +53,13 @@ export function PlayWorkspace({ active }: { active: boolean }) {
     reviewRetry,
     reviewPaused,
   );
+  // Computer play can keep feedback on the human's move after the reply.
+  const reviewEvaluation =
+    game.playable &&
+    feedbackPly === (game.historyPly ?? game.history.length) &&
+    feedback?.state === "ready"
+      ? feedback.review.evaluation
+      : undefined;
   const storageError = game.storageError || computer.storageError;
   usePanelFocus(game.promotion, () => game.setPromotion(null));
   useEffect(() => {
@@ -127,6 +132,7 @@ export function PlayWorkspace({ active }: { active: boolean }) {
             onDraggingChange={setDragging}
             selectionReset={selectionReset}
             analysis={recommendations}
+            reviewEvaluation={reviewEvaluation}
             highlights={presentation}
             onNewGame={newGame}
             onShowHistory={showHistory}

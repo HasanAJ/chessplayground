@@ -3,13 +3,13 @@ import { localizeReview, type MoveReview } from "./grading";
 import type { MessageKey } from "../../i18n/translate";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useMemo } from "react";
-import { ChevronDown, Eye, LoaderCircle } from "lucide-react";
+import { ChevronDown, LoaderCircle } from "lucide-react";
 import type { ReviewState } from "./moveReview";
 import type { InspectMove, MovePreview } from "../board/useBoardPreview";
-import { movePreviewEvents } from "./previewEvents";
-import { moveDescription } from "../../chess/moves";
-import { ExplanationLink } from "./ExplanationLink";
+import { MoveReviewDetails } from "./MoveReviewDetails";
 import { SquareText } from "../board/SquareHighlight";
+import type { Move } from "chess.js";
+import { pieceImage } from "../board/pieces";
 
 const gradeKeys = {
   "Best move": "coach.grade.best",
@@ -21,6 +21,7 @@ const gradeKeys = {
 
 export function MoveFeedback({
   result,
+  move,
   moveLabel,
   context = "coach.feedback.context.lastMove",
   onReanalyze,
@@ -30,6 +31,7 @@ export function MoveFeedback({
   onToggle,
 }: {
   result: ReviewState;
+  move: Move;
   moveLabel: string;
   context?:
     | "coach.feedback.context.lastMove"
@@ -89,7 +91,16 @@ export function MoveFeedback({
           <span className="feedback-move">
             <span className="feedback-context">{t(context)}</span>
             <strong>
-              <SquareText text={moveLabel} focusable={false} />
+              <img
+                className="feedback-piece"
+                src={pieceImage({ color: move.color, type: move.piece })}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+              />
+              <span>
+                <SquareText text={moveLabel} focusable={false} />
+              </span>
             </strong>
           </span>
           <span className="quality-badge" role="status">
@@ -122,84 +133,11 @@ export function MoveFeedback({
             </>
           ) : (
             review && (
-              <>
-                <p className="move-description">
-                  <SquareText text={moveDescription(review.move, t)} />
-                </p>
-                <div className="feedback-explanation">
-                  <p>
-                    <SquareText text={review.text} />
-                  </p>
-                  {review.lesson?.kind === "consequence" ? (
-                    <ExplanationLink
-                      candidate={review.lesson.candidate}
-                      focus={review.lesson.focus}
-                      ply={review.lesson.ply}
-                      preview={preview}
-                      onInspect={onInspect}
-                    />
-                  ) : (
-                    review.reply && (
-                      <button
-                        className="text-action"
-                        {...movePreviewEvents(onInspect, review.reply, 1)}
-                        onClick={() => onInspect(review.reply!, 1, "click")}
-                      >
-                        <Eye size={13} aria-hidden="true" />{" "}
-                        {t("coach.feedback.likelyReply")}
-                      </button>
-                    )
-                  )}
-                </div>
-                {review.lesson?.kind === "alternative" && (
-                  <div className="feedback-alternative">
-                    <p>
-                      <strong>
-                        <SquareText
-                          text={t(
-                            "coach.feedback.tryInstead",
-                            review.lesson.candidate.move.san,
-                          )}
-                        />
-                      </strong>
-                    </p>
-                    <ExplanationLink
-                      candidate={review.lesson.candidate}
-                      focus={review.lesson.focus}
-                      ply={review.lesson.ply}
-                      label={t(
-                        "coach.feedback.previewMove",
-                        review.lesson.candidate.move.san,
-                      )}
-                      preview={preview}
-                      onInspect={onInspect}
-                    />
-                  </div>
-                )}
-                {review.lesson && (
-                  <div className="move-lesson">
-                    <span>{t("coach.feedback.beforeYouMove")}</span>
-                    <p>
-                      <SquareText text={review.lesson.text} />
-                    </p>
-                  </div>
-                )}
-                {review.label !== "Best move" && review.loss !== null && (
-                  <details className="feedback-analysis-details">
-                    <summary>{t("coach.feedback.analysisDetails")}</summary>
-                    <p>
-                      {t(
-                        "coach.feedback.evaluationDrop",
-                        review.loss.toLocaleString(t.language, {
-                          minimumFractionDigits: 1,
-                          maximumFractionDigits: 1,
-                        }),
-                      )}
-                    </p>
-                    <small>{t("coach.feedback.quickReview")}</small>
-                  </details>
-                )}
-              </>
+              <MoveReviewDetails
+                review={review}
+                preview={preview}
+                onInspect={onInspect}
+              />
             )
           ))}
       </div>

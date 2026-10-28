@@ -30,18 +30,8 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-  .mobile-board-link {
-    display: block;
-    margin-left: auto;
-    color: #7d688b;
-    font-size: var(--text-sm);
-    white-space: nowrap;
-  }
   .strategy-card {
     padding: 20px;
-  }
-  .candidate-toggle {
-    padding: 14px;
   }
 }
 @media (max-width: 540px) {
@@ -79,9 +69,6 @@
   }
   .plan-actions {
     gap: 7px;
-  }
-  .learning-actions {
-    gap: 5px 14px;
   }
 }
 /* Keep the board and recommendations visible together on desktop. */
@@ -198,12 +185,8 @@
   .strategy-card > p {
     line-height: 1.65;
   }
-  .strategy-foot {
-    gap: 5px;
-  }
   .score-pill {
     padding: 5px 7px;
-    margin-left: 0;
   }
   .plan-actions {
     margin-top: 12px;
@@ -214,27 +197,8 @@
     min-height: 34px;
     padding: 8px 10px;
   }
-  .candidate-list {
-    gap: 6px;
-  }
-  .candidate-card {
-    border-radius: 9px;
-  }
-  .candidate-toggle {
-    padding: 7px 10px;
-    gap: 8px;
-  }
-  .candidate-purpose {
-    margin-top: 3px;
-  }
-  .candidate-body {
-    padding: 0 12px 12px;
-  }
   .candidate-body > p {
     line-height: 1.6;
-  }
-  .position-details {
-    padding: 10px 12px;
   }
   footer img {
     width: 16px;
@@ -383,8 +347,5 @@
 @media (max-width: 900px) {
   .coach-heading {
     display: block;
-  }
-  .mobile-board-link {
-    margin: 6px 0 0;
   }
 }

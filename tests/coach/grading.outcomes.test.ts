@@ -15,7 +15,7 @@ test("move quality uses the mover's perspective for White and Black", () => {
   const replyWhite = candidate(white.fen(), ["e7e5"], 200);
   const reviewWhite = reviewMove(moveWhite, bestWhite, replyWhite);
   assert.equal(reviewWhite.label, "Mistake");
-  assert.equal(reviewWhite.loss, 2.3);
+  assert.equal(reviewWhite.evaluation.whiteScore, -2);
   const black = new Chess();
   black.move("e4");
   const bestBlack = candidate(black.fen(), ["e7e5"], -20);
@@ -23,7 +23,7 @@ test("move quality uses the mover's perspective for White and Black", () => {
   const replyBlack = candidate(black.fen(), ["d2d4"], 150);
   const reviewBlack = reviewMove(moveBlack, bestBlack, replyBlack);
   assert.equal(reviewBlack.label, "Inaccuracy");
-  assert.equal(reviewBlack.loss, 1.3);
+  assert.equal(reviewBlack.evaluation.whiteScore, 1.5);
 });
 
 test("terminal move grades do not require a reply candidate", () => {
@@ -31,6 +31,7 @@ test("terminal move grades do not require a reply candidate", () => {
   const best = candidate(game.fen(), ["f1f8"], 0, 1);
   const move = game.move("Rf8#");
   assert.equal(reviewMove(move, best).label, "Best move");
+  assert.deepEqual(reviewMove(move, best).evaluation, { whiteScore: 100, mate: 0 });
   const repeat = new Chess();
   const alternative = candidate(repeat.fen(), ["e2e4"], 120);
   const repeatedMove = repeat.move("Nf3");
@@ -38,6 +39,7 @@ test("terminal move grades do not require a reply candidate", () => {
     reviewMove(repeatedMove, alternative, undefined, true).label,
     "Inaccuracy",
   );
+  assert.deepEqual(reviewMove(repeatedMove, alternative, undefined, true).evaluation, { whiteScore: 0 });
 });
 
 test("an alternative checkmate explains the played move instead of the engine's choice", () => {
@@ -46,7 +48,14 @@ test("an alternative checkmate explains the played move instead of the engine's 
   const move = game.move("Rf8#");
   const review = reviewMove(move, best);
   assert.equal(review.label, "Best move");
-  assert.equal(review.loss, null);
-  assert.match(review.text, /Rf8# delivers checkmate/);
+  assert.match(review.text, /Your rook gives checkmate/);
   assert.doesNotMatch(review.text, /queen|d8|first choice/);
+});
+
+test("Black's delivered checkmate has a negative score from White's perspective", () => {
+  const game = new Chess();
+  for (const san of ["f3", "e5", "g4"]) game.move(san);
+  const best = candidate(game.fen(), ["d8h4"], 0, 1);
+  const move = game.move("Qh4#");
+  assert.deepEqual(reviewMove(move, best).evaluation, { whiteScore: -100, mate: 0 });
 });

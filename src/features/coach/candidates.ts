@@ -1,47 +1,52 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import type { EngineLine } from "../../engine/uci";
-import { uciMove } from "../../chess/moves";
-import {
-  boardFocus,
-  describeReply,
-  explainMove,
-  type BoardFocus,
-} from "./explanations";
+import { capturedSquare, uciMove } from "../../chess/moves";
+import { formatEvaluation } from "../../chess/evaluation";
+import { boardFocus, type BoardFocus } from "./boardFocus";
+import { describeReply } from "./replyDescription";
+import { explainMove } from "./explanations";
+import { readContinuation } from "./continuation";
 
 export type Candidate = EngineLine & {
   move: Move;
   title: string;
   explanation: string;
   explanationFocus?: BoardFocus;
-  reply: string;
   continuation: Move[];
-  theme: string;
   score: string;
   whiteScore: number;
 };
 export const MAX_RECOMMENDED_MOVES = 5;
 const RECOMMENDATION_CP_GAP = 50;
 
-/** Keep useful alternatives to the first, engine-ranked move. UCI scores favor the mover. */
-export function recommendedCandidates(candidates: Candidate[]): Candidate[] {
-  const best = candidates[0];
+/** Qualify alternatives at the completed depth, keeping the final choice first. */
+export function recommendedCandidates(
+  candidates: Candidate[],
+  best = candidates[0],
+): Candidate[] {
   if (!best) return [];
-  return candidates
-    .filter((candidate, index) => {
-      if (index === 0) return true;
-      if (best.mate !== undefined)
-        return best.mate > 0
-          ? candidate.mate !== undefined && candidate.mate > 0
-          : candidate.mate === best.mate;
-      if (candidate.mate !== undefined) return candidate.mate > 0;
-      return (
-        best.cp !== undefined &&
-        candidate.cp !== undefined &&
-        best.cp - candidate.cp <= RECOMMENDATION_CP_GAP
-      );
-    })
-    .slice(0, MAX_RECOMMENDED_MOVES);
+  const comparisonBest = candidates[0];
+  const alternatives = candidates.filter((candidate) => {
+    if (candidate.move.lan === best.move.lan) return false;
+    // A newer mate result can rule out alternatives from the completed batch.
+    if (
+      best.mate !== undefined &&
+      (best.mate > 0 ? (candidate.mate ?? 0) <= 0 : candidate.mate !== best.mate)
+    ) return false;
+    if (best.mate === undefined && (candidate.mate ?? 0) < 0) return false;
+    if (comparisonBest.mate !== undefined)
+      return comparisonBest.mate > 0
+        ? candidate.mate !== undefined && candidate.mate > 0
+        : candidate.mate === comparisonBest.mate;
+    if (candidate.mate !== undefined) return candidate.mate > 0;
+    return (
+      comparisonBest.cp !== undefined &&
+      candidate.cp !== undefined &&
+      comparisonBest.cp - candidate.cp <= RECOMMENDATION_CP_GAP
+    );
+  });
+  return [best, ...alternatives].slice(0, MAX_RECOMMENDED_MOVES);
 }
 
 export function candidatesFor(
@@ -63,9 +68,7 @@ export function candidatesFor(
             text: t(
               "coach.explanation.matingAttack.text",
               line.mate,
-              move.san,
             ),
-            theme: "mating-attack",
             focus: boardFocus(t("coach.explanation.matingAttack.focus"), [
               { from: move.from, to: move.to },
             ]),
@@ -73,44 +76,48 @@ export function candidatesFor(
         } else if (line.mate !== undefined && line.mate < 0) {
           insight = {
             title: t("coach.explanation.mateDefense.title"),
-            text: t(
-              "coach.explanation.mateDefense.text",
-              move.san,
-            ),
-            theme: "mate-defense",
+            text: t("coach.explanation.mateDefense.text"),
             focus: boardFocus(t("coach.explanation.mateDefense.focus"), [
               { from: move.from, to: move.to },
             ]),
           };
         }
-        const continuation: Move[] = [move];
-        let reply = t("coach.reply.unavailable");
-        if (line.pv[1] && !after.isGameOver()) {
-          // An invalid immediate reply rejects the candidate; later errors only
-          // shorten the preview. Parse each move once for both prose and frames.
-          const response = uciMove(after, line.pv[1]);
-          continuation.push(response);
-          for (const uci of line.pv.slice(2, 6)) {
-            try {
-              continuation.push(uciMove(after, uci));
-            } catch {
-              break;
-            }
-          }
-          reply = describeReply(response, t);
-        } else if (after.isGameOver())
-          reply = after.isCheckmate()
-            ? t("coach.reply.terminal.checkmate")
-            : t("coach.reply.terminal.draw");
+        const {
+          moves: continuation,
+          materialLoss: lineMaterialLoss,
+        } = readContinuation(after, move, line.pv);
+        const response = continuation[1];
+        const materialWarning =
+          !!lineMaterialLoss && line.mate === undefined;
+        insight = {
+          ...insight,
+          text: [
+            insight.text,
+            response?.captured && line.mate === undefined
+              ? describeReply(response, t, move)
+              : "",
+            materialWarning ? t("coach.explanation.materialRisk.text") : "",
+          ].filter(Boolean).join(" "),
+        };
+        if (materialWarning && response?.captured) {
+          insight = {
+            ...insight,
+            focus: boardFocus(
+              t("coach.explanation.materialRisk.focus"),
+              [
+                ...(insight.focus?.arrows ?? []),
+                { from: response.from, to: response.to },
+              ],
+              [...(insight.focus?.squares ?? []), capturedSquare(response)],
+            ),
+          };
+        }
         const sign = before.turn() === "w" ? 1 : -1;
         const whiteScore =
           line.mate !== undefined
             ? (line.mate >= 0 ? 100 : -100) * sign
             : ((line.cp ?? 0) / 100) * sign;
-        const score =
-          line.mate !== undefined
-            ? `${whiteScore > 0 ? "+" : "−"}M${Math.abs(line.mate)}`
-            : `${whiteScore >= 0 ? "+" : "−"}${Math.abs(whiteScore).toLocaleString(t.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const score = formatEvaluation({ whiteScore, mate: line.mate }, t.language);
         return [
           {
             ...line,
@@ -118,8 +125,6 @@ export function candidatesFor(
             title: insight.title,
             explanation: insight.text,
             explanationFocus: insight.focus,
-            theme: insight.theme,
-            reply,
             continuation,
             whiteScore,
             score,

@@ -1,34 +1,23 @@
 import { Chess } from "chess.js";
-import { parseInfo, type EngineLine } from "./uci";
+import { parseInfo } from "./uci";
+import { MultiPvResults } from "./MultiPvResults";
+import type {
+  AnalysisCallbacks,
+  AnalysisClient,
+  AnalysisHistory,
+  SearchOptions,
+} from "./analysis";
 
-type Callbacks = {
-  onProgress: (depth: number) => void;
-  onComplete: (
-    lines: EngineLine[],
-    bestMove?: string,
-    bestLine?: EngineLine,
-  ) => void;
-  onError: (message: string) => void;
-};
-type Search = Callbacks & {
+type Search = AnalysisCallbacks & {
   options: SearchOptions;
   positionCommand: string;
-  expected: number;
   cancelled: boolean;
-  depths: Map<number, Map<number, EngineLine>>;
-  latest: EngineLine[];
+  results: MultiPvResults;
   reportedDepth: number;
-};
-type SearchOptions = {
-  depth?: number;
-  movetime?: number;
-  multiPV?: number;
-  skill?: number;
-  searchMoves?: string[];
 };
 
 /** Keep one engine warm; wait for bestmove after stop before starting another search. */
-export class AnalysisEngine {
+export class AnalysisEngine implements AnalysisClient {
   private worker: Worker | null = null;
   private phase: "booting" | "idle" | "searching" = "idle";
   private active: Search | null = null;
@@ -42,8 +31,8 @@ export class AnalysisEngine {
 
   analyze(
     fen: string,
-    callbacks: Callbacks,
-    history?: { rootFen: string; moves: string[] },
+    callbacks: AnalysisCallbacks,
+    history?: AnalysisHistory,
     options: SearchOptions = {},
   ): () => void {
     const search: Search = {
@@ -52,13 +41,13 @@ export class AnalysisEngine {
       positionCommand: history
         ? `position fen ${history.rootFen}${history.moves.length ? ` moves ${history.moves.join(" ")}` : ""}`
         : `position fen ${fen}`,
-      expected: Math.min(
-        options.multiPV ?? 3,
-        options.searchMoves?.length ?? new Chess(fen).moves().length,
+      results: new MultiPvResults(
+        Math.min(
+          options.multiPV ?? 3,
+          options.searchMoves?.length ?? new Chess(fen).moves().length,
+        ),
       ),
       cancelled: false,
-      depths: new Map(),
-      latest: [],
       reportedDepth: 0,
     };
     if (this.queued) this.queued.cancelled = true;
@@ -137,7 +126,7 @@ export class AnalysisEngine {
         this.fail(
           "The engine took too long to respond. Try analyzing the position again.",
         ),
-      10000,
+      Math.max(10000, (search.options.movetime ?? 1800) + 2000),
     );
     this.worker.postMessage(
       `setoption name MultiPV value ${search.options.multiPV ?? 3}`,
@@ -147,7 +136,7 @@ export class AnalysisEngine {
     );
     this.worker.postMessage(search.positionCommand);
     this.worker.postMessage(
-      `go depth ${search.options.depth ?? 18} movetime ${search.options.movetime ?? 1800}${search.options.searchMoves ? ` searchmoves ${search.options.searchMoves.join(" ")}` : ""}`,
+      `go${search.options.depth === null ? "" : ` depth ${search.options.depth ?? 18}`} movetime ${search.options.movetime ?? 1800}${search.options.searchMoves ? ` searchmoves ${search.options.searchMoves.join(" ")}` : ""}`,
     );
   }
 
@@ -171,18 +160,13 @@ export class AnalysisEngine {
       this.active = null;
       this.phase = "idle";
       if (!search.cancelled) {
-        if (search.latest.length) {
+        if (search.results.lines.length) {
           const bestMove = line.split(/\s+/)[1];
-          let bestLine: EngineLine | undefined;
-          // Preserve comparable lines, but also return the final move's newest PV.
-          for (const batch of search.depths.values())
-            for (const candidate of batch.values())
-              if (
-                candidate.pv[0] === bestMove &&
-                (!bestLine || candidate.depth >= bestLine.depth)
-              )
-                bestLine = candidate;
-          search.onComplete(search.latest, bestMove, bestLine);
+          search.onComplete(
+            search.results.lines,
+            bestMove,
+            search.results.bestLine(bestMove),
+          );
         } else
           search.onError(
             "No complete analysis was returned. Try this position again.",
@@ -193,20 +177,7 @@ export class AnalysisEngine {
     }
     if (search.cancelled) return;
     const info = parseInfo(line);
-    if (!info || info.rank < 1 || info.rank > search.expected) return;
-    if (!search.depths.has(info.depth))
-      search.depths.set(info.depth, new Map());
-    const batch = search.depths.get(info.depth)!;
-    batch.set(info.rank, info);
-    if (
-      batch.size !== search.expected ||
-      info.depth < (search.latest[0]?.depth ?? 0)
-    )
-      return;
-    const lines = [...batch.values()].sort((a, b) => a.rank - b.rank);
-    if (new Set(lines.map((value) => value.pv[0])).size !== search.expected)
-      return;
-    search.latest = lines;
+    if (!info || !search.results.add(info)) return;
     // Progress is inexpensive; generate explanations only for the finished search.
     if (info.depth >= search.reportedDepth + 3) {
       search.reportedDepth = info.depth;

@@ -12,10 +12,11 @@ import {
   Plus,
 } from "lucide-react";
 import { setupFen } from "../../chess/position";
+import type { PositionEvaluation } from "../../chess/evaluation";
 import { MoveHistory } from "../game/MoveHistory";
 import { PositionLoader } from "../game/PositionLoader";
 import type { GameController } from "../game/useGameController";
-import type { ComputerSettings } from "../computer/useComputerOpponent";
+import type { ComputerSettings } from "../computer/useComputerSettings";
 import type { Recommendations } from "../coach/useRecommendations";
 import type { CoachPresentation } from "../coach/useCoachPresentation";
 import type { BoardPreview } from "./useBoardPreview";
@@ -32,6 +33,7 @@ type Props = {
   computer: ComputerSettings;
   botTurn: boolean;
   analysis: Recommendations;
+  reviewEvaluation?: PositionEvaluation;
   highlights: CoachPresentation;
   onNewGame: () => void;
   onShowHistory: (ply: number) => void;
@@ -45,6 +47,7 @@ export function BoardPanel({
   computer,
   botTurn,
   analysis,
+  reviewEvaluation,
   highlights,
   onNewGame: newGame,
   onShowHistory: showHistory,
@@ -170,6 +173,7 @@ export function BoardPanel({
           board={board}
           preview={preview}
           analysis={analysis}
+          reviewEvaluation={reviewEvaluation}
           highlights={highlights}
         />
 

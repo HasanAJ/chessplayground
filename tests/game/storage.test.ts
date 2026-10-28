@@ -4,14 +4,14 @@ import { START_FEN } from "../../src/chess/position";
 import {
   addStudyMove,
   createStudy,
-  gameAt,
+  replayStudy,
   ROOT,
-  SESSION_KEY,
 } from "../../src/chess/study";
 import {
   preserveRecovery,
   readSavedSession,
   RECOVERY_PREFIX,
+  SESSION_KEY,
 } from "../../src/features/game/storage";
 import {
   COMPUTER_DIFFICULTY_KEY,
@@ -31,14 +31,14 @@ test("saved sessions preserve their active history and take precedence over the 
     }),
   );
   assert.equal(restored.id, study.id);
-  assert.deepEqual(gameAt(restored).history(), ["e4"]);
+  assert.deepEqual(replayStudy(restored).history.map((move) => move.san), ["e4"]);
   assert.equal(recovery, null);
 });
 
 test("a legacy position opens as a new playable game when no session exists", () => {
   const fen = "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 37 42";
   assert.equal(
-    gameAt(readSavedSession(storage({ "tempo-position": fen })).study).fen(),
+    replayStudy(readSavedSession(storage({ "tempo-position": fen })).study).game.fen(),
     fen,
   );
 });
@@ -50,7 +50,7 @@ test("corrupt saved data falls back to a playable starting position", () => {
     JSON.stringify({ ...createStudy(START_FEN), nodes: [null] }),
   ]) {
     const loaded = readSavedSession(storage({ [SESSION_KEY]: saved }));
-    assert.equal(gameAt(loaded.study).fen(), START_FEN);
+    assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
     assert.deepEqual(loaded.recovery?.data, { [SESSION_KEY]: saved });
   }
 });
@@ -62,7 +62,7 @@ test("unavailable browser storage still permits a fresh game and computer play",
     },
   };
   const loaded = readSavedSession(blocked);
-  assert.equal(gameAt(loaded.study).fen(), START_FEN);
+  assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
   assert.match(loaded.storageError, /could not be read/);
   assert.equal(readDifficulty(blocked), "medium");
 });
@@ -84,7 +84,7 @@ test("a corrupt session preserves its exact data and recovers a valid fallback F
   const fen = "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 37 42";
   const values = { [SESSION_KEY]: "{broken", "tempo-position": fen };
   const loaded = readSavedSession(storage(values));
-  assert.equal(gameAt(loaded.study).fen(), fen);
+  assert.equal(replayStudy(loaded.study).game.fen(), fen);
   assert.deepEqual(loaded.recovery?.data, { [SESSION_KEY]: "{broken" });
   assert.match(loaded.recovery!.message, /without its move history/);
   assert.match(loaded.recovery!.message, /Autosave is paused/);
@@ -94,7 +94,7 @@ test("a corrupt session preserves its exact data and recovers a valid fallback F
 test("both malformed saves, including an empty session, remain available for recovery", () => {
   const data = { [SESSION_KEY]: "", "tempo-position": "bad FEN" };
   const loaded = readSavedSession(storage(data));
-  assert.equal(gameAt(loaded.study).fen(), START_FEN);
+  assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
   assert.deepEqual(loaded.recovery?.data, data);
 });
 
