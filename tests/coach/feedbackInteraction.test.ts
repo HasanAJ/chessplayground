@@ -197,15 +197,24 @@ test("consequence previews stay with the explanation and preserve the tactical p
       assert.equal(document.querySelector(".feedback-alternative"), null);
 
       await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
-      assert.equal(preview.inspection?.candidate, lesson.candidate);
-      assert.equal(preview.inspection?.ply, lesson.ply);
-      assert.equal(preview.inspection?.focus, lesson.focus);
-      assert.equal(preview.previewGame!.fen(), lesson.candidate.continuation[lesson.ply - 1].after);
+      if (lesson.capturePly) {
+        assert.equal(preview.inspection, null, "a walkthrough starts only when requested");
+      } else {
+        assert.equal(preview.inspection?.candidate, lesson.candidate);
+        assert.equal(preview.inspection?.ply, lesson.ply);
+        assert.equal(preview.inspection?.focus, lesson.focus);
+        assert.equal(preview.previewGame!.fen(), lesson.candidate.continuation[lesson.ply - 1].after);
+      }
       await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true })));
       assert.equal(preview.boardPreview, false);
 
       await act(() => button.click());
       assert.equal(preview.pinned, true);
+      if (lesson.capturePly) {
+        assert.equal(preview.inspection?.ply, 1);
+        assert.equal(preview.inspection?.walkthrough?.capturePly, lesson.capturePly);
+        assert.equal(preview.inspection?.focus, undefined, "future capture arrows must not appear at the start");
+      }
       assert.equal(button.getAttribute("aria-pressed"), "true");
       collapsed = true;
       await act(() => root.render(createElement(Harness)));

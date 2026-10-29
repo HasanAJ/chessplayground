@@ -7,6 +7,7 @@ export type MovePreview = {
   candidate: Candidate;
   ply: number;
   focus?: BoardFocus;
+  walkthrough?: { capturePly: number; focus: BoardFocus };
 };
 
 type MoveInspection = MovePreview & { key: string };
@@ -17,6 +18,7 @@ export type InspectMove = (
   ply: number,
   input: PreviewInput,
   focus?: BoardFocus,
+  walkthrough?: MovePreview["walkthrough"],
 ) => void;
 
 export type ClearInspection = (
@@ -52,8 +54,8 @@ export function useBoardPreview(key: string, enabled: boolean) {
   );
 
   const inspectMove: InspectMove = useCallback(
-    (candidate, ply, input, focus) => {
-      const update = { key, candidate, ply, focus };
+    (candidate, ply, input, focus, walkthrough) => {
+      const update = { key, candidate, ply, focus, walkthrough };
       if (input === "hover") setHoverInspection(update);
       else if (input === "focus") setFocusInspection(update);
       else {

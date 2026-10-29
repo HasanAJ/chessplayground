@@ -11,12 +11,20 @@ export function ExplanationLink({
   onClearInspection,
   ply = 1,
   label = focus?.label,
-}: MovePreviewProps & { focus?: BoardFocus; ply?: number; label?: string }) {
+  capturePly,
+}: MovePreviewProps & {
+  focus?: BoardFocus;
+  ply?: number;
+  label?: string;
+  capturePly?: number;
+}) {
   if (!label) return null;
   const current =
     preview?.candidate === candidate &&
-    preview.ply === ply &&
-    preview.focus === focus;
+    (capturePly
+      ? preview.walkthrough?.capturePly === capturePly
+      : preview.ply === ply && preview.focus === focus);
+  const walkthrough = capturePly && focus ? { capturePly, focus } : undefined;
   return (
     <button
       type="button"
@@ -28,8 +36,18 @@ export function ExplanationLink({
         candidate,
         ply,
         focus,
+        enabled: !walkthrough,
       })}
-      onClick={() => onInspect(candidate, ply, "click", focus)}
+      onClick={() => {
+        if (!current || !walkthrough)
+          onInspect(
+            candidate,
+            walkthrough ? 1 : ply,
+            "click",
+            walkthrough ? undefined : focus,
+            walkthrough,
+          );
+      }}
     >
       <Eye size={13} aria-hidden="true" />{" "}
       <SquareText text={label} focusable={false} />

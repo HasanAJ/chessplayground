@@ -12,6 +12,7 @@ import type { GameController } from "../game/useGameController";
 import type { ComputerSettings } from "../computer/useComputerSettings";
 import type { BoardPreview } from "./useBoardPreview";
 import { useComputerMoveAnimation } from "./useComputerMoveAnimation";
+import { usePreviewMoveAnimation } from "./usePreviewMoveAnimation";
 import { scrollToBoard } from "./scrollToBoard";
 
 export function useBoardInteractions(
@@ -74,6 +75,7 @@ export function useBoardInteractions(
     preview.boardPreview,
     flipped,
   );
+  usePreviewMoveAnimation(ref, preview.inspection, flipped);
   useEffect(() => {
     setFreeDrag(null);
   }, [game.analysisKey, game.playable, preview.boardPreview, botTurn]);

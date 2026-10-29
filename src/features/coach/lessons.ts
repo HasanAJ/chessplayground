@@ -10,6 +10,7 @@ export type ReviewLesson = {
   consequence?: string;
   candidate: Candidate;
   ply: number;
+  capturePly?: number;
   focus?: BoardFocus;
 };
 
@@ -97,6 +98,7 @@ export function lessonFor(
       ),
       candidate: preview,
       ply: laterCapture,
+      capturePly: laterCapture + 1,
       focus: boardFocus(
         t("coach.lesson.laterCapture.focus"),
         [{ from: capture.from, to: capture.to }],

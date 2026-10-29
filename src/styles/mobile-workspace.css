@@ -1,7 +1,6 @@
 .guide-toggle,
 .position-editor-toggle,
-.mobile-editor-clear,
-.board-preview-controls {
+.mobile-editor-clear {
   display: none;
 }
 
@@ -101,17 +100,6 @@
     flex: 1 1 auto;
   }
 
-  .board-preview-controls {
-    display: block;
-    margin: 8px 0 4px 36px;
-    padding: 10px;
-    border: 1px solid #ded3f3;
-    border-radius: 10px;
-    background: #f5f1fc;
-    font-size: var(--text-sm);
-    color: #554170;
-  }
-
   .continuation-moves button {
     min-height: 44px;
   }
@@ -130,39 +118,4 @@
     flex-shrink: 0;
   }
 
-  .board-preview-heading,
-  .board-preview-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .board-preview-heading > span:last-child {
-    margin-left: auto;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .board-preview-controls p {
-    margin: 6px 0;
-    line-height: 1.5;
-    font-weight: 600;
-  }
-
-  .board-preview-actions .icon-button {
-    width: 44px;
-    height: 44px;
-    background: #fff;
-  }
-
-  .preview-return {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    min-height: 44px;
-    margin-left: auto;
-    padding: 6px;
-    font-weight: 600;
-  }
 }

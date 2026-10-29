@@ -3,11 +3,14 @@ import { moveDescription } from "../../chess/moves";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { SquareText } from "./SquareHighlight";
 import type { BoardPreview } from "./useBoardPreview";
+import { CaptureWalkthroughControls } from "./CaptureWalkthroughControls";
 
 export function BoardPreviewControls({ preview }: { preview: BoardPreview }) {
   const { t } = useTranslation();
   const { pinnedInspection, inspectMove, clearPreview } = preview;
   if (!pinnedInspection) return null;
+  if (pinnedInspection.walkthrough)
+    return <CaptureWalkthroughControls preview={preview} />;
   const { candidate, ply } = pinnedInspection;
   const inspectionMove = candidate.continuation[ply - 1];
   function selectMove(nextPly: number) {

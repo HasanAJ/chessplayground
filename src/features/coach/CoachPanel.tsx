@@ -20,6 +20,7 @@ import { CoachOptions } from "../computer/CoachOptions";
 import type { ComputerSettings } from "../computer/useComputerSettings";
 import type { ComputerTurn } from "../computer/useComputerTurn";
 import type { BoardPreview } from "../board/useBoardPreview";
+import { CaptureWalkthroughControls } from "../board/CaptureWalkthroughControls";
 import { PromotionCard } from "../game/PromotionCard";
 import { MoveFeedback } from "./MoveFeedback";
 import type { ReviewState } from "./moveReview";
@@ -246,6 +247,11 @@ export function CoachPanel({
             }
           />
         )}
+      {preview.pinnedInspection?.walkthrough && (
+        <div className="desktop-capture-walkthrough">
+          <CaptureWalkthroughControls preview={preview} />
+        </div>
+      )}
       {showWelcome && (
         <div className="coach-welcome">
           <div className="coach-welcome-icon" aria-hidden="true">

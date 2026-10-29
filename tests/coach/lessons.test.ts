@@ -66,6 +66,7 @@ test("later captures explain the checking sequence without asserting the exchang
   assert.match(result.text, /queen takes your rook on c7/);
   assert.match(result.text, /Further trades may follow/);
   assert.equal(result.lesson!.ply, 3);
+  assert.equal(result.lesson!.capturePly, 4);
   assert.equal(
     new Chess(result.lesson!.candidate.continuation[2].after).get("c7")?.type,
     "r",

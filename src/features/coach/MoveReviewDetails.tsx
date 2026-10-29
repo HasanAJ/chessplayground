@@ -44,6 +44,7 @@ export function MoveReviewDetails({
             candidate={lesson.candidate}
             focus={lesson.focus}
             ply={lesson.ply}
+            capturePly={lesson.capturePly}
             preview={preview}
             onInspect={onInspect}
             onClearInspection={onClearInspection}

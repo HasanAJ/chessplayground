@@ -1,0 +1,128 @@
+.board-preview-controls {
+  margin: 10px 0 4px 42px;
+  padding: 14px;
+  border: 1px solid #ded3f3;
+  border-radius: 12px;
+  background: #f5f1fc;
+  color: #554170;
+  font-size: var(--text-sm);
+}
+.board-preview-heading,
+.board-preview-actions,
+.walkthrough-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.board-preview-heading > span:last-child {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.board-preview-controls p {
+  margin: 6px 0;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.board-preview-actions .icon-button {
+  width: 44px;
+  height: 44px;
+  background: var(--paper);
+}
+.preview-return {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 6px;
+  font-weight: 600;
+}
+.capture-walkthrough .walkthrough-note {
+  color: var(--muted);
+  font-weight: 400;
+}
+.walkthrough-side,
+.walkthrough-footer {
+  font-size: var(--text-xs);
+}
+.walkthrough-caption {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 9px;
+  background: var(--paper);
+}
+.walkthrough-side {
+  color: var(--purple-dark);
+  font-weight: 600;
+}
+.walkthrough-moves {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100px, 100%), 1fr));
+  gap: 6px;
+  margin: 12px 0;
+}
+.walkthrough-moves button {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 9px;
+  border: 1px solid #e3dcee;
+  border-radius: 8px;
+  background: var(--paper);
+  text-align: left;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.walkthrough-moves button > span {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.walkthrough-moves button[aria-pressed="true"] {
+  background: #e8e0f7;
+  border-color: var(--purple);
+}
+.walkthrough-moves .walkthrough-capture strong {
+  color: #a14230;
+}
+.capture-walkthrough .board-preview-actions {
+  justify-content: space-between;
+}
+.capture-walkthrough .board-preview-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--paper);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.walkthrough-footer {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px solid #e3dcee;
+}
+.board-panel .capture-walkthrough {
+  display: none;
+}
+.desktop-capture-walkthrough .capture-walkthrough {
+  margin: 0 0 18px;
+}
+@media (max-width: 900px) {
+  .board-panel .capture-walkthrough {
+    display: block;
+  }
+  .desktop-capture-walkthrough {
+    display: none;
+  }
+  .board-preview-controls {
+    margin-left: 36px;
+    padding: 10px;
+  }
+}
