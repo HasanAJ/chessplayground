@@ -10,7 +10,7 @@ import { useBoardPreview } from "../../src/features/board/useBoardPreview";
 import { SquareHighlightProvider } from "../../src/features/board/SquareHighlight";
 import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
 import { useGameController } from "../../src/features/game/useGameController";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { CoachPanel } from "../../src/features/coach/CoachPanel";
 import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
@@ -56,7 +56,6 @@ async function renderWorkspace(
         key: game.analysisKey,
         candidates,
         best: candidates[0],
-        language: "en",
         state: "ready",
       },
       calculate() {},
@@ -389,7 +388,7 @@ test("mobile preview controls navigate without changing the game and reveal an o
   assert.equal(boardPanel.querySelector(".board-preview-controls"), controls);
   assert.equal(controls!.textContent, controlsText);
   assert.equal(view.scrolls, 1, "hovering over a pinned preview must not scroll");
-  await act(() => view.preview.inspectMove(candidates[0], 0, "hover"));
+  await act(() => view.preview.clearInspection(candidates[0], "hover"));
   assert.equal(view.preview.pinned, true);
   assert.equal(view.scrolls, 1, "restoring a pinned preview must not scroll");
   await act(() => view.preview.clearPreview());

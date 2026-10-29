@@ -15,7 +15,7 @@ import { languages } from "../../src/i18n/translate";
 const squares = (copy: string) =>
   [...new Set(copy.match(/[a-h][1-8]/g))].sort();
 
-test("every lesson teaches the bait, outcome and first defensive reply in all languages", () => {
+test("every lesson has an annotated preview, bait, outcome and defensive reply in all languages", () => {
   assert.deepEqual(
     Object.keys(annotations).sort(),
     openings.map((lesson) => lesson.id).sort(),
@@ -23,6 +23,15 @@ test("every lesson teaches the bait, outcome and first defensive reply in all la
   for (const lesson of openings) {
     const setup = setupLength(lesson);
     const trap = lessonPositions(lesson);
+    const previewStep = setup + lesson.previewPly;
+    const preview = teachingNote(lesson, "trap", previewStep);
+    assert.ok(preview?.arrows.length, `${lesson.id}: visible tactical arrows`);
+    for (const [from] of preview.arrows)
+      assert.equal(
+        trap[previewStep].position[from]?.color,
+        lesson.side,
+        `${lesson.id}: the preview shows the attacker's threats`,
+      );
     assert.ok(
       teachingNote(lesson, "trap", setup + lesson.temptation + 1),
       lesson.id,

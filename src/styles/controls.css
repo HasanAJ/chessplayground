@@ -384,31 +384,87 @@
   margin: 13px 0 20px;
 }
 
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  padding: 24px 0;
+.site-footer {
+  position: relative;
+  overflow: hidden;
   margin-top: 48px;
-  border-top: 1px solid var(--line);
-  color: #786383;
-  font-size: var(--text-sm);
+  padding: 16px clamp(24px, 6vw, 112px);
+  border-top: 1px solid #bcabe3;
+  background: #2d2038;
+  color: #f7f3fc;
+  font-size: 13px;
   line-height: 1.7;
 }
-footer > span {
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -30px;
+  width: 340px;
+  height: 340px;
+  background: repeating-conic-gradient(#bca4dc1a 0% 25%, transparent 0% 50%)
+    0 / 144px 144px;
+  mask-image: linear-gradient(to left, #000, transparent);
+  transform: rotate(9deg);
+  pointer-events: none;
+}
+.footer-content {
+  position: relative;
+  max-width: 1560px;
+  margin: 0 auto;
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+.footer-identity,
+.footer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.footer-brand {
+  align-self: flex-start;
+  display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
+  font-family: var(--heading);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
 }
-footer img {
-  width: 21px;
-  height: 21px;
-  border-radius: 6px;
-  opacity: 0.65;
+.footer-brand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
 }
-.footer-dot {
-  color: #786383;
+.footer-copyright,
+.footer-engine {
+  color: #bdb0ca;
+}
+.site-footer .privacy-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  color: #eee6f6;
+  font-size: inherit;
+  text-decoration-color: #bdb0ca;
+  text-underline-offset: 4px;
+}
+.site-footer .privacy-link + .privacy-link::before {
+  content: "";
+  height: 16px;
+  margin-right: 18px;
+  border-left: 1px solid #bdb0ca;
+}
+.site-footer .privacy-link:hover {
+  color: #fff;
+  text-decoration-color: currentColor;
+}
+.footer-brand:focus-visible,
+.site-footer .privacy-link:focus-visible {
+  outline-color: #c9b6f5;
 }
 .panel-notice {
   background: #f1edf9;

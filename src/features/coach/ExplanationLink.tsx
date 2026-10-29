@@ -8,6 +8,7 @@ export function ExplanationLink({
   focus = candidate.explanationFocus,
   preview,
   onInspect,
+  onClearInspection,
   ply = 1,
   label = focus?.label,
 }: MovePreviewProps & { focus?: BoardFocus; ply?: number; label?: string }) {
@@ -21,7 +22,13 @@ export function ExplanationLink({
       type="button"
       className="text-action explanation-link"
       aria-pressed={current}
-      {...movePreviewEvents(onInspect, candidate, ply, focus)}
+      {...movePreviewEvents({
+        onInspect,
+        onClearInspection,
+        candidate,
+        ply,
+        focus,
+      })}
       onClick={() => onInspect(candidate, ply, "click", focus)}
     >
       <Eye size={13} aria-hidden="true" />{" "}

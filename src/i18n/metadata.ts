@@ -2,7 +2,7 @@ import { languages, type Language } from "./translate";
 import { languagePath } from "./routes";
 import { siteContent } from "./siteContent";
 
-export type MetadataTag = {
+type MetadataTag = {
   tag: "meta" | "link";
   attrs: Record<string, string>;
 };

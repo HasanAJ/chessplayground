@@ -47,6 +47,37 @@ async function mount(t: TestContext) {
   return { dom, document, render, click, key, position };
 }
 
+test("library previews show the tactical position and remain navigable", async (t) => {
+  const view = await mount(t);
+  const wayward = view.document.querySelector('[data-opening="wayward-rook"]')!;
+  assert.match(
+    wayward.querySelector('[data-square="e5"] img')!.getAttribute("src")!,
+    /wQ/,
+  );
+  assert.ok(wayward.querySelector('[data-square="e8"].king-in-check'));
+  assert.deepEqual(
+    Array.from(wayward.querySelectorAll(".opening-arrows line"), (arrow) => [
+      arrow.getAttribute("data-from"),
+      arrow.getAttribute("data-to"),
+    ]),
+    [
+      ["e5", "e8"],
+      ["e5", "h8"],
+    ],
+  );
+  assert.equal(
+    view.document
+      .querySelector('[data-opening="stafford"] .square')!
+      .getAttribute("data-square"),
+    "h1",
+  );
+  await view.click('[data-opening="wayward-rook"] [data-square="e5"]');
+  assert.equal(
+    view.document.querySelector(".opening-lesson-header h1")!.textContent,
+    "Wayward Queen Attack",
+  );
+});
+
 test("the plan, temptation and defence appear once throughout both walkthroughs", async (t) => {
   const view = await mount(t);
   const lesson = openings.find((lesson) => lesson.id === "queens-gambit")!;
@@ -382,10 +413,6 @@ test("level, colour and goal filters combine with search while retaining the edi
   const view = await mount(t);
   const total = view.document.querySelectorAll(".opening-card").length;
   assert.equal(total, openings.length);
-  assert.match(
-    view.document.querySelector(".opening-library-summary")!.textContent!,
-    /editorial ranking/,
-  );
   const filter = async (selector: string, value: string) => {
     const select = view.document.querySelector<HTMLSelectElement>(selector)!;
     await act(() => {

@@ -1,4 +1,9 @@
-import { translateNotice } from "../../i18n/notices";
+import {
+  type Diagnostic,
+  noticeFromError,
+  notice,
+  translateNotice,
+} from "../../i18n/notices";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useState, type FormEvent } from "react";
 import type { Chess } from "chess.js";
@@ -16,23 +21,21 @@ export function PositionLoader({
 }) {
   const { t } = useTranslation();
   const [input, setInput] = useState(fen);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Diagnostic | null>(null);
 
   useEffect(() => {
     setInput(fen);
-    setError("");
+    setError(null);
   }, [fen]);
 
   function load(event: FormEvent) {
     event.preventDefault();
-    setError("");
+    setError(null);
     let game: Chess;
     try {
       game = checkedGame(input);
     } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "This FEN is not valid.",
-      );
+      setError(noticeFromError(cause, notice("position.error.invalidInput")));
       return;
     }
     setInput(game.fen());
@@ -43,12 +46,10 @@ export function PositionLoader({
     try {
       await navigator.clipboard.writeText(fen);
     } catch {
-      setError(
-        "Clipboard access is unavailable. Select the FEN text and copy it manually.",
-      );
+      setError(notice("position.error.clipboard"));
       return;
     }
-    setError("");
+    setError(null);
     onCopied();
   }
 
@@ -63,7 +64,7 @@ export function PositionLoader({
           value={input}
           onChange={(event) => {
             setInput(event.target.value);
-            setError("");
+            setError(null);
           }}
           spellCheck={false}
           placeholder={t("position.controls.input")}

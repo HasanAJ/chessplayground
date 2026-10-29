@@ -1,3 +1,5 @@
+import { translateNotice } from "../../src/i18n/notices";
+import { english } from "../../src/i18n/translate";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess, type Square } from "chess.js";
@@ -15,24 +17,21 @@ import {
 import { watchOutFor } from "../../src/features/coach/warnings";
 
 test("incomplete arrangements explain what is needed before play", () => {
+  assert.equal(arrangementIssue({}, "w", ""), null);
   assert.equal(
-    arrangementIssue({}, "w", ""),
-    "Add both kings to play or calculate.",
+    translateNotice(arrangementIssue({ e1: { color: "w", type: "k" } }, "w", ""), english),
+    "Add the Black king to play or calculate.",
   );
   assert.equal(
-    arrangementIssue({ e1: { color: "w", type: "k" } }, "w", ""),
-    "Add the black king to play or calculate.",
-  );
-  assert.equal(
-    arrangementIssue({ e8: { color: "b", type: "k" } }, "b", ""),
-    "Add the white king to play or calculate.",
+    translateNotice(arrangementIssue({ e8: { color: "b", type: "k" } }, "b", ""), english),
+    "Add the White king to play or calculate.",
   );
   const kings = {
     e1: { color: "w", type: "k" },
     e8: { color: "b", type: "k" },
   } as const;
   assert.equal(
-    arrangementIssue({ ...kings, a1: { color: "w", type: "p" } }, "w", ""),
+    translateNotice(arrangementIssue({ ...kings, a1: { color: "w", type: "p" } }, "w", ""), english),
     "Move pawns off the first and last ranks to play or calculate.",
   );
 });
@@ -43,16 +42,16 @@ test("arrangement guidance follows position legality and the chosen next player"
     new Chess("4k3/8/8/8/8/8/4R3/4K3 b - - 0 1"),
   );
   assert.match(
-    arrangementIssue(checkingPosition, "w", "")!,
-    /black king is in check.*White's turn/,
+    translateNotice(arrangementIssue(checkingPosition, "w", ""), english),
+    /Black king is in check.*White's turn/,
   );
   assert.equal(arrangementIssue(checkingPosition, "b", ""), null);
   assert.match(
-    arrangementIssue(
+    translateNotice(arrangementIssue(
       { e1: { color: "w", type: "k" }, e2: { color: "b", type: "k" } },
       "w",
       "",
-    )!,
+    ), english),
     /king is in check/,
   );
 });
@@ -166,7 +165,7 @@ test("piece limits apply to incomplete boards before either king is added", () =
       }).position;
     assert.equal(pieceLimitError(position), null);
     const ninthPawn = editPosition(position, "", "a3", { color, type: "p" });
-    assert.match(pieceLimitError(ninthPawn.position)!, /at most 8 pawns/);
+    assert.match(translateNotice(pieceLimitError(ninthPawn.position), english), /at most 8 pawns/);
   }
 });
 
@@ -194,7 +193,7 @@ test("piece limits allow 16 pieces and promoted pieces but reject a seventeenth"
     );
     assert.equal(pieceLimitError(position), null);
     const extra = editPosition(position, "", "a4", { color, type: "n" });
-    assert.match(pieceLimitError(extra.position)!, /at most 16 pieces/);
+    assert.match(translateNotice(pieceLimitError(extra.position), english), /at most 16 pieces/);
   }
 });
 

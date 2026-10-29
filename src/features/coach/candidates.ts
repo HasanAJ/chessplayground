@@ -1,30 +1,22 @@
-import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import type { EngineLine } from "../../engine/uci";
-import { capturedSquare, uciMove } from "../../chess/moves";
-import { formatEvaluation } from "../../chess/evaluation";
-import { boardFocus, type BoardFocus } from "./boardFocus";
-import { describeReply } from "./replyDescription";
-import { explainMove } from "./explanations";
+import { uciMove } from "../../chess/moves";
 import { readContinuation } from "./continuation";
 
-export type Candidate = EngineLine & {
+export type CandidateAnalysis = EngineLine & {
   move: Move;
-  title: string;
-  explanation: string;
-  explanationFocus?: BoardFocus;
   continuation: Move[];
-  score: string;
+  materialLoss: number | undefined;
   whiteScore: number;
 };
 export const MAX_RECOMMENDED_MOVES = 5;
 const RECOMMENDATION_CP_GAP = 50;
 
 /** Qualify alternatives at the completed depth, keeping the final choice first. */
-export function recommendedCandidates(
-  candidates: Candidate[],
+export function recommendedCandidates<T extends CandidateAnalysis>(
+  candidates: T[],
   best = candidates[0],
-): Candidate[] {
+): T[] {
   if (!best) return [];
   const comparisonBest = candidates[0];
   const alternatives = candidates.filter((candidate) => {
@@ -32,8 +24,11 @@ export function recommendedCandidates(
     // A newer mate result can rule out alternatives from the completed batch.
     if (
       best.mate !== undefined &&
-      (best.mate > 0 ? (candidate.mate ?? 0) <= 0 : candidate.mate !== best.mate)
-    ) return false;
+      (best.mate > 0
+        ? (candidate.mate ?? 0) <= 0
+        : candidate.mate !== best.mate)
+    )
+      return false;
     if (best.mate === undefined && (candidate.mate ?? 0) < 0) return false;
     if (comparisonBest.mate !== undefined)
       return comparisonBest.mate > 0
@@ -49,89 +44,37 @@ export function recommendedCandidates(
   return [best, ...alternatives].slice(0, MAX_RECOMMENDED_MOVES);
 }
 
-export function candidatesFor(
+/** Validate the engine's moves once, independently of their display language. */
+export function analyzeCandidates(
   fen: string,
   lines: EngineLine[],
-  t: Translator = english,
-): Candidate[] {
+): CandidateAnalysis[] {
   return [...lines]
     .sort((a, b) => a.rank - b.rank)
     .flatMap((line) => {
-      const before = new Chess(fen),
-        after = new Chess(fen);
+      const after = new Chess(fen);
+      const sign = after.turn() === "w" ? 1 : -1;
+      let move: Move;
+      let continuation: ReturnType<typeof readContinuation>;
       try {
-        const move = uciMove(after, line.pv[0]);
-        let insight = explainMove(before, after, move, t);
-        if (line.mate !== undefined && line.mate > 0 && !after.isCheckmate()) {
-          insight = {
-            title: t("coach.explanation.matingAttack.title"),
-            text: t(
-              "coach.explanation.matingAttack.text",
-              line.mate,
-            ),
-            focus: boardFocus(t("coach.explanation.matingAttack.focus"), [
-              { from: move.from, to: move.to },
-            ]),
-          };
-        } else if (line.mate !== undefined && line.mate < 0) {
-          insight = {
-            title: t("coach.explanation.mateDefense.title"),
-            text: t("coach.explanation.mateDefense.text"),
-            focus: boardFocus(t("coach.explanation.mateDefense.focus"), [
-              { from: move.from, to: move.to },
-            ]),
-          };
-        }
-        const {
-          moves: continuation,
-          materialLoss: lineMaterialLoss,
-        } = readContinuation(after, move, line.pv);
-        const response = continuation[1];
-        const materialWarning =
-          !!lineMaterialLoss && line.mate === undefined;
-        insight = {
-          ...insight,
-          text: [
-            insight.text,
-            response?.captured && line.mate === undefined
-              ? describeReply(response, t, move)
-              : "",
-            materialWarning ? t("coach.explanation.materialRisk.text") : "",
-          ].filter(Boolean).join(" "),
-        };
-        if (materialWarning && response?.captured) {
-          insight = {
-            ...insight,
-            focus: boardFocus(
-              t("coach.explanation.materialRisk.focus"),
-              [
-                ...(insight.focus?.arrows ?? []),
-                { from: response.from, to: response.to },
-              ],
-              [...(insight.focus?.squares ?? []), capturedSquare(response)],
-            ),
-          };
-        }
-        const sign = before.turn() === "w" ? 1 : -1;
-        const whiteScore =
-          line.mate !== undefined
-            ? (line.mate >= 0 ? 100 : -100) * sign
-            : ((line.cp ?? 0) / 100) * sign;
-        const score = formatEvaluation({ whiteScore, mate: line.mate }, t.language);
-        return [
-          {
-            ...line,
-            move,
-            title: insight.title,
-            explanation: insight.text,
-            explanationFocus: insight.focus,
-            continuation,
-            whiteScore,
-            score,
-          },
-        ];
+        move = uciMove(after, line.pv[0]);
+        continuation = readContinuation(after, move, line.pv);
       } catch {
+        // Malformed engine moves are rejected; presentation errors must surface.
         return [];
       }
+      const whiteScore =
+        line.mate !== undefined
+          ? (line.mate >= 0 ? 100 : -100) * sign
+          : ((line.cp ?? 0) / 100) * sign;
+      return [
+        {
+          ...line,
+          move,
+          continuation: continuation.moves,
+          materialLoss: continuation.materialLoss,
+          whiteScore,
+        },
+      ];
     });
 }

@@ -1,3 +1,4 @@
+import { type Diagnostic, notice } from "../i18n/notices";
 import { Chess } from "chess.js";
 import { parseInfo } from "./uci";
 import { MultiPvResults } from "./MultiPvResults";
@@ -76,7 +77,7 @@ export class AnalysisEngine implements AnalysisClient {
     this.phase = "idle";
   }
 
-  private fail(message: string) {
+  private fail(message: Diagnostic) {
     const latest = this.queued ?? this.active;
     const notify = latest && !latest.cancelled ? latest.onError : null;
     this.dispose();
@@ -91,26 +92,19 @@ export class AnalysisEngine implements AnalysisClient {
       worker.onerror = (event) => {
         if (this.worker !== worker) return;
         event.preventDefault();
-        this.fail(
-          "The chess engine could not load. Check your connection and retry analysis.",
-        );
+        this.fail(notice("engine.error.load"));
       };
       worker.onmessage = (event) => {
         if (this.worker !== worker || typeof event.data !== "string") return;
         for (const raw of event.data.split("\n")) this.receive(raw.trim());
       };
       this.timeout = setTimeout(
-        () =>
-          this.fail(
-            "The engine took too long to load. Try analyzing the position again.",
-          ),
+        () => this.fail(notice("engine.error.loadTimeout")),
         15000,
       );
       worker.postMessage("uci");
     } catch {
-      this.fail(
-        "The chess engine could not start. Try refreshing the page or using a browser with WebAssembly support.",
-      );
+      this.fail(notice("engine.error.start"));
     }
   }
 
@@ -122,10 +116,7 @@ export class AnalysisEngine implements AnalysisClient {
     this.active = search;
     this.phase = "searching";
     this.timeout = setTimeout(
-      () =>
-        this.fail(
-          "The engine took too long to respond. Try analyzing the position again.",
-        ),
+      () => this.fail(notice("engine.error.responseTimeout")),
       Math.max(10000, (search.options.movetime ?? 1800) + 2000),
     );
     this.worker.postMessage(
@@ -167,10 +158,7 @@ export class AnalysisEngine implements AnalysisClient {
             bestMove,
             search.results.bestLine(bestMove),
           );
-        } else
-          search.onError(
-            "No complete analysis was returned. Try this position again.",
-          );
+        } else search.onError(notice("engine.error.incompleteAnalysis"));
       }
       this.startNext();
       return;

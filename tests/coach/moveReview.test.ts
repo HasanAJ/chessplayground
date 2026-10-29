@@ -1,3 +1,5 @@
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
+import { english } from "../../src/i18n/translate";
 import test from "node:test";
 import assert from "node:assert/strict";
 import type { AnalysisEngine } from "../../src/engine/AnalysisEngine";
@@ -54,7 +56,7 @@ function observe() {
     reviews,
     errors,
     onComplete: (review: MoveReview) => reviews.push(review),
-    onError: (error: string) => errors.push(error),
+    onError: (error: Diagnostic) => errors.push(translateNotice(error, english)),
   };
 }
 

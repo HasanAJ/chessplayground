@@ -10,7 +10,7 @@ import type { PositionEvaluation } from "../../chess/evaluation";
 import { EvaluationBar } from "./EvaluationBar";
 
 type Props = {
-  game: GameController;
+  game: Pick<GameController, "playable" | "reviewing">;
   board: BoardController;
   preview: BoardPreview;
   analysis: Recommendations;
@@ -48,9 +48,8 @@ export function Chessboard({
   const files = (flipped ? "hgfedcba" : "abcdefgh").split("");
   const ranks = flipped ? [1, 2, 3, 4, 5, 6, 7, 8] : [8, 7, 6, 5, 4, 3, 2, 1];
   const legalSquares = new Set(legalMoves.map((move) => move.to));
-  const evaluation = !game.playable || boardPreview
-    ? undefined
-    : best ?? reviewEvaluation;
+  const evaluation =
+    !game.playable || boardPreview ? undefined : (best ?? reviewEvaluation);
   const arrowMove =
     inspectionMove ?? (hiddenAnalysis ? undefined : shownCandidate?.move);
   const arrow =

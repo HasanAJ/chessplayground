@@ -17,9 +17,6 @@
   justify-content: space-between;
   margin-bottom: 12px;
 }
-.coach-header .coach-heading {
-  padding-bottom: 0;
-}
 .coach-header-actions {
   display: flex;
   align-items: center;
@@ -41,6 +38,55 @@
   color: #fff;
   background: var(--purple-dark);
   border-color: var(--purple-dark);
+}
+.coach-panel.is-welcoming .coach-header {
+  margin-bottom: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.coach-welcome {
+  padding: 32px 12px 24px;
+  text-align: center;
+}
+.coach-welcome-icon {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: var(--purple-soft);
+}
+.coach-welcome-icon > img {
+  width: 56px;
+  height: 56px;
+  transform: rotate(-5deg);
+}
+.coach-welcome h3 {
+  font-family: var(--heading);
+  font-size: clamp(22px, 2vw, 26px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+}
+.coach-welcome p {
+  max-width: 34ch;
+  margin: 12px auto 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+@media (min-width: 901px) {
+  .is-welcoming .calculation-controls {
+    justify-items: center;
+    margin: 0;
+    padding: 0 12px 24px;
+    border: 0;
+  }
+  .is-welcoming .calculation-controls .calculate-button {
+    width: min(100%, 360px);
+    min-height: 50px;
+  }
 }
 .coach-options {
   position: relative;
@@ -332,7 +378,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0 14px;
 }
 .coach-heading h2 {
   font-family: var(--heading);
@@ -652,9 +697,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.coach-heading .turn-status:empty {
-  display: none;
 }
 
 .coach-status {

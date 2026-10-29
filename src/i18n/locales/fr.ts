@@ -1,12 +1,13 @@
 import type { Catalog } from "./en";
 
 export default {
+  "app.loading": "Chargement de Tempo…",
   "analytics.heading": "Préférences de cookies",
   "analytics.description":
     "Les cookies de mesure facultatifs nous aident à comprendre les visites et à améliorer Tempo.",
   "analytics.accept": "Accepter",
   "analytics.decline": "Refuser",
-  "analytics.settings": "Paramètres de mesure",
+  "analytics.settings": "Paramètres des cookies",
   "analytics.privacy": "Politique de confidentialité",
   "analytics.storage":
     "Votre choix s’applique à cette visite, mais n’a pas pu être enregistré pour la prochaine.",
@@ -38,11 +39,8 @@ export default {
   "opening.side.all": "Les deux couleurs",
   "opening.target": "Objectif",
   "opening.target.all": "Tous les objectifs",
-  "opening.explore": "Parcourir",
   "opening.empty":
     "Aucune attaque ne correspond. Essayez une autre recherche ou un filtre.",
-  "opening.library.note":
-    "Classés selon la tentation estimée pour un joueur qui ignore le piège. Un classement éditorial, pas des taux de réussite mesurés.",
   "opening.rank": "Rang {0} selon la facilité estimée à tomber dans le piège",
   "opening.backToLibrary": "Toutes les attaques",
   "opening.viewer.label": "Échiquier et navigation de la leçon d’attaque",
@@ -159,7 +157,6 @@ export default {
   "chess.side.white": "Blancs",
   "chess.side.black": "Noirs",
   "header.home": "Accueil de Tempo",
-  "header.tagline": "Votre terrain de jeu d’échecs",
   "intro.heading.start": "Analyse d’échecs,",
   "intro.heading.end": "avec coups expliqués.",
   "intro.tagline":
@@ -170,11 +167,8 @@ export default {
     "Choisissez « {0} », puis prévisualisez une réponse ou essayez le coup suggéré.",
   "intro.guide.setup":
     "Utilisez les outils de modification pour créer votre propre position.",
-  "footer.tagline": "Un bon coup commence par un peu de compréhension.",
   "footer.engine": "Avec Stockfish 19",
   "move.description.normal": "{0}{1} de {2} à {3}",
-  "position.error.missingBothKings":
-    "Ajoutez les deux rois pour jouer ou analyser.",
   "position.error.pawnOnEdge":
     "Retirez les pions de la première et de la dernière rangée pour jouer ou analyser.",
   "position.error.illegalArrangement":
@@ -422,6 +416,9 @@ export default {
   "coach.status.yourTurn": "À vous de jouer",
   "coach.panel.label": "Analyse de position",
   "coach.panel.heading": "Votre coach",
+  "coach.welcome.heading": "Votre prochain coup, expliqué.",
+  "coach.welcome.description":
+    "Trouvez un bon coup et comprenez pourquoi il fonctionne.",
   "coach.calculate.label.waiting": "En attente de l’ordinateur",
   "coach.calculate.label.thinking": "Calcul des meilleurs coups",
   "coach.calculate.label.ready": "Calculer les meilleurs coups",

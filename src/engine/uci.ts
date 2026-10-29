@@ -6,6 +6,16 @@ export type EngineLine = {
   pv: string[];
 };
 
+export function selectBestLine(
+  lines: EngineLine[],
+  bestMove?: string,
+  bestLine?: EngineLine,
+): EngineLine | undefined {
+  if (!bestMove) return lines[0];
+  if (bestLine?.pv[0] === bestMove) return bestLine;
+  return lines.find((line) => line.pv[0] === bestMove);
+}
+
 export function parseInfo(line: string): EngineLine | null {
   if (
     !line.startsWith("info ") ||

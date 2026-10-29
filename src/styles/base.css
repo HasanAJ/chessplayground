@@ -88,14 +88,15 @@ p {
 .site-header {
   height: 96px;
   padding: 0 max(32px, calc((100vw - 1256px) / 2));
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   background: #fff;
   border-bottom: 1px solid var(--line);
 }
 .brand {
+  justify-self: start;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -116,15 +117,8 @@ p {
 .brand-dot {
   color: var(--purple);
 }
-.header-center {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #705e99;
-  font-size: var(--text-sm);
-  background: #f5f2fb;
-  border-radius: 20px;
-  padding: 8px 13px;
+.header-actions {
+  justify-self: end;
 }
 main {
   max-width: 1320px;

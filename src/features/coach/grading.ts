@@ -1,7 +1,7 @@
 import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move } from "chess.js";
 import type { PositionEvaluation } from "../../chess/evaluation";
-import { candidatesFor, type Candidate } from "./candidates";
+import { presentCandidate, type Candidate } from "./candidatePresentation";
 import { explainMove } from "./explanations";
 import { describeReply } from "./replyDescription";
 import { lessonFor, type ReviewLesson } from "./lessons";
@@ -84,15 +84,16 @@ export function reviewMove(
       idea,
       !played && reply?.move.captured ? describeReply(reply.move, t, move) : "",
       !idea ? description : "",
-    ].filter(Boolean).join(" ");
+    ]
+      .filter(Boolean)
+      .join(" ");
   } else {
     const consequence =
       result?.mate !== undefined && resultingOutlook === 0
         ? t("coach.review.consequence.allowsMate")
         : best.mate !== undefined && outlook(best, sign) === 1
           ? t("coach.review.consequence.missesMate")
-          : (lesson?.consequence ??
-            t("coach.review.consequence.worseChances"));
+          : (lesson?.consequence ?? t("coach.review.consequence.worseChances"));
     const response = reply ? describeReply(reply.move, t, move) : "";
     text = reply?.move.san.endsWith("#")
       ? response
@@ -115,8 +116,7 @@ export function reviewMove(
 
 export function localizeReview(review: MoveReview, t: Translator): MoveReview {
   if (t === english) return review;
-  const localize = (candidate: Candidate) =>
-    candidatesFor(candidate.move.before, [candidate], t)[0];
+  const localize = (candidate: Candidate) => presentCandidate(candidate, t);
   return reviewMove(
     review.move,
     localize(review.best),

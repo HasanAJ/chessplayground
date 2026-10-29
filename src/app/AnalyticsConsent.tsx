@@ -20,7 +20,7 @@ export function AnalyticsConsent({
 }) {
   const { t, language } = useTranslation();
   const [consent, setConsent] = useState(readAnalyticsConsent);
-  const [open, setOpen] = useState(consent === null);
+  const [open, setOpen] = useState(Boolean(measurementId) && consent === null);
   const [saved, setSaved] = useState(true);
   const trigger = useRef<HTMLButtonElement>(null);
   const analytics = useMemo(
@@ -54,43 +54,39 @@ export function AnalyticsConsent({
       <a className="privacy-link" href={privacyPath(language)}>
         {t("analytics.privacy")}
       </a>
-      {analytics && (
-        <>
-          <button
-            className="privacy-link"
-            ref={trigger}
-            aria-expanded={open}
-            aria-controls="analytics-choice"
-            onClick={() => setOpen(!open)}
-          >
-            {t("analytics.settings")}
-          </button>
-          {open && (
-            <section
-              className="analytics-choice"
-              id="analytics-choice"
-              aria-label={t("analytics.heading")}
-            >
-              <p>
-                {t("analytics.description")}{" "}
-                <a href={privacyPath(language)}>{t("analytics.privacy")}</a>
-              </p>
-              <div className="analytics-actions">
-                <button onClick={() => choose("denied")}>
-                  {t("analytics.decline")}
-                </button>
-                <button onClick={() => choose("granted")}>
-                  {t("analytics.accept")}
-                </button>
-              </div>
-            </section>
-          )}
-          {!saved && (
-            <p className="analytics-storage-notice" role="status">
-              {t("analytics.storage")}
-            </p>
-          )}
-        </>
+      <button
+        className="privacy-link"
+        ref={trigger}
+        aria-expanded={open}
+        aria-controls="analytics-choice"
+        onClick={() => setOpen(!open)}
+      >
+        {t("analytics.settings")}
+      </button>
+      {open && (
+        <section
+          className="analytics-choice"
+          id="analytics-choice"
+          aria-label={t("analytics.heading")}
+        >
+          <p>
+            {t("analytics.description")}{" "}
+            <a href={privacyPath(language)}>{t("analytics.privacy")}</a>
+          </p>
+          <div className="analytics-actions">
+            <button onClick={() => choose("denied")}>
+              {t("analytics.decline")}
+            </button>
+            <button onClick={() => choose("granted")}>
+              {t("analytics.accept")}
+            </button>
+          </div>
+        </section>
+      )}
+      {!saved && (
+        <p className="analytics-storage-notice" role="status">
+          {t("analytics.storage")}
+        </p>
       )}
     </>
   );

@@ -20,7 +20,7 @@ const extendedCenter: Square[] = [
   "e6",
   "f6",
 ];
-export type Explanation = {
+type Explanation = {
   title: string;
   text: string;
   focus?: BoardFocus;

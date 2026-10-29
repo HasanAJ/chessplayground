@@ -4,7 +4,7 @@ import { Chess } from "chess.js";
 import { act, createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { moveDescription } from "../../src/chess/moves";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
 import { createTestRoot } from "../helpers/dom";
@@ -19,6 +19,7 @@ test("the best-move card has one descriptive title followed by the reason", () =
       forcedMove: false,
       preview: null,
       onInspect() {},
+      onClearInspection() {},
       onPlay() {},
     }),
   );
@@ -105,6 +106,7 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
         forcedMove: false,
         preview: preview.inspection,
         onInspect: preview.inspectMove,
+        onClearInspection: preview.clearInspection,
         onPlay() {},
       }),
       createElement("button", { id: "outside" }, "Outside"),

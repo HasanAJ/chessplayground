@@ -28,8 +28,27 @@ import type { CoachPresentation } from "./useCoachPresentation";
 import { RecommendationsPanel } from "./RecommendationsPanel";
 import { SquareText } from "../board/SquareHighlight";
 
+type CoachGame = Pick<
+  GameController,
+  | "analysisGame"
+  | "analysisKey"
+  | "analysisTerminal"
+  | "error"
+  | "history"
+  | "lastMove"
+  | "notice"
+  | "playMove"
+  | "playable"
+  | "positionIssue"
+  | "promotion"
+  | "reviewing"
+  | "setError"
+  | "setPromotion"
+  | "terminal"
+>;
+
 type Props = {
-  game: GameController;
+  game: CoachGame;
   onPlayMove: GameController["playMove"];
   preview: BoardPreview;
   computer: ComputerSettings;
@@ -63,7 +82,9 @@ export function CoachPanel({
   const [collapsedFeedbackKey, setCollapsedFeedbackKey] = useState<
     string | null
   >(null);
-  const [hiddenFeedbackKey, setHiddenFeedbackKey] = useState<string | null>(null);
+  const [hiddenFeedbackKey, setHiddenFeedbackKey] = useState<string | null>(
+    null,
+  );
   const {
     analysisGame,
     analysisTerminal,
@@ -77,16 +98,14 @@ export function CoachPanel({
     setPromotion,
   } = game;
   const { thinking, requested: analysisRequested } = recommendations;
-  const { boardPreview, inspectionMove, inspectMove } = preview;
+  const { boardPreview, inspectionMove, inspectMove, clearInspection } =
+    preview;
   const displayedGame = preview.previewGame ?? analysisGame;
   const checkedKing = game.playable && displayedGame.isCheck();
-  const displayedEnding = useMemo(
-    () => {
-      if (!game.playable) return null;
-      return preview.previewGame ? ending(preview.previewGame) : analysisTerminal;
-    },
-    [game.playable, preview.previewGame, analysisTerminal],
-  );
+  const displayedEnding = useMemo(() => {
+    if (!game.playable) return null;
+    return preview.previewGame ? ending(preview.previewGame) : analysisTerminal;
+  }, [game.playable, preview.previewGame, analysisTerminal]);
   const { turn: botTurn, busy: botBusy, state: botState } = opponent;
   const {
     enabled: computer,
@@ -103,13 +122,23 @@ export function CoachPanel({
   const calculateReason = translateNotice(game.positionIssue ?? "", t);
   function turnStatus() {
     if (displayedEnding)
-      return t(displayedGame.isCheckmate() ? "coach.status.checkmate" : "coach.status.draw");
+      return t(
+        displayedGame.isCheckmate()
+          ? "coach.status.checkmate"
+          : "coach.status.draw",
+      );
     if (boardPreview)
-      return t(checkedKing ? "coach.status.previewCheck" : "coach.status.preview");
+      return t(
+        checkedKing ? "coach.status.previewCheck" : "coach.status.preview",
+      );
     if (checkedKing) return t("coach.status.check");
     if (computer && optionsOpen) return t("coach.status.paused");
     if (botTurn)
-      return t(botState === "waiting" ? "coach.status.replying" : "coach.status.thinking");
+      return t(
+        botState === "waiting"
+          ? "coach.status.replying"
+          : "coach.status.thinking",
+      );
     if (reviewing) return t("coach.status.reviewing");
     if (computer) return t("coach.status.yourTurn");
     return t(turn === "w" ? "board.turn.white" : "board.turn.black");
@@ -118,6 +147,13 @@ export function CoachPanel({
     analysisRequested && game.playable && !analysisTerminal && !botTurn;
   const calculateDisabled =
     !game.playable || thinking || boardPreview || botTurn || !!analysisTerminal;
+  const showWelcome =
+    !game.playable ||
+    (!analysisRequested &&
+      !calculateDisabled &&
+      !feedbackMove &&
+      !reviewing &&
+      !promotion);
   const refreshLabel = t(
     thinking ? "coach.analysis.status.thinking" : "coach.calculate.refresh",
   );
@@ -127,7 +163,7 @@ export function CoachPanel({
   }
   return (
     <aside
-      className="coach-panel"
+      className={`coach-panel${showWelcome ? " is-welcoming" : ""}`}
       id="coach"
       aria-label={t("coach.panel.label")}
     >
@@ -159,7 +195,7 @@ export function CoachPanel({
             onOpenChange={setOptionsOpen}
             onEnabledChange={(enabled) => {
               setComputer(enabled);
-              setError("");
+              setError(null);
             }}
             onRetry={opponent.retry}
           />
@@ -200,6 +236,7 @@ export function CoachPanel({
             }
             onReanalyze={onReviewRetry}
             onInspect={inspectMove}
+            onClearInspection={clearInspection}
             preview={preview.inspection}
             collapsed={collapsedFeedbackKey === feedback.key}
             onToggle={() =>
@@ -209,6 +246,15 @@ export function CoachPanel({
             }
           />
         )}
+      {showWelcome && (
+        <div className="coach-welcome">
+          <div className="coach-welcome-icon" aria-hidden="true">
+            <img src="/favicon.svg" alt="" draggable={false} />
+          </div>
+          <h3>{t("coach.welcome.heading")}</h3>
+          <p>{t("coach.welcome.description")}</p>
+        </div>
+      )}
       {!showRefresh && (
         <div className="calculation-controls">
           <button
@@ -221,7 +267,9 @@ export function CoachPanel({
                   ? t("coach.calculate.label.thinking")
                   : t("coach.calculate.label.ready")
             }
-            aria-describedby={calculateReason ? "calculation-reason" : undefined}
+            aria-describedby={
+              calculateReason ? "calculation-reason" : undefined
+            }
             onClick={calculate}
           >
             {thinking || botBusy ? (
@@ -259,7 +307,10 @@ export function CoachPanel({
           <span>
             <SquareText text={translateNotice(error, t)} />
           </span>
-          <button aria-label={t("common.dismissError")} onClick={() => setError("")}>
+          <button
+            aria-label={t("common.dismissError")}
+            onClick={() => setError(null)}
+          >
             <X size={14} />
           </button>
         </div>
@@ -334,25 +385,22 @@ export function CoachPanel({
 }
 
 function computerStatus(
-  game: GameController,
+  game: CoachGame,
   settings: ComputerSettings,
   opponent: ComputerTurn,
   previewing: boolean,
   t: Translator,
 ) {
-  if (!game.playable)
-    return t("computer.status.invalidPosition");
+  if (!game.playable) return t("computer.status.invalidPosition");
   if (game.terminal) return t("computer.status.gameEnded");
-  if (game.reviewing || previewing)
-    return t("computer.status.preview");
+  if (game.reviewing || previewing) return t("computer.status.preview");
   if (!settings.enabled)
     return t(
       "computer.status.enable",
       sideName(settings.side === "w" ? "b" : "w", t),
     );
   if (settings.open) return t("computer.status.settings");
-  if (opponent.state === "error")
-    return t("computer.error.move");
+  if (opponent.state === "error") return t("computer.error.move");
   if (opponent.busy)
     return opponent.state === "waiting"
       ? t("computer.status.movingSoon")

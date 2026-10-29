@@ -1,7 +1,11 @@
 import { Eye } from "lucide-react";
 import { formatEvaluation } from "../../chess/evaluation";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import type { InspectMove, MovePreview } from "../board/useBoardPreview";
+import type {
+  ClearInspection,
+  InspectMove,
+  MovePreview,
+} from "../board/useBoardPreview";
 import { SquareText } from "../board/SquareHighlight";
 import type { MoveReview } from "./grading";
 import { ExplanationLink } from "./ExplanationLink";
@@ -11,10 +15,12 @@ export function MoveReviewDetails({
   review,
   preview,
   onInspect,
+  onClearInspection,
 }: {
   review: MoveReview;
   preview: MovePreview | null;
   onInspect: InspectMove;
+  onClearInspection: ClearInspection;
 }) {
   const { t } = useTranslation();
   const { reply, lesson } = review;
@@ -40,12 +46,18 @@ export function MoveReviewDetails({
             ply={lesson.ply}
             preview={preview}
             onInspect={onInspect}
+            onClearInspection={onClearInspection}
           />
         ) : (
           reply && (
             <button
               className="text-action"
-              {...movePreviewEvents(onInspect, reply, 1)}
+              {...movePreviewEvents({
+                onInspect,
+                onClearInspection,
+                candidate: reply,
+                ply: 1,
+              })}
               onClick={() => onInspect(reply, 1, "click")}
             >
               <Eye size={13} aria-hidden="true" />{" "}
@@ -59,10 +71,7 @@ export function MoveReviewDetails({
           <p>
             <strong>
               <SquareText
-                text={t(
-                  "coach.feedback.tryInstead",
-                  lesson.candidate.move.san,
-                )}
+                text={t("coach.feedback.tryInstead", lesson.candidate.move.san)}
               />
             </strong>
           </p>
@@ -70,12 +79,10 @@ export function MoveReviewDetails({
             candidate={lesson.candidate}
             focus={lesson.focus}
             ply={lesson.ply}
-            label={t(
-              "coach.feedback.previewMove",
-              lesson.candidate.move.san,
-            )}
+            label={t("coach.feedback.previewMove", lesson.candidate.move.san)}
             preview={preview}
             onInspect={onInspect}
+            onClearInspection={onClearInspection}
           />
         </div>
       )}

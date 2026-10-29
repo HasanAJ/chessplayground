@@ -1,11 +1,8 @@
 .footer-privacy {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 12px;
-}
-footer {
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 18px;
 }
 .privacy-link {
   font-size: var(--text-xs);

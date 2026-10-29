@@ -1,3 +1,4 @@
+import { notice } from "../../i18n/notices";
 import { useEffect, useState } from "react";
 import type { Study } from "../../chess/study";
 import {
@@ -20,11 +21,9 @@ export function useStudyPersistence(
     if (autosavePaused) return;
     try {
       writeSavedSession(study, fen);
-      setStorageError("");
+      setStorageError(null);
     } catch {
-      setStorageError(
-        "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
-      );
+      setStorageError(notice("game.save.error.unavailable"));
     }
   }, [study, fen, autosavePaused]);
 
@@ -34,11 +33,9 @@ export function useStudyPersistence(
       // Never overwrite the original until an exact recovery copy is stored.
       preserveRecovery(recovery);
       setAutosavePaused(false);
-      setStorageError("");
+      setStorageError(null);
     } catch {
-      setStorageError(
-        "The original save could not be backed up. Autosave remains paused. Your latest changes may not survive a reload.",
-      );
+      setStorageError(notice("game.save.error.backup"));
     }
   }
 

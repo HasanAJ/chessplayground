@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Chess } from "chess.js";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { reviewMove } from "../../src/features/coach/grading";
 import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import { Continuation } from "../../src/features/coach/MoveDetails";
@@ -30,6 +30,7 @@ test("expanded move review puts the threat preview with the explanation", () => 
     onToggle() {},
     onReanalyze() {},
     onInspect() {},
+    onClearInspection() {},
   };
   const revealed = renderToStaticMarkup(createElement(MoveFeedback, props));
   assert.match(revealed, /Blunder/);
@@ -61,6 +62,7 @@ test("pending automatic review identifies the selected move without stale feedba
       onToggle() {},
       onReanalyze() {},
       onInspect() {},
+      onClearInspection() {},
     }),
   );
   assert.match(pending, /class="feedback-context">Selected move<\/span>/);
@@ -85,6 +87,7 @@ test("failed automatic review offers a retry and keeps the move identified", () 
       onToggle() {},
       onReanalyze() {},
       onInspect() {},
+      onClearInspection() {},
     }),
   );
   assert.match(failed.replace(/<[^>]*>/g, ""), /1\. e4 · White/);
@@ -104,6 +107,7 @@ test("the best move starts compact, with its reply and continuation hidden", () 
       forcedMove: false,
       preview: null,
       onInspect() {},
+      onClearInspection() {},
       onPlay() {},
     }),
   );
@@ -132,6 +136,7 @@ test("forced moves keep their label alongside the score from White's perspective
       forcedMove: game.moves().length === 1,
       preview: null,
       onInspect() {},
+      onClearInspection() {},
       onPlay() {},
     }),
   );
@@ -153,6 +158,7 @@ test("a mating move can be explored without inventing a reply", () => {
       forcedMove: false,
       preview: null,
       onInspect() {},
+      onClearInspection() {},
       onPlay() {},
     }),
   );
@@ -173,6 +179,7 @@ test("shared continuation details select the preview step only for the matching 
         candidate: candidates[index],
         preview: { candidate: candidates[0], ply: 2 },
         onInspect() {},
+        onClearInspection() {},
       }),
     );
   const selected = render(0);

@@ -6,7 +6,7 @@ import type { Recommendations } from "./useRecommendations";
 import { watchOutFor } from "./warnings";
 
 export function useCoachPresentation(
-  game: GameController,
+  game: Pick<GameController, "analysisGame" | "analysisKey" | "playable">,
   recommendations: Recommendations,
   preview: BoardPreview,
 ) {

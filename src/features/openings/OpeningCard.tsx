@@ -1,9 +1,12 @@
-import { ArrowRight } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { sideName } from "../../chess/position";
 import { openingPath } from "../../i18n/routes";
+import { BoardGrid } from "../board/BoardGrid";
+import { teachingNote } from "./annotations";
 import { motifs } from "./content";
-import type { OpeningLesson } from "./lessons";
+import { lessonPositions, setupLength, type OpeningLesson } from "./lessons";
+import { OpeningArrows } from "./OpeningArrows";
 
 export function OpeningCard({
   lesson,
@@ -16,6 +19,14 @@ export function OpeningCard({
 }) {
   const { t, language } = useTranslation();
   const motif = motifs[lesson.motif];
+  const { frame, note } = useMemo(() => {
+    const step = setupLength(lesson) + lesson.previewPly;
+    return {
+      frame: lessonPositions(lesson)[step],
+      note: teachingNote(lesson, "trap", step)!,
+    };
+  }, [lesson]);
+  const flipped = lesson.side === "b";
   return (
     <a
       className="opening-card"
@@ -43,18 +54,25 @@ export function OpeningCard({
         </span>
       </span>
       <h2>{lesson.name[language]}</h2>
-      <span className="opening-family">{motif.title[language]}</span>
-      <p>{motif.plan[language]}</p>
+      <p>{motif.summary[language]}</p>
+      <div className="opening-card-preview" aria-hidden="true">
+        <BoardGrid
+          position={frame.position}
+          flipped={flipped}
+          checkedKing={frame.checkedKing}
+          focusSquares={note.squares}
+          label={lesson.name[language]}
+        >
+          <OpeningArrows arrows={note.arrows} flipped={flipped} />
+        </BoardGrid>
+      </div>
       <span className="opening-card-reward">
         {t(`opening.reward.${lesson.reward}`)}
       </span>
-      <span className={`opening-risk ${lesson.risk}`}>
-        {t(`opening.risk.${lesson.risk}`)}
-      </span>
       <span className="opening-card-bottom">
         <span className="opening-label">{sideName(lesson.side, t)}</span>
-        <span>
-          {t("opening.explore")} <ArrowRight size={15} aria-hidden="true" />
+        <span className={`opening-risk ${lesson.risk}`}>
+          {t(`opening.risk.${lesson.risk}`)}
         </span>
       </span>
     </a>

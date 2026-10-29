@@ -3,7 +3,7 @@ import { uciMove } from "./moves";
 import { gameOutcome } from "./position";
 import { addStudyMove, replayStudy, type Study } from "./study";
 
-export type StudySnapshot = {
+type StudySnapshot = {
   study: Study;
   // Position-only rules; repetition and other game outcomes live in outcomes.
   positionGame: Chess;

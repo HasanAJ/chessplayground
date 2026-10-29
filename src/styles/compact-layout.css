@@ -7,37 +7,18 @@
   main {
     padding-top: 32px;
   }
-  .workspace {
-    gap: 18px;
-  }
-  .coach-heading {
-    padding-bottom: 14px;
-  }
   .mobile-coach-link {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: var(--purple-soft);
     border-radius: 9px;
     color: #655099;
-    padding: 12px;
     font-size: var(--text-sm);
     font-weight: 600;
-    margin: 0 0 14px 40px;
-  }
-  .coach-heading {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .strategy-card {
-    padding: 20px;
   }
 }
 @media (max-width: 540px) {
-  .piece-tray {
-    margin-left: 37px;
-  }
   .page-heading {
     flex-direction: column;
     align-items: stretch;
@@ -61,12 +42,6 @@
   .coach-panel {
     border-radius: 18px;
   }
-  .mobile-coach-link {
-    margin-left: 37px;
-  }
-  .strategy-card {
-    padding: 18px;
-  }
   .plan-actions {
     gap: 7px;
   }
@@ -87,9 +62,6 @@
   }
   .brand > span {
     font-size: 41.6px;
-  }
-  .header-center {
-    padding: 6px 10px;
   }
   main {
     max-width: 1180px;
@@ -200,17 +172,10 @@
   .candidate-body > p {
     line-height: 1.6;
   }
-  footer img {
-    width: 16px;
-    height: 16px;
-  }
 }
 
 /* Keep calculation within reach while the turn selector stays with the board. */
 @media (max-width: 900px) {
-  main {
-    padding-bottom: 110px;
-  }
   .calculation-controls {
     position: fixed;
     inset: auto 0 0;
@@ -237,7 +202,6 @@
 }
 @media (max-width: 540px) {
   .site-header {
-    height: 80px;
     padding-inline: 10px;
     gap: 8px;
   }
@@ -252,7 +216,7 @@
     font-size: 32px;
   }
   main {
-    padding: 24px 8px 110px;
+    padding: 24px 8px 0;
   }
   .page-heading {
     margin-bottom: 20px;
@@ -289,15 +253,6 @@
     margin: 4px 0 4px 36px;
     padding: 0;
     border: 0;
-  }
-  .mobile-coach-link {
-    min-height: 36px;
-    margin: 4px 0 0 36px;
-    padding: 8px;
-    font-size: var(--text-sm);
-  }
-  .workspace {
-    gap: 20px;
   }
   .coach-panel {
     padding: 12px;
@@ -338,9 +293,21 @@
   }
 }
 
-@media (max-width: 760px) {
-  .header-center {
-    display: none;
+@media (max-width: 900px) {
+  .site-header {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: 12px;
+    row-gap: 12px;
+  }
+  .site-header > .workspace-tabs {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+  }
+  .header-actions {
+    grid-column: 2;
+    grid-row: 1;
   }
 }
 

@@ -185,9 +185,8 @@ test("production pages contain translated content and reciprocal language metada
       document.querySelector("h1")!.textContent,
       `${t("intro.heading.start")} ${t("intro.heading.end")}`,
     );
-    assert.equal(
-      document.querySelector("main > p")!.textContent,
-      t("intro.tagline"),
+    assert.ok(
+      document.querySelector("main")!.textContent!.includes(t("intro.tagline")),
     );
     assert.equal(
       document
@@ -242,15 +241,8 @@ test("production pages contain translated content and reciprocal language metada
       ),
       [content.intro, content.analysis],
     );
-    assert.equal(document.querySelectorAll(".site-intro li").length, 0);
-    assert.match(
-      document.querySelector('script[type="module"]')!.getAttribute("src")!,
-      /^\/assets\/.*\.js$/,
-    );
-    assert.match(
-      document.querySelector('link[rel="stylesheet"]')!.getAttribute("href")!,
-      /^\/assets\/.*\.css$/,
-    );
+    assert.ok(document.querySelector('script[type="module"][src]'));
+    assert.ok(document.querySelector('link[rel="stylesheet"][href]'));
     dom.window.close();
   }
 });

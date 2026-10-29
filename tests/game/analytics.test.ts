@@ -79,6 +79,33 @@ test("no Analytics script or commands run before consent or after declining", as
   assert.equal(document.querySelectorAll("script").length, 0);
 });
 
+test("cookie settings remain beside Privacy policy without an Analytics ID and save choices without tracking", async (t) => {
+  const { root } = createTestRoot(t);
+  await act(() => root.render(createElement(AnalyticsConsent)));
+  const settings = button("Cookie settings");
+  assert.equal(
+    document.querySelector("a.privacy-link")!.nextElementSibling,
+    settings,
+  );
+  assert.equal(settings.getAttribute("aria-expanded"), "false");
+  assert.equal(document.querySelector("#analytics-choice"), null);
+
+  await act(() => settings.click());
+  assert.equal(settings.getAttribute("aria-expanded"), "true");
+  assert.ok(document.getElementById(settings.getAttribute("aria-controls")!));
+  await act(() => button("Decline").click());
+  assert.equal(window.localStorage.getItem(analyticsConsentKey), "denied");
+  assert.equal(document.querySelector("#analytics-choice"), null);
+  assert.equal(document.activeElement, settings);
+
+  await act(() => settings.click());
+  await act(() => button("Accept").click());
+  assert.equal(window.localStorage.getItem(analyticsConsentKey), "granted");
+  assert.equal(document.querySelector("#analytics-choice"), null);
+  assert.equal(document.querySelectorAll("script").length, 0);
+  assert.deepEqual(commands(), []);
+});
+
 test("allowing Analytics starts one tag and withdrawing permission clears cookies and stops page views", async (t) => {
   const { root } = createTestRoot(t);
   await act(() =>
@@ -101,7 +128,7 @@ test("allowing Analytics starts one tag and withdrawing permission clears cookie
   document.cookie = "_ga=visitor; Path=/";
   document.cookie = "_ga_TEST123456=session; Domain=tempo.test; Path=/";
   document.cookie = "unrelated=keep; Path=/";
-  await act(() => button("Analytics settings").click());
+  await act(() => button("Cookie settings").click());
   await act(() => button("Decline").click());
   assert.equal(Reflect.get(window, `ga-disable-${measurementId}`), true);
   assert.equal(document.cookie, "unrelated=keep");
@@ -109,7 +136,7 @@ test("allowing Analytics starts one tag and withdrawing permission clears cookie
   updatePageMetadata("es");
   await Promise.resolve();
   assert.equal(views().length, 1);
-  await act(() => button("Analytics settings").click());
+  await act(() => button("Cookie settings").click());
   await act(() => button("Accept").click());
   assert.equal(Reflect.get(window, `ga-disable-${measurementId}`), false);
   assert.equal(document.querySelectorAll("script").length, 1);

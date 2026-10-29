@@ -1,30 +1,49 @@
 import type { FocusEvent } from "react";
-import type { InspectMove, MovePreview } from "../board/useBoardPreview";
-import type { Candidate } from "./candidates";
+import type {
+  ClearInspection,
+  InspectMove,
+  MovePreview,
+} from "../board/useBoardPreview";
+import type { Candidate } from "./candidatePresentation";
 import type { BoardFocus } from "./boardFocus";
 
 export type MovePreviewProps = {
   candidate: Candidate;
   preview: MovePreview | null;
   onInspect: InspectMove;
+  onClearInspection: ClearInspection;
 };
 
-export function movePreviewEvents(
-  onInspect: InspectMove,
-  candidate: Candidate,
-  ply: number,
-  focus?: BoardFocus,
-) {
+export function movePreviewEvents({
+  onInspect,
+  onClearInspection,
+  candidate,
+  ply,
+  focus,
+  enabled = true,
+}: {
+  onInspect: InspectMove;
+  onClearInspection: ClearInspection;
+  candidate: Candidate;
+  ply: number;
+  focus?: BoardFocus;
+  enabled?: boolean;
+}) {
   return {
-    onMouseEnter: () => onInspect(candidate, ply, "hover", focus),
-    onMouseLeave: () => onInspect(candidate, 0, "hover"),
+    onMouseEnter: () =>
+      enabled
+        ? onInspect(candidate, ply, "hover", focus)
+        : onClearInspection(candidate, "hover"),
+    onMouseLeave: () => onClearInspection(candidate, "hover"),
     onFocus: (event: FocusEvent<HTMLElement>) => {
-      if (event.currentTarget.matches(":focus-visible"))
-        onInspect(candidate, ply, "focus", focus);
+      if (event.currentTarget.matches(":focus-visible")) {
+        if (enabled) onInspect(candidate, ply, "focus", focus);
+        else onClearInspection(candidate, "focus");
+      }
     },
     onBlur: (event: FocusEvent<HTMLElement>) => {
       if (!event.currentTarget.contains(event.relatedTarget))
-        onInspect(candidate, 0, "focus");
+        onClearInspection(candidate, "focus");
     },
   };
 }

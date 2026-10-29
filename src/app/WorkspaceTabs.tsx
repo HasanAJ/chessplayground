@@ -1,7 +1,7 @@
 import { BookOpen, Swords } from "lucide-react";
 import { useTranslation } from "../i18n/LanguageProvider";
 
-export type Workspace = "play" | "opening";
+type Workspace = "play" | "opening";
 
 export function WorkspaceTabs({
   active,

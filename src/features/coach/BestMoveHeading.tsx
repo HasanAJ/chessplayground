@@ -1,7 +1,7 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { moveDescription } from "../../chess/moves";
 import { SquareText } from "../board/SquareHighlight";
-import type { Candidate } from "./candidates";
+import type { Candidate } from "./candidatePresentation";
 
 export function BestMoveHeading({ candidate }: { candidate: Candidate }) {
   const { t } = useTranslation();

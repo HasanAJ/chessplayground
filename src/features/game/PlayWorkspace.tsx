@@ -94,7 +94,7 @@ export function PlayWorkspace({ active }: { active: boolean }) {
     preview.clearPreview();
     game.setTool("move");
     setSelectionReset((value) => value + 1);
-    game.setError("");
+    game.setError(null);
     recommendations.calculate(recommendations.requested);
     if (window.matchMedia("(max-width: 900px)").matches)
       document.getElementById("coach")?.scrollIntoView({

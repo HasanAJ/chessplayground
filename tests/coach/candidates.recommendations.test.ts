@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { Chess } from "chess.js";
 import { START_FEN } from "../../src/chess/position";
 import {
-  candidatesFor,
   recommendedCandidates,
 } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { type EngineLine } from "../../src/engine/uci";
 
 function candidates(

@@ -32,3 +32,42 @@ test("Calculate and refresh use the two-second search without a mode selector", 
   assert.equal(requests.length, 2);
   assert.deepEqual(requests[1][3], { depth: null, movetime: 2000, multiPV: 5 });
 });
+
+test("clearing the board preserves the coach welcome while calculation stays disabled", async (t) => {
+  for (const scenario of ["new game", "analysis after a move", "finished game"]) {
+    await t.test(scenario, async (t) => {
+      const { dom, root } = createTestRoot(t);
+      dom.window.HTMLElement.prototype.scrollIntoView = () => {};
+      if (scenario === "finished game")
+        dom.window.localStorage.setItem(
+          "tempo-position",
+          "7k/6Q1/6K1/8/8/8/8/8 b - - 0 1",
+        );
+      t.mock.method(
+        AnalysisEngine.prototype,
+        "analyze",
+        () => () => {},
+      );
+      await act(() => root.render(createElement(App)));
+      const document = dom.window.document;
+      if (scenario === "analysis after a move") {
+        for (const square of ["e2", "e4"])
+          await act(() =>
+            document.querySelector<HTMLButtonElement>(`#board [data-square="${square}"]`)!.click(),
+          );
+        await act(() =>
+          document.querySelector<HTMLButtonElement>(".calculate-button")!.click(),
+        );
+      }
+      await act(() =>
+        document.querySelector<HTMLButtonElement>('[aria-label="Clear board"]')!.click(),
+      );
+
+      assert.ok(document.querySelector("#coach .coach-welcome"));
+      assert.equal(
+        document.querySelector<HTMLButtonElement>(".calculate-button")!.disabled,
+        true,
+      );
+    });
+  }
+});

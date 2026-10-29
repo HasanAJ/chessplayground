@@ -1,12 +1,13 @@
 import type { Catalog } from "./en";
 
 export default {
+  "app.loading": "Caricamento di Tempo…",
   "analytics.heading": "Preferenze sui cookie",
   "analytics.description":
     "I cookie di analisi facoltativi ci aiutano a capire le visite e migliorare Tempo.",
   "analytics.accept": "Accetta",
   "analytics.decline": "Rifiuta",
-  "analytics.settings": "Impostazioni di analisi",
+  "analytics.settings": "Impostazioni cookie",
   "analytics.privacy": "Informativa sulla privacy",
   "analytics.storage":
     "La tua scelta vale per questa visita, ma non è stato possibile salvarla per la prossima.",
@@ -38,11 +39,8 @@ export default {
   "opening.side.all": "Entrambi i colori",
   "opening.target": "Obiettivo",
   "opening.target.all": "Tutti gli obiettivi",
-  "opening.explore": "Esplora",
   "opening.empty":
     "Nessun attacco corrisponde. Prova un’altra ricerca o filtro.",
-  "opening.library.note":
-    "Ordinati per quanto l’errore sembra invitante a chi non conosce la trappola. È una stima editoriale, non un tasso di successo misurato.",
   "opening.rank": "Posizione {0} per facilità stimata di cadere nella trappola",
   "opening.backToLibrary": "Tutti gli attacchi",
   "opening.viewer.label": "Scacchiera e navigazione della lezione d’attacco",
@@ -159,7 +157,6 @@ export default {
   "chess.side.white": "Bianco",
   "chess.side.black": "Nero",
   "header.home": "Pagina iniziale di Tempo",
-  "header.tagline": "Il tuo spazio per gli scacchi",
   "intro.heading.start": "Analisi degli scacchi,",
   "intro.heading.end": "con mosse spiegate.",
   "intro.tagline":
@@ -170,11 +167,8 @@ export default {
     "Scegli «{0}», poi visualizza una risposta in anteprima o prova la mossa suggerita.",
   "intro.guide.setup":
     "Usa gli strumenti di modifica per creare una posizione.",
-  "footer.tagline": "Una buona mossa inizia con un po' di comprensione.",
   "footer.engine": "Con Stockfish 19",
   "move.description.normal": "{0}{1} da {2} a {3}",
-  "position.error.missingBothKings":
-    "Aggiungi entrambi i re per giocare o analizzare.",
   "position.error.pawnOnEdge":
     "Sposta i pedoni dalla prima e dall'ultima traversa per giocare o analizzare.",
   "position.error.illegalArrangement":
@@ -421,6 +415,9 @@ export default {
   "coach.status.yourTurn": "Tocca a te",
   "coach.panel.label": "Analisi della posizione",
   "coach.panel.heading": "Il tuo allenatore",
+  "coach.welcome.heading": "La tua prossima mossa, spiegata.",
+  "coach.welcome.description":
+    "Trova una buona mossa e scopri perché funziona.",
   "coach.calculate.label.waiting": "In attesa del computer",
   "coach.calculate.label.thinking": "Calcolo delle migliori mosse",
   "coach.calculate.label.ready": "Calcola le migliori mosse",

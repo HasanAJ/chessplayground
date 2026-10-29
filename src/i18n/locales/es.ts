@@ -1,12 +1,13 @@
 import type { Catalog } from "./en";
 
 export default {
+  "app.loading": "Cargando Tempo…",
   "analytics.heading": "Preferencias de cookies",
   "analytics.description":
     "Las cookies de analítica opcionales nos ayudan a entender las visitas y mejorar Tempo.",
   "analytics.accept": "Aceptar",
   "analytics.decline": "Rechazar",
-  "analytics.settings": "Ajustes de analítica",
+  "analytics.settings": "Ajustes de cookies",
   "analytics.privacy": "Política de privacidad",
   "analytics.storage":
     "Tu elección se aplica a esta visita, pero no se ha podido guardar para la próxima.",
@@ -38,11 +39,8 @@ export default {
   "opening.side.all": "Ambos colores",
   "opening.target": "Objetivo",
   "opening.target.all": "Todos los objetivos",
-  "opening.explore": "Ver jugadas",
   "opening.empty":
     "No hay ataques que coincidan. Prueba otra búsqueda o filtro.",
-  "opening.library.note":
-    "Ordenados por lo tentador del error para quien no conoce la trampa. Es una estimación editorial, no una tasa de éxito medida.",
   "opening.rank": "Puesto {0} según lo fácil que es caer en la trampa",
   "opening.backToLibrary": "Todos los ataques",
   "opening.viewer.label": "Tablero y navegación de la lección de ataque",
@@ -159,7 +157,6 @@ export default {
   "chess.side.white": "Blancas",
   "chess.side.black": "Negras",
   "header.home": "Inicio de Tempo",
-  "header.tagline": "Tu espacio de ajedrez",
   "intro.heading.start": "Análisis de ajedrez,",
   "intro.heading.end": "con jugadas explicadas.",
   "intro.tagline":
@@ -170,10 +167,8 @@ export default {
     "Elige «{0}» y previsualiza una respuesta o prueba la sugerencia.",
   "intro.guide.setup":
     "Usa las herramientas de edición para crear tu propia posición.",
-  "footer.tagline": "Una buena jugada empieza con un poco de comprensión.",
   "footer.engine": "Con Stockfish 19",
   "move.description.normal": "{0}{1} de {2} a {3}",
-  "position.error.missingBothKings": "Añade ambos reyes para jugar o calcular.",
   "position.error.pawnOnEdge":
     "Retira los peones de la primera y última fila para jugar o calcular.",
   "position.error.illegalArrangement":
@@ -417,6 +412,9 @@ export default {
   "coach.status.yourTurn": "Tu turno",
   "coach.panel.label": "Análisis de posición",
   "coach.panel.heading": "Tu entrenador",
+  "coach.welcome.heading": "Tu próxima jugada, explicada.",
+  "coach.welcome.description":
+    "Encuentra una buena jugada y entiende por qué funciona.",
   "coach.calculate.label.waiting": "Esperando al ordenador",
   "coach.calculate.label.thinking": "Calculando mejores jugadas",
   "coach.calculate.label.ready": "Calcular mejores jugadas",

@@ -1,3 +1,4 @@
+import { type Diagnostic } from "../i18n/notices";
 import type { EngineLine } from "./uci";
 
 export type AnalysisCallbacks = {
@@ -8,7 +9,7 @@ export type AnalysisCallbacks = {
     bestMove?: string,
     bestLine?: EngineLine,
   ) => void;
-  onError: (message: string) => void;
+  onError: (message: Diagnostic) => void;
 };
 
 export type SearchOptions = {

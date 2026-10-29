@@ -1,19 +1,24 @@
-import type { EngineLine } from "../../engine/uci";
-import type { Language, Translator } from "../../i18n/translate";
-import { candidatesFor, recommendedCandidates, type Candidate } from "./candidates";
+import { type Diagnostic, notice } from "../../i18n/notices";
+import { selectBestLine, type EngineLine } from "../../engine/uci";
+import type { Translator } from "../../i18n/translate";
+import {
+  analyzeCandidates,
+  recommendedCandidates,
+  type CandidateAnalysis,
+} from "./candidates";
+import { presentCandidate } from "./candidatePresentation";
 
 export type CompletedAnalysis = {
   key: string;
   state: "ready";
-  candidates: Candidate[];
-  best: Candidate;
-  language: Language;
+  candidates: CandidateAnalysis[];
+  best: CandidateAnalysis;
 };
 
 export type RecommendationAnalysis =
   | CompletedAnalysis
   | { key: string; state: "thinking"; candidates: [] }
-  | { key: string; state: "error"; candidates: []; error: string };
+  | { key: string; state: "error"; candidates: []; error: Diagnostic };
 
 export function completeAnalysis(
   key: string,
@@ -21,41 +26,28 @@ export function completeAnalysis(
   lines: EngineLine[],
   bestMove: string | undefined,
   bestLine: EngineLine | undefined,
-  t: Translator,
 ): RecommendationAnalysis {
-  const selected = bestMove
-    ? bestLine?.pv[0] === bestMove
-      ? bestLine
-      : lines.find((line) => line.pv[0] === bestMove)
-    : lines[0];
-  const candidates = candidatesFor(fen, lines, t);
-  const best = !selected
-    ? undefined
-    : lines.includes(selected)
+  const selected = selectBestLine(lines, bestMove, bestLine);
+  const candidates = analyzeCandidates(fen, lines);
+  let best: CandidateAnalysis | undefined;
+  if (selected) {
+    best = lines.includes(selected)
       ? candidates.find((candidate) => candidate.move.lan === selected.pv[0])
-      : candidatesFor(fen, [{ ...selected, rank: 1 }], t)[0];
-
+      : analyzeCandidates(fen, [{ ...selected, rank: 1 }])[0];
+  }
   if (!best || candidates.length !== lines.length) {
     return {
       key,
       state: "error",
       candidates: [],
-      error: "The engine returned no legal candidates. Please retry analysis.",
+      error: notice("engine.error.noLegalCandidates"),
     };
   }
-  return { key, state: "ready", candidates, best, language: t.language };
+  return { key, state: "ready", candidates, best };
 }
 
-export function localizeCandidates(
-  analysis: CompletedAnalysis,
-  fen: string,
-  t: Translator,
-) {
-  if (analysis.language === t.language)
-    return recommendedCandidates(analysis.candidates, analysis.best);
-
-  return recommendedCandidates(
-    candidatesFor(fen, analysis.candidates, t),
-    candidatesFor(fen, [analysis.best], t)[0],
+export function localizeCandidates(analysis: CompletedAnalysis, t: Translator) {
+  return recommendedCandidates(analysis.candidates, analysis.best).map(
+    (candidate) => presentCandidate(candidate, t),
   );
 }

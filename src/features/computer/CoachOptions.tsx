@@ -1,4 +1,3 @@
-import { translateNotice } from "../../i18n/notices";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useRef } from "react";
 import type { Color } from "chess.js";
@@ -67,7 +66,7 @@ export function CoachOptions({
         role="switch"
         aria-checked={enabled}
         aria-label={t("computer.toggle.label")}
-        title={translateNotice(status, t)}
+        title={status}
         disabled={!enabled && startDisabled}
         onClick={() => {
           onEnabledChange(!enabled);
@@ -165,7 +164,7 @@ export function CoachOptions({
           className={`computer-status ${failed ? "has-error" : ""}`}
           role="status"
         >
-          {translateNotice(status, t)}
+          {status}
         </p>
         <div className="computer-settings-actions">
           {failed && (

@@ -5,7 +5,11 @@ import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useMemo } from "react";
 import { ChevronDown, LoaderCircle } from "lucide-react";
 import type { ReviewState } from "./moveReview";
-import type { InspectMove, MovePreview } from "../board/useBoardPreview";
+import type {
+  ClearInspection,
+  InspectMove,
+  MovePreview,
+} from "../board/useBoardPreview";
 import { MoveReviewDetails } from "./MoveReviewDetails";
 import { SquareText } from "../board/SquareHighlight";
 import type { Move } from "chess.js";
@@ -26,6 +30,7 @@ export function MoveFeedback({
   context = "coach.feedback.context.lastMove",
   onReanalyze,
   onInspect,
+  onClearInspection,
   preview = null,
   collapsed,
   onToggle,
@@ -39,6 +44,7 @@ export function MoveFeedback({
     | "coach.feedback.context.selectedMove";
   onReanalyze: () => void;
   onInspect: InspectMove;
+  onClearInspection: ClearInspection;
   preview?: MovePreview | null;
   collapsed: boolean;
   onToggle: () => void;
@@ -61,10 +67,10 @@ export function MoveFeedback({
   useEffect(() => {
     if (collapsed) return;
     return () => {
-      if (review?.reply) onInspect(review.reply, 0);
-      if (review?.lesson) onInspect(review.lesson.candidate, 0);
+      if (review?.reply) onClearInspection(review.reply);
+      if (review?.lesson) onClearInspection(review.lesson.candidate);
     };
-  }, [collapsed, onInspect, review?.reply, review?.lesson]);
+  }, [collapsed, onClearInspection, review?.reply, review?.lesson]);
   return (
     <section
       className="move-feedback"
@@ -119,9 +125,7 @@ export function MoveFeedback({
       <div id={bodyId} className="feedback-body" hidden={collapsed}>
         {!collapsed &&
           (result.state === "thinking" ? (
-            <p className="learning-pending">
-              {t("coach.feedback.pending")}
-            </p>
+            <p className="learning-pending">{t("coach.feedback.pending")}</p>
           ) : result.state === "error" ? (
             <>
               <p>
@@ -137,6 +141,7 @@ export function MoveFeedback({
                 review={review}
                 preview={preview}
                 onInspect={onInspect}
+                onClearInspection={onClearInspection}
               />
             )
           ))}

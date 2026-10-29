@@ -31,6 +31,8 @@ export type OpeningLesson = {
   defense: string;
   /** Zero-based ply in the trap continuation, after setup. */
   temptation: number;
+  /** One-based ply in the trap continuation shown on the library card. */
+  previewPly: number;
 };
 
 // Editorial estimate of how tempting the reply looks to an unfamiliar player.
@@ -55,6 +57,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "g6 Qxe5+ Be7 Qxh8",
     defense: "Nc6 Bc4 g6 Qf3 Nf6",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "scholars-mate",
@@ -75,6 +78,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Nf6 Qxf7#",
     defense: "g6 Qf3 Nf6 Ne2",
     temptation: 0,
+    previewPly: 1,
   },
   {
     id: "scholars-f3",
@@ -95,6 +99,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "d6 Qxf7#",
     defense: "Nf6 Ne2 Nc6 d3",
     temptation: 0,
+    previewPly: 1,
   },
   {
     id: "italian-fork",
@@ -115,6 +120,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "h6 Nxf7 Qe7 Nxh8",
     defense: "d5 exd5 Na5 Bb5+ c6 dxc6 bxc6",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "legal",
@@ -135,6 +141,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Bh5 Nxe5 Bxd1 Bxf7+ Ke7 Nd5#",
     defense: "Bxf3 Qxf3 Nf6 d3",
     temptation: 2,
+    previewPly: 6,
   },
   {
     id: "petrov",
@@ -155,6 +162,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Nxe4 Qe2 Nf6 Nc6+ Be7 Nxd8 Kxd8",
     defense: "d6 Nf3 Nxe4 d4 d5 Bd3",
     temptation: 2,
+    previewPly: 4,
   },
   {
     id: "caro-smothered",
@@ -175,6 +183,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Ngf6 Nd6#",
     defense: "Ndf6 Nxf6+ Nxf6 Nf3",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "budapest",
@@ -195,6 +204,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "axb4 Nd3#",
     defense: "Nxe5 Nxe5 e3",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "damiano-rook",
@@ -215,6 +225,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "fxe5 Qh5+ g6 Qxe5+ Qe7 Qxh8",
     defense: "Qe7 Nf3 Qxe4+ Be2",
     temptation: 0,
+    previewPly: 4,
   },
   {
     id: "blackburne",
@@ -235,6 +246,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Nxe5 Qg5 Nxf7 Qxg2 Rf1 Qxe4+ Be2 Nf3#",
     defense: "Nxd4 exd4 O-O Bc5 d3",
     temptation: 2,
+    previewPly: 8,
   },
   {
     id: "stafford",
@@ -255,6 +267,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Bg5 Nxe4 Bxd8 Bxf2+ Ke2 Bg4#",
     defense: "Be2 h5 c3 Ng4 d4",
     temptation: 0,
+    previewPly: 6,
   },
   {
     id: "elephant",
@@ -275,6 +288,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Nxd5 Nxd5 Bxd8 Bb4+ Qd2 Bxd2+ Kxd2 Kxd8",
     defense: "e3 c6 Bd3 Be7 Nf3 O-O",
     temptation: 0,
+    previewPly: 4,
   },
   {
     id: "french",
@@ -295,6 +309,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Nxd4 Nxd4 Qxd4 Bb5+ Bd7 Bxd7+ Kxd7 Qxd4",
     defense: "Bd7 O-O Nge7 Nc3 Nxd4 Nxd4 Qxd4",
     temptation: 2,
+    previewPly: 4,
   },
   {
     id: "englund-mate",
@@ -315,6 +330,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Bc3 Bb4 Qd2 Bxc3 Qxc3 Qc1#",
     defense: "Nc3 Bb4 Rb1 Qa3 Rb3 Qa5",
     temptation: 0,
+    previewPly: 6,
   },
   {
     id: "englund-queen",
@@ -335,6 +351,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Qc3 Bb4 Qxb4 Nxb4",
     defense: "Nc3 Bb4 Rb1 Qa3 Rb3 Qa5",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "fishing-pole",
@@ -355,6 +372,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "hxg4 hxg4 Ne1 Qh4 f3 g3 d3 Qh2#",
     defense: "d4 exd4 Bxc6 dxc6 Qxd4",
     temptation: 4,
+    previewPly: 8,
   },
   {
     id: "tennison",
@@ -375,6 +393,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "h6 Nxf7 Kxf7 Bg6+ Kxg6 Qxd8",
     defense: "Nc6 O-O Bg4",
     temptation: 2,
+    previewPly: 4,
   },
   {
     id: "danish",
@@ -395,6 +414,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Ne5 Nxe5 Bxd1 Bxf7+ Ke7 Nd5#",
     defense: "Nf6 Qb3 Qd7",
     temptation: 2,
+    previewPly: 6,
   },
   {
     id: "ponziani",
@@ -415,6 +435,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "d6 Bb5+ c6 dxc6 bxc6 Nxc6 Nxc6 Bxc6+ Bd7 Bxa8",
     defense: "Ng6 Nxg6 hxg6 Bd3",
     temptation: 0,
+    previewPly: 8,
   },
   {
     id: "fried-liver-mate",
@@ -435,6 +456,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Kg8 Bxd5+ Be6 Bxe6#",
     defense: "Ke6 Nc3 Nb4 Bb3 c6",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "fried-liver-queen",
@@ -455,6 +477,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Qf6 Bxd5+ Ke8",
     defense: "Ke6 Nc3 Nb4 Bb3 c6",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "albin",
@@ -475,6 +498,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "e3 Bb4+ Bd2 dxe3 Bxb4 exf2+ Ke2 fxg1=N+ Rxg1 Bg4+ Ke1 Bxd1",
     defense: "Nf3 Nc6 a3 Be6",
     temptation: 0,
+    previewPly: 8,
   },
   {
     id: "siberian",
@@ -495,6 +519,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "h3 Nd4 Nxd4 Qh2#",
     defense: "Nb5 Qb8 h3 Nge5 Nxe5 Nxe5",
     temptation: 0,
+    previewPly: 3,
   },
   {
     id: "fajarowicz",
@@ -515,6 +540,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "g3 Nxf2 Kxf2 Bxg3+ hxg3 Qxd1",
     defense: "Nbd2 Bf5 e3 O-O",
     temptation: 2,
+    previewPly: 4,
   },
   {
     id: "noahs-ark",
@@ -535,6 +561,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "Qxd4 c5 Qd5 Be6 Qc6+ Bd7 Qd5 c4 Bxc4 bxc4 Qxc4",
     defense: "Bd5 Rb8 Qxd4 Nf6",
     temptation: 0,
+    previewPly: 8,
   },
   {
     id: "queens-gambit",
@@ -555,6 +582,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "b5 a4 c6 axb5 cxb5 Qf3 Nc6 Qxc6+ Bd7 Qxa8",
     defense: "Nf6 Bxc4 e6 Nf3 c5 O-O",
     temptation: 2,
+    previewPly: 6,
   },
   {
     id: "damiano-king",
@@ -575,6 +603,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "fxe5 Qh5+ Ke7 Qxe5+ Kf7 Bc4+",
     defense: "Qe7 Nf3 Qxe4+ Be2",
     temptation: 0,
+    previewPly: 6,
   },
   {
     id: "vienna",
@@ -595,6 +624,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "exf4 e5 Ng8 Nf3 d6 d4 g5 h4",
     defense: "d5 fxe5 Nxe4 Nf3 Be7 d4",
     temptation: 0,
+    previewPly: 2,
   },
   {
     id: "scotch-gambit",
@@ -615,6 +645,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "dxc3 Bxf7+ Kxf7 Qd5+ Ke8 Qxc5 d6 Qxc3",
     defense: "Nf6 cxd4 Bb4+ Nc3 d5 exd5 Nxd5",
     temptation: 0,
+    previewPly: 4,
   },
   {
     id: "evans",
@@ -635,6 +666,7 @@ export const openings: readonly OpeningLesson[] = [
     trap: "dxc3 Bxf7+ Kxf7 Qd5+ Ke8 Qxc5 d6 Qxc3",
     defense: "d6 cxd4 Bb6 Nc3 Nf6",
     temptation: 0,
+    previewPly: 4,
   },
 ];
 

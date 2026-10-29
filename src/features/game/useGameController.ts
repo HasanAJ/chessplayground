@@ -1,3 +1,4 @@
+import { type Diagnostic, notice } from "../../i18n/notices";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Chess,
@@ -18,12 +19,7 @@ import {
   withTurn,
   type Position,
 } from "../../chess/position";
-import {
-  createStudy,
-  nodePath,
-  ROOT,
-  type Study,
-} from "../../chess/study";
+import { createStudy, nodePath, ROOT, type Study } from "../../chess/study";
 import { StudySession } from "../../chess/StudySession";
 import { readSavedSession } from "./storage";
 import { useStudyPersistence } from "./useStudyPersistence";
@@ -53,8 +49,8 @@ export function useGameController(onEdit: () => void) {
   } | null>(null);
   const [computerMove, setComputerMove] = useState<Move | null>(null);
   const [revealBoard, setRevealBoard] = useState(0);
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
+  const [error, setError] = useState<Diagnostic | null>(null);
+  const [statusNotice, setNotice] = useState<Diagnostic | null>(null);
   const playable = !draft;
   const reviewing = historyPly !== null && playable;
   const nodeId = reviewing ? (path[historyPly - 1]?.id ?? ROOT) : study.tipId;
@@ -78,15 +74,15 @@ export function useGameController(onEdit: () => void) {
   );
 
   useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(() => setNotice(""), 3000);
+    if (!statusNotice) return;
+    const timer = window.setTimeout(() => setNotice(null), 3000);
     return () => window.clearTimeout(timer);
-  }, [notice]);
+  }, [statusNotice]);
 
   function resetBoardControls() {
     setComputerMove(null);
     setHistoryPly(null);
-    setError("");
+    setError(null);
     setPromotion(null);
   }
 
@@ -108,7 +104,7 @@ export function useGameController(onEdit: () => void) {
 
   function newGame() {
     openStudy(createStudy(START_FEN));
-    setNotice("");
+    setNotice(null);
     setRevealBoard((value) => value + 1);
   }
 
@@ -135,7 +131,7 @@ export function useGameController(onEdit: () => void) {
     else setRevealBoard((value) => value + 1);
     if (reviewing) {
       onEdit();
-      setNotice("Continuing from the selected position.");
+      setNotice(notice("game.status.continuing"));
     }
   }
 
@@ -152,7 +148,7 @@ export function useGameController(onEdit: () => void) {
       // Incomplete arrangements remain editable without starting an engine search.
     }
     onEdit();
-    setNotice("");
+    setNotice(null);
     if (next) openStudy(createStudy(next.fen()));
     else {
       resetBoardControls();
@@ -201,7 +197,7 @@ export function useGameController(onEdit: () => void) {
       setComputerMove(null);
       setHistoryPly(ply === history.length ? null : ply);
       setPromotion(null);
-      setError("");
+      setError(null);
     },
     [history.length],
   );
@@ -221,7 +217,7 @@ export function useGameController(onEdit: () => void) {
     computerMove,
     revealBoard,
     error,
-    notice,
+    notice: statusNotice,
     ...persistence,
     reviewing,
     analysisGame,

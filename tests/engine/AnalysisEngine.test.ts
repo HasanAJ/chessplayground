@@ -1,3 +1,5 @@
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
+import { english } from "../../src/i18n/translate";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
@@ -52,7 +54,7 @@ function observer() {
       result.bestMoves.push(bestMove);
       result.bestLines.push(bestLine);
     },
-    onError: (message: string) => result.errors.push(message),
+    onError: (message: Diagnostic) => result.errors.push(translateNotice(message, english)),
   };
 }
 
@@ -89,7 +91,7 @@ test("computer searches configure strength and return the engine's selected move
     {
       onProgress() {},
       onError(message) {
-        assert.fail(message);
+        assert.fail(translateNotice(message, english));
       },
       onComplete(_lines, move) {
         selected = move;

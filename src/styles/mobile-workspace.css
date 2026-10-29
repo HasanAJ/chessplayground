@@ -104,16 +104,11 @@
   .board-preview-controls {
     display: block;
     margin: 8px 0 4px 36px;
-    padding: 12px;
-    border: 1px solid #e4dcf3;
+    padding: 10px;
+    border: 1px solid #ded3f3;
     border-radius: 10px;
     background: #f5f1fc;
     font-size: var(--text-sm);
-  }
-
-  .board-preview-controls {
-    padding: 10px;
-    border-color: #ded3f3;
     color: #554170;
   }
 

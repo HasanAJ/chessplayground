@@ -24,7 +24,19 @@ const SEARCH_OPTIONS = {
 };
 const MAX_CACHED_ANALYSES = 64;
 
-export function useRecommendations(game: GameController, paused: boolean) {
+export function useRecommendations(
+  game: Pick<
+    GameController,
+    | "analysisFen"
+    | "analysisKey"
+    | "analysisTerminal"
+    | "history"
+    | "historyPly"
+    | "playable"
+    | "study"
+  >,
+  paused: boolean,
+) {
   const { t } = useTranslation();
   const engine = useAnalysisEngine();
   const cache = useRef(new Map<string, CompletedAnalysis>());
@@ -49,8 +61,8 @@ export function useRecommendations(game: GameController, paused: boolean) {
     requested && analysis?.key === game.analysisKey && game.playable;
   const candidates = useMemo(() => {
     if (!current || analysis.state !== "ready") return [];
-    return localizeCandidates(analysis, game.analysisFen, t);
-  }, [current, analysis, game.analysisFen, t]);
+    return localizeCandidates(analysis, t);
+  }, [current, analysis, t]);
   const thinking =
     game.playable &&
     requested &&
@@ -76,7 +88,11 @@ export function useRecommendations(game: GameController, paused: boolean) {
         onComplete(lines, bestMove, bestLine) {
           if (cancelled) return;
           const ready = completeAnalysis(
-            key, game.analysisFen, lines, bestMove, bestLine, t,
+            key,
+            game.analysisFen,
+            lines,
+            bestMove,
+            bestLine,
           );
           if (ready.state !== "ready") {
             setAnalysis(ready);

@@ -1,3 +1,4 @@
+import { notice } from "../../i18n/notices";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import type { Color } from "chess.js";
@@ -26,7 +27,31 @@ import { PieceTray } from "./PieceTray";
 import { BoardPreviewControls } from "./BoardPreviewControls";
 
 type Props = {
-  game: GameController;
+  game: Pick<
+    GameController,
+    | "analysisFen"
+    | "analysisGame"
+    | "analysisKey"
+    | "analysisTerminal"
+    | "arrangePiece"
+    | "chooseNextPlayer"
+    | "computerMove"
+    | "draft"
+    | "history"
+    | "historyPly"
+    | "lastMove"
+    | "playMove"
+    | "playable"
+    | "replaceGame"
+    | "revealBoard"
+    | "reviewedMove"
+    | "reviewing"
+    | "setBoardPosition"
+    | "setError"
+    | "setNotice"
+    | "setTool"
+    | "tool"
+  >;
   onDraggingChange: (dragging: boolean) => void;
   selectionReset: number;
   preview: BoardPreview;
@@ -103,9 +128,7 @@ export function BoardPanel({
             <Eraser size={16} />
           </button>
         </div>
-        <div
-          className={`turn-select ${board.turn === "b" ? "is-black" : ""}`}
-        >
+        <div className={`turn-select ${board.turn === "b" ? "is-black" : ""}`}>
           <select
             aria-label={t("board.turn.select")}
             value={board.turn}
@@ -230,9 +253,9 @@ export function BoardPanel({
             onLoad={(next) => {
               replaceGame(next);
               setEditorOpen(false);
-              setNotice("Position loaded");
+              setNotice(notice("position.notice.loaded"));
             }}
-            onCopied={() => setNotice("Position copied")}
+            onCopied={() => setNotice(notice("position.notice.copied"))}
           />
         </div>
       </div>

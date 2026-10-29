@@ -6,7 +6,10 @@ import type { ComputerSettings } from "./useComputerSettings";
 import { startComputerTurn } from "./computer";
 
 export function useComputerTurn(
-  game: GameController,
+  game: Pick<
+    GameController,
+    "fen" | "history" | "playMove" | "playable" | "study" | "terminal"
+  >,
   settings: ComputerSettings,
   turn: boolean,
   paused: boolean,

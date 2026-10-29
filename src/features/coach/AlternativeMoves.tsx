@@ -3,7 +3,7 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import type { GameController } from "../game/useGameController";
 import type { BoardPreview } from "../board/useBoardPreview";
 import { MoveExploration } from "./MoveDetails";
-import type { Candidate } from "./candidates";
+import type { Candidate } from "./candidatePresentation";
 import type { CoachPresentation } from "./useCoachPresentation";
 import { moveDescription } from "../../chess/moves";
 import { SquareText } from "../board/SquareHighlight";
@@ -24,7 +24,7 @@ export function AlternativeMoves({
 }: Props) {
   const { t } = useTranslation();
   const { active, setActive, setHovered } = presentation;
-  const { inspection, inspectMove, clearPreview } = preview;
+  const { inspection, inspectMove, clearInspection, clearPreview } = preview;
   if (candidates.length < 2) return null;
   return (
     <section
@@ -60,7 +60,10 @@ export function AlternativeMoves({
               >
                 <span className="candidate-piece" aria-hidden="true">
                   <img
-                    src={pieceImage({ color: candidate.move.color, type: candidate.move.piece })}
+                    src={pieceImage({
+                      color: candidate.move.color,
+                      type: candidate.move.piece,
+                    })}
                     alt=""
                     draggable={false}
                   />
@@ -74,7 +77,10 @@ export function AlternativeMoves({
                       <SquareText text={candidate.title} focusable={false} />
                     </span>
                   </div>
-                  <span className="candidate-score" title={t("board.evaluation.legend")}>
+                  <span
+                    className="candidate-score"
+                    title={t("board.evaluation.legend")}
+                  >
                     {candidate.score}
                   </span>
                 </div>
@@ -93,6 +99,7 @@ export function AlternativeMoves({
                     candidate={candidate}
                     preview={inspection}
                     onInspect={inspectMove}
+                    onClearInspection={clearInspection}
                   >
                     <button
                       className="primary-button"

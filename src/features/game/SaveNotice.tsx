@@ -1,4 +1,4 @@
-import { translateNotice } from "../../i18n/notices";
+import { type Diagnostic, translateNotice } from "../../i18n/notices";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import type { SaveRecovery } from "./storage";
 
@@ -9,7 +9,7 @@ export function SaveNotice({
   onResume,
   onDismiss,
 }: {
-  error: string;
+  error: Diagnostic | null;
   recovery: SaveRecovery | null;
   paused: boolean;
   onResume: () => void;
@@ -44,9 +44,7 @@ export function SaveNotice({
             className="small-button"
             onClick={paused ? onResume : onDismiss}
           >
-            {paused
-              ? t("game.save.resume")
-              : t("game.save.dismiss")}
+            {paused ? t("game.save.resume") : t("game.save.dismiss")}
           </button>
         </div>
       )}

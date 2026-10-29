@@ -2,7 +2,7 @@ import { english, type Translator } from "../../i18n/translate";
 import { Chess, type Move, type Square } from "chess.js";
 import { capturedSquare } from "../../chess/moves";
 import { pieceNameKeys, opposite, positionOf } from "../../chess/position";
-import { candidatesFor, type Candidate } from "./candidates";
+import { candidatesFor, type Candidate } from "./candidatePresentation";
 import { boardFocus, type BoardFocus } from "./boardFocus";
 
 export type ReviewLesson = {

@@ -1,3 +1,5 @@
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
+import { english } from "../../src/i18n/translate";
 import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
@@ -30,7 +32,7 @@ function fixture(t: TestContext, san = "e3", game = new Chess()) {
     { move, history: { rootFen, moves: [move.lan] }, terminal: null, drawn: false },
     {
       onComplete: (review) => reviews.push(review),
-      onError: (error) => errors.push(error),
+      onError: (error: Diagnostic) => errors.push(translateNotice(error, english)),
     },
   );
   worker.emit("uciok", "readyok");

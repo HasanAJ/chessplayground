@@ -7,7 +7,7 @@ import { useGameController } from "../../src/features/game/useGameController";
 import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
 import { useBoardPreview } from "../../src/features/board/useBoardPreview";
 import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { Continuation } from "../../src/features/coach/MoveDetails";
 import { SaveNotice } from "../../src/features/game/SaveNotice";
 import { RECOVERY_PREFIX, SESSION_KEY } from "../../src/features/game/storage";
@@ -46,6 +46,7 @@ async function mount(
         candidate,
         preview: preview.inspection,
         onInspect: preview.inspectMove,
+        onClearInspection: preview.clearInspection,
       }),
       createElement("button", { id: "outside" }, "Back to board"),
       createElement(SaveNotice, {
@@ -115,7 +116,7 @@ test("clicked previews survive blur and temporary hover, then Escape restores th
   assert.equal(read().preview.inspection?.ply, 2);
   await act(() => read().preview.inspectMove(candidate, 3, "hover"));
   assert.equal(read().preview.inspection?.ply, 3);
-  await act(() => read().preview.inspectMove(candidate, 0, "hover"));
+  await act(() => read().preview.clearInspection(candidate, "hover"));
   assert.equal(read().preview.inspection?.ply, 2);
   assert.equal(read().game.fen, START_FEN);
   assert.equal(read().game.history.length, 0);
@@ -135,6 +136,22 @@ test("kept previews clear when playing a move or changing the position", async (
   assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
   await act(() => read().preview.inspectMove(candidate, 1, "click"));
   await act(() => read().game.newGame());
+  assert.equal(read().preview.boardPreview, false);
+});
+
+test("clearing one candidate leaves another candidate's temporary preview intact", async (t) => {
+  const { read, candidate } = await mount(t);
+  const other = candidatesFor(START_FEN, [
+    { rank: 1, depth: 12, cp: 20, pv: ["d2d4", "d7d5"] },
+  ])[0];
+  await act(() => read().preview.inspectMove(candidate, 2, "click"));
+  await act(() => read().preview.inspectMove(other, 1, "hover"));
+  await act(() => read().preview.clearInspection(candidate, "hover"));
+  assert.equal(read().preview.inspection?.candidate, other);
+  await act(() => read().preview.clearInspection(other, "hover"));
+  assert.equal(read().preview.inspection?.candidate, candidate);
+  assert.equal(read().preview.inspection?.ply, 2);
+  await act(() => read().preview.clearInspection(candidate));
   assert.equal(read().preview.boardPreview, false);
 });
 

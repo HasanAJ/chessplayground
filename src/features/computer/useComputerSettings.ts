@@ -1,3 +1,4 @@
+import { type Diagnostic, notice } from "../../i18n/notices";
 import { useCallback, useEffect, useState } from "react";
 import type { Color } from "chess.js";
 import { COMPUTER_DIFFICULTY_KEY, readDifficulty } from "./preferences";
@@ -7,7 +8,7 @@ export function useComputerSettings() {
   const [open, setOpen] = useState(false);
   const [side, setSide] = useState<Color>("w");
   const [difficulty, setDifficulty] = useState(readDifficulty);
-  const [storageError, setStorageError] = useState("");
+  const [storageError, setStorageError] = useState<Diagnostic | null>(null);
   const disable = useCallback(() => setEnabled(false), []);
   useEffect(() => {
     if (!enabled) setOpen(false);
@@ -15,11 +16,9 @@ export function useComputerSettings() {
   useEffect(() => {
     try {
       localStorage.setItem(COMPUTER_DIFFICULTY_KEY, difficulty);
-      setStorageError("");
+      setStorageError(null);
     } catch {
-      setStorageError(
-        "Your computer difficulty could not be saved in this browser.",
-      );
+      setStorageError(notice("computer.error.saveDifficulty"));
     }
   }, [difficulty]);
   return {

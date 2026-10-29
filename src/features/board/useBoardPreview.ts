@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
-import type { Candidate } from "../coach/candidates";
+import type { Candidate } from "../coach/candidatePresentation";
 import type { BoardFocus } from "../coach/boardFocus";
 
 export type MovePreview = {
@@ -10,12 +10,18 @@ export type MovePreview = {
 };
 
 type MoveInspection = MovePreview & { key: string };
+type PreviewInput = "hover" | "focus" | "click";
 
 export type InspectMove = (
-  candidate: Candidate | null,
-  ply?: number,
-  input?: "hover" | "focus" | "click",
+  candidate: Candidate,
+  ply: number,
+  input: PreviewInput,
   focus?: BoardFocus,
+) => void;
+
+export type ClearInspection = (
+  candidate: Candidate,
+  input?: PreviewInput,
 ) => void;
 
 export function useBoardPreview(key: string, enabled: boolean) {
@@ -46,18 +52,12 @@ export function useBoardPreview(key: string, enabled: boolean) {
   );
 
   const inspectMove: InspectMove = useCallback(
-    (candidate, ply = 1, input, focus) => {
-      const update = (
-        current: MoveInspection | null,
-      ): MoveInspection | null => {
-        if (!candidate) return null;
-        if (ply === 0) return current?.candidate === candidate ? null : current;
-        return { key, candidate, ply, focus };
-      };
-      if (!input || input === "hover") setHoverInspection(update);
-      if (!input || input === "focus") setFocusInspection(update);
-      if (!input || input === "click") setPinnedInspection(update);
-      if (input === "click" && ply > 0) {
+    (candidate, ply, input, focus) => {
+      const update = { key, candidate, ply, focus };
+      if (input === "hover") setHoverInspection(update);
+      else if (input === "focus") setFocusInspection(update);
+      else {
+        setPinnedInspection(update);
         setHoverInspection(null);
         setFocusInspection(null);
       }
@@ -65,8 +65,19 @@ export function useBoardPreview(key: string, enabled: boolean) {
     [key],
   );
 
-  const clearPreview = useCallback(() => inspectMove(null), [inspectMove]);
-  useEffect(clearPreview, [clearPreview, enabled]);
+  const clearInspection: ClearInspection = useCallback((candidate, input) => {
+    const clear = (current: MoveInspection | null) =>
+      current?.candidate === candidate ? null : current;
+    if (!input || input === "hover") setHoverInspection(clear);
+    if (!input || input === "focus") setFocusInspection(clear);
+    if (!input || input === "click") setPinnedInspection(clear);
+  }, []);
+  const clearPreview = useCallback(() => {
+    setHoverInspection(null);
+    setFocusInspection(null);
+    setPinnedInspection(null);
+  }, []);
+  useEffect(clearPreview, [clearPreview, enabled, key]);
   useEffect(() => {
     if (!boardPreview) return;
     const cancel = (event: KeyboardEvent) => {
@@ -84,6 +95,7 @@ export function useBoardPreview(key: string, enabled: boolean) {
     pinned: boardPreview && inspection === pinnedInspection,
     previewGame,
     inspectMove,
+    clearInspection,
     clearPreview,
   };
 }

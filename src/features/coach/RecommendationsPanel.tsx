@@ -13,7 +13,15 @@ import { AlternativeMoves } from "./AlternativeMoves";
 import { SquareText } from "../board/SquareHighlight";
 
 type Props = {
-  game: GameController;
+  game: Pick<
+    GameController,
+    | "analysisGame"
+    | "analysisKey"
+    | "analysisTerminal"
+    | "lastMove"
+    | "playable"
+    | "reviewing"
+  >;
   onPlayMove: GameController["playMove"];
   preview: BoardPreview;
   computer: ComputerSettings;
@@ -34,13 +42,8 @@ export function RecommendationsPanel({
   onNewGame: newGame,
 }: Props) {
   const { t } = useTranslation();
-  const {
-    analysisGame,
-    analysisKey,
-    analysisTerminal,
-    reviewing,
-    lastMove,
-  } = game;
+  const { analysisGame, analysisKey, analysisTerminal, reviewing, lastMove } =
+    game;
   const {
     candidates,
     best: candidate,
@@ -53,7 +56,7 @@ export function RecommendationsPanel({
   const turn = analysisGame.turn();
   const computer = settings.enabled,
     humanSide = settings.side;
-  const { inspection, inspectMove, boardPreview } = preview;
+  const { inspection, inspectMove, clearInspection, boardPreview } = preview;
   const {
     forcedMove,
     setHovered,
@@ -139,12 +142,9 @@ export function RecommendationsPanel({
                 forcedMove={forcedMove}
                 preview={inspection}
                 onInspect={inspectMove}
+                onClearInspection={clearInspection}
                 onPlay={() =>
-                  onPlayMove(
-                    best.move.from,
-                    best.move.to,
-                    best.move.promotion,
-                  )
+                  onPlayMove(best.move.from, best.move.to, best.move.promotion)
                 }
               />
             ) : (
@@ -153,7 +153,9 @@ export function RecommendationsPanel({
                   <LoaderCircle size={16} className="spin" />
                   <span>{t("coach.analysis.search.heading")}</span>
                 </div>
-                <h3>{t("coach.analysis.search.bestMove", sideName(turn, t))}</h3>
+                <h3>
+                  {t("coach.analysis.search.bestMove", sideName(turn, t))}
+                </h3>
                 <p>
                   {reviewing
                     ? t("coach.analysis.search.history")

@@ -54,7 +54,7 @@ export default function OpeningWorkspace({ active }: { active: boolean }) {
       (level === "all" || lesson.level === level) &&
       (side === "all" || lesson.side === side) &&
       (theme === "all" || lesson.theme === theme) &&
-      `${lesson.name[language]} ${lesson.name.en} ${motif.title[language]} ${motif.title.en} ${motif.plan[language]}`
+      `${lesson.name[language]} ${lesson.name.en} ${motif.title[language]} ${motif.title.en} ${motif.summary[language]} ${motif.plan[language]}`
         .toLocaleLowerCase(language)
         .includes(search)
     );
@@ -150,12 +150,9 @@ export default function OpeningWorkspace({ active }: { active: boolean }) {
               <ChevronDown size={14} aria-hidden="true" />
             </label>
           </div>
-          <div className="opening-library-summary">
-            <span className="opening-count" role="status">
-              {t("opening.count", shown.length, openings.length)}
-            </span>
-            <p>{t("opening.library.note")}</p>
-          </div>
+          <p className="opening-count" role="status">
+            {t("opening.count", shown.length, openings.length)}
+          </p>
           <div className="opening-library">
             {shown.map(({ lesson, rank }) => (
               <OpeningCard

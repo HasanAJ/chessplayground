@@ -1,12 +1,13 @@
 import type { Catalog } from "./en";
 
 export default {
+  "app.loading": "Tempo wird geladen…",
   "analytics.heading": "Cookie-Einstellungen",
   "analytics.description":
     "Optionale Analyse-Cookies helfen uns, Besuche zu verstehen und Tempo zu verbessern.",
   "analytics.accept": "Akzeptieren",
   "analytics.decline": "Ablehnen",
-  "analytics.settings": "Analyse-Einstellungen",
+  "analytics.settings": "Cookie-Einstellungen",
   "analytics.privacy": "Datenschutzerklärung",
   "analytics.storage":
     "Deine Wahl gilt für diesen Besuch, konnte aber nicht für das nächste Mal gespeichert werden.",
@@ -38,10 +39,7 @@ export default {
   "opening.side.all": "Beide Farben",
   "opening.target": "Ziel",
   "opening.target.all": "Alle Ziele",
-  "opening.explore": "Durchgehen",
   "opening.empty": "Keine passenden Angriffe. Ändere die Suche oder Filter.",
-  "opening.library.note":
-    "Geordnet nach geschätztem Anreiz für Spieler, die die Falle nicht kennen. Eine redaktionelle Einschätzung, keine gemessene Erfolgsquote.",
   "opening.rank": "Platz {0} nach geschätzter Anfälligkeit für die Falle",
   "opening.backToLibrary": "Alle Angriffe",
   "opening.viewer.label": "Brett und Navigation der Angriffslektion",
@@ -158,7 +156,6 @@ export default {
   "chess.side.white": "Weiß",
   "chess.side.black": "Schwarz",
   "header.home": "Tempo-Startseite",
-  "header.tagline": "Dein Schachspielplatz",
   "intro.heading.start": "Schachanalyse,",
   "intro.heading.end": "mit erklärten Zügen.",
   "intro.tagline":
@@ -169,11 +166,8 @@ export default {
     "Wähle „{0}“ und sieh dir eine Antwort an oder probiere den Zugvorschlag aus.",
   "intro.guide.setup":
     "Nutze die Bearbeitungswerkzeuge, um eine eigene Stellung aufzubauen.",
-  "footer.tagline": "Ein guter Zug beginnt mit etwas Verständnis.",
   "footer.engine": "Mit Stockfish 19",
   "move.description.normal": "{0}{1} von {2} nach {3}",
-  "position.error.missingBothKings":
-    "Füge beide Könige hinzu, um zu spielen oder zu analysieren.",
   "position.error.pawnOnEdge":
     "Entferne Bauern von der ersten und letzten Reihe, um zu spielen oder zu analysieren.",
   "position.error.illegalArrangement":
@@ -425,6 +419,9 @@ export default {
   "coach.status.yourTurn": "Du bist am Zug",
   "coach.panel.label": "Stellungsanalyse",
   "coach.panel.heading": "Dein Trainer",
+  "coach.welcome.heading": "Dein nächster Zug, erklärt.",
+  "coach.welcome.description":
+    "Finde einen starken Zug und verstehe, warum er funktioniert.",
   "coach.calculate.label.waiting": "Warten auf den Computer",
   "coach.calculate.label.thinking": "Beste Züge werden berechnet",
   "coach.calculate.label.ready": "Beste Züge berechnen",

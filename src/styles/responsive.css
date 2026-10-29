@@ -24,20 +24,25 @@
   .board-panel {
     padding: 22px;
   }
-  footer {
+  .site-footer {
+    padding: 20px 25px calc(20px + 110px + env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 700px) {
+  .footer-content {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    line-height: 1.6;
-    gap: 10px;
+    gap: 12px;
+  }
+  .site-footer .privacy-link {
+    min-height: 44px;
+  }
+  .site-footer .privacy-link + .privacy-link::before {
+    display: none;
   }
 }
 @media (max-width: 540px) {
-  .site-header {
-    padding: 0 18px;
-  }
-  .header-center {
-    display: none;
+  .site-footer {
+    padding-inline: 24px;
   }
   .eyebrow {
     letter-spacing: 1.3px;
@@ -57,10 +62,6 @@
   }
   .board-toolbar {
     gap: 6px;
-  }
-  .board-navigation-actions > .icon-button {
-    width: 34px;
-    height: 38px;
   }
   .chessboard {
     border-radius: 8px;
@@ -84,9 +85,6 @@
   }
   .fen-controls .small-button {
     grid-column: 1 / -1;
-  }
-  .continuation-moves button {
-    min-height: 40px;
   }
   .panel-dialog {
     padding: 14px;

@@ -4,7 +4,7 @@ import { act, createElement } from "react";
 import { Chess } from "chess.js";
 import { CoachPanel } from "../../src/features/coach/CoachPanel";
 import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { reviewMove } from "../../src/features/coach/grading";
 import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
 import type { Recommendations } from "../../src/features/coach/useRecommendations";
@@ -55,7 +55,7 @@ test("calculation hides the last move review until the next move, including when
       requested,
       current: false,
       analysis: requested
-        ? { key: game.analysisKey, candidates, best: candidates[0], language: "en", state: "ready" }
+        ? { key: game.analysisKey, candidates, best: candidates[0], state: "ready" }
         : null,
       calculate() {},
       clear() {},
@@ -144,6 +144,7 @@ test("Inaccuracy reviews keep the grade and position score without analysis deta
     onToggle() {},
     onReanalyze() {},
     onInspect() {},
+    onClearInspection() {},
   })));
   const document = dom.window.document;
   assert.equal(document.querySelector(".quality-badge")!.textContent, "Inaccuracy");
@@ -184,6 +185,7 @@ test("consequence previews stay with the explanation and preserve the tactical p
           onToggle() {},
           onReanalyze() {},
           onInspect: preview.inspectMove,
+          onClearInspection: preview.clearInspection,
         });
       }
       await act(() => root.render(createElement(Harness)));
@@ -241,6 +243,7 @@ test("better-move previews name and show the alternative for both explained and 
           onToggle() {},
           onReanalyze() {},
           onInspect: preview.inspectMove,
+          onClearInspection: preview.clearInspection,
         });
       }
       await act(() => root.render(createElement(Harness)));

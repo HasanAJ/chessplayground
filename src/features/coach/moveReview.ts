@@ -1,11 +1,12 @@
+import { type Diagnostic, notice } from "../../i18n/notices";
 import type { AnalysisClient } from "../../engine/analysis";
-import type { EngineLine } from "../../engine/uci";
-import { candidatesFor, type Candidate } from "./candidates";
+import { selectBestLine, type EngineLine } from "../../engine/uci";
+import { candidatesFor, type Candidate } from "./candidatePresentation";
 import { reviewMove, type MoveReview } from "./grading";
 import type { Move } from "chess.js";
 import { mateAfterMove } from "../../chess/evaluation";
 
-export type ReviewPosition = {
+type ReviewPosition = {
   move: Move;
   history: { rootFen: string; moves: string[] };
   terminal: string | null;
@@ -15,7 +16,7 @@ export type ReviewPosition = {
 export type ReviewState = { key: string } & (
   | { state: "thinking" }
   | { state: "ready"; review: MoveReview }
-  | { state: "error"; error: string }
+  | { state: "error"; error: Diagnostic }
 );
 
 function finalCandidate(
@@ -24,11 +25,7 @@ function finalCandidate(
   bestMove?: string,
   bestLine?: EngineLine,
 ): Candidate | undefined {
-  const selected = bestMove
-    ? bestLine?.pv[0] === bestMove
-      ? bestLine
-      : lines.find((line) => line.pv[0] === bestMove)
-    : lines[0];
+  const selected = selectBestLine(lines, bestMove, bestLine);
   return selected
     ? candidatesFor(fen, [{ ...selected, rank: 1 }])[0]
     : undefined;
@@ -42,10 +39,7 @@ function replyAfter(played: Candidate): Candidate | undefined {
       rank: 1,
       depth: Math.max(1, played.depth - 1),
       cp: played.cp === undefined ? undefined : -played.cp,
-      mate:
-        played.mate === undefined
-          ? undefined
-          : mateAfterMove(played.mate),
+      mate: played.mate === undefined ? undefined : mateAfterMove(played.mate),
       pv: played.pv.slice(1),
     },
   ])[0];
@@ -56,7 +50,7 @@ export function startMoveReview(
   { move, history, terminal, drawn }: ReviewPosition,
   callbacks: {
     onComplete: (review: MoveReview) => void;
-    onError: (message: string) => void;
+    onError: (message: Diagnostic) => void;
   },
 ): () => void {
   const beforeHistory = {
@@ -65,7 +59,7 @@ export function startMoveReview(
   };
   let canceled = false;
   let cancel: (() => void) | undefined;
-  const fail = (message: string) => {
+  const fail = (message: Diagnostic) => {
     if (!canceled) callbacks.onError(message);
   };
 
@@ -82,7 +76,7 @@ export function startMoveReview(
             !winner ||
             (winner.move.lan !== move.lan && winner.move.lan !== best.move.lan)
           ) {
-            fail("The engine could not reliably compare this move. Try again.");
+            fail(notice("coach.review.error.comparison"));
             return;
           }
           if (winner.move.lan === move.lan) {
@@ -106,8 +100,7 @@ export function startMoveReview(
             // or comparing the winner's new score with an older played score.
             if (retry)
               compare(best, Math.max(completedDepth, winner.depth), false);
-            else
-              fail("The engine could not reliably compare this move. Try again.");
+            else fail(notice("coach.review.error.comparison"));
             return;
           }
           const choices = candidatesFor(move.before, lines);
@@ -116,7 +109,7 @@ export function startMoveReview(
             (choice) => choice.move.lan === winner.move.lan,
           );
           if (!played || !alternative || played.depth !== alternative.depth) {
-            fail("The engine could not reliably compare this move. Try again.");
+            fail(notice("coach.review.error.comparison"));
             return;
           }
           callbacks.onComplete(
@@ -149,7 +142,7 @@ export function startMoveReview(
         if (canceled) return;
         const best = finalCandidate(move.before, lines, bestMove, bestLine);
         if (!best) {
-          fail("The engine could not review this move. Try again.");
+          fail(notice("coach.review.error.failed"));
           return;
         }
         if (move.lan !== best.move.lan) {
@@ -157,9 +150,7 @@ export function startMoveReview(
           return;
         }
         if (terminal) {
-          callbacks.onComplete(
-            reviewMove(move, best, undefined, drawn),
-          );
+          callbacks.onComplete(reviewMove(move, best, undefined, drawn));
           return;
         }
         cancel = engine.analyze(
@@ -176,7 +167,7 @@ export function startMoveReview(
                 replyLine,
               );
               if (!reply) {
-                fail("The engine could not check the reply. Try again.");
+                fail(notice("coach.review.error.reply"));
                 return;
               }
               callbacks.onComplete(reviewMove(move, best, reply));

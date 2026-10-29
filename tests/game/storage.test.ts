@@ -1,3 +1,5 @@
+import { translateNotice } from "../../src/i18n/notices";
+import { english } from "../../src/i18n/translate";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { START_FEN } from "../../src/chess/position";
@@ -63,7 +65,7 @@ test("unavailable browser storage still permits a fresh game and computer play",
   };
   const loaded = readSavedSession(blocked);
   assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
-  assert.match(loaded.storageError, /could not be read/);
+  assert.match(translateNotice(loaded.storageError, english), /could not be read/);
   assert.equal(readDifficulty(blocked), "medium");
 });
 
@@ -86,8 +88,8 @@ test("a corrupt session preserves its exact data and recovers a valid fallback F
   const loaded = readSavedSession(storage(values));
   assert.equal(replayStudy(loaded.study).game.fen(), fen);
   assert.deepEqual(loaded.recovery?.data, { [SESSION_KEY]: "{broken" });
-  assert.match(loaded.recovery!.message, /without its move history/);
-  assert.match(loaded.recovery!.message, /Autosave is paused/);
+  assert.match(translateNotice(loaded.recovery!.message, english), /without its move history/);
+  assert.match(translateNotice(loaded.recovery!.message, english), /Autosave is paused/);
   assert.deepEqual(values, { [SESSION_KEY]: "{broken", "tempo-position": fen });
 });
 

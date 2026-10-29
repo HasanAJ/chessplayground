@@ -14,6 +14,13 @@ export function text(
 // Each motif explains the bait, the tactical idea, and how to avoid that idea.
 export const motifs = {
   rookFork: {
+    summary: text(
+      "Use your queen to check the king and attack the rook at the same time.",
+      "Da jaque con la dama y ataca la torre al mismo tiempo.",
+      "Greife mit deiner Dame gleichzeitig den König und den Turm an.",
+      "Dai scacco con la donna e attacca la torre allo stesso tempo.",
+      "Donnez échec avec la dame tout en attaquant la tour.",
+    ),
     title: text(
       "Fork the king and rook",
       "Horquilla al rey y la torre",
@@ -44,6 +51,13 @@ export const motifs = {
     ),
   },
   f7Mate: {
+    summary: text(
+      "Your queen and bishop team up to checkmate on the weak f7 square.",
+      "La dama y el alfil se combinan para dar mate en la débil casilla f7.",
+      "Dame und Läufer arbeiten zusammen, um auf dem schwachen Feld f7 mattzusetzen.",
+      "Donna e alfiere collaborano per dare matto sulla debole casa f7.",
+      "La dame et le fou unissent leurs forces pour mater sur la case faible f7.",
+    ),
     title: text(
       "Mate on f7",
       "Mate en f7",
@@ -74,6 +88,13 @@ export const motifs = {
     ),
   },
   queenBait: {
+    summary: text(
+      "Offer your queen, then use your bishops and knights to trap the king.",
+      "Ofrece la dama y usa alfiles y caballos para atrapar al rey.",
+      "Opfere deine Dame und setze den König mit Läufern und Springern matt.",
+      "Offri la donna, poi usa alfieri e cavalli per intrappolare il re.",
+      "Offrez votre dame, puis piégez le roi avec vos fous et cavaliers.",
+    ),
     title: text(
       "The queen is bait",
       "La dama es el cebo",
@@ -104,6 +125,13 @@ export const motifs = {
     ),
   },
   knightFork: {
+    summary: text(
+      "Your knight attacks the queen and rook together. Saving the queen leaves the rook behind.",
+      "El caballo ataca dama y torre a la vez. Salvar la dama deja la torre en peligro.",
+      "Dein Springer greift Dame und Turm zugleich an. Wird die Dame gerettet, bleibt der Turm zurück.",
+      "Il cavallo attacca donna e torre insieme. Salvare la donna lascia la torre in presa.",
+      "Votre cavalier attaque la dame et la tour à la fois. Sauver la dame laisse la tour en prise.",
+    ),
     title: text(
       "Knight fork on f7",
       "Horquilla en f7",
@@ -134,6 +162,13 @@ export const motifs = {
     ),
   },
   kingRetreat: {
+    summary: text(
+      "Keep checking with your bishop until the crowded king runs out of safe squares.",
+      "Sigue dando jaques con el alfil hasta que el rey se quede sin casillas seguras.",
+      "Gib mit deinem Läufer weiter Schach, bis der eingeengte König kein sicheres Feld mehr hat.",
+      "Continua a dare scacco con l’alfiere finché il re non ha più case sicure.",
+      "Enchaînez les échecs du fou jusqu’à priver le roi de toute case sûre.",
+    ),
     title: text(
       "The king retreats into danger",
       "El rey retrocede al peligro",
@@ -164,6 +199,13 @@ export const motifs = {
     ),
   },
   checkCapture: {
+    summary: text(
+      "Your bishop captures a knight with check, winning back the piece you sacrificed.",
+      "El alfil captura un caballo con jaque y recupera la pieza sacrificada.",
+      "Dein Läufer schlägt einen Springer mit Schach und gewinnt die geopferte Figur zurück.",
+      "L’alfiere cattura un cavallo con scacco, recuperando il pezzo sacrificato.",
+      "Votre fou prend un cavalier avec échec et récupère la pièce sacrifiée.",
+    ),
     title: text(
       "Recover the piece with check",
       "Recupera la pieza con jaque",
@@ -194,6 +236,13 @@ export const motifs = {
     ),
   },
   chaseKnight: {
+    summary: text(
+      "Chase the knight with a pawn to gain time and build a strong centre.",
+      "Ataca al caballo con un peón para ganar tiempo y formar un centro fuerte.",
+      "Vertreibe den Springer mit einem Bauern, um Zeit und ein starkes Zentrum zu gewinnen.",
+      "Scaccia il cavallo con un pedone per guadagnare tempo e costruire un centro forte.",
+      "Chassez le cavalier avec un pion pour gagner du temps et bâtir un centre fort.",
+    ),
     title: text(
       "Chase the knight, claim the centre",
       "Persigue al caballo y gana centro",
@@ -224,6 +273,13 @@ export const motifs = {
     ),
   },
   kingHunt: {
+    summary: text(
+      "Use checks from your queen and bishop to chase the king into the open.",
+      "Usa jaques de dama y alfil para sacar al rey de su refugio.",
+      "Treibe den König mit Schachs von Dame und Läufer ins Freie.",
+      "Usa gli scacchi di donna e alfiere per portare il re allo scoperto.",
+      "Chassez le roi à découvert avec des échecs de la dame et du fou.",
+    ),
     title: text(
       "Hunt the exposed king",
       "Persigue al rey expuesto",
@@ -254,6 +310,13 @@ export const motifs = {
     ),
   },
   discoveredCheck: {
+    summary: text(
+      "Move your knight to attack the queen and uncover a check. The king must be saved first.",
+      "Mueve el caballo para atacar a la dama y descubrir un jaque. Primero hay que salvar al rey.",
+      "Ziehe den Springer mit Angriff auf die Dame und öffne dabei eine Schachlinie. Der König muss zuerst gerettet werden.",
+      "Muovi il cavallo per attaccare la donna e scoprire uno scacco. Bisogna prima salvare il re.",
+      "Déplacez le cavalier pour attaquer la dame et découvrir un échec. Il faut d’abord sauver le roi.",
+    ),
     title: text(
       "A discovered check wins the queen",
       "Un jaque descubierto gana la dama",
@@ -284,6 +347,13 @@ export const motifs = {
     ),
   },
   counterCheck: {
+    summary: text(
+      "Let your queen be taken, then use a bishop check to win the enemy queen and extra material.",
+      "Deja que capturen tu dama y usa un jaque de alfil para ganar la dama rival y material extra.",
+      "Lass deine Dame schlagen und gewinne mit einem Läuferschach die gegnerische Dame und zusätzliches Material.",
+      "Lascia catturare la donna, poi usa uno scacco d’alfiere per vincere la donna avversaria e altro materiale.",
+      "Laissez prendre votre dame, puis gagnez la dame adverse et du matériel grâce à un échec du fou.",
+    ),
     title: text(
       "Answer queen bait with check",
       "Responde al cebo con jaque",
@@ -314,6 +384,13 @@ export const motifs = {
     ),
   },
   bishopTrap: {
+    summary: text(
+      "Advance your pawns to attack the bishop and close off its safe retreats.",
+      "Avanza los peones para atacar al alfil y cerrar sus vías de retirada.",
+      "Greife den Läufer mit deinen Bauern an und versperre seine sicheren Rückzugsfelder.",
+      "Avanza i pedoni per attaccare l’alfiere e chiudere le sue vie di fuga.",
+      "Avancez vos pions pour attaquer le fou et fermer ses cases de retraite.",
+    ),
     title: text(
       "Trap the bishop with pawns",
       "Atrapa al alfil con peones",
@@ -344,6 +421,13 @@ export const motifs = {
     ),
   },
   smotheredMate: {
+    summary: text(
+      "Your knight delivers checkmate while the king is boxed in by its own pieces.",
+      "El caballo da mate mientras el rey está encerrado por sus propias piezas.",
+      "Dein Springer setzt matt, während der König von den eigenen Figuren eingeschlossen ist.",
+      "Il cavallo dà matto mentre il re è bloccato dai propri pezzi.",
+      "Votre cavalier donne mat tandis que le roi est enfermé par ses propres pièces.",
+    ),
     title: text(
       "Smothered mate after a pawn grab",
       "Mate ahogado tras tomar un peón",
@@ -374,6 +458,13 @@ export const motifs = {
     ),
   },
   backRank: {
+    summary: text(
+      "Clear a path for your queen to checkmate a king trapped behind its own pieces.",
+      "Abre paso a la dama para dar mate al rey encerrado detrás de sus propias piezas.",
+      "Öffne deiner Dame den Weg zum Matt gegen den König hinter seinen eigenen Figuren.",
+      "Apri la strada alla donna per dare matto al re bloccato dietro i propri pezzi.",
+      "Ouvrez un chemin à votre dame pour mater le roi bloqué derrière ses propres pièces.",
+    ),
     title: text(
       "The back rank has no escape",
       "La última fila no tiene salida",
@@ -404,6 +495,13 @@ export const motifs = {
     ),
   },
   queenPin: {
+    summary: text(
+      "Line up your bishop with the enemy queen and king. The queen cannot move out of the way.",
+      "Alinea el alfil con la dama y el rey rivales. La dama no puede apartarse.",
+      "Bringe deinen Läufer mit der gegnerischen Dame und dem König auf eine Linie. Die Dame kann nicht ausweichen.",
+      "Allinea l’alfiere con donna e re avversari. La donna non può spostarsi dalla linea.",
+      "Alignez votre fou avec la dame et le roi adverses. La dame ne peut pas s’écarter.",
+    ),
     title: text(
       "Pin the queen to the king",
       "Clava la dama al rey",
@@ -434,6 +532,13 @@ export const motifs = {
     ),
   },
   openHFile: {
+    summary: text(
+      "Open a path for your queen along the edge of the board and trap the castled king.",
+      "Abre un camino a la dama por el borde del tablero y atrapa al rey enrocado.",
+      "Öffne deiner Dame einen Weg am Brettrand und setze den rochierten König matt.",
+      "Apri un passaggio alla donna lungo il bordo della scacchiera e intrappola il re arroccato.",
+      "Ouvrez un passage à la dame sur le bord de l’échiquier pour piéger le roi roqué.",
+    ),
     title: text(
       "Open the h-file against the king",
       "Abre la columna h contra el rey",
@@ -464,6 +569,13 @@ export const motifs = {
     ),
   },
   pinnedPawn: {
+    summary: text(
+      "Your knight gives checkmate. The pawn beside it cannot capture without exposing its king.",
+      "El caballo da mate. El peón cercano no puede capturarlo sin dejar expuesto a su rey.",
+      "Dein Springer setzt matt. Der benachbarte Bauer darf ihn nicht schlagen, weil er sonst seinen König entblößt.",
+      "Il cavallo dà matto. Il pedone vicino non può catturarlo senza esporre il proprio re.",
+      "Votre cavalier donne mat. Le pion voisin ne peut pas le prendre sans exposer son roi.",
+    ),
     title: text(
       "A pinned pawn cannot save the king",
       "Un peón clavado no salva al rey",
@@ -494,6 +606,13 @@ export const motifs = {
     ),
   },
   underpromotion: {
+    summary: text(
+      "Promote your pawn to a knight with check to keep the attack going and win the queen.",
+      "Promociona el peón a caballo con jaque para continuar el ataque y ganar la dama.",
+      "Wandle deinen Bauern mit Schach in einen Springer um, um weiter anzugreifen und die Dame zu gewinnen.",
+      "Promuovi il pedone a cavallo con scacco per continuare l’attacco e vincere la donna.",
+      "Promouvez le pion en cavalier avec échec pour poursuivre l’attaque et gagner la dame.",
+    ),
     title: text(
       "Promote to a knight with check",
       "Promociona a caballo con jaque",
@@ -524,6 +643,13 @@ export const motifs = {
     ),
   },
   deflection: {
+    summary: text(
+      "Lure away the knight guarding the king, then let your queen deliver checkmate.",
+      "Atrae al caballo que protege al rey y da mate con la dama.",
+      "Locke den Springer weg, der den König schützt, und setze dann mit der Dame matt.",
+      "Attira lontano il cavallo che difende il re, poi dai matto con la donna.",
+      "Détournez le cavalier qui protège le roi, puis donnez mat avec la dame.",
+    ),
     title: text(
       "Pull away the mating-square defender",
       "Aparta al defensor de la casilla de mate",
@@ -554,6 +680,13 @@ export const motifs = {
     ),
   },
   bishopFork: {
+    summary: text(
+      "Your queen checks the king and attacks a bishop, giving you time to recover material.",
+      "La dama da jaque y ataca un alfil, lo que permite recuperar material.",
+      "Deine Dame gibt Schach und greift einen Läufer an. So gewinnst du Material zurück.",
+      "La donna dà scacco e attacca un alfiere, dandoti il tempo di recuperare materiale.",
+      "Votre dame donne échec et attaque un fou, ce qui vous laisse le temps de récupérer du matériel.",
+    ),
     title: text(
       "Fork the king and bishop",
       "Horquilla al rey y al alfil",
@@ -584,6 +717,13 @@ export const motifs = {
     ),
   },
   queenAmbush: {
+    summary: text(
+      "Offer a knight, then move your bishop with check to clear the path to the enemy queen.",
+      "Ofrece un caballo y mueve el alfil con jaque para abrir el camino a la dama rival.",
+      "Opfere einen Springer und ziehe den Läufer mit Schach, um den Weg zur gegnerischen Dame zu öffnen.",
+      "Offri un cavallo, poi muovi l’alfiere con scacco per aprire la strada verso la donna avversaria.",
+      "Offrez un cavalier, puis déplacez le fou avec échec pour ouvrir le chemin vers la dame adverse.",
+    ),
     title: text(
       "Clear the path to the queen",
       "Abre el camino hacia la dama",
@@ -614,6 +754,13 @@ export const motifs = {
     ),
   },
   discoveredAttack: {
+    summary: text(
+      "Move your bishop with check to reveal an attack on the queen. The king must be saved first.",
+      "Mueve el alfil con jaque para descubrir un ataque a la dama. Primero hay que salvar al rey.",
+      "Ziehe deinen Läufer mit Schach und öffne dabei einen Angriff auf die Dame. Der König muss zuerst gerettet werden.",
+      "Muovi l’alfiere con scacco per scoprire un attacco alla donna. Bisogna prima salvare il re.",
+      "Déplacez le fou avec échec pour découvrir une attaque sur la dame. Il faut d’abord sauver le roi.",
+    ),
     title: text(
       "A bishop check uncovers the queen",
       "Un jaque de alfil descubre la dama",
@@ -644,6 +791,13 @@ export const motifs = {
     ),
   },
   diagonalRook: {
+    summary: text(
+      "Break up the pawn shield to open a diagonal for your queen to attack the corner rook.",
+      "Rompe la barrera de peones para que la dama ataque la torre de la esquina por una diagonal.",
+      "Sprenge den Bauernschutz, damit deine Dame den Eckturm auf einer Diagonale angreifen kann.",
+      "Rompi lo scudo di pedoni per aprire una diagonale alla donna contro la torre nell’angolo.",
+      "Brisez le rempart de pions pour ouvrir à votre dame une diagonale vers la tour du coin.",
+    ),
     title: text(
       "The pawn chain exposes a rook",
       "La cadena de peones expone una torre",
@@ -674,6 +828,13 @@ export const motifs = {
     ),
   },
   openDiagonal: {
+    summary: text(
+      "Your bishop checks the king and attacks the corner rook. Black must answer the check first.",
+      "El alfil da jaque y ataca la torre de la esquina. Las negras deben responder primero al jaque.",
+      "Dein Läufer gibt Schach und greift den Eckturm an. Schwarz muss zuerst das Schach abwehren.",
+      "L’alfiere dà scacco e attacca la torre nell’angolo. Il Nero deve prima parare lo scacco.",
+      "Votre fou donne échec et attaque la tour du coin. Les Noirs doivent d’abord parer l’échec.",
+    ),
     title: text(
       "A checking bishop reaches the rook",
       "El alfil llega a la torre con jaques",
@@ -706,6 +867,7 @@ export const motifs = {
 } satisfies Record<
   string,
   {
+    summary: Localized;
     title: Localized;
     plan: Localized;
     temptation: Localized;

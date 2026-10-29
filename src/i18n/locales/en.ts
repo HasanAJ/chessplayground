@@ -1,10 +1,11 @@
 const en = {
+  "app.loading": "Loading Tempo…",
   "analytics.heading": "Cookie preferences",
   "analytics.description":
     "Optional analytics cookies help us understand visits and improve Tempo.",
   "analytics.accept": "Accept",
   "analytics.decline": "Decline",
-  "analytics.settings": "Analytics settings",
+  "analytics.settings": "Cookie settings",
   "analytics.privacy": "Privacy policy",
   "analytics.storage":
     "Your analytics choice applies to this visit, but could not be saved for next time.",
@@ -36,10 +37,7 @@ const en = {
   "opening.side.all": "Both colours",
   "opening.target": "Goal",
   "opening.target.all": "All goals",
-  "opening.explore": "Walk through",
   "opening.empty": "No attacks match. Try another search or filter.",
-  "opening.library.note":
-    "Ordered by estimated temptation for an unfamiliar player. This is an editorial ranking, not measured success rates.",
   "opening.rank": "Estimated temptation rank {0}",
   "opening.backToLibrary": "All attacks",
   "opening.viewer.label": "Attack lesson board and navigation",
@@ -156,7 +154,6 @@ const en = {
   "chess.side.white": "White",
   "chess.side.black": "Black",
   "header.home": "Tempo home",
-  "header.tagline": "Your chess playground",
   "intro.heading.start": "Chess analysis,",
   "intro.heading.end": "with moves explained.",
   "intro.tagline":
@@ -165,10 +162,8 @@ const en = {
   "intro.guide.analyze":
     "Choose “{0}”, then preview a reply or try the suggestion.",
   "intro.guide.setup": "Use the editing tools to build your own position.",
-  "footer.tagline": "A good move starts with a little understanding.",
   "footer.engine": "Powered by Stockfish 19",
   "move.description.normal": "{0}{1} from {2} to {3}",
-  "position.error.missingBothKings": "Add both kings to play or calculate.",
   "position.error.pawnOnEdge":
     "Move pawns off the first and last ranks to play or calculate.",
   "position.error.illegalArrangement":
@@ -412,6 +407,9 @@ const en = {
   "coach.status.yourTurn": "Your turn",
   "coach.panel.label": "Position analysis",
   "coach.panel.heading": "Your coach",
+  "coach.welcome.heading": "Your next move, explained.",
+  "coach.welcome.description":
+    "Find a strong move and understand why it works.",
   "coach.calculate.label.waiting": "Waiting for computer",
   "coach.calculate.label.thinking": "Calculating best moves",
   "coach.calculate.label.ready": "Calculate best moves",

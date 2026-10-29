@@ -4,7 +4,7 @@ import { startMoveReview, type ReviewState } from "./moveReview";
 import type { GameController } from "../game/useGameController";
 
 export function useMoveReview(
-  game: GameController,
+  game: Pick<GameController, "history" | "outcomes" | "path" | "study">,
   ply: number | null,
   retry: number,
   paused: boolean,

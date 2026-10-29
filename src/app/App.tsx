@@ -9,7 +9,6 @@ import {
 import { updatePageMetadata } from "../i18n/metadata";
 import { SiteIntro } from "./SiteIntro";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
 import { PlayWorkspace } from "../features/game/PlayWorkspace";
 import { WorkspaceTabs } from "./WorkspaceTabs";
 import { navigate, useLocation } from "./navigation";
@@ -47,15 +46,6 @@ export default function App() {
             tempo<span className="brand-dot">.</span>
           </span>
         </a>
-        <div className="header-center">
-          <Sparkles size={14} /> {t("header.tagline")}
-        </div>
-        <div className="header-actions">
-          <LanguageSelector />
-        </div>
-      </header>
-
-      <main>
         <WorkspaceTabs
           active={openingActive ? "opening" : "play"}
           onChange={(next) => {
@@ -66,6 +56,12 @@ export default function App() {
             );
           }}
         />
+        <div className="header-actions">
+          <LanguageSelector />
+        </div>
+      </header>
+
+      <main>
         <PlayWorkspace active={!openingActive} />
         <section
           id="opening-workspace"
@@ -86,20 +82,30 @@ export default function App() {
           onLanguageChange={setLanguage}
           pathname={pathname}
         />
-        <footer>
-          <span>
-            <img src="/favicon.svg" alt="" /> {t("footer.tagline")}
-          </span>
-          <span>
-            © {new Date().getFullYear()} Tempo{" "}
-            <span className="footer-dot">·</span> {t("footer.engine")}{" "}
-            <span className="footer-dot">·</span>
-          </span>
-          <div className="footer-privacy">
-            <AnalyticsConsent />
-          </div>
-        </footer>
       </main>
+      <footer className="site-footer">
+        <div className="footer-content">
+          <div className="footer-identity">
+            <a
+              className="footer-brand"
+              href={languagePath(language)}
+              aria-label={t("header.home")}
+            >
+              <img src="/favicon.svg" alt="" />
+              <span>Tempo</span>
+            </a>
+            <p className="footer-copyright">
+              © {new Date().getFullYear()} Tempo
+            </p>
+          </div>
+          <div className="footer-details">
+            <p className="footer-engine">{t("footer.engine")}</p>
+            <div className="footer-privacy">
+              <AnalyticsConsent />
+            </div>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

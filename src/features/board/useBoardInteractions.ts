@@ -15,7 +15,24 @@ import { useComputerMoveAnimation } from "./useComputerMoveAnimation";
 import { scrollToBoard } from "./scrollToBoard";
 
 export function useBoardInteractions(
-  game: GameController,
+  game: Pick<
+    GameController,
+    | "analysisGame"
+    | "analysisKey"
+    | "analysisTerminal"
+    | "arrangePiece"
+    | "computerMove"
+    | "draft"
+    | "lastMove"
+    | "playMove"
+    | "playable"
+    | "revealBoard"
+    | "reviewedMove"
+    | "reviewing"
+    | "setError"
+    | "setTool"
+    | "tool"
+  >,
   preview: BoardPreview,
   computer: ComputerSettings,
   botTurn: boolean,
@@ -46,13 +63,7 @@ export function useBoardInteractions(
       game.playable && !preview.boardPreview && !botTurn && selected
         ? game.analysisGame.moves({ square: selected, verbose: true })
         : [],
-    [
-      game.playable,
-      preview.boardPreview,
-      botTurn,
-      selected,
-      game.analysisGame,
-    ],
+    [game.playable, preview.boardPreview, botTurn, selected, game.analysisGame],
   );
   const lastMove =
     preview.inspectionMove ??
@@ -155,7 +166,7 @@ export function useBoardInteractions(
       game.analysisTerminal
     )
       return;
-    game.setError("");
+    game.setError(null);
     if (selected === square) setSelected(null);
     else if (position[square]?.color === game.analysisGame.turn())
       setSelected(square);
@@ -214,7 +225,7 @@ export function useBoardInteractions(
     computer.disable();
     game.setTool(game.tool === `${color}${type}` ? "move" : `${color}${type}`);
     setSelected(null);
-    game.setError("");
+    game.setError(null);
   }
 
   useEffect(() => {
@@ -223,7 +234,10 @@ export function useBoardInteractions(
   }, [game.revealBoard]);
 
   useEffect(() => {
-    if (preview.pinnedInspection && window.matchMedia("(max-width: 900px)").matches)
+    if (
+      preview.pinnedInspection &&
+      window.matchMedia("(max-width: 900px)").matches
+    )
       scrollToBoard(ref.current);
   }, [preview.pinnedInspection]);
 

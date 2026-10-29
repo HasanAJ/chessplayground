@@ -6,7 +6,12 @@ import { moveDescription } from "../../chess/moves";
 import { SquareText } from "../board/SquareHighlight";
 import { movePreviewEvents, type MovePreviewProps } from "./previewEvents";
 
-export function Continuation({ candidate, preview, onInspect }: MovePreviewProps) {
+export function Continuation({
+  candidate,
+  preview,
+  onInspect,
+  onClearInspection,
+}: MovePreviewProps) {
   const { t } = useTranslation();
   return (
     <div className="continuation" aria-label={t("coach.continuation.label")}>
@@ -29,7 +34,13 @@ export function Continuation({ candidate, preview, onInspect }: MovePreviewProps
                 description,
               )}
               aria-pressed={current}
-              {...movePreviewEvents(onInspect, candidate, index + 1, focus)}
+              {...movePreviewEvents({
+                onInspect,
+                onClearInspection,
+                candidate,
+                ply: index + 1,
+                focus,
+              })}
               onClick={() => onInspect(candidate, index + 1, "click", focus)}
             >
               <span className="continuation-step-label">
@@ -55,10 +66,13 @@ export function MoveExploration({
   ...props
 }: MovePreviewProps & { children: ReactNode }) {
   const { t } = useTranslation();
-  const { candidate, onInspect } = props;
+  const { candidate, onInspect, onClearInspection } = props;
   const [open, setOpen] = useState(false);
   const id = useId();
-  useEffect(() => () => onInspect(candidate, 0), [candidate, onInspect]);
+  useEffect(
+    () => () => onClearInspection(candidate),
+    [candidate, onClearInspection],
+  );
   return (
     <>
       <div className="plan-actions">
@@ -68,15 +82,17 @@ export function MoveExploration({
           className="plan-preview"
           aria-expanded={open}
           aria-controls={id}
-          {...movePreviewEvents(
+          {...movePreviewEvents({
             onInspect,
+            onClearInspection,
             candidate,
-            open ? 0 : 1,
-            candidate.explanationFocus,
-          )}
+            ply: 1,
+            focus: candidate.explanationFocus,
+            enabled: !open,
+          })}
           onClick={() => {
             setOpen(!open);
-            if (open) onInspect(candidate, 0);
+            if (open) onClearInspection(candidate);
             else onInspect(candidate, 1, "click", candidate.explanationFocus);
           }}
         >

@@ -1,10 +1,10 @@
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import {
-  candidatesFor,
   recommendedCandidates,
 } from "../../src/features/coach/candidates";
 import { translator } from "../../src/i18n/translate";
@@ -156,6 +156,7 @@ test("the best-move card shows the capture before Play without opening the previ
     forcedMove: false,
     preview: null,
     onInspect() {},
+    onClearInspection() {},
     onPlay() {},
   }));
   const text = html.replace(/<[^>]*>/g, "");

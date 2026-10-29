@@ -1,3 +1,11 @@
+import { fenNotice } from "./fenNotice";
+import {
+  notice,
+  NoticeError,
+  noticeFromError,
+  type Diagnostic,
+  type Notice,
+} from "../i18n/notices";
 import { english, type MessageKey, type Translator } from "../i18n/translate";
 import {
   Chess,
@@ -20,8 +28,11 @@ export const pieceNameKeys = {
   q: "chess.piece.queen",
   k: "chess.piece.king",
 } as const satisfies Record<PieceSymbol, MessageKey>;
+const sideKey = (color: Color) =>
+  color === "w" ? "chess.side.white" : "chess.side.black";
+const sideNotice = (color: Color) => notice(sideKey(color));
 export const sideName = (color: Color, t: Translator = english) =>
-  t(color === "w" ? "chess.side.white" : "chess.side.black");
+  t(sideKey(color));
 export const opposite = (color: Color): Color => (color === "w" ? "b" : "w");
 export const gameMoveLabel = (move: Move) =>
   `${move.before.split(" ")[5]}${move.color === "w" ? "." : "…"} ${move.san}`;
@@ -112,15 +123,15 @@ export function editPosition(
   };
 }
 
-export function pieceLimitError(position: Position): string | null {
+export function pieceLimitError(position: Position): Notice | null {
   for (const color of ["w", "b"] as Color[]) {
     const pieces = Object.values(position).filter(
       (piece) => piece?.color === color,
     );
     if (pieces.filter((piece) => piece?.type === "p").length > 8)
-      return `${sideName(color)} can have at most 8 pawns. Remove one before adding another.`;
+      return notice("position.error.pawnLimit", sideNotice(color));
     if (pieces.length > 16)
-      return `${sideName(color)} can have at most 16 pieces. Remove one before adding another.`;
+      return notice("position.error.pieceLimit", sideNotice(color));
   }
   return null;
 }
@@ -129,29 +140,36 @@ export function arrangementIssue(
   position: Position,
   turn: Color,
   rights: string,
-): string | null {
+): Diagnostic | null {
   const pieces = Object.values(position);
   const missing = (["w", "b"] as Color[]).filter(
     (color) =>
       !pieces.some((piece) => piece?.color === color && piece.type === "k"),
   );
-  if (missing.length === 2) return "Add both kings to play or calculate.";
+  if (missing.length === 2) return null;
   if (missing.length === 1)
-    return `Add the ${sideName(missing[0]).toLowerCase()} king to play or calculate.`;
+    return notice("position.error.missingPlayableKing", sideNotice(missing[0]));
   if (
     Object.entries(position).some(
       ([square, piece]) =>
         piece?.type === "p" && (square[1] === "1" || square[1] === "8"),
     )
   )
-    return "Move pawns off the first and last ranks to play or calculate.";
+    return notice("position.error.pawnOnEdge");
   try {
     checkedGame(setupFen(position, turn, rights));
     return null;
   } catch (cause) {
-    return cause instanceof Error
-      ? cause.message.replace(/^Invalid FEN: /, "")
-      : "Arrange a legal position to play or calculate.";
+    const diagnostic = noticeFromError(
+      cause,
+      notice("position.error.illegalArrangement"),
+    );
+    if (
+      typeof diagnostic !== "string" &&
+      diagnostic.key === "position.error.invalidFen"
+    )
+      return diagnostic.values[0] as Diagnostic;
+    return diagnostic;
   }
 }
 
@@ -162,7 +180,12 @@ export function checkedGame(fen: string): Chess {
   fen = fields.join(" ");
   const result = validateFen(fen);
   if (!result.ok)
-    throw new Error(result.error ?? "This position is not valid.");
+    throw new NoticeError(
+      result.error
+        ? fenNotice(result.error)
+        : notice("position.error.invalidPosition"),
+      result.error,
+    );
   const rights = fields[2];
   const ep = fields[3];
   if (
@@ -172,39 +195,39 @@ export function checkedGame(fen: string): Chess {
         (value) => !/^\d+$/.test(value) || !Number.isSafeInteger(Number(value)),
       )
   ) {
-    throw new Error(
-      "The FEN’s move counters must be whole numbers within the supported range.",
-    );
+    throw new NoticeError(notice("position.error.moveCounters"));
   }
   if (
     rights !== "-" &&
     (!/^[KQkq]+$/.test(rights) || new Set(rights).size !== rights.length)
   ) {
-    throw new Error(
-      "Castling availability must list each right (KQkq) once, or use “-” for none.",
-    );
+    throw new NoticeError(notice("position.error.castlingRights"));
   }
   if (fields[0].includes("0")) {
-    throw new Error("Invalid FEN: piece data must use 1–8 for empty squares.");
+    throw new NoticeError(
+      notice("position.error.invalidFen", notice("position.fen.emptySquares")),
+    );
   }
   const game = new Chess(fen);
   const position = positionOf(game);
   const limitError = pieceLimitError(position);
-  if (limitError) throw new Error(limitError);
+  if (limitError) throw new NoticeError(limitError);
   const previousSide = opposite(game.turn());
   const king = Object.entries(position).find(
     ([, piece]) => piece?.color === previousSide && piece.type === "k",
   )![0] as Square;
   if (game.isAttacked(king, game.turn())) {
-    throw new Error(
-      `The ${sideName(previousSide).toLowerCase()} king is in check, but it is ${sideName(game.turn())}'s turn. Change whose turn it is or move the king to safety.`,
+    throw new NoticeError(
+      notice(
+        "position.error.inactiveKingInCheck",
+        sideNotice(previousSide),
+        sideNotice(game.turn()),
+      ),
     );
   }
   if (ep !== "-") {
     if (Number(fields[4]) !== 0) {
-      throw new Error(
-        "An en passant target needs a zero half-move counter because the last move was a pawn move.",
-      );
+      throw new NoticeError(notice("position.error.enPassantCounter"));
     }
     const pawnSquare = `${ep[0]}${game.turn() === "w" ? "5" : "4"}` as Square;
     const originSquare = `${ep[0]}${game.turn() === "w" ? "7" : "2"}` as Square;
@@ -214,9 +237,7 @@ export function checkedGame(fen: string): Chess {
       position[pawnSquare]?.type !== "p" ||
       position[pawnSquare]?.color !== opposite(game.turn())
     ) {
-      throw new Error(
-        "The en passant square needs an opposing pawn that has just advanced two squares. Check the FEN’s fourth field.",
-      );
+      throw new NoticeError(notice("position.error.enPassantPawn"));
     }
   }
   for (const [flag, kingSquare, rookSquare, color] of [
@@ -232,8 +253,8 @@ export function checkedGame(fen: string): Chess {
         position[rookSquare]?.type !== "r" ||
         position[rookSquare]?.color !== color)
     ) {
-      throw new Error(
-        `Castling right ${flag} needs the ${sideName(color).toLowerCase()} king and rook on their original squares.`,
+      throw new NoticeError(
+        notice("position.error.castlingPieces", flag, sideNotice(color)),
       );
     }
   }
@@ -243,8 +264,7 @@ export function checkedGame(fen: string): Chess {
 export function ending(game: Chess, t: Translator = english): string | null {
   if (game.isCheckmate())
     return t("game.ending.checkmate", sideName(opposite(game.turn()), t));
-  if (game.isStalemate())
-    return t("game.ending.stalemate");
+  if (game.isStalemate()) return t("game.ending.stalemate");
   if (game.isThreefoldRepetition()) return t("game.ending.repetition");
   if (game.isInsufficientMaterial())
     return t("game.ending.insufficientMaterial");

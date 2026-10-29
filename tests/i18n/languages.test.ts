@@ -15,9 +15,10 @@ import { LanguageProvider } from "../../src/i18n/LanguageProvider";
 import { languageFromPath, languagePath } from "../../src/i18n/routes";
 import { siteContent } from "../../src/i18n/siteContent";
 import { LanguageSelector } from "../../src/i18n/LanguageSelector";
-import { translateNotice } from "../../src/i18n/notices";
+import { notice, NoticeError, noticeFromError, translateNotice } from "../../src/i18n/notices";
+import { checkedGame, arrangementIssue, pieceLimitError } from "../../src/chess/position";
 import { moveDescription } from "../../src/chess/moves";
-import { candidatesFor } from "../../src/features/coach/candidates";
+import { candidatesFor } from "../../src/features/coach/candidatePresentation";
 import { localizeReview, reviewMove } from "../../src/features/coach/grading";
 import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
 import { useGameController } from "../../src/features/game/useGameController";
@@ -160,59 +161,54 @@ test("special moves and cached reviews translate without changing notation, eval
 test("retained validation notices follow the selected language and preserve chess fields", () => {
   const t = translator("es");
   assert.equal(
-    translateNotice("Add the black king to play or calculate.", t),
+    translateNotice(arrangementIssue({ e1: { color: "w", type: "k" } }, "w", ""), t),
     "Añade el rey de Negras para jugar o calcular.",
   );
   assert.equal(
-    translateNotice("Invalid FEN: missing white king", t),
+    translateNotice(notice("position.error.invalidFen", notice("position.error.missingKing", notice("chess.side.white"))), t),
     "FEN no válido: Falta el rey de Blancas.",
   );
   assert.match(
     translateNotice(
-      "Castling right K needs the white king and rook on their original squares.",
+      notice("position.error.castlingPieces", "K", notice("chess.side.white")),
       t,
     ),
     /K.*Blancas/,
   );
   assert.match(
     translateNotice(
-      "Black can have at most 16 pieces. Remove one before adding another.",
+      notice("position.error.pieceLimit", notice("chess.side.black")),
       t,
     ),
     /Negras.*16/,
   );
 });
 
-test("raw engine and saved-game diagnostics resolve through descriptive keys", () => {
-  const fixtures: [string, MessageKey][] = [
-    [
-      "The chess engine could not load. Check your connection and retry analysis.",
-      "engine.error.load",
-    ],
-    [
-      "The engine could not check the reply. Try again.",
-      "coach.review.error.reply",
-    ],
-    [
-      "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
-      "game.save.error.unavailable",
-    ],
-    [
-      "Your saved game could not be read. The last valid position was restored, without its move history. Autosave is paused to protect the original data.",
-      "game.save.error.restoredPosition",
-    ],
-    [
-      "Your computer difficulty could not be saved in this browser.",
-      "computer.error.saveDifficulty",
-    ],
-    ["Position loaded", "position.notice.loaded"],
+test("structured diagnostics translate by key while unknown raw errors stay readable", () => {
+  const keys: MessageKey[] = [
+    "engine.error.load", "coach.review.error.reply", "game.save.error.unavailable",
+    "game.save.error.restoredPosition", "computer.error.saveDifficulty", "position.notice.loaded",
   ];
   for (const language of Object.keys(languages) as (keyof typeof languages)[]) {
     const t = translator(language);
-    for (const [source, key] of fixtures)
-      assert.equal(translateNotice(source, t), t(key), `${language}: ${source}`);
+    for (const key of keys) assert.equal(translateNotice(notice(key), t), t(key));
     assert.equal(translateNotice("engine.error.load", t), "engine.error.load");
   }
+  const error = new NoticeError(notice("engine.error.load"), "Different diagnostic wording");
+  assert.equal(translateNotice(noticeFromError(error, notice("engine.error.start")), translator("fr")), translator("fr")("engine.error.load"));
+  assert.equal(translateNotice(noticeFromError(new Error("Unknown failure"), notice("engine.error.start")), english), "Unknown failure");
+});
+
+test("chess.js validation is adapted to a retained diagnostic at the FEN boundary", () => {
+  assert.throws(() => checkedGame("8/8/8/8/8/8/8/4k3 w - - 0 1"), (error: unknown) => {
+    assert.ok(error instanceof NoticeError);
+    assert.equal(translateNotice(error.notice, translator("es")), "FEN no válido: Falta el rey de Blancas.");
+    return true;
+  });
+  const tooMany = Object.fromEntries(Array.from({ length: 9 }, (_, i) =>
+    [`${"abcdefgh"[i % 8]}${i < 8 ? 2 : 3}`, { color: "b" as const, type: "p" as const }],
+  ));
+  assert.match(translateNotice(pieceLimitError(tooMany), translator("es")), /Negras.*8/);
 });
 
 test("switching languages keeps the game and completed recommendations without another engine search", async (t) => {
@@ -248,6 +244,7 @@ test("switching languages keeps the game and completed recommendations without a
           forcedMove: false,
           onPlay() {},
           onInspect() {},
+          onClearInspection() {},
         }),
     );
   }
