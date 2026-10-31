@@ -20,7 +20,6 @@ export function recommendedCandidates<T extends CandidateAnalysis>(
   if (!best) return [];
   const comparisonBest = candidates[0];
   const alternatives = candidates.filter((candidate) => {
-    if (candidate.move.lan === best.move.lan) return false;
     // A newer mate result can rule out alternatives from the completed batch.
     if (
       best.mate !== undefined &&
@@ -41,7 +40,16 @@ export function recommendedCandidates<T extends CandidateAnalysis>(
       comparisonBest.cp - candidate.cp <= RECOMMENDATION_CP_GAP
     );
   });
-  return [best, ...alternatives].slice(0, MAX_RECOMMENDED_MOVES);
+  // Promotion variants share one card, using the first choice's piece and line.
+  const seen = new Set<string>();
+  return [best, ...alternatives]
+    .filter(({ move }) => {
+      const key = move.from + move.to;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, MAX_RECOMMENDED_MOVES);
 }
 
 /** Validate the engine's moves once, independently of their display language. */

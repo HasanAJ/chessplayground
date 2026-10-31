@@ -124,6 +124,17 @@ test("a final choice outside the completed batch keeps four alternatives and no 
   assert.deepEqual(recommendedCandidates(evaluated, latest), [latest, ...evaluated.slice(0, 4)]);
 });
 
+test("grouping promotions preserves different sources and destinations before limiting cards", () => {
+  const moves = ["e1d1", "a7a8q", "a7a8n", "a7b8q", "c7b8q", "c7c8q"];
+  const evaluated = candidatesFor("1r5k/P1P5/8/8/8/8/8/4K3 w - - 0 1", moves.map((move, index) => ({
+    rank: index + 1, depth: 18, cp: 500 - index, pv: [move],
+  })));
+  assert.equal(evaluated.length, moves.length);
+  assert.deepEqual(recommendedCandidates(evaluated).map((candidate) => candidate.move.lan), [
+    "e1d1", "a7a8q", "a7b8q", "c7b8q", "c7c8q",
+  ]);
+});
+
 test("a newer mating result still excludes alternatives that give up or allow mate", () => {
   const evaluated = candidates([{ cp: 30 }, { cp: 20 }, { mate: 4 }, { mate: -2 }]);
   const latest = candidatesFor(START_FEN, [{ ...evaluated[0], depth: 16, cp: undefined, mate: 3 }])[0];

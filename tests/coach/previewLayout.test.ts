@@ -588,3 +588,32 @@ test("the suggestion, board arrow, exploration, and Play use the engine's final 
   assert.equal(document.querySelector(".best-move-heading"), null);
   assert.equal(document.querySelector(".score-pill"), null);
 });
+
+test("promotion recommendations show one card and preview and play the recommended piece", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  dom.window.localStorage.setItem("tempo-position", "8/8/7P/8/5K2/1P1kN3/3p4/8 b - - 0 1");
+  dom.window.HTMLElement.prototype.scrollIntoView = () => {};
+  let callbacks!: Parameters<AnalysisEngine["analyze"]>[1];
+  t.mock.method(AnalysisEngine.prototype, "analyze", (_fen: string, next: typeof callbacks) => {
+    callbacks = next;
+    return () => {};
+  });
+  await act(() => root.render(createElement(App)));
+  const document = dom.window.document;
+  await act(() => document.querySelector<HTMLButtonElement>(".calculate-button")!.click());
+  await act(() => callbacks.onComplete([
+    { rank: 1, depth: 18, mate: -9, pv: ["d2d1q"] },
+    { rank: 2, depth: 18, mate: -9, pv: ["d2d1r"] },
+    { rank: 3, depth: 18, mate: -9, pv: ["d2d1b"] },
+    { rank: 4, depth: 18, mate: -9, pv: ["d2d1n"] },
+    { rank: 5, depth: 18, mate: -9, pv: ["d3c3"] },
+  ], "d2d1r", { rank: 1, depth: 19, mate: -9, pv: ["d2d1r", "f4g4"] }));
+  assert.deepEqual(Array.from(document.querySelectorAll(".candidate-title"), (title) => title.textContent), [
+    "King from d3 to c3",
+  ]);
+  await act(() => document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!.click());
+  assert.ok(document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'));
+  await act(() => document.querySelector<HTMLButtonElement>(".preview-return")!.click());
+  await act(() => document.querySelector<HTMLButtonElement>('[aria-label="Play best move d1=R"]')!.click());
+  assert.ok(document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'));
+});
