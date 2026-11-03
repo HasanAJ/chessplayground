@@ -311,9 +311,11 @@ export function OpeningViewer({
                 <span className={`opening-risk ${lesson.risk}`}>
                   {t(`opening.risk.${lesson.risk}`)}
                 </span>
-                <p className="opening-risk-detail">
-                  {t(`opening.risk.detail.${lesson.risk}`)}
-                </p>
+                {lesson.risk !== "low" && (
+                  <p className="opening-risk-detail">
+                    {t(`opening.risk.detail.${lesson.risk}`)}
+                  </p>
+                )}
               </div>
             </div>
           </details>

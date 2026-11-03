@@ -77,7 +77,9 @@ export function StaticPage({
                 <p>{motif[section][language]}</p>
               </section>
             ))}
-            <p>{t(`opening.risk.detail.${lesson.risk}`)}</p>
+            {lesson.risk !== "low" && (
+              <p>{t(`opening.risk.detail.${lesson.risk}`)}</p>
+            )}
             {(["trap", "defense"] as const).map((branch) => (
               <section key={branch}>
                 <h2>{t(`opening.branch.${branch}`)}</h2>

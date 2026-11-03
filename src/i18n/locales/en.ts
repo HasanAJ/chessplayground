@@ -72,8 +72,6 @@ const en = {
   "opening.risk.low": "Tactical opportunity",
   "opening.risk.gambit": "Material offered for attack",
   "opening.risk.high": "Risky if avoided",
-  "opening.risk.detail.low":
-    "Look for the tactic as you develop. The opponent can choose a different route.",
   "opening.risk.detail.gambit":
     "You offer material to gain activity. Know how to continue if the opponent avoids the trap.",
   "opening.risk.detail.high":

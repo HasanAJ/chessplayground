@@ -74,8 +74,6 @@ export default {
   "opening.risk.low": "Taktische Gelegenheit",
   "opening.risk.gambit": "Material für den Angriff angeboten",
   "opening.risk.high": "Riskant bei guter Verteidigung",
-  "opening.risk.detail.low":
-    "Achte beim Entwickeln auf die Taktik. Der Gegner kann einen anderen Weg wählen.",
   "opening.risk.detail.gambit":
     "Du gibst Material für Aktivität. Lerne weiterzuspielen, wenn der Gegner die Falle vermeidet.",
   "opening.risk.detail.high":
