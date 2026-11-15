@@ -561,7 +561,9 @@
   background: linear-gradient(135deg, #fcfbff, #f6f2fc);
   box-shadow: 0 2px 6px #33214205;
   overflow: hidden;
-  transition: border-color 160ms, box-shadow 160ms;
+  transition:
+    border-color 160ms,
+    box-shadow 160ms;
 }
 .candidate-card:hover,
 .candidate-card:focus-within,

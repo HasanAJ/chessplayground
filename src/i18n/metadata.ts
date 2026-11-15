@@ -1,118 +1,113 @@
-import { languages, type Language } from "./translate";
-import { languagePath } from "./routes";
-import { siteContent } from "./siteContent";
-
-type MetadataTag = {
-  tag: "meta" | "link";
-  attrs: Record<string, string>;
-};
-
+import { languages, type Language } from "./translate.ts";
+import { languagePath } from "./routes.ts";
+import { siteContent } from "./siteContent.ts";
+type MetadataTag = { tag: "meta" | "link"; attrs: Record<string, string> };
 export type PageDetails = { path: string; title: string; description: string };
 
-export function siteOrigin(siteUrl: string) {
-  const site = new URL(siteUrl);
+export function siteOrigin(value: string) {
+  const url = new URL(value);
   if (
-    site.protocol !== "https:" ||
-    site.username ||
-    site.password ||
-    site.pathname !== "/" ||
-    site.search ||
-    site.hash
+    url.protocol === "https:" &&
+    !url.username &&
+    !url.password &&
+    url.pathname === "/" &&
+    !url.search &&
+    !url.hash
   )
-    throw new Error(
-      "SITE_URL must be an HTTPS origin, for example https://chessplayground.app",
-    );
-  return site.origin;
+    return url.origin;
+  throw new Error(
+    "SITE_URL must be an HTTPS origin, for example https://chessplayground.app",
+  );
 }
-
 export function pageMetadata(
   siteUrl: string,
   language: Language,
   page?: PageDetails,
 ) {
-  const origin = siteOrigin(siteUrl);
-  const content = siteContent[language];
-  const path = page?.path ?? "";
-  const title = page?.title ?? content.title;
-  const description = page?.description ?? content.description;
-  const url = `${origin}${languagePath(language)}${path}`;
-  const image = `${origin}/social-preview.png`;
-  const meta = (property: string, value: string): MetadataTag => ({
-    tag: "meta",
-    attrs: { property, content: value },
+  const origin = siteOrigin(siteUrl),
+    content = siteContent[language];
+  const path = page?.path ?? "",
+    title = page?.title ?? content.title,
+    description = page?.description ?? content.description;
+  const canonical = origin + languagePath(language) + path,
+    image = `${origin}/social-preview.png`;
+  const link = (attrs: Record<string, string>): MetadataTag => ({
+    tag: "link",
+    attrs,
   });
-  const tags: MetadataTag[] = [
-    {
-      tag: "meta",
-      attrs: { name: "description", content: description },
-    },
-    { tag: "link", attrs: { rel: "canonical", href: url } },
-    ...Object.keys(languages).map((code) => ({
-      tag: "link" as const,
-      attrs: {
+  const named = (name: string, content: string): MetadataTag => ({
+    tag: "meta",
+    attrs: { name, content },
+  });
+  const property = (name: string, content: string): MetadataTag => ({
+    tag: "meta",
+    attrs: { property: name, content },
+  });
+  const tags = [
+    named("description", description),
+    link({ rel: "canonical", href: canonical }),
+  ];
+  for (const code of Object.keys(languages) as Language[])
+    tags.push(
+      link({
         rel: "alternate",
         hreflang: code,
-        href: `${origin}${languagePath(code as Language)}${path}`,
-      },
-    })),
-    {
-      tag: "link",
-      attrs: {
-        rel: "alternate",
-        hreflang: "x-default",
-        href: `${origin}/${path}`,
-      },
-    },
-    meta("og:type", "website"),
-    meta("og:site_name", "Tempo"),
-    meta("og:title", title),
-    meta("og:description", description),
-    meta("og:url", url),
-    meta("og:image", image),
-    meta("og:image:type", "image/png"),
-    meta("og:image:width", "1200"),
-    meta("og:image:height", "630"),
-    meta("og:image:alt", content.imageAlt),
-    {
-      tag: "meta",
-      attrs: { name: "twitter:card", content: "summary_large_image" },
-    },
-    { tag: "meta", attrs: { name: "twitter:title", content: title } },
-    {
-      tag: "meta",
-      attrs: { name: "twitter:description", content: description },
-    },
-    { tag: "meta", attrs: { name: "twitter:image", content: image } },
-    {
-      tag: "meta",
-      attrs: { name: "twitter:image:alt", content: content.imageAlt },
-    },
-  ];
+        href: origin + languagePath(code) + path,
+      }),
+    );
+  tags.push(
+    link({
+      rel: "alternate",
+      hreflang: "x-default",
+      href: `${origin}/${path}`,
+    }),
+  );
+  const social: Record<string, string> = {
+    type: "website",
+    site_name: "Tempo",
+    title,
+    description,
+    url: canonical,
+    image,
+    "image:type": "image/png",
+    "image:width": "1200",
+    "image:height": "630",
+    "image:alt": content.imageAlt,
+  };
+  for (const [key, value] of Object.entries(social))
+    tags.push(property(`og:${key}`, value));
+  const twitter = {
+    card: "summary_large_image",
+    title,
+    description,
+    image,
+    "image:alt": content.imageAlt,
+  };
+  for (const [key, value] of Object.entries(twitter))
+    tags.push(named(`twitter:${key}`, value));
   return { title, tags };
 }
-
+function selectorFor(tag: MetadataTag) {
+  const attribute = ["name", "property", "rel"].find((key) => tag.attrs[key])!;
+  return `${tag.tag}[${attribute}="${tag.attrs[attribute]}"]${tag.attrs.hreflang ? `[hreflang="${tag.attrs.hreflang}"]` : ""}`;
+}
 export function updatePageMetadata(language: Language, page?: PageDetails) {
-  const canonical = document.querySelector<HTMLLinkElement>(
+  const existing = document.querySelector<HTMLLinkElement>(
     'link[rel="canonical"]',
   );
-  const origin = canonical
-    ? new URL(canonical.href).origin
+  const origin = existing
+    ? new URL(existing.href).origin
     : "https://chessplayground.app";
-  const { title, tags } = pageMetadata(origin, language, page);
+  const metadata = pageMetadata(origin, language, page);
   document.documentElement.lang = language;
-  document.title = title;
-  for (const { tag, attrs } of tags) {
-    const identifier = attrs.name
-      ? "name"
-      : attrs.property
-        ? "property"
-        : "rel";
-    const locale = attrs.hreflang ? `[hreflang="${attrs.hreflang}"]` : "";
-    const selector = `${tag}[${identifier}="${attrs[identifier]}"]${locale}`;
+  document.title = metadata.title;
+  for (const tag of metadata.tags) {
     const element =
-      document.querySelector(selector) ?? document.createElement(tag);
-    for (const [name, value] of Object.entries(attrs))
-      element.setAttribute(name, value);
-    if (!element.isConnected) document.head.append(element);
+      document.querySelector(selectorFor(tag)) ??
+      document.createElement(tag.tag);
+    Object.entries(tag.attrs).forEach(([attribute, value]) =>
+      element.setAttribute(attribute, value),
+    );
+    if (!element.isConnected) document.head.appendChild(element);
   }
 }

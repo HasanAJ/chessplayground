@@ -4,8 +4,7 @@
 @import "./controls.css";
 @import "./responsive.css";
 @import "./feedback.css";
-@import "./compact-layout.css";
-@import "./mobile-workspace.css";
+@import "./layout.css";
 @import "./board-preview.css";
 @import "./openings.css";
 @import "./analytics.css";

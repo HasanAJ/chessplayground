@@ -1,15 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { START_FEN } from "../../src/chess/position";
-import { languages } from "../../src/i18n/translate";
-import { motifs } from "../../src/features/openings/content";
+import { START_FEN } from "../../src/domain/chess/position.ts";
+import { languages } from "../../src/i18n/translate.ts";
+import { motifs } from "../../src/content/openings/content.ts";
+import { openings } from "../../src/content/openings/lessons.ts";
 import {
   lessonMoves,
   lessonPositions,
-  openings,
   setupLength,
-} from "../../src/features/openings/lessons";
+} from "../../src/domain/openings/lesson.ts";
 
 test("every attack and defence has legal moves, accurate notation, and complete translations", () => {
   assert.equal(

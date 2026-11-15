@@ -1,14 +1,12 @@
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
-import {
-  recommendedCandidates,
-} from "../../src/features/coach/candidates";
-import { translator } from "../../src/i18n/translate";
-import { reviewMove } from "../../src/features/coach/grading";
+import { BestMoveContent } from "../../src/ui/coach/BestMoveContent.tsx";
+import { recommendedCandidates } from "../../src/domain/coach/candidates.ts";
+import { translator } from "../../src/i18n/translate.ts";
+import { reviewMove } from "../../src/domain/coach/grading.ts";
 
 const SCREENSHOT_FEN = "8/8/n5p1/P7/6P1/4BK1k/8/8 b - - 0 1";
 const pawnPush = {
@@ -31,15 +29,25 @@ test("the screenshot position explains Bxg5 without overriding Stockfish's ranki
     { rank: 3, depth: 16, cp: -718, pv: ["h3h4", "f3f4"] },
   ]);
   assert.match(evaluated[0].explanation, /give up more material/);
-  assert.match(evaluated[0].explanation, /Their bishop can take your pawn on g5/);
+  assert.match(
+    evaluated[0].explanation,
+    /Their bishop can take your pawn on g5/,
+  );
   assert.deepEqual(evaluated[0].explanationFocus?.arrows, [
     { from: "g6", to: "g5" },
     { from: "e3", to: "g5" },
   ]);
   const recommended = recommendedCandidates(evaluated);
-  assert.deepEqual(recommended.map((candidate) => candidate.move.san), ["g5", "Nb4", "Kh4"]);
+  assert.deepEqual(
+    recommended.map((candidate) => candidate.move.san),
+    ["g5", "Nb4", "Kh4"],
+  );
   assert.equal(recommended[0].score, "+7.00");
-  assert.equal(evaluated[0].move.san, "g5", "preserve the engine ranking for grading and cached results");
+  assert.equal(
+    evaluated[0].move.san,
+    "g5",
+    "preserve the engine ranking for grading and cached results",
+  );
 });
 
 test("material warnings also preserve the engine ranking from White's perspective", () => {
@@ -48,7 +56,10 @@ test("material warnings also preserve the engine ranking from White's perspectiv
     { rank: 2, depth: 16, cp: -718, pv: ["a3b5", "g5g4"] },
   ]);
   assert.equal(recommendedCandidates(evaluated)[0].move.san, "g4");
-  assert.match(evaluated[0].explanation, /Their bishop can take your pawn on g4/);
+  assert.match(
+    evaluated[0].explanation,
+    /Their bishop can take your pawn on g4/,
+  );
   assert.equal(evaluated[0].whiteScore, -7);
 });
 
@@ -62,8 +73,13 @@ test("a stronger sacrifice stays first when alternatives exceed the score gap", 
 });
 
 test("missing replies do not invent a capture or material loss", () => {
-  const candidate = candidatesFor(SCREENSHOT_FEN, [{ ...pawnPush, pv: ["g6g5"] }])[0];
-  assert.doesNotMatch(candidate.explanation, /bishop can take|give up more material/);
+  const candidate = candidatesFor(SCREENSHOT_FEN, [
+    { ...pawnPush, pv: ["g6g5"] },
+  ])[0];
+  assert.doesNotMatch(
+    candidate.explanation,
+    /bishop can take|give up more material/,
+  );
 });
 
 test("recaptures and material gained by the first move count toward compensation", () => {
@@ -71,7 +87,9 @@ test("recaptures and material gained by the first move count toward compensation
     ["4k3/8/8/3p4/8/3P4/4P3/4K3 w - - 0 1", ["e2e4", "d5e4", "d3e4"]],
     ["4k3/8/2p5/3q4/8/8/8/3QK3 w - - 0 1", ["d1d5", "c6d5"]],
   ] as const) {
-    const candidate = candidatesFor(fen, [{ rank: 1, depth: 16, cp: 0, pv: [...pv] }])[0];
+    const candidate = candidatesFor(fen, [
+      { rank: 1, depth: 16, cp: 0, pv: [...pv] },
+    ])[0];
     assert.doesNotMatch(candidate.explanation, /give up more material/);
     assert.deepEqual(recommendedCandidates([candidate]), [candidate]);
   }
@@ -82,10 +100,14 @@ test("equal queen trades use plain move order without a material-loss warning", 
     ["8/k5q1/8/8/8/8/6Q1/7K b - - 0 1", ["g7g2", "h1g2"], "g2"],
     ["7k/6q1/8/8/8/8/6Q1/7K w - - 0 1", ["g2g7", "h8g7"], "g7"],
   ] as const) {
-    const candidate = candidatesFor(fen, [{ rank: 1, depth: 18, cp: 0, pv: [...pv] }])[0];
+    const candidate = candidatesFor(fen, [
+      { rank: 1, depth: 18, cp: 0, pv: [...pv] },
+    ])[0];
     const expected = `Your queen takes their queen on ${square} and gives check. Their king can take your queen in return.`;
     assert.equal(candidate.explanation, expected);
-    const reply = candidatesFor(candidate.move.after, [{ rank: 1, depth: 17, cp: 0, pv: [pv[1]] }])[0];
+    const reply = candidatesFor(candidate.move.after, [
+      { rank: 1, depth: 17, cp: 0, pv: [pv[1]] },
+    ])[0];
     const review = reviewMove(candidate.move, candidate, reply);
     assert.equal(review.label, "Best move");
     assert.equal(review.text, expected);
@@ -95,10 +117,18 @@ test("equal queen trades use plain move order without a material-loss warning", 
 
 test("a recapture beyond the old six-move cutoff keeps the exchange balanced", () => {
   for (const [fen, pv] of [
-    ["5r2/k5q1/7p/8/8/4p3/6Q1/5R1K b - - 0 1", ["g7g2", "h1g2", "a7b6", "g2h2", "f8f2", "f1f2", "e3f2"]],
-    ["5r1k/6q1/4P3/8/8/7P/K5Q1/5R2 w - - 0 1", ["g2g7", "h8g7", "a2b3", "g7h7", "f1f7", "f8f7", "e6f7"]],
+    [
+      "5r2/k5q1/7p/8/8/4p3/6Q1/5R1K b - - 0 1",
+      ["g7g2", "h1g2", "a7b6", "g2h2", "f8f2", "f1f2", "e3f2"],
+    ],
+    [
+      "5r1k/6q1/4P3/8/8/7P/K5Q1/5R2 w - - 0 1",
+      ["g2g7", "h8g7", "a2b3", "g7h7", "f1f7", "f8f7", "e6f7"],
+    ],
   ] as const) {
-    const candidate = candidatesFor(fen, [{ rank: 1, depth: 18, cp: 0, pv: [...pv] }])[0];
+    const candidate = candidatesFor(fen, [
+      { rank: 1, depth: 18, cp: 0, pv: [...pv] },
+    ])[0];
     assert.ok(candidate);
     assert.equal(candidate.continuation.length, 7);
     assert.equal(candidate.continuation.at(-1)?.captured, "r");
@@ -110,12 +140,20 @@ test("a genuinely losing exchange states the reply before the net outcome", () =
   const candidate = candidatesFor("7k/6r1/8/8/8/8/6Q1/7K w - - 0 1", [
     { rank: 1, depth: 18, cp: -400, pv: ["g2g7", "h8g7"] },
   ])[0];
-  assert.equal(candidate.explanation, "Your queen takes their rook on g7 and gives check. Their king can take your queen in return. In this line, you give up more material than you take.");
+  assert.equal(
+    candidate.explanation,
+    "Your queen takes their rook on g7 and gives check. Their king can take your queen in return. In this line, you give up more material than you take.",
+  );
 });
 
 test("an invalid continuation cannot produce a net material-loss claim", () => {
-  const candidate = candidatesFor(SCREENSHOT_FEN, [{ ...pawnPush, pv: ["g6g5", "e3g5", "a6a8"] }])[0];
-  assert.deepEqual(candidate.continuation.map((move) => move.lan), ["g6g5", "e3g5"]);
+  const candidate = candidatesFor(SCREENSHOT_FEN, [
+    { ...pawnPush, pv: ["g6g5", "e3g5", "a6a8"] },
+  ])[0];
+  assert.deepEqual(
+    candidate.continuation.map((move) => move.lan),
+    ["g6g5", "e3g5"],
+  );
   assert.match(candidate.explanation, /Their bishop can take your pawn/);
   assert.doesNotMatch(candidate.explanation, /give up more material/);
 });
@@ -151,21 +189,34 @@ test("en passant identifies the captured pawn square and promotions count their 
 
 test("the best-move card shows the capture before Play without opening the preview", () => {
   const candidate = candidatesFor(SCREENSHOT_FEN, [pawnPush])[0];
-  const html = renderToStaticMarkup(createElement(BestMoveContent, {
-    candidate,
-    forcedMove: false,
-    preview: null,
-    onInspect() {},
-    onClearInspection() {},
-    onPlay() {},
-  }));
+  const html = renderToStaticMarkup(
+    createElement(BestMoveContent, {
+      candidate,
+      forcedMove: false,
+      preview: null,
+      onInspect() {},
+      onClearInspection() {},
+      onPlay() {},
+    }),
+  );
   const text = html.replace(/<[^>]*>/g, "");
   assert.match(text, /Their bishop can take your pawn on g5/);
   assert.ok(text.indexOf("give up more material") < text.indexOf("Play"));
   for (const language of ["de", "es", "it", "fr"] as const) {
-    const localized = candidatesFor(SCREENSHOT_FEN, [pawnPush], translator(language))[0];
-    assert.ok(localized.explanation.includes(translator(language)("coach.explanation.materialRisk.text")));
+    const localized = candidatesFor(
+      SCREENSHOT_FEN,
+      [pawnPush],
+      translator(language),
+    )[0];
+    assert.ok(
+      localized.explanation.includes(
+        translator(language)("coach.explanation.materialRisk.text"),
+      ),
+    );
     assert.match(localized.explanation, /g5/);
-    assert.doesNotMatch(localized.explanation, /\{\d+\}|their bishop|material loss/);
+    assert.doesNotMatch(
+      localized.explanation,
+      /\{\d+\}|their bishop|material loss/,
+    );
   }
 });

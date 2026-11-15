@@ -30,8 +30,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run format:check
+      - run: npm run check
       - run: npm test
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
       - name: Validate Cloudflare configuration
         run: npx wrangler deploy --dry-run
       - name: Deploy to Cloudflare

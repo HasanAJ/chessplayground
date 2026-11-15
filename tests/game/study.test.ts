@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { START_FEN } from "../../src/chess/position";
+import { START_FEN } from "../../src/domain/chess/position.ts";
 import {
   createStudy,
   addStudyMove,
@@ -8,7 +8,7 @@ import {
   nodePath,
   parseStudy,
   ROOT,
-} from "../../src/chess/study";
+} from "../../src/domain/chess/study.ts";
 
 test("branches retain the original line and reuse an existing move", () => {
   let study = createStudy(START_FEN);
@@ -18,8 +18,14 @@ test("branches retain the original line and reuse an existing move", () => {
   const main = study.tipId;
   study = addStudyMove(study, e4, "c7c5");
   assert.equal(study.mainTipId, main);
-  assert.deepEqual(replayStudy(study, main).history.map((move) => move.san), ["e4", "e5"]);
-  assert.deepEqual(replayStudy(study).history.map((move) => move.san), ["e4", "c5"]);
+  assert.deepEqual(
+    replayStudy(study, main).history.map((move) => move.san),
+    ["e4", "e5"],
+  );
+  assert.deepEqual(
+    replayStudy(study).history.map((move) => move.san),
+    ["e4", "c5"],
+  );
   const reused = addStudyMove(study, e4, "c7c5");
   assert.equal(reused.nodes.length, study.nodes.length);
   assert.equal(reused.tipId, study.tipId);

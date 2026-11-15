@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import type { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { startComputerTurn } from "../../src/features/computer/computer";
-import { START_FEN } from "../../src/chess/position";
+import type { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { startComputerTurn } from "../../src/application/computer/computer.ts";
+import { START_FEN } from "../../src/domain/chess/position.ts";
 
 function computerTurn() {
   let search: Parameters<AnalysisEngine["analyze"]>[1];

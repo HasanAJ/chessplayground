@@ -1,12 +1,13 @@
 import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
-import OpeningWorkspace from "../../src/features/openings/OpeningWorkspace";
-import { LanguageProvider } from "../../src/i18n/LanguageProvider";
-import { LanguageSelector } from "../../src/i18n/LanguageSelector";
-import { lessonMoves, openings } from "../../src/features/openings/lessons";
-import { motifs } from "../../src/features/openings/content";
-import { createTestRoot } from "../helpers/dom";
+import OpeningWorkspace from "../../src/ui/openings/OpeningWorkspace.tsx";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider.tsx";
+import { LanguageSelector } from "../../src/i18n/LanguageSelector.tsx";
+import { openings } from "../../src/content/openings/lessons.ts";
+import { lessonMoves } from "../../src/domain/openings/lesson.ts";
+import { motifs } from "../../src/content/openings/content.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 async function mount(t: TestContext) {
   const { dom, root } = createTestRoot(t);
@@ -514,7 +515,9 @@ test("compact lessons keep one explanation with the board and support tapping sq
     "matchMedia",
     () =>
       ({
-        matches: compact,
+        get matches() {
+          return compact;
+        },
         addEventListener() {},
         removeEventListener() {},
       }) as unknown as MediaQueryList,
@@ -555,5 +558,25 @@ test("compact lessons keep one explanation with the board and support tapping sq
   assert.equal(
     view.document.querySelector(".opening-progress span")!.textContent,
     "Step 5 of 7",
+  );
+});
+
+test("lesson keyboard navigation accumulates every event in a batch", async (t) => {
+  const view = await mount(t);
+  await view.click('[data-opening="wayward-rook"]');
+  await act(() => {
+    for (let count = 0; count < 3; count++)
+      view.document.body.dispatchEvent(
+        new view.dom.window.KeyboardEvent("keydown", {
+          key: "ArrowRight",
+          bubbles: true,
+        }),
+      );
+  });
+  assert.equal(
+    view.document
+      .querySelector(".opening-progress progress")
+      ?.getAttribute("value"),
+    "3",
   );
 });

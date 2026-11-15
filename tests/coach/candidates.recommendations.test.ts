@@ -1,12 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { START_FEN } from "../../src/chess/position";
-import {
-  recommendedCandidates,
-} from "../../src/features/coach/candidates";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { type EngineLine } from "../../src/engine/uci";
+import { START_FEN } from "../../src/domain/chess/position.ts";
+import { recommendedCandidates } from "../../src/domain/coach/candidates.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { type EngineLine } from "../../src/domain/analysis/lines.ts";
 
 function candidates(
   scores: Pick<EngineLine, "cp" | "mate">[],
@@ -65,7 +63,10 @@ test("a clear best move is shown alone, even when several other moves are legal"
   const evaluated = candidates([0, -100, -250].map((cp) => ({ cp })));
   const result = recommendedCandidates(evaluated);
   assert.deepEqual(result, [evaluated[0]]);
-  assert.ok(new Chess().moves().length > 1, "one recommendation does not mean one legal move");
+  assert.ok(
+    new Chess().moves().length > 1,
+    "one recommendation does not mean one legal move",
+  );
 });
 
 test("a losing position still shows the best defense and comparable alternatives", () => {
@@ -112,34 +113,66 @@ test("a position with only one legal move retains its best defense", () => {
 test("newer best scores do not change qualification against the completed comparison", () => {
   const evaluated = candidates([30, 25, -30, -100].map((cp) => ({ cp })));
   for (const cp of [150, -50]) {
-    const latest = candidatesFor(START_FEN, [{ ...evaluated[0], depth: 16, cp }])[0];
-    assert.deepEqual(recommendedCandidates(evaluated, latest), [latest, evaluated[1]]);
+    const latest = candidatesFor(START_FEN, [
+      { ...evaluated[0], depth: 16, cp },
+    ])[0];
+    assert.deepEqual(recommendedCandidates(evaluated, latest), [
+      latest,
+      evaluated[1],
+    ]);
   }
 });
 
 test("a final choice outside the completed batch keeps four alternatives and no duplicates", () => {
   const evaluated = candidates([30, 25, 20, 15, 10, 5].map((cp) => ({ cp })));
-  const latest = candidatesFor(START_FEN, [{ ...evaluated[5], rank: 1, depth: 16, cp: 40 }])[0];
-  assert.deepEqual(recommendedCandidates(evaluated.slice(0, 5), latest, 5), [latest, ...evaluated.slice(0, 4)]);
-  assert.deepEqual(recommendedCandidates(evaluated, latest, 5), [latest, ...evaluated.slice(0, 4)]);
+  const latest = candidatesFor(START_FEN, [
+    { ...evaluated[5], rank: 1, depth: 16, cp: 40 },
+  ])[0];
+  assert.deepEqual(recommendedCandidates(evaluated.slice(0, 5), latest, 5), [
+    latest,
+    ...evaluated.slice(0, 4),
+  ]);
+  assert.deepEqual(recommendedCandidates(evaluated, latest, 5), [
+    latest,
+    ...evaluated.slice(0, 4),
+  ]);
 });
 
 test("grouping promotions preserves different sources and destinations before limiting cards", () => {
   const moves = ["e1d1", "a7a8q", "a7a8n", "a7b8q", "c7b8q", "c7c8q"];
-  const evaluated = candidatesFor("1r5k/P1P5/8/8/8/8/8/4K3 w - - 0 1", moves.map((move, index) => ({
-    rank: index + 1, depth: 18, cp: 500 - index, pv: [move],
-  })));
+  const evaluated = candidatesFor(
+    "1r5k/P1P5/8/8/8/8/8/4K3 w - - 0 1",
+    moves.map((move, index) => ({
+      rank: index + 1,
+      depth: 18,
+      cp: 500 - index,
+      pv: [move],
+    })),
+  );
   assert.equal(evaluated.length, moves.length);
-  assert.deepEqual(recommendedCandidates(evaluated).map((candidate) => candidate.move.lan), [
-    "e1d1", "a7a8q", "a7b8q", "c7b8q", "c7c8q",
-  ]);
+  assert.deepEqual(
+    recommendedCandidates(evaluated).map((candidate) => candidate.move.lan),
+    ["e1d1", "a7a8q", "a7b8q", "c7b8q", "c7c8q"],
+  );
 });
 
 test("a newer mating result still excludes alternatives that give up or allow mate", () => {
-  const evaluated = candidates([{ cp: 30 }, { cp: 20 }, { mate: 4 }, { mate: -2 }]);
-  const latest = candidatesFor(START_FEN, [{ ...evaluated[0], depth: 16, cp: undefined, mate: 3 }])[0];
-  assert.deepEqual(recommendedCandidates(evaluated, latest), [latest, evaluated[2]]);
+  const evaluated = candidates([
+    { cp: 30 },
+    { cp: 20 },
+    { mate: 4 },
+    { mate: -2 },
+  ]);
+  const latest = candidatesFor(START_FEN, [
+    { ...evaluated[0], depth: 16, cp: undefined, mate: 3 },
+  ])[0];
+  assert.deepEqual(recommendedCandidates(evaluated, latest), [
+    latest,
+    evaluated[2],
+  ]);
   const losing = candidates([{ mate: -5 }, { mate: -5 }, { mate: -2 }]);
-  const avoidsMate = candidatesFor(START_FEN, [{ ...losing[0], depth: 16, cp: -900, mate: undefined }])[0];
+  const avoidsMate = candidatesFor(START_FEN, [
+    { ...losing[0], depth: 16, cp: -900, mate: undefined },
+  ])[0];
   assert.deepEqual(recommendedCandidates(losing, avoidsMate), [avoidsMate]);
 });

@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess, type Color } from "chess.js";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { reviewMove } from "../../src/features/coach/grading";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { reviewMove } from "../../src/domain/coach/grading.ts";
 
 function reviewScores(
   bestScore: number,
@@ -56,13 +56,20 @@ test("nearly best moves are excellent, with good and inaccurate moves beyond the
       [-0.43, "Good move"],
       [-0.44, "Inaccuracy"],
     ] as const)
-      assert.equal(reviewScores(0, score, side).label, label, `${side}: ${score}`);
+      assert.equal(
+        reviewScores(0, score, side).label,
+        label,
+        `${side}: ${score}`,
+      );
 });
 
 test("excellent moves keep positive explanations without a corrective lesson", () => {
   const review = reviewScores(0, -0.2);
   assert.equal(review.label, "Excellent move");
-  assert.equal(review.text, "This keeps nearly the same chances as the best move.");
+  assert.equal(
+    review.text,
+    "This keeps nearly the same chances as the best move.",
+  );
   assert.equal(review.lesson, undefined);
 });
 

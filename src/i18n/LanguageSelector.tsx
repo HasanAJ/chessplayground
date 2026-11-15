@@ -1,20 +1,22 @@
 import { ChevronDown, Languages } from "lucide-react";
-import { useTranslation } from "./LanguageProvider";
-import { languages, type Language } from "./translate";
-
+import { useTranslation } from "./LanguageProvider.tsx";
+import { languages, type Language } from "./translate.ts";
+const choices = Object.keys(languages) as Language[];
 export function LanguageSelector() {
-  const { language, setLanguage, t } = useTranslation();
+  const locale = useTranslation();
   return (
     <label className="language-selector">
       <Languages className="language-icon" size={16} aria-hidden="true" />
-      <span className="sr-only">{t("language.selector.label")}</span>
+      <span className="sr-only">{locale.t("language.selector.label")}</span>
       <select
-        value={language}
-        onChange={(event) => setLanguage(event.target.value as Language)}
+        value={locale.language}
+        onChange={(event) =>
+          locale.setLanguage(event.currentTarget.value as Language)
+        }
       >
-        {Object.entries(languages).map(([code, name]) => (
-          <option key={code} value={code} lang={code}>
-            {name}
+        {choices.map((language) => (
+          <option key={language} value={language} lang={language}>
+            {languages[language]}
           </option>
         ))}
       </select>

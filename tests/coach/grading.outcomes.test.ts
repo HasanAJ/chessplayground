@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { reviewMove } from "../../src/features/coach/grading";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { reviewMove } from "../../src/domain/coach/grading.ts";
 
 function candidate(fen: string, pv: string[], cp = 0, mate?: number) {
   return candidatesFor(fen, [{ rank: 1, depth: 15, cp, mate, pv }])[0];
@@ -31,7 +31,10 @@ test("terminal move grades do not require a reply candidate", () => {
   const best = candidate(game.fen(), ["f1f8"], 0, 1);
   const move = game.move("Rf8#");
   assert.equal(reviewMove(move, best).label, "Best move");
-  assert.deepEqual(reviewMove(move, best).evaluation, { whiteScore: 100, mate: 0 });
+  assert.deepEqual(reviewMove(move, best).evaluation, {
+    whiteScore: 100,
+    mate: 0,
+  });
   const repeat = new Chess();
   const alternative = candidate(repeat.fen(), ["e2e4"], 120);
   const repeatedMove = repeat.move("Nf3");
@@ -39,7 +42,10 @@ test("terminal move grades do not require a reply candidate", () => {
     reviewMove(repeatedMove, alternative, undefined, true).label,
     "Inaccuracy",
   );
-  assert.deepEqual(reviewMove(repeatedMove, alternative, undefined, true).evaluation, { whiteScore: 0 });
+  assert.deepEqual(
+    reviewMove(repeatedMove, alternative, undefined, true).evaluation,
+    { whiteScore: 0 },
+  );
 });
 
 test("an alternative checkmate explains the played move instead of the engine's choice", () => {
@@ -67,5 +73,8 @@ test("Black's delivered checkmate has a negative score from White's perspective"
   for (const san of ["f3", "e5", "g4"]) game.move(san);
   const best = candidate(game.fen(), ["d8h4"], 0, 1);
   const move = game.move("Qh4#");
-  assert.deepEqual(reviewMove(move, best).evaluation, { whiteScore: -100, mate: 0 });
+  assert.deepEqual(reviewMove(move, best).evaluation, {
+    whiteScore: -100,
+    mate: 0,
+  });
 });

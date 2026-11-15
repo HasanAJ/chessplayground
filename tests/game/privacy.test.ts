@@ -2,8 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { JSDOM } from "jsdom";
-import { languages, translator, type Language } from "../../src/i18n/translate";
-import { languagePath, privacyPath } from "../../src/i18n/routes";
+import {
+  languages,
+  translator,
+  type Language,
+} from "../../src/i18n/translate.ts";
+import { languagePath, privacyPath } from "../../src/i18n/routes.ts";
 
 test("every localized privacy URL has a complete policy and matching language navigation", () => {
   for (const language of Object.keys(languages) as Language[]) {

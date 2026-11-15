@@ -1,13 +1,14 @@
+import { JSDOM } from "jsdom";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Chess } from "chess.js";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { reviewMove } from "../../src/features/coach/grading";
-import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
-import { Continuation } from "../../src/features/coach/MoveDetails";
-import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { reviewMove } from "../../src/domain/coach/grading.ts";
+import { BestMoveContent } from "../../src/ui/coach/BestMoveContent.tsx";
+import { Continuation } from "../../src/ui/coach/MoveDetails.tsx";
+import { MoveFeedback } from "../../src/ui/coach/MoveFeedback.tsx";
 
 test("expanded move review puts the threat preview with the explanation", () => {
   const game = new Chess();
@@ -120,10 +121,7 @@ test("the best move starts compact, with its reply and continuation hidden", () 
   assert.match(card, /aria-expanded="false"/);
   assert.match(card, /Explore this move/);
   assert.match(card, /class="score-pill" aria-label="Position score: \+0\.30"/);
-  assert.doesNotMatch(
-    card,
-    /continuation-moves|Only legal move/,
-  );
+  assert.doesNotMatch(card, /continuation-moves|Only legal move/);
 });
 
 test("forced moves keep their label alongside the score from White's perspective", () => {
@@ -185,9 +183,13 @@ test("shared continuation details select the preview step only for the matching 
     );
   const selected = render(0);
   assert.equal((selected.match(/aria-pressed="true"/g) ?? []).length, 1);
-  assert.match(
-    selected,
-    /class="current-step" aria-label="Preview move 2: Black, Pawn from e7 to e5"/,
+  const dom = new JSDOM(selected);
+  const current = dom.window.document.querySelector(".current-step");
+  assert.equal(
+    current?.getAttribute("aria-label"),
+    "Preview move 2: Black, Pawn from e7 to e5",
   );
+  assert.equal(current?.getAttribute("aria-pressed"), "true");
+  dom.window.close();
   assert.doesNotMatch(render(1), /aria-pressed="true"|current-step/);
 });

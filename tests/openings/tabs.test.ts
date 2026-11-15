@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
-import App from "../../src/app/App";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { SESSION_KEY } from "../../src/features/game/storage";
-import { createTestRoot } from "../helpers/dom";
+import App from "../../src/ui/shell/App.tsx";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { SESSION_KEY } from "../../src/infrastructure/persistence/session.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 test("opening lessons preserve the saved game and cancel a pending computer move until Play resumes", async (t) => {
   const { dom, root } = createTestRoot(t);
@@ -44,7 +44,7 @@ test("opening lessons preserve the saved game and cancel a pending computer move
   await act(() => bot.callbacks.onComplete([], "e7e5")); // Finished search, still waiting to move.
   await click("#opening-tab");
   await act(async () => {
-    await import("../../src/features/openings/OpeningWorkspace");
+    await import("../../src/ui/openings/OpeningWorkspace.tsx");
   });
   assert.equal(bot.cancelled, true);
   assert.equal(document.getElementById("play-workspace")!.hidden, true);
@@ -102,7 +102,7 @@ test("workspace tabs support arrow keys without also advancing the opening lesso
     ),
   );
   await act(async () => {
-    await import("../../src/features/openings/OpeningWorkspace");
+    await import("../../src/ui/openings/OpeningWorkspace.tsx");
   });
   assert.equal(document.activeElement?.id, "opening-tab");
   await act(() =>

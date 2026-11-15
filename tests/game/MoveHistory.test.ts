@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Chess } from "chess.js";
-import { MoveHistory } from "../../src/features/game/MoveHistory";
+import { MoveHistory } from "../../src/ui/game/MoveHistory.tsx";
 
 function renderHistory(game: Chess, selectedPly: number | null) {
   return renderToStaticMarkup(

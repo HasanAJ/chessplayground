@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement, useState } from "react";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { useMoveReview } from "../../src/features/coach/useMoveReview";
-import { useGameController } from "../../src/features/game/useGameController";
-import { createTestRoot } from "../helpers/dom";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { useMoveReview } from "../../src/ui/coach/useMoveReview.ts";
+import { useGameController } from "../../src/ui/game/useGameController.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 test("pausing reviews cancels stale results, resumes the move, and retains completed feedback", async (t) => {
   const { root } = createTestRoot(t);
@@ -44,7 +44,11 @@ test("pausing reviews cancels stale results, resumes the move, and retains compl
   assert.equal(requests[0].cancelled, true);
   const best = { rank: 1, depth: 18, cp: 20, pv: ["e2e4", "e7e5"] };
   await act(() => requests[0].args[1].onComplete([best]));
-  assert.equal(requests.length, 1, "a canceled result cannot start a reply search");
+  assert.equal(
+    requests.length,
+    1,
+    "a canceled result cannot start a reply search",
+  );
   assert.equal(current.review?.state, "thinking");
   await act(() => current.setPaused(false));
   assert.equal(requests.length, 2);
@@ -61,5 +65,9 @@ test("pausing reviews cancels stale results, resumes the move, and retains compl
   assert.equal(current.review, completed);
   await act(() => current.setPaused(false));
   assert.equal(current.review, completed);
-  assert.equal(requests.length, 3, "cached feedback does not need another search");
+  assert.equal(
+    requests.length,
+    3,
+    "cached feedback does not need another search",
+  );
 });

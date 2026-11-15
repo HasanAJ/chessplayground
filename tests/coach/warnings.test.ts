@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { checkedGame } from "../../src/chess/position";
-import { watchOutFor } from "../../src/features/coach/warnings";
+import { checkedGame } from "../../src/domain/chess/position.ts";
+import { watchOutFor } from "../../src/domain/coach/warnings.ts";
 
 test("a position without a threat has no warning target or highlights", () => {
   const warning = watchOutFor(new Chess());

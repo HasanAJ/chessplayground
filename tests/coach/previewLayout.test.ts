@@ -2,19 +2,19 @@ import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
-import type { EngineLine } from "../../src/engine/uci";
-import App from "../../src/app/App";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { BoardPanel } from "../../src/features/board/BoardPanel";
-import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { SquareHighlightProvider } from "../../src/features/board/SquareHighlight";
-import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
-import { useGameController } from "../../src/features/game/useGameController";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { CoachPanel } from "../../src/features/coach/CoachPanel";
-import { useCoachPresentation } from "../../src/features/coach/useCoachPresentation";
-import type { Recommendations } from "../../src/features/coach/useRecommendations";
-import { createTestRoot } from "../helpers/dom";
+import type { EngineLine } from "../../src/domain/analysis/lines.ts";
+import App from "../../src/ui/shell/App.tsx";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { BoardPanel } from "../../src/ui/board/BoardPanel.tsx";
+import { useBoardPreview } from "../../src/ui/board/useBoardPreview.ts";
+import { SquareHighlightProvider } from "../../src/ui/board/SquareHighlight.tsx";
+import { useComputerSettings } from "../../src/ui/computer/useComputerSettings.ts";
+import { useGameController } from "../../src/ui/game/useGameController.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { CoachPanel } from "../../src/ui/coach/CoachPanel.tsx";
+import { useCoachPresentation } from "../../src/ui/coach/useCoachPresentation.ts";
+import type { Recommendations } from "../../src/ui/coach/useRecommendations.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 async function renderWorkspace(
   t: TestContext,
@@ -47,7 +47,9 @@ async function renderWorkspace(
       !game.reviewing &&
       game.positionGame.turn() !== computer.side;
     const recommendations: Recommendations = {
-      settings: { seconds: 2, moves: 3 }, settingsValid: true, updateSettings() {},
+      settings: { seconds: 2, moves: 3 },
+      settingsValid: true,
+      updateSettings() {},
       candidates,
       best: candidates[0],
       thinking: false,
@@ -133,15 +135,24 @@ test("the material row follows captures, previews, history and draft positions w
   const row = () => document.querySelector(".material-balance");
   const badge = () => row()?.querySelector(".material-advantage");
   const pieces = (color: "w" | "b") =>
-    Array.from(row()?.querySelectorAll(`img[src^="/pieces/${color}"]`) ?? [],
-      (image) => image.getAttribute("src"));
+    Array.from(
+      row()?.querySelectorAll(`img[src^="/pieces/${color}"]`) ?? [],
+      (image) => image.getAttribute("src"),
+    );
   assert.equal(row(), null);
-  for (const [from, to] of [["e2", "e4"], ["d7", "d5"], ["e4", "d5"]] as const)
+  for (const [from, to] of [
+    ["e2", "e4"],
+    ["d7", "d5"],
+    ["e4", "d5"],
+  ] as const)
     await act(() => view.game.playMove(from, to));
   assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
   assert.deepEqual(pieces("w"), []);
   assert.equal(row()!.textContent!.trim(), "+1");
-  assert.equal(badge()!.getAttribute("aria-label"), "White is ahead by 1 material points");
+  assert.equal(
+    badge()!.getAttribute("aria-label"),
+    "White is ahead by 1 material points",
+  );
   assert.ok(badge()!.parentElement!.classList.contains("is-w"));
   assert.ok(row()!.querySelector('[aria-label="Missing Black pieces"]'));
 
@@ -155,7 +166,9 @@ test("the material row follows captures, previews, history and draft positions w
   assert.equal(view.game.fen, liveFen);
   await act(() => view.preview.clearPreview());
   assert.equal(badge()!.textContent, "+1");
-  await act(() => document.querySelector<HTMLButtonElement>(".flip-board-button")!.click());
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".flip-board-button")!.click(),
+  );
   assert.ok(badge()!.parentElement!.classList.contains("is-w"));
   assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
 
@@ -163,10 +176,15 @@ test("the material row follows captures, previews, history and draft positions w
   assert.equal(row(), null);
   await act(() => view.game.showHistory(3));
   assert.equal(badge()!.textContent, "+1");
-  await act(() => view.game.setBoardPosition({ a8: { color: "b", type: "r" } }, "w", ""));
+  await act(() =>
+    view.game.setBoardPosition({ a8: { color: "b", type: "r" } }, "w", ""),
+  );
   assert.equal(badge()!.textContent, "+5");
   assert.ok(badge()!.parentElement!.classList.contains("is-b"));
-  assert.equal(badge()!.getAttribute("aria-label"), "Black is ahead by 5 material points");
+  assert.equal(
+    badge()!.getAttribute("aria-label"),
+    "Black is ahead by 5 material points",
+  );
 });
 
 test("the board turn selector follows the displayed position and preserves editing safeguards", async (t) => {
@@ -263,7 +281,9 @@ test("hovered and pinned previews preserve board structure and square highlights
     left.querySelector(".move-arrow line")!.getAttribute("marker-end"),
     "url(#arrowhead)",
   );
-  const link = document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!;
+  const link = document.querySelector<HTMLButtonElement>(
+    ".strategy-card .plan-preview",
+  )!;
   for (const action of ["hover", "click"] as const) {
     await act(() => {
       if (action === "hover")
@@ -285,7 +305,10 @@ test("hovered and pinned previews preserve board structure and square highlights
       left.querySelectorAll(".board-preview-actions > button").length,
       action === "click" ? 3 : 0,
     );
-    assert.equal(left.querySelector(".board-toolbar")!.textContent, initialToolbar);
+    assert.equal(
+      left.querySelector(".board-toolbar")!.textContent,
+      initialToolbar,
+    );
     assert.equal(left.querySelectorAll(".square").length, 64);
     assert.ok(left.querySelectorAll(".strategy-square").length > 0);
     assert.ok(left.querySelector(".explanation-arrows"));
@@ -389,7 +412,9 @@ test("mobile preview controls navigate without changing the game and reveal an o
   const { dom, document, boardPanel, candidates } = view;
   const liveFen = view.game.fen;
   await act(() =>
-    document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!.click(),
+    document
+      .querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!
+      .click(),
   );
   assert.equal(view.preview.pinned, true);
   assert.equal(view.preview.inspection?.ply, 1);
@@ -422,7 +447,11 @@ test("mobile preview controls navigate without changing the game and reveal an o
   await act(() => view.preview.inspectMove(candidates[0], 1, "hover"));
   assert.equal(view.scrolls, 0, "hover previews must never scroll the page");
   await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
-  assert.equal(view.scrolls, 1, "a pinned mobile preview reveals an offscreen board");
+  assert.equal(
+    view.scrolls,
+    1,
+    "a pinned mobile preview reveals an offscreen board",
+  );
   const controls = boardPanel.querySelector(".board-preview-controls");
   const controlsText = controls!.textContent;
   await act(() => view.preview.inspectMove(candidates[0], 2, "hover"));
@@ -430,7 +459,11 @@ test("mobile preview controls navigate without changing the game and reveal an o
   assert.equal(view.preview.pinnedInspection?.ply, 1);
   assert.equal(boardPanel.querySelector(".board-preview-controls"), controls);
   assert.equal(controls!.textContent, controlsText);
-  assert.equal(view.scrolls, 1, "hovering over a pinned preview must not scroll");
+  assert.equal(
+    view.scrolls,
+    1,
+    "hovering over a pinned preview must not scroll",
+  );
   await act(() => view.preview.clearInspection(candidates[0], "hover"));
   assert.equal(view.preview.pinned, true);
   assert.equal(view.scrolls, 1, "restoring a pinned preview must not scroll");
@@ -448,13 +481,20 @@ test("position editing preserves the game until a suggested move is played", asy
   const view = await renderWorkspace(t);
   const { document, boardPanel } = view;
   const liveFen = view.game.fen;
-  const edit = boardPanel.querySelector<HTMLButtonElement>(".position-editor-toggle")!;
+  const edit = boardPanel.querySelector<HTMLButtonElement>(
+    ".position-editor-toggle",
+  )!;
   for (const id of edit.getAttribute("aria-controls")!.split(" "))
-    assert.ok(document.getElementById(id), "every controlled editor region must exist");
+    assert.ok(
+      document.getElementById(id),
+      "every controlled editor region must exist",
+    );
   await act(() => edit.click());
   assert.equal(edit.getAttribute("aria-expanded"), "true");
   await act(() =>
-    boardPanel.querySelector<HTMLButtonElement>('[aria-label="Place White knight"]')!.click(),
+    boardPanel
+      .querySelector<HTMLButtonElement>('[aria-label="Place White knight"]')!
+      .click(),
   );
   assert.equal(view.game.tool, "wn");
   await act(() => edit.click());
@@ -465,7 +505,9 @@ test("position editing preserves the game until a suggested move is played", asy
   assert.equal(view.game.history.length, 0);
 
   await act(() =>
-    document.querySelector<HTMLButtonElement>(".strategy-card .primary-button")!.click(),
+    document
+      .querySelector<HTMLButtonElement>(".strategy-card .primary-button")!
+      .click(),
   );
   assert.equal(view.game.history.at(-1)?.san, "Nf3");
 });
@@ -476,33 +518,82 @@ test("ready analysis keeps refresh secondary and alternatives visible; collapsin
     { rank: 2, depth: 15, cp: 20, pv: ["e2e4", "e7e5"] },
   ]);
   const { document } = view;
-  const refresh = document.querySelector<HTMLButtonElement>(".calculate-button")!;
+  const refresh =
+    document.querySelector<HTMLButtonElement>(".calculate-button")!;
   assert.equal(refresh.getAttribute("aria-label"), "Refresh analysis");
-  assert.equal(refresh.closest(".coach-header-actions")?.parentElement?.className, "coach-header");
+  assert.equal(
+    refresh.closest(".coach-header-actions")?.parentElement?.className,
+    "coach-header",
+  );
   assert.equal(document.querySelector(".calculation-controls"), null);
   assert.equal(refresh.classList.contains("primary-button"), false);
-  const score = document.querySelector(".strategy-card .suggested-move-header .score-pill")!;
+  const score = document.querySelector(
+    ".strategy-card .suggested-move-header .score-pill",
+  )!;
   assert.equal(score.textContent, "+0.30");
   assert.equal(score.getAttribute("aria-label"), "Position score: +0.30");
-  assert.equal(document.querySelector(".strategy-card .candidate-piece img")!.getAttribute("src"), "/pieces/wN.svg");
+  assert.equal(
+    document
+      .querySelector(".strategy-card .candidate-piece img")!
+      .getAttribute("src"),
+    "/pieces/wN.svg",
+  );
   assert.equal(document.querySelector(".position-details"), null);
-  const alternatives = document.querySelector<HTMLElement>(".alternative-moves")!;
-  assert.equal(alternatives.querySelector("h3")!.textContent, "Other good moves");
+  const alternatives =
+    document.querySelector<HTMLElement>(".alternative-moves")!;
+  assert.equal(
+    alternatives.querySelector("h3")!.textContent,
+    "Other good moves",
+  );
   assert.equal(alternatives.querySelectorAll(".candidate-toggle").length, 1);
-  assert.equal(alternatives.querySelector(".candidate-title")!.textContent, "Pawn from e2 to e4");
-  assert.equal(alternatives.querySelector(".move-strategy-tag")!.textContent, "Claim the center");
-  assert.equal(alternatives.querySelector(".candidate-piece img")!.getAttribute("src"), "/pieces/wP.svg");
-  assert.match(alternatives.querySelector(".candidate-toggle")!.getAttribute("aria-label")!, /Position score: \+0\.20/);
-  await act(() => document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click());
-  const explore = document.querySelector<HTMLButtonElement>(".candidate-body .plan-preview")!;
+  assert.equal(
+    alternatives.querySelector(".candidate-title")!.textContent,
+    "Pawn from e2 to e4",
+  );
+  assert.equal(
+    alternatives.querySelector(".move-strategy-tag")!.textContent,
+    "Claim the center",
+  );
+  assert.equal(
+    alternatives.querySelector(".candidate-piece img")!.getAttribute("src"),
+    "/pieces/wP.svg",
+  );
+  assert.match(
+    alternatives
+      .querySelector(".candidate-toggle")!
+      .getAttribute("aria-label")!,
+    /Position score: \+0\.20/,
+  );
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click(),
+  );
+  const explore = document.querySelector<HTMLButtonElement>(
+    ".candidate-body .plan-preview",
+  )!;
   await act(() => explore.click());
   assert.equal(view.preview.pinnedInspection?.candidate, view.candidates[1]);
-  assert.equal(refresh.disabled, true, "refresh stays unavailable during a board preview");
-  await act(() => document.querySelectorAll<HTMLButtonElement>(".candidate-body .continuation-moves button")[1].click());
+  assert.equal(
+    refresh.disabled,
+    true,
+    "refresh stays unavailable during a board preview",
+  );
+  await act(() =>
+    document
+      .querySelectorAll<HTMLButtonElement>(
+        ".candidate-body .continuation-moves button",
+      )[1]
+      .click(),
+  );
   assert.equal(view.preview.pinnedInspection?.ply, 2);
   assert.equal(view.game.history.length, 0);
-  await act(() => document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click());
-  assert.equal(view.preview.boardPreview, false, "collapsed move details must not leave a hidden preview pinned");
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click(),
+  );
+  assert.equal(
+    view.preview.boardPreview,
+    false,
+    "collapsed move details must not leave a hidden preview pinned",
+  );
   assert.equal(alternatives.querySelectorAll(".candidate-toggle").length, 1);
 });
 
@@ -516,11 +607,24 @@ test("quiet pawn suggestions retain action tags alongside specific strategy tags
     { rank: 4, depth: 18, cp: -41, pv: ["c7c6"] },
     { rank: 5, depth: 18, cp: -43, pv: ["d7d6"] },
   ]);
-  assert.equal(view.document.querySelector(".strategy-card .move-strategy-tag")!.textContent, "Advance your pawn to e6");
+  assert.equal(
+    view.document.querySelector(".strategy-card .move-strategy-tag")!
+      .textContent,
+    "Advance your pawn to e6",
+  );
   assert.equal(view.document.querySelector(".strategy-card > p"), null);
-  assert.deepEqual(Array.from(view.document.querySelectorAll(".candidate-card .move-strategy-tag"), (tag) => tag.textContent), [
-    "Claim the center", "Advance your pawn to c5", "Advance your pawn to c6", "Advance your pawn to d6",
-  ]);
+  assert.deepEqual(
+    Array.from(
+      view.document.querySelectorAll(".candidate-card .move-strategy-tag"),
+      (tag) => tag.textContent,
+    ),
+    [
+      "Claim the center",
+      "Advance your pawn to c5",
+      "Advance your pawn to c6",
+      "Advance your pawn to d6",
+    ],
+  );
 });
 
 test("capture and check details stay outside move titles in cards and previews", async (t) => {
@@ -529,31 +633,78 @@ test("capture and check details stay outside move titles in cards and previews",
     { rank: 2, depth: 18, cp: -26, pv: ["g7g2", "h1g2"] },
   ]);
   const { document } = view;
-  assert.equal(document.querySelector(".candidate-title")!.textContent, "Queen from g7 to g2");
-  assert.equal(document.querySelector(".candidate-card .move-strategy-tag")!.textContent, "Capture with check");
-  await act(() => document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click());
-  const explanation = document.querySelector(".candidate-body .move-explanation")!;
+  assert.equal(
+    document.querySelector(".candidate-title")!.textContent,
+    "Queen from g7 to g2",
+  );
+  assert.equal(
+    document.querySelector(".candidate-card .move-strategy-tag")!.textContent,
+    "Capture with check",
+  );
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".candidate-toggle")!.click(),
+  );
+  const explanation = document.querySelector(
+    ".candidate-body .move-explanation",
+  )!;
   assert.match(explanation.textContent!, /queen takes their queen on g2/);
   assert.match(explanation.textContent!, /gives check/);
-  await act(() => document.querySelector<HTMLButtonElement>(".candidate-body .plan-preview")!.click());
-  assert.equal(document.querySelector(".continuation-description")!.textContent, "Queen from g7 to g2");
-  assert.equal(document.querySelector(".board-preview-controls > p")!.textContent, "Queen from g7 to g2");
+  await act(() =>
+    document
+      .querySelector<HTMLButtonElement>(".candidate-body .plan-preview")!
+      .click(),
+  );
+  assert.equal(
+    document.querySelector(".continuation-description")!.textContent,
+    "Queen from g7 to g2",
+  );
+  assert.equal(
+    document.querySelector(".board-preview-controls > p")!.textContent,
+    "Queen from g7 to g2",
+  );
 });
 
 test("only check and undefended attacks show warnings above the suggested move", async (t) => {
   const cases = [
-    { name: "check", fen: "k3r3/8/8/8/1b6/8/8/4K3 w - - 0 1", pv: ["e1f1"], prominent: true },
-    { name: "undefended", fen: "4r2k/1b6/8/8/4Q3/8/8/6K1 w - - 0 1", pv: ["e4f4"], prominent: true },
-    { name: "defended", fen: "4r2k/8/8/8/4P3/3P4/8/6K1 w - - 0 1", pv: ["g1f1"], prominent: false },
-    { name: "Black", fen: "7k/8/8/4q3/8/8/8/4R2K b - - 0 1", pv: ["e5f5"], prominent: true },
+    {
+      name: "check",
+      fen: "k3r3/8/8/8/1b6/8/8/4K3 w - - 0 1",
+      pv: ["e1f1"],
+      prominent: true,
+    },
+    {
+      name: "undefended",
+      fen: "4r2k/1b6/8/8/4Q3/8/8/6K1 w - - 0 1",
+      pv: ["e4f4"],
+      prominent: true,
+    },
+    {
+      name: "defended",
+      fen: "4r2k/8/8/8/4P3/3P4/8/6K1 w - - 0 1",
+      pv: ["g1f1"],
+      prominent: false,
+    },
+    {
+      name: "Black",
+      fen: "7k/8/8/4q3/8/8/8/4R2K b - - 0 1",
+      pv: ["e5f5"],
+      prominent: true,
+    },
   ];
-  for (const fixture of cases) await t.test(fixture.name, async (t) => {
-    const view = await renderWorkspace(t, fixture.fen, [{ rank: 1, depth: 15, cp: 450, pv: fixture.pv }]);
-    const warnings = view.document.querySelectorAll(".strategy-warning");
-    assert.equal(warnings.length, fixture.prominent ? 1 : 0);
-    if (fixture.prominent)
-      assert.ok(warnings[0].compareDocumentPosition(view.document.querySelector(".strategy-card")!) & 4);
-  });
+  for (const fixture of cases)
+    await t.test(fixture.name, async (t) => {
+      const view = await renderWorkspace(t, fixture.fen, [
+        { rank: 1, depth: 15, cp: 450, pv: fixture.pv },
+      ]);
+      const warnings = view.document.querySelectorAll(".strategy-warning");
+      assert.equal(warnings.length, fixture.prominent ? 1 : 0);
+      if (fixture.prominent)
+        assert.ok(
+          warnings[0].compareDocumentPosition(
+            view.document.querySelector(".strategy-card")!,
+          ) & 4,
+        );
+    });
 });
 
 test("calculating on mobile reveals the coach; desktop calculation preserves the viewport", async (t) => {
@@ -561,42 +712,70 @@ test("calculating on mobile reveals the coach; desktop calculation preserves the
   let mobile = true;
   const scrolled: string[] = [];
   Object.defineProperty(dom.window, "matchMedia", {
-    value: (query: string) => ({ matches: query === "(max-width: 900px)" && mobile }),
+    value: (query: string) => ({
+      matches: query === "(max-width: 900px)" && mobile,
+    }),
   });
   dom.window.HTMLElement.prototype.scrollIntoView = function () {
     scrolled.push(this.id);
   };
   let callbacks!: Parameters<AnalysisEngine["analyze"]>[1];
-  t.mock.method(AnalysisEngine.prototype, "analyze", (_fen: string, next: typeof callbacks) => {
-    callbacks = next;
-    return () => {};
-  });
+  t.mock.method(
+    AnalysisEngine.prototype,
+    "analyze",
+    (_fen: string, next: typeof callbacks) => {
+      callbacks = next;
+      return () => {};
+    },
+  );
   await act(() => root.render(createElement(App)));
   const document = dom.window.document;
-  const clickCalculate = () => document.querySelector<HTMLButtonElement>(".calculate-button")!.click();
+  const clickCalculate = () =>
+    document.querySelector<HTMLButtonElement>(".calculate-button")!.click();
   await act(clickCalculate);
   assert.deepEqual(scrolled, ["coach"]);
   assert.equal(document.querySelector(".score-pill"), null);
-  assert.equal(document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled, true);
+  assert.equal(
+    document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled,
+    true,
+  );
   assert.equal(document.querySelector(".calculation-controls"), null);
-  await act(() => callbacks.onComplete([{ rank: 1, depth: 18, cp: 30, pv: ["e2e4", "e7e5"] }]));
+  await act(() =>
+    callbacks.onComplete([
+      { rank: 1, depth: 18, cp: 30, pv: ["e2e4", "e7e5"] },
+    ]),
+  );
   assert.equal(document.querySelectorAll(".best-move-heading").length, 1);
-  assert.equal(document.querySelector(".refresh-analysis")!.getAttribute("aria-label"), "Refresh analysis");
+  assert.equal(
+    document.querySelector(".refresh-analysis")!.getAttribute("aria-label"),
+    "Refresh analysis",
+  );
   mobile = false;
   await act(clickCalculate);
-  assert.equal(document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled, true);
+  assert.equal(
+    document.querySelector<HTMLButtonElement>(".refresh-analysis")!.disabled,
+    true,
+  );
   assert.equal(document.querySelector(".calculation-controls"), null);
-  assert.deepEqual(scrolled, ["coach"], "desktop refresh should not move the viewport");
+  assert.deepEqual(
+    scrolled,
+    ["coach"],
+    "desktop refresh should not move the viewport",
+  );
 });
 
 test("the suggestion, board arrow, exploration, and Play use the engine's final move", async (t) => {
   const { root, dom } = createTestRoot(t);
   dom.window.HTMLElement.prototype.scrollIntoView = () => {};
   const requests: Parameters<AnalysisEngine["analyze"]>[] = [];
-  t.mock.method(AnalysisEngine.prototype, "analyze", (...args: Parameters<AnalysisEngine["analyze"]>) => {
-    requests.push(args);
-    return () => {};
-  });
+  t.mock.method(
+    AnalysisEngine.prototype,
+    "analyze",
+    (...args: Parameters<AnalysisEngine["analyze"]>) => {
+      requests.push(args);
+      return () => {};
+    },
+  );
   await act(() => root.render(createElement(App)));
   const document = dom.window.document;
   const click = async (selector: string) => {
@@ -605,56 +784,123 @@ test("the suggestion, board arrow, exploration, and Play use the engine's final 
     await act(() => button.click());
   };
   await click(".calculate-button");
-  await act(() => requests[0][1].onComplete([
-    { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] },
-    { rank: 2, depth: 12, cp: 25, pv: ["g1f3", "g8f6"] },
-    { rank: 3, depth: 12, cp: 20, pv: ["d2d4", "d7d5"] },
-  ], "g1f3", { rank: 1, depth: 13, cp: 40, pv: ["g1f3", "d7d5"] }));
-  assert.equal(document.querySelector(".best-move-heading")?.textContent, "Knight from g1 to f3");
+  await act(() =>
+    requests[0][1].onComplete(
+      [
+        { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] },
+        { rank: 2, depth: 12, cp: 25, pv: ["g1f3", "g8f6"] },
+        { rank: 3, depth: 12, cp: 20, pv: ["d2d4", "d7d5"] },
+      ],
+      "g1f3",
+      { rank: 1, depth: 13, cp: 40, pv: ["g1f3", "d7d5"] },
+    ),
+  );
+  assert.equal(
+    document.querySelector(".best-move-heading")?.textContent,
+    "Knight from g1 to f3",
+  );
   assert.equal(document.querySelector(".score-pill")?.textContent, "+0.40");
-  assert.deepEqual(Array.from(document.querySelectorAll(".candidate-title"), (title) => title.textContent), [
-    "Pawn from e2 to e4", "Pawn from d2 to d4",
-  ]);
-  assert.equal(document.querySelector(".move-arrow line")?.getAttribute("x1"), "650");
-  assert.equal(document.querySelector(".move-arrow line")?.getAttribute("y1"), "750");
+  assert.deepEqual(
+    Array.from(
+      document.querySelectorAll(".candidate-title"),
+      (title) => title.textContent,
+    ),
+    ["Pawn from e2 to e4", "Pawn from d2 to d4"],
+  );
+  assert.equal(
+    document.querySelector(".move-arrow line")?.getAttribute("x1"),
+    "650",
+  );
+  assert.equal(
+    document.querySelector(".move-arrow line")?.getAttribute("y1"),
+    "750",
+  );
   await click(".strategy-card .plan-preview");
-  assert.ok(document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'));
-  assert.match(document.querySelector(".continuation-moves")?.textContent ?? "", /d5/);
-  assert.equal((document.querySelector(".move-history")?.textContent ?? "").includes("Nf3"), false);
+  assert.ok(
+    document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'),
+  );
+  assert.match(
+    document.querySelector(".continuation-moves")?.textContent ?? "",
+    /d5/,
+  );
+  assert.equal(
+    (document.querySelector(".move-history")?.textContent ?? "").includes(
+      "Nf3",
+    ),
+    false,
+  );
   await click(".preview-return");
   await click('[aria-label="Play best move Nf3"]');
-  assert.ok(document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'));
+  assert.ok(
+    document.querySelector('[data-square="f3"] img[src="/pieces/wN.svg"]'),
+  );
   assert.equal(document.querySelector('[data-square="g1"] img'), null);
-  assert.match(document.querySelector(".move-history")?.textContent ?? "", /Nf3/);
+  assert.match(
+    document.querySelector(".move-history")?.textContent ?? "",
+    /Nf3/,
+  );
   assert.equal(document.querySelector(".best-move-heading"), null);
   assert.equal(document.querySelector(".score-pill"), null);
 });
 
 test("promotion recommendations show one card and preview and play the recommended piece", async (t) => {
   const { root, dom } = createTestRoot(t);
-  dom.window.localStorage.setItem("tempo-position", "8/8/7P/8/5K2/1P1kN3/3p4/8 b - - 0 1");
+  dom.window.localStorage.setItem(
+    "tempo-position",
+    "8/8/7P/8/5K2/1P1kN3/3p4/8 b - - 0 1",
+  );
   dom.window.HTMLElement.prototype.scrollIntoView = () => {};
   let callbacks!: Parameters<AnalysisEngine["analyze"]>[1];
-  t.mock.method(AnalysisEngine.prototype, "analyze", (_fen: string, next: typeof callbacks) => {
-    callbacks = next;
-    return () => {};
-  });
+  t.mock.method(
+    AnalysisEngine.prototype,
+    "analyze",
+    (_fen: string, next: typeof callbacks) => {
+      callbacks = next;
+      return () => {};
+    },
+  );
   await act(() => root.render(createElement(App)));
   const document = dom.window.document;
-  await act(() => document.querySelector<HTMLButtonElement>(".calculate-button")!.click());
-  await act(() => callbacks.onComplete([
-    { rank: 1, depth: 18, mate: -9, pv: ["d2d1q"] },
-    { rank: 2, depth: 18, mate: -9, pv: ["d2d1r"] },
-    { rank: 3, depth: 18, mate: -9, pv: ["d2d1b"] },
-    { rank: 4, depth: 18, mate: -9, pv: ["d2d1n"] },
-    { rank: 5, depth: 18, mate: -9, pv: ["d3c3"] },
-  ], "d2d1r", { rank: 1, depth: 19, mate: -9, pv: ["d2d1r", "f4g4"] }));
-  assert.deepEqual(Array.from(document.querySelectorAll(".candidate-title"), (title) => title.textContent), [
-    "King from d3 to c3",
-  ]);
-  await act(() => document.querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!.click());
-  assert.ok(document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'));
-  await act(() => document.querySelector<HTMLButtonElement>(".preview-return")!.click());
-  await act(() => document.querySelector<HTMLButtonElement>('[aria-label="Play best move d1=R"]')!.click());
-  assert.ok(document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'));
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".calculate-button")!.click(),
+  );
+  await act(() =>
+    callbacks.onComplete(
+      [
+        { rank: 1, depth: 18, mate: -9, pv: ["d2d1q"] },
+        { rank: 2, depth: 18, mate: -9, pv: ["d2d1r"] },
+        { rank: 3, depth: 18, mate: -9, pv: ["d2d1b"] },
+        { rank: 4, depth: 18, mate: -9, pv: ["d2d1n"] },
+        { rank: 5, depth: 18, mate: -9, pv: ["d3c3"] },
+      ],
+      "d2d1r",
+      { rank: 1, depth: 19, mate: -9, pv: ["d2d1r", "f4g4"] },
+    ),
+  );
+  assert.deepEqual(
+    Array.from(
+      document.querySelectorAll(".candidate-title"),
+      (title) => title.textContent,
+    ),
+    ["King from d3 to c3"],
+  );
+  await act(() =>
+    document
+      .querySelector<HTMLButtonElement>(".strategy-card .plan-preview")!
+      .click(),
+  );
+  assert.ok(
+    document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'),
+  );
+  await act(() =>
+    document.querySelector<HTMLButtonElement>(".preview-return")!.click(),
+  );
+  await act(() =>
+    document
+      .querySelector<HTMLButtonElement>('[aria-label="Play best move d1=R"]')!
+      .click(),
+  );
+  assert.ok(
+    document.querySelector('[data-square="d1"] img[src="/pieces/bR.svg"]'),
+  );
 });

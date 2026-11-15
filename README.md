@@ -16,10 +16,15 @@ Open the URL printed by Vite. Installation copies Stockfish Lite into `public/en
 ## Check and build
 
 ```sh
+npm run check
 npm test
 npm run build
+npx playwright install chromium
+npm run test:browser
 npm run preview
 ```
+
+Browser checks run against the production build and exercise the real Stockfish worker on desktop and mobile Chromium. `npm run format:check` checks source formatting.
 
 ## Deployment
 

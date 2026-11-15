@@ -1,16 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
-import App from "../../src/app/App";
-import { LanguageProvider } from "../../src/i18n/LanguageProvider";
+import App from "../../src/ui/shell/App.tsx";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider.tsx";
 import {
   openingPath,
   isOpeningsPath,
   languageFromPath,
   pathForLanguage,
-} from "../../src/i18n/routes";
-import { createTestRoot } from "../helpers/dom";
-import { OpeningBoundary } from "../../src/features/openings/OpeningBoundary";
+} from "../../src/i18n/routes.ts";
+import { createTestRoot } from "../helpers/dom.ts";
+import { OpeningBoundary } from "../../src/ui/openings/OpeningBoundary.tsx";
 
 test("opening paths preserve the lesson when changing language and reject unrelated paths", () => {
   assert.equal(openingPath("en"), "/openings/");
@@ -37,7 +37,7 @@ test("direct lesson URLs, translated URLs and browser Back stay in sync with the
     root.render(
       createElement(LanguageProvider, { children: createElement(App) }),
     );
-    await import("../../src/features/openings/OpeningWorkspace");
+    await import("../../src/ui/openings/OpeningWorkspace.tsx");
   });
   assert.equal(document.querySelector("#opening-tab")!.textContent, "Openings");
   assert.equal(
@@ -104,7 +104,7 @@ test("unknown lessons provide a route back to the library", async (t) => {
     root.render(
       createElement(LanguageProvider, { children: createElement(App) }),
     );
-    await import("../../src/features/openings/OpeningWorkspace");
+    await import("../../src/ui/openings/OpeningWorkspace.tsx");
   });
   assert.match(
     dom.window.document.querySelector(".opening-load-error")!.textContent!,

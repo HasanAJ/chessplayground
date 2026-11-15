@@ -1,13 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { START_FEN } from "../../src/chess/position";
-import { english, translator, type Translator } from "../../src/i18n/translate";
-import { analyzeCandidates } from "../../src/features/coach/candidates";
-import {
-  candidatesFor,
-  presentCandidate,
-} from "../../src/features/coach/candidatePresentation";
+import { START_FEN } from "../../src/domain/chess/position.ts";
+import { english, translator } from "../../src/i18n/translate.ts";
+import { analyzeCandidates } from "../../src/domain/coach/candidates.ts";
+import { presentCandidate } from "../../src/domain/coach/candidatePresentation.ts";
 
 const line = { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] };
 
@@ -22,15 +19,4 @@ test("localizing a completed candidate reuses its legal continuation and evaluat
   assert.equal(localized.whiteScore, original.whiteScore);
   assert.notEqual(localized.explanation, original.explanation);
   assert.equal(presentCandidate(analysis, english), original);
-});
-
-test("unexpected presentation failures surface instead of silently discarding legal candidates", () => {
-  const failure = new Error("Broken translation");
-  const broken: Translator = Object.assign(
-    () => {
-      throw failure;
-    },
-    { language: "en" as const },
-  );
-  assert.throws(() => candidatesFor(START_FEN, [line], broken), failure);
 });

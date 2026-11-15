@@ -5,7 +5,10 @@ body {
   min-height: 100vh;
   color: #282536;
   background: #f7f7fb;
-  font: 15px/1.6 "DM Sans", system-ui, sans-serif;
+  font:
+    15px/1.6 "DM Sans",
+    system-ui,
+    sans-serif;
 }
 .loading-intro,
 .loading-intro * {

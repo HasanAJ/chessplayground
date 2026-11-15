@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement, StrictMode } from "react";
 import { Chess } from "chess.js";
-import App from "../../src/app/App";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { addStudyMove, createStudy } from "../../src/chess/study";
-import { SESSION_KEY } from "../../src/features/game/storage";
-import { createTestRoot } from "../helpers/dom";
+import App from "../../src/ui/shell/App.tsx";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { addStudyMove, createStudy } from "../../src/domain/chess/study.ts";
+import { SESSION_KEY } from "../../src/infrastructure/persistence/session.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 test("playing a long game applies only the new move, including automatic review", async (t) => {
   const { dom, root } = createTestRoot(t);
@@ -39,7 +39,11 @@ test("playing a long game applies only the new move, including automatic review"
   };
 
   await clickSquare(next.from);
-  assert.equal(moveCalls.mock.callCount(), 0, "selection must not replay moves");
+  assert.equal(
+    moveCalls.mock.callCount(),
+    0,
+    "selection must not replay moves",
+  );
   await clickSquare(next.to);
   assert.equal(
     moveCalls.mock.callCount(),
@@ -86,15 +90,15 @@ test("board selection and flipping skip coach, history, and hidden opening work"
   await click('[data-square="e5"]');
   await click("#opening-tab");
   await act(async () => {
-    await import("../../src/features/openings/OpeningWorkspace");
+    await import("../../src/ui/openings/OpeningWorkspace.tsx");
   });
   assert.equal(document.querySelectorAll(".opening-card").length, 30);
   await click("#play-tab");
   await click(".calculate-button");
   await act(() =>
-    requests.at(-1)![1].onComplete([
-      { rank: 1, depth: 18, cp: 20, pv: ["g1f3", "b8c6"] },
-    ]),
+    requests
+      .at(-1)![1]
+      .onComplete([{ rank: 1, depth: 18, cp: 20, pv: ["g1f3", "b8c6"] }]),
   );
   const moves = t.mock.method(Chess.prototype, "moves");
   const squareText = t.mock.method(String.prototype, "matchAll");
@@ -105,9 +109,19 @@ test("board selection and flipping skip coach, history, and hidden opening work"
   assert.ok(document.querySelector('[data-square="f3"] .legal-dot'));
   await click(".flip-board-button");
   await click(".flip-board-button");
-  assert.equal(moves.mock.callCount(), 1, "only the selected piece needs legal moves");
-  assert.deepEqual(moves.mock.calls[0].arguments, [{ square: "g1", verbose: true }]);
-  assert.equal(squareText.mock.callCount(), 0, "coach and history prose must not be rebuilt");
+  assert.equal(
+    moves.mock.callCount(),
+    1,
+    "only the selected piece needs legal moves",
+  );
+  assert.deepEqual(moves.mock.calls[0].arguments, [
+    { square: "g1", verbose: true },
+  ]);
+  assert.equal(
+    squareText.mock.callCount(),
+    0,
+    "coach and history prose must not be rebuilt",
+  );
   assert.equal(
     openingSearch.mock.callCount(),
     0,
@@ -141,7 +155,11 @@ test("board selection and flipping skip coach, history, and hidden opening work"
   assert.equal(document.querySelector(".reference-square"), null);
 
   await click(".calculate-button");
-  assert.equal(document.querySelector(".selected-square"), null, "refresh clears selection");
+  assert.equal(
+    document.querySelector(".selected-square"),
+    null,
+    "refresh clears selection",
+  );
   await click('[data-square="g1"]');
   await click('[data-square="f3"]');
   assert.equal(
@@ -179,21 +197,30 @@ test("automatic reviews wait for the computer reply and yield to requested analy
   );
   await act(() => root.render(createElement(App)));
   const click = async (selector: string) => {
-    const button = dom.window.document.querySelector<HTMLButtonElement>(selector);
+    const button =
+      dom.window.document.querySelector<HTMLButtonElement>(selector);
     assert.ok(button, selector);
     await act(() => button.click());
   };
   await click(".computer-toggle");
   await click('[data-square="e2"]');
   await click('[data-square="e4"]');
-  assert.equal(requests.length, 1, "the opponent has priority over automatic review");
+  assert.equal(
+    requests.length,
+    1,
+    "the opponent has priority over automatic review",
+  );
   assert.equal(requests[0].args[3]?.skill, 7);
   await act(() => {
     requests[0].args[1].onComplete([], "e7e5");
     t.mock.timers.tick(1000);
   });
   assert.equal(requests.length, 2);
-  assert.equal(requests[1].args[0], new Chess().fen(), "review still covers the human move");
+  assert.equal(
+    requests[1].args[0],
+    new Chess().fen(),
+    "review still covers the human move",
+  );
   assert.equal(requests[1].args[3]?.movetime, 1200);
   await click(".calculate-button");
   assert.equal(requests[1].cancelled, true);
@@ -203,6 +230,10 @@ test("automatic reviews wait for the computer reply and yield to requested analy
       { rank: 1, depth: 18, cp: 20, pv: ["g1f3", "b8c6"] },
     ]),
   );
-  assert.equal(requests.length, 4, "the review resumes when requested analysis finishes");
+  assert.equal(
+    requests.length,
+    4,
+    "the review resumes when requested analysis finishes",
+  );
   assert.equal(requests[3].args[0], requests[1].args[0]);
 });

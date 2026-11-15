@@ -1,11 +1,11 @@
-import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
-import { english } from "../../src/i18n/translate";
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices.ts";
+import { english } from "../../src/i18n/translate.ts";
 import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { startMoveReview } from "../../src/features/coach/moveReview";
-import type { MoveReview } from "../../src/features/coach/grading";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { startMoveReview } from "../../src/application/review/moveReview.ts";
+import type { MoveReview } from "../../src/domain/coach/grading.ts";
 
 class FakeWorker {
   commands: string[] = [];
@@ -29,10 +29,16 @@ function fixture(t: TestContext, san = "e3", game = new Chess()) {
   const errors: string[] = [];
   const cancel = startMoveReview(
     engine,
-    { move, history: { rootFen, moves: [move.lan] }, terminal: null, drawn: false },
+    {
+      move,
+      history: { rootFen, moves: [move.lan] },
+      terminal: null,
+      drawn: false,
+    },
     {
       onComplete: (review) => reviews.push(review),
-      onError: (error: Diagnostic) => errors.push(translateNotice(error, english)),
+      onError: (error: Diagnostic) =>
+        errors.push(translateNotice(error, english)),
     },
   );
   worker.emit("uciok", "readyok");
@@ -72,7 +78,10 @@ test("a late final choice of the played move replaces a stale blunder grade", (t
   assert.equal(reviews[0].best.cp, 150);
   assert.equal(reviews[0].played?.cp, 150);
   assert.equal(reviews[0].reply?.move.san, "c5");
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 2);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    2,
+  );
 });
 
 test("a late reversal away from the played move retries before assigning a matched-depth grade", (t) => {
@@ -81,7 +90,10 @@ test("a late reversal away from the played move retries before assigning a match
   reverseAwayFromPlayed(worker);
   assert.equal(reviews.length, 0, "do not keep the older Best move label");
   assert.deepEqual(errors, []);
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 3);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    3,
+  );
   assert.match(worker.commands.at(-1)!, /searchmoves e2e4 e2e3$/);
   worker.emit(
     "info depth 20 multipv 1 score cp 100 pv e2e4 c7c5",
@@ -122,7 +134,10 @@ test("an unfinished deeper score retries only to that depth before grading", (t)
     "bestmove e2e4",
   );
   assert.equal(reviews.length, 0);
-  assert.equal(worker.commands.at(-1), "go depth 15 movetime 1800 searchmoves e2e4 e2e3");
+  assert.equal(
+    worker.commands.at(-1),
+    "go depth 15 movetime 1800 searchmoves e2e4 e2e3",
+  );
   worker.emit(
     "info depth 15 multipv 1 score cp 150 pv e2e4 c7c5",
     "info depth 15 multipv 2 score cp 140 pv e2e3 e7e5",
@@ -145,7 +160,10 @@ test("a comparison that is still inconsistent after one retry reports an error",
   assert.equal(reviews.length, 0);
   assert.equal(errors.length, 1);
   assert.match(errors[0], /reliably compare/);
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 3);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    3,
+  );
 });
 
 test("canceling a comparison retry ignores its late results", (t) => {
@@ -161,7 +179,10 @@ test("canceling a comparison retry ignores its late results", (t) => {
   );
   assert.equal(reviews.length, 0);
   assert.deepEqual(errors, []);
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 3);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    3,
+  );
 });
 
 test("the initial search honors its final choice of the played move", (t) => {
@@ -210,5 +231,8 @@ test("a final move without a scored legal line reports an error instead of using
   );
   assert.equal(reviews.length, 0);
   assert.match(errors[0], /could not review/);
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 1);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    1,
+  );
 });

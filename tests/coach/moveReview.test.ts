@@ -1,12 +1,12 @@
-import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
-import { english } from "../../src/i18n/translate";
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices.ts";
+import { english } from "../../src/i18n/translate.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
-import type { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import type { EngineLine } from "../../src/engine/uci";
-import type { MoveReview } from "../../src/features/coach/grading";
-import { startMoveReview } from "../../src/features/coach/moveReview";
-import { START_FEN } from "../../src/chess/position";
+import type { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import type { EngineLine } from "../../src/domain/analysis/lines.ts";
+import type { MoveReview } from "../../src/domain/coach/grading.ts";
+import { startMoveReview } from "../../src/application/review/moveReview.ts";
+import { START_FEN } from "../../src/domain/chess/position.ts";
 import {
   createStudy,
   addStudyMove,
@@ -14,7 +14,7 @@ import {
   replayStudy,
   ROOT,
   type Study,
-} from "../../src/chess/study";
+} from "../../src/domain/chess/study.ts";
 
 function studyAfter(...moves: string[]) {
   return moves.reduce(
@@ -56,7 +56,8 @@ function observe() {
     reviews,
     errors,
     onComplete: (review: MoveReview) => reviews.push(review),
-    onError: (error: Diagnostic) => errors.push(translateNotice(error, english)),
+    onError: (error: Diagnostic) =>
+      errors.push(translateNotice(error, english)),
   };
 }
 
@@ -163,10 +164,11 @@ test("a mating move finishes its review without searching a terminal position", 
 });
 
 test("a repetition draw is reviewed from its snapshot without searching a reply", () => {
-  const engine = new ReviewEngine(), observed = observe();
-  const position = reviewPosition(studyAfter(
-    "g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8",
-  ));
+  const engine = new ReviewEngine(),
+    observed = observe();
+  const position = reviewPosition(
+    studyAfter("g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"),
+  );
   startMoveReview(engine, position, observed);
   engine.complete(0, [{ rank: 1, depth: 18, cp: 0, pv: ["f6g8"] }]);
   assert.equal(observed.reviews[0].drawn, true);

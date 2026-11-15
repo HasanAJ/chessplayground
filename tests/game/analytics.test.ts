@@ -1,14 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement, Fragment } from "react";
-import { createTestRoot } from "../helpers/dom";
-import { AnalyticsConsent } from "../../src/app/AnalyticsConsent";
-import { analyticsConsentKey, createAnalytics } from "../../src/app/analytics";
-import { updatePageMetadata } from "../../src/i18n/metadata";
-import { LanguageProvider } from "../../src/i18n/LanguageProvider";
-import { LanguageSelector } from "../../src/i18n/LanguageSelector";
-import { languages, type Language } from "../../src/i18n/translate";
-import { privacyPath } from "../../src/i18n/routes";
+import { createTestRoot } from "../helpers/dom.ts";
+import { AnalyticsConsent } from "../../src/ui/shell/AnalyticsConsent.tsx";
+import {
+  analyticsConsentKey,
+  createAnalytics,
+} from "../../src/infrastructure/analytics/analytics.ts";
+import { updatePageMetadata } from "../../src/i18n/metadata.ts";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider.tsx";
+import { LanguageSelector } from "../../src/i18n/LanguageSelector.tsx";
+import { languages, type Language } from "../../src/i18n/translate.ts";
+import { privacyPath } from "../../src/i18n/routes.ts";
 
 const measurementId = "G-TEST123456";
 function commands() {

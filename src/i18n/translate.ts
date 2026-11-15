@@ -1,8 +1,8 @@
-import en from "./locales/en";
-import es from "./locales/es";
-import de from "./locales/de";
-import it from "./locales/it";
-import fr from "./locales/fr";
+import en from "../content/locales/en.ts";
+import es from "../content/locales/es.ts";
+import de from "../content/locales/de.ts";
+import it from "../content/locales/it.ts";
+import fr from "../content/locales/fr.ts";
 
 export const languages = {
   en: "English",
@@ -18,25 +18,28 @@ export type Translator = ((
   ...values: (string | number)[]
 ) => string) & { language: Language };
 export const catalogs = { es, de, it, fr };
-
-function interpolate(source: string, values: (string | number)[]) {
-  return source.replace(/\{(\d+)\}/g, (placeholder, index: string) =>
-    String(values[Number(index)] ?? placeholder),
-  );
+const messages = { en, ...catalogs };
+function format(source: string, values: (string | number)[]) {
+  return source
+    .split(/(\{\d+\})/)
+    .map((part) =>
+      /^\{\d+\}$/.test(part)
+        ? String(values[Number(part.slice(1, -1))] ?? part)
+        : part,
+    )
+    .join("");
 }
-
-export const english: Translator = Object.assign(
-  (key: MessageKey, ...values: (string | number)[]) =>
-    interpolate(en[key], values),
-  { language: "en" as Language },
-);
-
+function createTranslator(language: Language): Translator {
+  const translate = (key: MessageKey, ...values: (string | number)[]) =>
+    format(messages[language][key] ?? en[key], values);
+  return Object.assign(translate, { language });
+}
+const translators = new Map<Language, Translator>();
 export function translator(language: Language): Translator {
-  if (language === "en") return english;
-  const catalog = catalogs[language];
-  return Object.assign(
-    (key: MessageKey, ...values: (string | number)[]) =>
-      interpolate(catalog[key] ?? en[key], values),
-    { language },
-  );
+  const cached = translators.get(language);
+  if (cached) return cached;
+  const next = createTranslator(language);
+  translators.set(language, next);
+  return next;
 }
+export const english = translator("en");

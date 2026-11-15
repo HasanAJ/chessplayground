@@ -2,8 +2,8 @@ import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement, useRef } from "react";
 import { Chess, type Move, type Square } from "chess.js";
-import { useComputerMoveAnimation } from "../../src/features/board/useComputerMoveAnimation";
-import { createTestRoot } from "../helpers/dom";
+import { useComputerMoveAnimation } from "../../src/ui/board/useComputerMoveAnimation.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 async function mount(t: TestContext, reducedMotion = false) {
   const { dom, root } = createTestRoot(t);

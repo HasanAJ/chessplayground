@@ -516,8 +516,8 @@
   right: -30px;
   width: 340px;
   height: 340px;
-  background: repeating-conic-gradient(#bca4dc1a 0% 25%, transparent 0% 50%)
-    0 / 144px 144px;
+  background: repeating-conic-gradient(#bca4dc1a 0% 25%, transparent 0% 50%) 0 /
+    144px 144px;
   mask-image: linear-gradient(to left, #000, transparent);
   transform: rotate(9deg);
   pointer-events: none;

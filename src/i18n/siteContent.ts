@@ -1,4 +1,4 @@
-import type { Language } from "./translate";
+import type { Language } from "./translate.ts";
 
 type SiteContent = {
   title: string;

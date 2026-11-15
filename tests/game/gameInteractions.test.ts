@@ -2,16 +2,19 @@ import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement, type DragEvent } from "react";
 import type { Square } from "chess.js";
-import { checkedGame, START_FEN } from "../../src/chess/position";
-import { useGameController } from "../../src/features/game/useGameController";
-import { useBoardInteractions } from "../../src/features/board/useBoardInteractions";
-import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { useComputerSettings } from "../../src/features/computer/useComputerSettings";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { Continuation } from "../../src/features/coach/MoveDetails";
-import { SaveNotice } from "../../src/features/game/SaveNotice";
-import { RECOVERY_PREFIX, SESSION_KEY } from "../../src/features/game/storage";
-import { createTestRoot } from "../helpers/dom";
+import { checkedGame, START_FEN } from "../../src/domain/chess/position.ts";
+import { useGameController } from "../../src/ui/game/useGameController.ts";
+import { useBoardInteractions } from "../../src/ui/board/useBoardInteractions.ts";
+import { useBoardPreview } from "../../src/ui/board/useBoardPreview.ts";
+import { useComputerSettings } from "../../src/ui/computer/useComputerSettings.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { Continuation } from "../../src/ui/coach/MoveDetails.tsx";
+import { SaveNotice } from "../../src/ui/game/SaveNotice.tsx";
+import {
+  RECOVERY_PREFIX,
+  SESSION_KEY,
+} from "../../src/infrastructure/persistence/session.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 async function mount(
   t: TestContext,
@@ -75,7 +78,10 @@ test("manual legal drags retain study identity, history, counters and autosave",
   await act(() => read().game.playMove("e2", "e4"));
   await act(() => read().board.dropPiece(drop("e7"), "e5"));
   assert.equal(read().game.study.id, id);
-  assert.deepEqual(read().game.history.map((move) => move.san), ["e4", "e5"]);
+  assert.deepEqual(
+    read().game.history.map((move) => move.san),
+    ["e4", "e5"],
+  );
   assert.equal(read().game.fen.split(" ")[5], "2");
   assert.equal(
     JSON.parse(dom.window.localStorage.getItem(SESSION_KEY)!).nodes.length,
@@ -99,7 +105,10 @@ test("legal drags use chess rules for castling, en passant and promotion", async
       await act(() => read().game.playMove(from, to, "n"));
     }
     assert.equal(read().game.study.id, id);
-    assert.deepEqual(read().game.history.map((move) => move.san), [san]);
+    assert.deepEqual(
+      read().game.history.map((move) => move.san),
+      [san],
+    );
   }
 });
 
@@ -133,7 +142,10 @@ test("kept previews clear when playing a move or changing the position", async (
   await act(() => read().preview.inspectMove(candidate, 2, "click"));
   await act(() => read().game.playMove("e2", "e4"));
   assert.equal(read().preview.boardPreview, false);
-  assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
+  assert.deepEqual(
+    read().game.history.map((move) => move.san),
+    ["e4"],
+  );
   await act(() => read().preview.inspectMove(candidate, 1, "click"));
   await act(() => read().game.newGame());
   assert.equal(read().preview.boardPreview, false);
@@ -214,7 +226,10 @@ test("quota failures keep recovery paused and expose a complete save warning", a
 test("ordinary autosave failures keep play usable and show a live save warning", async (t) => {
   const { read, dom } = await mount(t, {}, true);
   await act(() => read().game.playMove("e2", "e4"));
-  assert.deepEqual(read().game.history.map((move) => move.san), ["e4"]);
+  assert.deepEqual(
+    read().game.history.map((move) => move.san),
+    ["e4"],
+  );
   const notice = dom.window.document.querySelector(".save-notice")!;
   assert.equal(notice.getAttribute("role"), "status");
   assert.match(
@@ -227,14 +242,24 @@ test("ordinary autosave failures keep play usable and show a live save warning",
 test("repetition outcomes follow the displayed history and a continued branch", async (t) => {
   const { read } = await mount(t);
   for (const [from, to] of [
-    ["g1", "f3"], ["g8", "f6"], ["f3", "g1"], ["f6", "g8"],
-    ["g1", "f3"], ["g8", "f6"], ["f3", "g1"], ["f6", "g8"],
+    ["g1", "f3"],
+    ["g8", "f6"],
+    ["f3", "g1"],
+    ["f6", "g8"],
+    ["g1", "f3"],
+    ["g8", "f6"],
+    ["f3", "g1"],
+    ["f6", "g8"],
   ] as const)
     await act(() => read().game.playMove(from, to));
   assert.match(read().game.terminal!, /repetition/i);
   const finished = read().game.study;
   await act(() => read().game.playMove("e2", "e4"));
-  assert.equal(read().game.study, finished, "terminal games reject further moves");
+  assert.equal(
+    read().game.study,
+    finished,
+    "terminal games reject further moves",
+  );
   await act(() => read().game.showHistory(4));
   assert.equal(read().game.analysisTerminal, null);
   await act(() => read().game.playMove("e2", "e4"));
@@ -242,5 +267,8 @@ test("repetition outcomes follow the displayed history and a continued branch", 
   assert.equal(read().game.study.id, finished.id);
   assert.equal(read().game.study.mainTipId, finished.tipId);
   assert.equal(read().game.study.nodes.length, 9);
-  assert.deepEqual(read().game.history.map((move) => move.san), ["Nf3", "Nf6", "Ng1", "Ng8", "e4"]);
+  assert.deepEqual(
+    read().game.history.map((move) => move.san),
+    ["Nf3", "Nf6", "Ng1", "Ng8", "e4"],
+  );
 });

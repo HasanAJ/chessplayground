@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { Chess } from "chess.js";
 import { act, createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { moveDescription } from "../../src/chess/moves";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
-import { useBoardPreview } from "../../src/features/board/useBoardPreview";
-import { createTestRoot } from "../helpers/dom";
+import { moveDescription } from "../../src/domain/chess/moves.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { BestMoveContent } from "../../src/ui/coach/BestMoveContent.tsx";
+import { useBoardPreview } from "../../src/ui/board/useBoardPreview.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 test("the best-move card has one descriptive title followed by the reason", () => {
   const candidate = candidatesFor(new Chess().fen(), [
@@ -24,9 +24,14 @@ test("the best-move card has one descriptive title followed by the reason", () =
     }),
   );
   const text = html.replace(/<[^>]*>/g, "");
-  const heading = html.match(/<h3\b[^>]*>(.*?)<\/h3>/s)![1].replace(/<[^>]*>/g, "");
+  const heading = html
+    .match(/<h3\b[^>]*>(.*?)<\/h3>/s)![1]
+    .replace(/<[^>]*>/g, "");
   assert.equal(heading, "Knight from g1 to f3");
-  assert.match(html, /class="move-strategy-tag"[^>]*>Bring another piece into play<\/span>/);
+  assert.match(
+    html,
+    /class="move-strategy-tag"[^>]*>Bring another piece into play<\/span>/,
+  );
   assert.match(text, /attacks d4 and e5, helping you control the center/);
   assert.deepEqual(candidate.explanationFocus?.arrows, [
     { from: "f3", to: "d4" },
@@ -36,31 +41,11 @@ test("the best-move card has one descriptive title followed by the reason", () =
 
 test("move titles keep only the original piece and from/to squares for special moves", () => {
   const cases = [
-    [
-      "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
-      "O-O",
-      "King from e1 to g1",
-    ],
-    [
-      "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1",
-      "O-O-O",
-      "King from e8 to c8",
-    ],
-    [
-      "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1",
-      "exd6",
-      "Pawn from e5 to d6",
-    ],
-    [
-      "4k3/8/8/8/3Pp3/8/8/4K3 b - d3 0 1",
-      "exd3",
-      "Pawn from e4 to d3",
-    ],
-    [
-      "7k/P7/6K1/8/8/8/8/8 w - - 0 1",
-      "a8=Q#",
-      "Pawn from a7 to a8",
-    ],
+    ["r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "O-O", "King from e1 to g1"],
+    ["r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", "O-O-O", "King from e8 to c8"],
+    ["4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "exd6", "Pawn from e5 to d6"],
+    ["4k3/8/8/8/3Pp3/8/8/4K3 b - d3 0 1", "exd3", "Pawn from e4 to d3"],
+    ["7k/P7/6K1/8/8/8/8/8 w - - 0 1", "a8=Q#", "Pawn from a7 to a8"],
     ["7k/P7/8/8/8/8/8/4K3 w - - 0 1", "a8=N", "Pawn from a7 to a8"],
     ["8/k5q1/8/8/8/8/6Q1/7K b - - 0 1", "Qxg2+", "Queen from g7 to g2"],
   ] as const;
@@ -134,11 +119,21 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
   assert.equal(link.getAttribute("aria-expanded"), "true");
   await act(() => preview.inspectMove(candidate, 2, "click"));
   await act(() =>
-    link.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })),
+    link.dispatchEvent(
+      new dom.window.MouseEvent("mouseover", { bubbles: true }),
+    ),
   );
-  assert.equal(preview.inspection?.ply, 2, "hovering Close must preserve the selected step");
+  assert.equal(
+    preview.inspection?.ply,
+    2,
+    "hovering Close must preserve the selected step",
+  );
   await act(() => link.focus());
-  assert.equal(preview.inspection?.ply, 2, "focusing Close must preserve the selected step");
+  assert.equal(
+    preview.inspection?.ply,
+    2,
+    "focusing Close must preserve the selected step",
+  );
   await act(() =>
     dom.window.document.dispatchEvent(
       new dom.window.KeyboardEvent("keydown", { key: "Escape" }),
@@ -146,7 +141,11 @@ test("explanation previews pin the right board, survive blur, and clear on Escap
   );
   assert.equal(preview.inspection, null);
   await act(() => link.click());
-  assert.equal(preview.inspection, null, "closing exploration clears its preview");
+  assert.equal(
+    preview.inspection,
+    null,
+    "closing exploration clears its preview",
+  );
   await act(() => link.click());
   assert.equal(preview.pinned, true);
   key = "different-position";

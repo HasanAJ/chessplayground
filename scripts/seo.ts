@@ -1,20 +1,23 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { Plugin } from "vite";
-import { StaticPage } from "./StaticPage";
+import { StaticPage } from "./StaticPage.tsx";
 import {
   pageMetadata,
   siteOrigin,
   type PageDetails,
-} from "../src/i18n/metadata";
+} from "../src/i18n/metadata.ts";
 import {
   languageFromPath,
   languagePath,
   privacyPath,
-} from "../src/i18n/routes";
-import { languages, type Language } from "../src/i18n/translate";
-import { openings, type OpeningLesson } from "../src/features/openings/lessons";
-import { openingMetadata } from "../src/features/openings/metadata";
+} from "../src/i18n/routes.ts";
+import { languages, type Language } from "../src/i18n/translate.ts";
+import {
+  openings,
+  type OpeningLesson,
+} from "../src/content/openings/lessons.ts";
+import { openingMetadata } from "../src/i18n/openingMetadata.ts";
 
 type SitePage = {
   language: Language;

@@ -1,11 +1,11 @@
-import { translateNotice, type Diagnostic } from "../../src/i18n/notices";
-import { english } from "../../src/i18n/translate";
+import { translateNotice, type Diagnostic } from "../../src/i18n/notices.ts";
+import { english } from "../../src/i18n/translate.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Chess } from "chess.js";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { START_FEN } from "../../src/chess/position";
-import { type EngineLine } from "../../src/engine/uci";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { START_FEN } from "../../src/domain/chess/position.ts";
+import { type EngineLine } from "../../src/domain/analysis/lines.ts";
 
 class FakeWorker {
   commands: string[] = [];
@@ -53,7 +53,8 @@ function observer() {
       result.bestMoves.push(bestMove);
       result.bestLines.push(bestLine);
     },
-    onError: (message: Diagnostic) => result.errors.push(translateNotice(message, english)),
+    onError: (message: Diagnostic) =>
+      result.errors.push(translateNotice(message, english)),
   };
 }
 
@@ -151,7 +152,10 @@ test("time-limited analysis omits the depth ceiling and allows its full search b
   worker.complete(24);
   assert.equal(observed.result.completed[0][0].depth, 24);
   const stalled = observer();
-  engine.analyze(START_FEN, stalled, undefined, { depth: null, movetime: 15000 });
+  engine.analyze(START_FEN, stalled, undefined, {
+    depth: null,
+    movetime: 15000,
+  });
   t.mock.timers.tick(17001);
   assert.match(stalled.result.errors[0], /too long to respond/);
 });
@@ -266,9 +270,15 @@ test("an incomplete iteration returns the final best line separately from compar
   );
   assert.equal(observed.result.bestMoves[0], "g1f3");
   assert.deepEqual(observed.result.bestLines[0], {
-    rank: 1, depth: 10, cp: 30, pv: ["g1f3"],
+    rank: 1,
+    depth: 10,
+    cp: 30,
+    pv: ["g1f3"],
   });
-  assert.equal(worker.commands.filter((command) => command.startsWith("go ")).length, 1);
+  assert.equal(
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    1,
+  );
 });
 
 test("the final best line can be outside the completed candidates and excludes score bounds", (t) => {
@@ -285,9 +295,15 @@ test("the final best line can be outside the completed candidates and excludes s
   worker.emit("info depth 12 multipv 1 score cp 50 lowerbound pv c2c4 e7e5");
   worker.emit("bestmove c2c4 ponder g8f6");
   assert.deepEqual(observed.result.bestLines[0], {
-    rank: 1, depth: 11, cp: 40, pv: ["c2c4", "g8f6"],
+    rank: 1,
+    depth: 11,
+    cp: 40,
+    pv: ["c2c4", "g8f6"],
   });
-  assert.deepEqual(observed.result.completed[0].map((line) => line.depth), [9, 9, 9]);
+  assert.deepEqual(
+    observed.result.completed[0].map((line) => line.depth),
+    [9, 9, 9],
+  );
   assert.equal(observed.result.bestMoves[0], "c2c4");
 });
 
@@ -316,14 +332,22 @@ test("out-of-order ranks and older depths preserve comparable results and progre
   const moves = ["e2e4", "d2d4", "g1f3"];
   for (const depth of [9, 6, 12]) {
     for (const rank of [3, 1, 2])
-      worker.emit(`info depth ${depth} multipv ${rank} score cp 20 pv ${moves[rank - 1]}`);
+      worker.emit(
+        `info depth ${depth} multipv ${rank} score cp 20 pv ${moves[rank - 1]}`,
+      );
   }
   worker.emit("info depth 13 multipv 4 score cp 30 pv c2c4");
   worker.emit("bestmove e2e4");
 
   assert.deepEqual(observed.result.progress, [9, 12]);
-  assert.deepEqual(observed.result.completed[0].map((line) => line.pv[0]), moves);
-  assert.deepEqual(observed.result.completed[0].map((line) => line.depth), [12, 12, 12]);
+  assert.deepEqual(
+    observed.result.completed[0].map((line) => line.pv[0]),
+    moves,
+  );
+  assert.deepEqual(
+    observed.result.completed[0].map((line) => line.depth),
+    [12, 12, 12],
+  );
   assert.equal(observed.result.bestLines[0]?.depth, 12);
 });
 
@@ -422,7 +446,8 @@ test("disposal cancels active and queued work, including late worker events and 
   t.mock.timers.enable({ apis: ["setTimeout"] });
   const worker = new FakeWorker();
   const engine = new AnalysisEngine(() => worker as unknown as Worker);
-  const active = observer(), queued = observer();
+  const active = observer(),
+    queued = observer();
   engine.analyze(START_FEN, active);
   worker.ready();
   engine.analyze(START_FEN, queued);
@@ -438,4 +463,44 @@ test("disposal cancels active and queued work, including late worker events and 
     assert.deepEqual(result.progress, []);
     assert.deepEqual(result.errors, []);
   }
+});
+
+test("a stopped long search has a bounded drain time and cannot strand its replacement", (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const worker = new FakeWorker();
+  const engine = new AnalysisEngine(() => worker as unknown as Worker);
+  t.after(() => engine.dispose());
+  engine.analyze(START_FEN, observer(), undefined, {
+    depth: null,
+    movetime: 60000,
+  });
+  worker.ready();
+  const next = observer();
+  engine.analyze(START_FEN, next);
+  t.mock.timers.tick(2001);
+  assert.equal(worker.terminated, true);
+  assert.equal(next.result.errors.length, 1);
+  assert.equal(next.result.completed.length, 0);
+});
+
+test("a worker transport failure reports an error and a fresh request can recover", (t) => {
+  const first = new FakeWorker();
+  const replacement = new FakeWorker();
+  let count = 0;
+  const engine = new AnalysisEngine(
+    () => (++count === 1 ? first : replacement) as unknown as Worker,
+  );
+  t.after(() => engine.dispose());
+  const failed = observer();
+  first.postMessage = () => {
+    throw new Error("Worker closed");
+  };
+  engine.analyze(START_FEN, failed);
+  assert.equal(failed.result.errors.length, 1);
+  const recovered = observer();
+  engine.analyze(START_FEN, recovered);
+  replacement.ready();
+  replacement.complete();
+  assert.equal(recovered.result.completed.length, 1);
+  assert.equal(count, 2);
 });

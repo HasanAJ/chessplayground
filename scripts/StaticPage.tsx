@@ -1,15 +1,15 @@
 import { BookOpen, Globe, Swords } from "lucide-react";
-import { gameMoveLabel } from "../src/chess/position";
-import { SiteIntro } from "../src/app/SiteIntro";
-import { languagePath, openingPath } from "../src/i18n/routes";
-import { siteContent } from "../src/i18n/siteContent";
-import { languages, translator, type Language } from "../src/i18n/translate";
-import { motifs } from "../src/features/openings/content";
+import { gameMoveLabel } from "../src/domain/chess/position.ts";
+import { SiteIntro } from "../src/ui/shell/SiteIntro.tsx";
+import { languagePath, openingPath } from "../src/i18n/routes.ts";
+import { siteContent } from "../src/i18n/siteContent.ts";
+import { languages, translator, type Language } from "../src/i18n/translate.ts";
+import { motifs } from "../src/content/openings/content.ts";
 import {
-  lessonPositions,
   openings,
   type OpeningLesson,
-} from "../src/features/openings/lessons";
+} from "../src/content/openings/lessons.ts";
+import { lessonPositions } from "../src/domain/openings/lesson.ts";
 
 export function StaticPage({
   language,
@@ -95,7 +95,8 @@ export function StaticPage({
         ) : openingPage ? (
           <>
             <h1>
-              {t("opening.heading.start")} <span>{t("opening.heading.end")}</span>
+              {t("opening.heading.start")}{" "}
+              <span>{t("opening.heading.end")}</span>
             </h1>
             <p className="loading-tagline">{t("opening.subtitle")}</p>
             <ol className="loading-openings">
@@ -160,7 +161,9 @@ export function StaticPage({
         <SiteIntro language={language} pathname={pathname} />
         <noscript>
           <style>{`.loading-workspace { display: none; }`}</style>
-          <p className="loading-javascript">{siteContent[language].javascript}</p>
+          <p className="loading-javascript">
+            {siteContent[language].javascript}
+          </p>
         </noscript>
       </main>
     </div>

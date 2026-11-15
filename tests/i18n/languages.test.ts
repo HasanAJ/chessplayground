@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
-import en from "../../src/i18n/locales/en";
+import en from "../../src/content/locales/en.ts";
 import {
   catalogs,
   english,
@@ -10,21 +10,30 @@ import {
   translator,
   type Translator,
   type MessageKey,
-} from "../../src/i18n/translate";
-import { LanguageProvider } from "../../src/i18n/LanguageProvider";
-import { languageFromPath, languagePath } from "../../src/i18n/routes";
-import { siteContent } from "../../src/i18n/siteContent";
-import { LanguageSelector } from "../../src/i18n/LanguageSelector";
-import { notice, NoticeError, noticeFromError, translateNotice } from "../../src/i18n/notices";
-import { checkedGame, arrangementIssue, pieceLimitError } from "../../src/chess/position";
-import { moveDescription } from "../../src/chess/moves";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
-import { localizeReview, reviewMove } from "../../src/features/coach/grading";
-import { BestMoveContent } from "../../src/features/coach/BestMoveContent";
-import { useGameController } from "../../src/features/game/useGameController";
-import { useRecommendations } from "../../src/features/coach/useRecommendations";
-import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
-import { createTestRoot } from "../helpers/dom";
+} from "../../src/i18n/translate.ts";
+import { LanguageProvider } from "../../src/i18n/LanguageProvider.tsx";
+import { languageFromPath, languagePath } from "../../src/i18n/routes.ts";
+import { siteContent } from "../../src/i18n/siteContent.ts";
+import { LanguageSelector } from "../../src/i18n/LanguageSelector.tsx";
+import {
+  notice,
+  NoticeError,
+  noticeFromError,
+  translateNotice,
+} from "../../src/i18n/notices.ts";
+import {
+  checkedGame,
+  arrangementIssue,
+  pieceLimitError,
+} from "../../src/domain/chess/position.ts";
+import { moveDescription } from "../../src/domain/chess/moves.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { localizeReview, reviewMove } from "../../src/domain/coach/grading.ts";
+import { BestMoveContent } from "../../src/ui/coach/BestMoveContent.tsx";
+import { useGameController } from "../../src/ui/game/useGameController.ts";
+import { useRecommendations } from "../../src/ui/coach/useRecommendations.ts";
+import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
+import { createTestRoot } from "../helpers/dom.ts";
 
 const placeholders = (message: string) =>
   [...message.matchAll(/\{\d+\}/g)].map((match) => match[0]).sort();
@@ -161,11 +170,20 @@ test("special moves and cached reviews translate without changing notation, eval
 test("retained validation notices follow the selected language and preserve chess fields", () => {
   const t = translator("es");
   assert.equal(
-    translateNotice(arrangementIssue({ e1: { color: "w", type: "k" } }, "w", ""), t),
+    translateNotice(
+      arrangementIssue({ e1: { color: "w", type: "k" } }, "w", ""),
+      t,
+    ),
     "Añade el rey de Negras para jugar o calcular.",
   );
   assert.equal(
-    translateNotice(notice("position.error.invalidFen", notice("position.error.missingKing", notice("chess.side.white"))), t),
+    translateNotice(
+      notice(
+        "position.error.invalidFen",
+        notice("position.error.missingKing", notice("chess.side.white")),
+      ),
+      t,
+    ),
     "FEN no válido: Falta el rey de Blancas.",
   );
   assert.match(
@@ -186,29 +204,64 @@ test("retained validation notices follow the selected language and preserve ches
 
 test("structured diagnostics translate by key while unknown raw errors stay readable", () => {
   const keys: MessageKey[] = [
-    "engine.error.load", "coach.review.error.reply", "game.save.error.unavailable",
-    "game.save.error.restoredPosition", "computer.error.saveDifficulty", "position.notice.loaded",
+    "engine.error.load",
+    "coach.review.error.reply",
+    "game.save.error.unavailable",
+    "game.save.error.restoredPosition",
+    "computer.error.saveDifficulty",
+    "position.notice.loaded",
   ];
   for (const language of Object.keys(languages) as (keyof typeof languages)[]) {
     const t = translator(language);
-    for (const key of keys) assert.equal(translateNotice(notice(key), t), t(key));
+    for (const key of keys)
+      assert.equal(translateNotice(notice(key), t), t(key));
     assert.equal(translateNotice("engine.error.load", t), "engine.error.load");
   }
-  const error = new NoticeError(notice("engine.error.load"), "Different diagnostic wording");
-  assert.equal(translateNotice(noticeFromError(error, notice("engine.error.start")), translator("fr")), translator("fr")("engine.error.load"));
-  assert.equal(translateNotice(noticeFromError(new Error("Unknown failure"), notice("engine.error.start")), english), "Unknown failure");
+  const error = new NoticeError(
+    notice("engine.error.load"),
+    "Different diagnostic wording",
+  );
+  assert.equal(
+    translateNotice(
+      noticeFromError(error, notice("engine.error.start")),
+      translator("fr"),
+    ),
+    translator("fr")("engine.error.load"),
+  );
+  assert.equal(
+    translateNotice(
+      noticeFromError(
+        new Error("Unknown failure"),
+        notice("engine.error.start"),
+      ),
+      english,
+    ),
+    "Unknown failure",
+  );
 });
 
 test("chess.js validation is adapted to a retained diagnostic at the FEN boundary", () => {
-  assert.throws(() => checkedGame("8/8/8/8/8/8/8/4k3 w - - 0 1"), (error: unknown) => {
-    assert.ok(error instanceof NoticeError);
-    assert.equal(translateNotice(error.notice, translator("es")), "FEN no válido: Falta el rey de Blancas.");
-    return true;
-  });
-  const tooMany = Object.fromEntries(Array.from({ length: 9 }, (_, i) =>
-    [`${"abcdefgh"[i % 8]}${i < 8 ? 2 : 3}`, { color: "b" as const, type: "p" as const }],
-  ));
-  assert.match(translateNotice(pieceLimitError(tooMany), translator("es")), /Negras.*8/);
+  assert.throws(
+    () => checkedGame("8/8/8/8/8/8/8/4k3 w - - 0 1"),
+    (error: unknown) => {
+      assert.ok(error instanceof NoticeError);
+      assert.equal(
+        translateNotice(error.notice, translator("es")),
+        "FEN no válido: Falta el rey de Blancas.",
+      );
+      return true;
+    },
+  );
+  const tooMany = Object.fromEntries(
+    Array.from({ length: 9 }, (_, i) => [
+      `${"abcdefgh"[i % 8]}${i < 8 ? 2 : 3}`,
+      { color: "b" as const, type: "p" as const },
+    ]),
+  );
+  assert.match(
+    translateNotice(pieceLimitError(tooMany), translator("es")),
+    /Negras.*8/,
+  );
 });
 
 test("switching languages keeps the game and completed recommendations without another engine search", async (t) => {
@@ -256,10 +309,14 @@ test("switching languages keeps the game and completed recommendations without a
   await act(() => current.game.playMove("e2", "e4"));
   await act(() => current.recommendations.calculate());
   await act(() =>
-    callbacks.onComplete([
-      { rank: 1, depth: 12, cp: 25, pv: ["c7c5", "g1f3"] },
-      { rank: 2, depth: 12, cp: 24, pv: ["e7e5", "g1f3"] },
-    ], "e7e5", { rank: 1, depth: 13, cp: 30, pv: ["e7e5", "g1f3"] }),
+    callbacks.onComplete(
+      [
+        { rank: 1, depth: 12, cp: 25, pv: ["c7c5", "g1f3"] },
+        { rank: 2, depth: 12, cp: 24, pv: ["e7e5", "g1f3"] },
+      ],
+      "e7e5",
+      { rank: 1, depth: 13, cp: 30, pv: ["e7e5", "g1f3"] },
+    ),
   );
   assert.equal(searches, 1);
   const { study, analysisKey, fen } = current.game;
@@ -283,12 +340,21 @@ test("switching languages keeps the game and completed recommendations without a
     assert.equal(current.game.study, study);
     assert.equal(current.game.analysisKey, analysisKey);
     assert.equal(current.game.fen, fen);
-    assert.deepEqual(current.game.history.map((move) => move.san), ["e4"]);
+    assert.deepEqual(
+      current.game.history.map((move) => move.san),
+      ["e4"],
+    );
     assert.equal(current.recommendations.thinking, false);
     assert.equal(current.recommendations.best?.move.san, "e5");
     assert.equal(current.recommendations.best?.depth, 13);
-    assert.equal(dom.window.document.querySelector(".move-strategy-tag")!.textContent, current.recommendations.best?.title);
-    assert.deepEqual(current.recommendations.candidates.map((candidate) => candidate.move.san), ["e5", "c5"]);
+    assert.equal(
+      dom.window.document.querySelector(".move-strategy-tag")!.textContent,
+      current.recommendations.best?.title,
+    );
+    assert.deepEqual(
+      current.recommendations.candidates.map((candidate) => candidate.move.san),
+      ["e5", "c5"],
+    );
     assert.equal(searches, 1);
     assert.match(
       dom.window.document.querySelector(".best-move-heading")!.textContent!,

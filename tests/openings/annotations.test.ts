@@ -3,14 +3,14 @@ import assert from "node:assert/strict";
 import {
   annotations,
   teachingNote,
-} from "../../src/features/openings/annotations";
+} from "../../src/content/openings/annotations.ts";
+import { openings } from "../../src/content/openings/lessons.ts";
 import {
-  openings,
   lessonPositions,
   setupLength,
-} from "../../src/features/openings/lessons";
-import { motifs } from "../../src/features/openings/content";
-import { languages } from "../../src/i18n/translate";
+} from "../../src/domain/openings/lesson.ts";
+import { motifs } from "../../src/content/openings/content.ts";
+import { languages } from "../../src/i18n/translate.ts";
 
 const squares = (copy: string) =>
   [...new Set(copy.match(/[a-h][1-8]/g))].sort();

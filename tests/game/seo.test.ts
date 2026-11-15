@@ -3,12 +3,20 @@ import assert from "node:assert/strict";
 import { build } from "vite";
 import react from "@vitejs/plugin-react";
 import { JSDOM } from "jsdom";
-import { seoPlugin, siteMetadata, sitePages } from "../../scripts/seo";
-import { languages, translator, type Language } from "../../src/i18n/translate";
-import { languagePath, openingPath, privacyPath } from "../../src/i18n/routes";
-import { siteContent } from "../../src/i18n/siteContent";
-import { openings } from "../../src/features/openings/lessons";
-import { motifs } from "../../src/features/openings/content";
+import { seoPlugin, siteMetadata, sitePages } from "../../scripts/seo.ts";
+import {
+  languages,
+  translator,
+  type Language,
+} from "../../src/i18n/translate.ts";
+import {
+  languagePath,
+  openingPath,
+  privacyPath,
+} from "../../src/i18n/routes.ts";
+import { siteContent } from "../../src/i18n/siteContent.ts";
+import { openings } from "../../src/content/openings/lessons.ts";
+import { motifs } from "../../src/content/openings/content.ts";
 
 test("canonical, social image, robots and sitemap all use the configured origin", () => {
   const { tags, robots, sitemap } = siteMetadata("https://tempo.example.org/");

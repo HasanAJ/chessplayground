@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { candidatesFor } from "../../src/features/coach/candidatePresentation";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
 
 const DEMO_FEN =
   "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4";
@@ -47,7 +47,10 @@ test("capturing with the checking piece combines both actions without repeating 
     const candidate = candidatesFor(fen, [
       { rank: 1, depth: 12, cp: 0, pv: [uci] },
     ])[0];
-    assert.equal(candidate.explanation, `Your queen takes their queen on ${square} and gives check.`);
+    assert.equal(
+      candidate.explanation,
+      `Your queen takes their queen on ${square} and gives check.`,
+    );
   }
 });
 
@@ -59,12 +62,18 @@ test("capture explanations use concrete replies instead of generic safety advice
     const candidate = candidatesFor(fen, [
       { rank: 1, depth: 12, cp: 0, pv: [uci] },
     ])[0];
-    assert.equal(candidate.explanation, `Your knight takes their rook on ${square}.`);
+    assert.equal(
+      candidate.explanation,
+      `Your knight takes their rook on ${square}.`,
+    );
   }
   const attacked = candidatesFor("7k/r1r5/8/1N6/8/8/8/7K w - - 0 1", [
     { rank: 1, depth: 12, cp: 0, pv: ["b5a7", "c7a7"] },
   ])[0];
-  assert.equal(attacked.explanation, "Your knight takes their rook on a7. Their rook can take your knight in return.");
+  assert.equal(
+    attacked.explanation,
+    "Your knight takes their rook on a7. Their rook can take your knight in return.",
+  );
 });
 
 test("discovered checks identify the checking rook rather than the moved knight", () => {
@@ -113,7 +122,9 @@ test("quiet moves name the destination without inventing a strategic reason", ()
     ["4k3/8/8/8/8/8/8/R3K3 w - - 0 1", "e1d1", "d1"],
     ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "a2a3", "a3"],
   ]) {
-    const candidate = candidatesFor(fen, [{ rank: 1, depth: 15, cp: 0, pv: [uci] }])[0];
+    const candidate = candidatesFor(fen, [
+      { rank: 1, depth: 15, cp: 0, pv: [uci] },
+    ])[0];
     assert.ok(candidate.title.includes(destination));
     assert.equal(candidate.explanation, "");
   }

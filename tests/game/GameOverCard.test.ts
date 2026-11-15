@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Chess, type Color } from "chess.js";
-import { ending } from "../../src/chess/position";
-import { GameOverCard } from "../../src/features/game/GameOverCard";
+import { ending } from "../../src/domain/chess/position.ts";
+import { GameOverCard } from "../../src/ui/game/GameOverCard.tsx";
 
 function renderResult(fen: string, humanSide?: Color, animate = true) {
   const game = new Chess(fen);
@@ -66,4 +66,36 @@ test("loaded or reviewed results can keep the illustration without replaying the
   const result = renderResult(whiteMate, undefined, false);
   assert.match(result, /has-celebration/);
   assert.doesNotMatch(result, /animate-celebration/);
+});
+
+test("a history-only repetition result stays localized on a position snapshot", async (t) => {
+  const { act } = await import("react");
+  const { createTestRoot } = await import("../helpers/dom.ts");
+  const { LanguageProvider } =
+    await import("../../src/i18n/LanguageProvider.tsx");
+  const { translator } = await import("../../src/i18n/translate.ts");
+  const { dom, root } = createTestRoot(t);
+  const history = new Chess();
+  for (const move of ["Nf3", "Nf6", "Ng1", "Ng8", "Nf3", "Nf6", "Ng1", "Ng8"])
+    history.move(move);
+  const reason = ending(history)!;
+  const position = new Chess(history.fen());
+  assert.equal(position.isThreefoldRepetition(), false);
+  dom.window.history.replaceState(null, "", "/de/");
+  await act(() =>
+    root.render(
+      createElement(LanguageProvider, {
+        children: createElement(GameOverCard, {
+          game: position,
+          reason,
+          animate: false,
+          onPlayAgain() {},
+        }),
+      }),
+    ),
+  );
+  assert.equal(
+    dom.window.document.querySelector(".result-message")?.textContent,
+    translator("de")("game.ending.repetition"),
+  );
 });

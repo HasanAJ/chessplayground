@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { checkedGame, ending } from "../../src/chess/position";
+import { checkedGame, ending } from "../../src/domain/chess/position.ts";
 
 const CASTLING_FEN = "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 37 42";
 

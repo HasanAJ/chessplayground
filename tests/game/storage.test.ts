@@ -1,24 +1,24 @@
-import { translateNotice } from "../../src/i18n/notices";
-import { english } from "../../src/i18n/translate";
+import { translateNotice } from "../../src/i18n/notices.ts";
+import { english } from "../../src/i18n/translate.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { START_FEN } from "../../src/chess/position";
+import { START_FEN } from "../../src/domain/chess/position.ts";
 import {
   addStudyMove,
   createStudy,
   replayStudy,
   ROOT,
-} from "../../src/chess/study";
+} from "../../src/domain/chess/study.ts";
 import {
   preserveRecovery,
   readSavedSession,
   RECOVERY_PREFIX,
   SESSION_KEY,
-} from "../../src/features/game/storage";
+} from "../../src/infrastructure/persistence/session.ts";
 import {
   COMPUTER_DIFFICULTY_KEY,
   readDifficulty,
-} from "../../src/features/computer/preferences";
+} from "../../src/infrastructure/persistence/preferences.ts";
 
 const storage = (values: Record<string, string>) => ({
   getItem: (key: string) => values[key] ?? null,
@@ -33,14 +33,19 @@ test("saved sessions preserve their active history and take precedence over the 
     }),
   );
   assert.equal(restored.id, study.id);
-  assert.deepEqual(replayStudy(restored).history.map((move) => move.san), ["e4"]);
+  assert.deepEqual(
+    replayStudy(restored).history.map((move) => move.san),
+    ["e4"],
+  );
   assert.equal(recovery, null);
 });
 
 test("a legacy position opens as a new playable game when no session exists", () => {
   const fen = "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 37 42";
   assert.equal(
-    replayStudy(readSavedSession(storage({ "tempo-position": fen })).study).game.fen(),
+    replayStudy(
+      readSavedSession(storage({ "tempo-position": fen })).study,
+    ).game.fen(),
     fen,
   );
 });
@@ -65,7 +70,10 @@ test("unavailable browser storage still permits a fresh game and computer play",
   };
   const loaded = readSavedSession(blocked);
   assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
-  assert.match(translateNotice(loaded.storageError, english), /could not be read/);
+  assert.match(
+    translateNotice(loaded.storageError, english),
+    /could not be read/,
+  );
   assert.equal(readDifficulty(blocked), "medium");
 });
 
@@ -88,8 +96,14 @@ test("a corrupt session preserves its exact data and recovers a valid fallback F
   const loaded = readSavedSession(storage(values));
   assert.equal(replayStudy(loaded.study).game.fen(), fen);
   assert.deepEqual(loaded.recovery?.data, { [SESSION_KEY]: "{broken" });
-  assert.match(translateNotice(loaded.recovery!.message, english), /without its move history/);
-  assert.match(translateNotice(loaded.recovery!.message, english), /Autosave is paused/);
+  assert.match(
+    translateNotice(loaded.recovery!.message, english),
+    /without its move history/,
+  );
+  assert.match(
+    translateNotice(loaded.recovery!.message, english),
+    /Autosave is paused/,
+  );
   assert.deepEqual(values, { [SESSION_KEY]: "{broken", "tempo-position": fen });
 });
 
