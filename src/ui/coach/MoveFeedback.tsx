@@ -4,6 +4,7 @@ import {
   ChevronDown,
   CircleAlert,
   CircleCheck,
+  CircleDashed,
   LoaderCircle,
 } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
@@ -26,6 +27,7 @@ const grades = {
   "Good move": "coach.grade.good",
   Inaccuracy: "coach.grade.inaccuracy",
   Mistake: "coach.grade.mistake",
+  Miss: "coach.grade.miss",
   Blunder: "coach.grade.blunder",
 } as const;
 type Props = {
@@ -93,7 +95,13 @@ export function MoveFeedback({
   const positive =
     review &&
     ["Best move", "Excellent move", "Good move"].includes(review.label);
-  const Icon = waiting ? LoaderCircle : positive ? CircleCheck : CircleAlert;
+  const Icon = waiting
+    ? LoaderCircle
+    : review?.label === "Miss"
+      ? CircleDashed
+      : positive
+        ? CircleCheck
+        : CircleAlert;
   const title = compactMoveDescription(move, t),
     caption = t(context);
   return (

@@ -4,7 +4,8 @@ import { pieceValues } from "../chess/material.ts";
 import type { Translator } from "../../i18n/translate.ts";
 import { boardFocus, type BoardFocus } from "./boardFocus.ts";
 
-function movedOrigins(move: Move) {
+/** Piece origins keyed by destination, including the rook when castling. */
+export function movedOrigins(move: Move) {
   const origins = new Map<Square, Square>([[move.to, move.from]]);
   if (move.isKingsideCastle() || move.isQueensideCastle()) {
     const side = move.isKingsideCastle();
@@ -55,6 +56,10 @@ function newAttacks(move: Move, board: Chess, origins: Map<Square, Square>) {
     }
   }
   return arrows;
+}
+
+export function newThreatArrows(move: Move) {
+  return newAttacks(move, new Chess(move.after), movedOrigins(move));
 }
 
 export function tacticalThreats(move: Move, t: Translator) {

@@ -40,6 +40,9 @@
 .move-feedback[data-rating="Mistake"] {
   --feedback-color: #ffa459;
 }
+.move-feedback[data-rating="Miss"] {
+  --feedback-color: #9a78ca;
+}
 .move-feedback[data-rating="Blunder"] {
   --feedback-color: #fa412d;
 }

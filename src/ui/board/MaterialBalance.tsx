@@ -32,15 +32,25 @@ export function MaterialBalance({ position }: { position: Position }) {
             title={description}
           >
             {balance.missing[color].map(({ type, count }) => (
-              <span key={type} className="material-piece-stack">
+              <span
+                key={type}
+                className="material-piece-stack"
+                role="img"
+                aria-label={`${pieceLabel({ color, type }, t)} × ${count}`}
+              >
                 {Array.from({ length: count }, (_, index) => (
                   <img
                     key={index}
                     src={pieceImage({ color, type })}
-                    alt={pieceLabel({ color, type }, t)}
+                    alt=""
                     draggable={false}
                   />
                 ))}
+                {count > 1 && (
+                  <span className="material-piece-count" aria-hidden="true">
+                    {count}
+                  </span>
+                )}
               </span>
             ))}
             {balance.difference !== 0 && color === leader && (

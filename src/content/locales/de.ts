@@ -286,6 +286,8 @@ export default {
   "coach.review.consequence.allowsMate": "Dein Gegner kann Matt erzwingen.",
   "coach.review.consequence.missesMate":
     "Dieser Zug verpasst ein erzwungenes Matt.",
+  "coach.review.consequence.missesMaterial":
+    "Dieser Zug verpasst eine gewinnbringende Taktik, die Material gewinnt. Erkunde den besten Zug, um die Idee zu sehen.",
   "coach.review.consequence.worseChances":
     "Dein Gegner bekommt bessere Chancen als nach dem besten Zug.",
   "coach.explanation.pressure.title": "Druck auf {0} aufbauen",
@@ -498,7 +500,6 @@ export default {
   "game.result.drawHeading": "Die Punkte werden geteilt.",
   "game.result.checkmateMessage": "Ein königlicher Abschluss. Noch eine Runde?",
   "game.result.drawMessage": "Gut gespielt. Die nächste Runde wartet.",
-  "game.result.score": "Endstand: Weiß {0}, Schwarz {1}",
   "game.result.playAgain": "Erneut spielen",
   "game.promotion.label": "Umwandlungsfigur wählen",
   "game.promotion.cancel": "Umwandlung abbrechen",
@@ -551,6 +552,7 @@ export default {
   "coach.grade.good": "Guter Zug",
   "coach.grade.inaccuracy": "Ungenauigkeit",
   "coach.grade.mistake": "Fehler",
+  "coach.grade.miss": "Verpasste Chance",
   "coach.grade.blunder": "Grober Fehler",
   "coach.feedback.context.yourLastMove": "Dein letzter Zug",
   "coach.feedback.context.selectedMove": "Gewählter Zug",

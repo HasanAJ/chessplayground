@@ -8,6 +8,7 @@ import { betterMoveReason, lessonFor, type ReviewLesson } from "./lessons.ts";
 import {
   moveQuality,
   outlook,
+  type MissedOpportunity,
   type MoveGrade,
   type ReviewOutcome,
 } from "./moveQuality.ts";
@@ -52,6 +53,7 @@ function reviewText(
   best: Candidate,
   outcome: ReviewOutcome,
   good: boolean,
+  opportunity: MissedOpportunity | undefined,
   chance: number,
   lesson: ReviewLesson | undefined,
   played: Candidate | undefined,
@@ -61,6 +63,16 @@ function reviewText(
   if (outcome.kind === "checkmate")
     return explainMove(new Chess(move.before), new Chess(move.after), move, t)
       .text;
+  if (opportunity) {
+    const text = t(
+      opportunity === "mate"
+        ? "coach.review.consequence.missesMate"
+        : "coach.review.consequence.missesMaterial",
+    );
+    return outcome.kind === "draw"
+      ? `${text} ${t("coach.review.consequence.draw")}`
+      : text;
+  }
   if (outcome.kind === "draw")
     return t(good ? "coach.review.good.draw" : "coach.review.consequence.draw");
   if (best.move.lan === move.lan) return best.explanation;
@@ -113,10 +125,24 @@ export function reviewMove(
 ): MoveReview {
   const isDraw = drawn || new Chess(move.after).isDraw();
   const outcome = outcomeFor(move, isDraw, played, reply, t);
-  const quality = moveQuality(move, best, outcome);
+  const quality = moveQuality(
+    move,
+    best,
+    outcome,
+    played?.continuation ?? [move, ...(reply?.continuation ?? [])],
+  );
   const good = positive.has(quality.label);
-  const lesson =
-    !isDraw && !good ? lessonFor(move, best, reply, played, t) : undefined;
+  const lesson: ReviewLesson | undefined =
+    !isDraw && !good
+      ? quality.opportunity
+        ? {
+            kind: "alternative",
+            candidate: best,
+            ply: 1,
+            focus: best.explanationFocus,
+          }
+        : lessonFor(move, best, reply, played, t)
+      : undefined;
   return {
     move,
     best,
@@ -131,6 +157,7 @@ export function reviewMove(
       best,
       outcome,
       good,
+      quality.opportunity,
       quality.resultingOutlook,
       lesson,
       played,

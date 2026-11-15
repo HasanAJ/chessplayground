@@ -63,6 +63,7 @@
   pointer-events: none;
 }
 .material-balance {
+  container: material / inline-size;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -73,11 +74,9 @@
 }
 .material-pieces {
   display: flex;
-  flex: 1;
-  flex-wrap: wrap;
+  flex: 1 0 auto;
   align-items: center;
-  gap: 3px 5px;
-  min-width: 0;
+  gap: 5px;
   min-height: 22px;
 }
 .material-pieces + .material-pieces {
@@ -91,9 +90,12 @@
   order: -1;
 }
 .material-piece-stack {
+  position: relative;
   display: flex;
+  flex: none;
 }
 .material-piece-stack img {
+  flex-shrink: 0;
   width: 22px;
   height: 22px;
   user-select: none;
@@ -101,16 +103,61 @@
 .material-piece-stack img + img {
   margin-left: -13px;
 }
+.material-piece-count {
+  display: none;
+}
 .material-advantage {
-  display: inline-block;
   flex-shrink: 0;
-  padding: 2px 7px;
-  border-radius: 20px;
-  background: var(--purple-soft);
+  padding-inline: 3px;
   color: var(--purple-dark);
   font-size: var(--text-xs);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Use quantities on narrow boards so the pieces and score stay on one line. */
+@container material (max-width: 490px) {
+  .material-pieces {
+    gap: 2px;
+  }
+  .material-pieces + .material-pieces {
+    padding-left: 8px;
+  }
+  .material-piece-stack {
+    width: 20px;
+    height: 22px;
+  }
+  .material-piece-stack img {
+    width: 18px;
+    object-fit: contain;
+  }
+  .material-piece-stack img + img {
+    display: none;
+  }
+  .material-piece-count {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: block;
+    color: var(--ink);
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+@container material (max-width: 280px) {
+  .material-pieces {
+    gap: 1px;
+  }
+  .material-pieces + .material-pieces {
+    padding-left: 6px;
+  }
+  .material-piece-stack {
+    width: 18px;
+  }
+  .material-piece-stack img {
+    width: 16px;
+  }
 }
 .icon-button {
   display: inline-flex;

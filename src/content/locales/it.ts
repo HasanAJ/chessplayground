@@ -283,6 +283,8 @@ export default {
   "coach.review.consequence.allowsMate":
     "Il tuo avversario può forzare il matto.",
   "coach.review.consequence.missesMate": "Questa mossa manca un matto forzato.",
+  "coach.review.consequence.missesMaterial":
+    "Questa mossa manca una tattica vincente che guadagna materiale. Esplora la mossa migliore per vedere l’idea.",
   "coach.review.consequence.worseChances":
     "Il tuo avversario ottiene più possibilità rispetto alla mossa migliore.",
   "coach.explanation.pressure.title": "Aumenta la pressione su {0}",
@@ -490,7 +492,6 @@ export default {
   "game.result.drawHeading": "Onori condivisi.",
   "game.result.checkmateMessage": "Un finale regale. Un'altra partita?",
   "game.result.drawMessage": "Bella partita. C'è sempre un'altra occasione.",
-  "game.result.score": "Risultato finale: Bianco {0}, Nero {1}",
   "game.result.playAgain": "Gioca ancora",
   "game.promotion.label": "Scegli un pezzo per la promozione",
   "game.promotion.cancel": "Annulla promozione",
@@ -542,6 +543,7 @@ export default {
   "coach.grade.good": "Buona mossa",
   "coach.grade.inaccuracy": "Imprecisione",
   "coach.grade.mistake": "Errore",
+  "coach.grade.miss": "Occasione mancata",
   "coach.grade.blunder": "Grave errore",
   "coach.feedback.context.yourLastMove": "La tua ultima mossa",
   "coach.feedback.context.selectedMove": "Mossa selezionata",

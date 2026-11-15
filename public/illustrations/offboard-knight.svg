@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" fill="none">
+  <defs>
+    <clipPath id="board">
+      <rect width="288" height="288" rx="16" />
+    </clipPath>
+  </defs>
+  <ellipse cx="472" cy="346" rx="74" ry="12" fill="#e9e4f6" />
+  <g transform="matrix(1 -.23 .58 .47 44 310)">
+    <rect width="288" height="288" rx="16" fill="#d5cbea" />
+  </g>
+  <g transform="matrix(1 -.23 .58 .47 44 300)">
+    <g clip-path="url(#board)">
+      <rect width="288" height="288" fill="#fff" />
+      <path
+        d="M0 0h72v72H0zM144 0h72v72h-72zM72 72h72v72H72zM216 72h72v72h-72zM0 144h72v72H0zM144 144h72v72h-72zM72 216h72v72H72zM216 216h72v72h-72z"
+        fill="#e9e4f6"
+      />
+    </g>
+    <path
+      d="M108 180V108h252"
+      stroke="#7560cd"
+      stroke-width="6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-dasharray="2 13"
+    />
+    <circle cx="108" cy="180" r="11" fill="#7560cd" />
+  </g>
+  <g transform="translate(270 56) scale(6)">
+    <path
+      d="M22 47h26l-3-8H29l9-8 7 1-2-15-11-5-3 8-10 14 8 4-5 9z"
+      fill="#7560cd"
+    />
+    <circle cx="37" cy="23" r="2" fill="#fff" />
+  </g>
+</svg>

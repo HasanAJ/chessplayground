@@ -10,8 +10,6 @@ function resultFor(game: Chess, humanSide?: Color) {
     winner,
     celebrate:
       winner !== null && (humanSide === undefined || winner === humanSide),
-    white: winner ? Number(winner === "w").toString() : "½",
-    black: winner ? Number(winner === "b").toString() : "½",
   };
 }
 const confetti = Array.from({ length: 12 }, (_, index) => ({
@@ -107,24 +105,6 @@ export function GameOverCard({
           : t("game.result.drawHeading")}
       </h3>
       <p className="result-message">{message}</p>
-      <div
-        className="result-score"
-        role="group"
-        aria-label={t("game.result.score", result.white, result.black)}
-      >
-        <span className={result.winner === "w" ? "result-winner" : ""}>
-          <i className="side-disc" /> {t("chess.side.white")}
-        </span>
-        <strong>
-          {result.white}
-          <span>–</span>
-          {result.black}
-        </strong>
-        <span className={result.winner === "b" ? "result-winner" : ""}>
-          {t("chess.side.black")}
-          <i className="side-disc black-disc" />
-        </span>
-      </div>
       <button className="primary-button" onClick={onPlayAgain}>
         {t("game.result.playAgain")}
         <ArrowRight size={15} />

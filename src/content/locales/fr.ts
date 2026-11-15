@@ -285,6 +285,8 @@ export default {
     "La partie se termine par la nulle. Le meilleur coup offrait de meilleures chances.",
   "coach.review.consequence.allowsMate": "Votre adversaire peut forcer le mat.",
   "coach.review.consequence.missesMate": "Ce coup manque un mat forcé.",
+  "coach.review.consequence.missesMaterial":
+    "Ce coup manque une tactique gagnante qui permet de gagner du matériel. Explorez le meilleur coup pour voir l’idée.",
   "coach.review.consequence.worseChances":
     "Votre adversaire obtient de meilleures chances qu’après le meilleur coup.",
   "coach.explanation.pressure.title": "Accentuez la pression sur {0}",
@@ -487,7 +489,6 @@ export default {
   "game.result.checkmateMessage": "Une fin royale. Une autre partie ?",
   "game.result.drawMessage":
     "Belle partie. Il y aura toujours une autre manche.",
-  "game.result.score": "Score final : Blancs {0}, Noirs {1}",
   "game.result.playAgain": "Rejouer",
   "game.promotion.label": "Choisissez une pièce de promotion",
   "game.promotion.cancel": "Annuler la promotion",
@@ -539,6 +540,7 @@ export default {
   "coach.grade.good": "Bon coup",
   "coach.grade.inaccuracy": "Imprécision",
   "coach.grade.mistake": "Erreur",
+  "coach.grade.miss": "Occasion manquée",
   "coach.grade.blunder": "Gaffe",
   "coach.feedback.context.yourLastMove": "Votre dernier coup",
   "coach.feedback.context.selectedMove": "Coup sélectionné",

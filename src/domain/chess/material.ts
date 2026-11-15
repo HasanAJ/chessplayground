@@ -1,4 +1,4 @@
-import type { Color, PieceSymbol } from "chess.js";
+import type { Color, Move, PieceSymbol } from "chess.js";
 import type { Position } from "./position.ts";
 
 export const pieceValues = {
@@ -11,6 +11,15 @@ export const pieceValues = {
 } as const satisfies Record<PieceSymbol, number>;
 const inventory = { q: 1, r: 2, b: 2, n: 2, p: 8 } as const;
 type MaterialPiece = keyof typeof inventory;
+
+export function materialGain(moves: readonly Move[], side: Color) {
+  return moves.reduce((balance, move) => {
+    const gain =
+      (move.captured ? pieceValues[move.captured] : 0) +
+      (move.promotion ? pieceValues[move.promotion] - pieceValues.p : 0);
+    return balance + gain * (move.color === side ? 1 : -1);
+  }, 0);
+}
 
 export function materialBalance(position: Position) {
   const counts: Record<Color, Partial<Record<PieceSymbol, number>>> = {

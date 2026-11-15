@@ -343,47 +343,6 @@
   line-height: 1.65;
   margin-top: 8px;
 }
-.result-score {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: min(280px, 100%);
-  padding: 9px 13px;
-  margin-top: 18px;
-  border: 1px solid #e7deef;
-  border-radius: 10px;
-  background: #ffffffb3;
-}
-.result-score > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-sm);
-  color: #897a96;
-}
-.result-score > .result-winner {
-  color: #5e4580;
-  font-weight: 650;
-}
-.result-score .side-disc {
-  width: 9px;
-  height: 9px;
-  flex-shrink: 0;
-}
-.result-score strong {
-  display: flex;
-  gap: 9px;
-  font-family: var(--heading);
-  font-size: 20px;
-  font-variant-numeric: tabular-nums;
-  color: #4e386b;
-  white-space: nowrap;
-}
-.result-score strong > span {
-  color: #b3a4c4;
-  font-weight: 400;
-}
 .game-over-card .primary-button {
   margin-top: 20px;
   padding: 12px 20px;
@@ -448,10 +407,6 @@
   }
   .result-message {
     font-size: var(--text-body);
-  }
-  .result-score {
-    gap: 10px;
-    padding-inline: 10px;
   }
 }
 .error-message {

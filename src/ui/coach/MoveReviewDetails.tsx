@@ -57,6 +57,7 @@ export function MoveReviewDetails({ review, ...inspection }: Props) {
             walkthrough={consequence.walkthrough}
           />
         ) : (
+          review.label !== "Miss" &&
           review.reply && (
             <button
               className="text-action"

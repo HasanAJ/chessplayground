@@ -283,6 +283,8 @@ export default {
     "La partida termina en tablas. La mejor jugada ofrecía más posibilidades.",
   "coach.review.consequence.allowsMate": "Tu rival puede forzar mate.",
   "coach.review.consequence.missesMate": "Dejas escapar un mate forzado.",
+  "coach.review.consequence.missesMaterial":
+    "Dejas escapar una táctica ganadora que permite ganar material. Explora la mejor jugada para ver la idea.",
   "coach.review.consequence.worseChances":
     "Tu rival obtiene más posibilidades que con la mejor jugada.",
   "coach.explanation.pressure.title": "Aumenta la presión sobre {0}",
@@ -475,7 +477,6 @@ export default {
   "game.result.drawHeading": "Empate bien luchado.",
   "game.result.checkmateMessage": "Un final real. ¿Otra partida?",
   "game.result.drawMessage": "Buena partida. Siempre hay otra oportunidad.",
-  "game.result.score": "Resultado final: Blancas {0}, Negras {1}",
   "game.result.playAgain": "Jugar de nuevo",
   "game.promotion.label": "Elige una pieza para coronar",
   "game.promotion.cancel": "Cancelar coronación",
@@ -527,6 +528,7 @@ export default {
   "coach.grade.good": "Buena jugada",
   "coach.grade.inaccuracy": "Imprecisión",
   "coach.grade.mistake": "Error",
+  "coach.grade.miss": "Oportunidad perdida",
   "coach.grade.blunder": "Error grave",
   "coach.feedback.context.yourLastMove": "Tu última jugada",
   "coach.feedback.context.selectedMove": "Jugada seleccionada",

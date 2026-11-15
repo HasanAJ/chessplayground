@@ -88,6 +88,38 @@ test("real Stockfish calculates, previews and plays its legal suggestion", async
   expect(errors).toEqual([]);
 });
 
+test("a missed winning tactic has its own grade and a translated winning-line preview", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await loadFen(page, "rnb1kbnr/pp6/8/8/3P4/8/PPP1PP2/RNBQK3 b Qkq - 0 1");
+  await move(page, "f8", "e7");
+  const feedback = page.locator('.move-feedback[data-rating="Miss"]');
+  await expect(feedback.getByRole("status")).toHaveText("Miss");
+  await expect(feedback).toContainText("misses a winning tactic");
+  await expect(feedback.locator(".feedback-best-move")).toContainText(
+    "Rook h8 → h1",
+  );
+  const position = await page.evaluate(() =>
+    localStorage.getItem("tempo-position"),
+  );
+  await feedback.locator(".feedback-best-move").click();
+  await expect(
+    page.locator("#play-workspace .chessboard.previewing"),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.locator(".language-selector select").selectOption("de");
+  await expect(feedback.getByRole("status")).toHaveText("Verpasste Chance");
+  await expect(feedback).toContainText("Material gewinnt");
+  await feedback.locator(".feedback-best-move").click();
+  await expect(
+    page.locator("#play-workspace .chessboard.previewing"),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() => localStorage.getItem("tempo-position")),
+  ).toBe(position);
+});
+
 test("a failed worker surfaces retry and the retry loads the real engine", async ({
   page,
 }) => {
@@ -182,6 +214,57 @@ test("small and large viewports have no horizontal overflow", async ({
         ),
         `${path} at ${width}px`,
       ).toBe(true);
+    }
+  }
+});
+
+test("captured pieces and their score stay aligned on one line", async ({
+  page,
+  isMobile,
+}) => {
+  const widths = isMobile ? [320, 390] : [560, 768, 1440];
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    for (const fen of [
+      "3qk2r/pp6/8/8/8/8/8/RN1QK3 w Qk - 0 1",
+      "4k3/8/8/8/4P3/8/8/4K3 w - - 0 1",
+    ]) {
+      await loadFen(page, fen);
+      await expect(page.locator(".fen-error")).toHaveCount(0);
+      const row = page.locator(".material-balance");
+      await expect(row.locator(".material-advantage")).toBeVisible();
+      await row
+        .locator("img")
+        .evaluateAll((images) =>
+          Promise.all(
+            images.map((image) => (image as HTMLImageElement).decode()),
+          ),
+        );
+      const groups = await row.getByRole("img").all();
+      expect(groups.length).toBeGreaterThan(0);
+      for (const group of groups) {
+        await expect(group).toHaveAccessibleName(/\S/);
+        await expect(group.locator("img").first()).toBeVisible();
+      }
+      const layout = await row.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const boxes = [...element.querySelectorAll("img, .material-advantage")]
+          .filter((child) => child.getClientRects().length > 0)
+          .map((child) => child.getBoundingClientRect());
+        const centers = boxes.map((box) => box.top + box.height / 2);
+        return {
+          spread: Math.max(...centers) - Math.min(...centers),
+          fits: boxes.every(
+            (box) =>
+              box.left >= bounds.left - 1 && box.right <= bounds.right + 1,
+          ),
+          pageFits: document.documentElement.scrollWidth <= innerWidth,
+        };
+      });
+      expect(layout.spread, `${width}px: ${fen}`).toBeLessThanOrEqual(1);
+      expect(layout.fits && layout.pageFits, `${width}px: ${fen}`).toBe(true);
     }
   }
 });

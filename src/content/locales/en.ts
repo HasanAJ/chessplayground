@@ -276,6 +276,8 @@ const en = {
     "This ends the game in a draw. The best move offered better chances.",
   "coach.review.consequence.allowsMate": "Your opponent can force checkmate.",
   "coach.review.consequence.missesMate": "This misses a forced checkmate.",
+  "coach.review.consequence.missesMaterial":
+    "This misses a winning tactic that gains material. Explore the best move to see the idea.",
   "coach.review.consequence.worseChances":
     "Your opponent gets better chances than after the best move.",
   "coach.explanation.pressure.title": "Build pressure on {0}",
@@ -468,7 +470,6 @@ const en = {
   "game.result.drawHeading": "Honors shared.",
   "game.result.checkmateMessage": "A royal finish. Ready for another round?",
   "game.result.drawMessage": "Good game. There’s always another round.",
-  "game.result.score": "Final score: White {0}, Black {1}",
   "game.result.playAgain": "Play again",
   "game.promotion.label": "Choose a promotion piece",
   "game.promotion.cancel": "Cancel promotion",
@@ -519,6 +520,7 @@ const en = {
   "coach.grade.good": "Good move",
   "coach.grade.inaccuracy": "Inaccuracy",
   "coach.grade.mistake": "Mistake",
+  "coach.grade.miss": "Miss",
   "coach.grade.blunder": "Blunder",
   "coach.feedback.context.yourLastMove": "Your last move",
   "coach.feedback.context.selectedMove": "Selected move",

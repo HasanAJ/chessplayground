@@ -1,6 +1,6 @@
 import { Chess, type Move } from "chess.js";
 import { capturedSquare } from "../chess/moves.ts";
-import { pieceValues } from "../chess/material.ts";
+import { materialGain } from "../chess/material.ts";
 import { ending } from "../chess/position.ts";
 import type { Translator } from "../../i18n/translate.ts";
 import type { Candidate } from "./candidatePresentation.ts";
@@ -38,13 +38,7 @@ function materialOutcome(candidate: Candidate, shown: Move[], t: Translator) {
     !shown.some((move) => move.captured || move.promotion)
   )
     return undefined;
-  let balance = 0;
-  for (const move of shown) {
-    const value =
-      (move.captured ? pieceValues[move.captured] : 0) +
-      (move.promotion ? pieceValues[move.promotion] - pieceValues.p : 0);
-    balance += value * (move.color === candidate.move.color ? 1 : -1);
-  }
+  const balance = materialGain(shown, candidate.move.color);
   const text = t(
     balance > 0
       ? "coach.lesson.material.gain"
