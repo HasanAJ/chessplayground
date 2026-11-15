@@ -24,6 +24,7 @@ import type { BoardPreview } from "./useBoardPreview";
 import { useBoardInteractions } from "./useBoardInteractions";
 import { Chessboard } from "./Chessboard";
 import { PieceTray } from "./PieceTray";
+import { MaterialBalance } from "./MaterialBalance";
 import { BoardPreviewControls } from "./BoardPreviewControls";
 
 type Props = {
@@ -207,6 +208,7 @@ export function BoardPanel({
           onSelect={(type) => choosePiece(flipped ? "b" : "w", type)}
           onStartDrag={startPieceDrag}
         />
+        <MaterialBalance position={board.position} />
       </div>
 
       <BoardPreviewControls preview={preview} />

@@ -3,7 +3,7 @@ import { localizeReview, type MoveReview } from "./grading";
 import type { MessageKey } from "../../i18n/translate";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useEffect, useId, useMemo } from "react";
-import { ChevronDown, LoaderCircle } from "lucide-react";
+import { ChevronDown, CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
 import type { ReviewState } from "./moveReview";
 import type {
   ClearInspection,
@@ -14,9 +14,12 @@ import { MoveReviewDetails } from "./MoveReviewDetails";
 import { SquareText } from "../board/SquareHighlight";
 import type { Move } from "chess.js";
 import { pieceImage } from "../board/pieces";
+import { compactMoveDescription } from "../../chess/moves";
+import { formatEvaluation } from "../../chess/evaluation";
 
 const gradeKeys = {
   "Best move": "coach.grade.best",
+  "Excellent move": "coach.grade.excellent",
   "Good move": "coach.grade.good",
   Inaccuracy: "coach.grade.inaccuracy",
   Mistake: "coach.grade.mistake",
@@ -64,13 +67,23 @@ export function MoveFeedback({
         : review
           ? t(gradeKeys[review.label])
           : "";
+  const StatusIcon =
+    result.state === "thinking"
+      ? LoaderCircle
+      : review &&
+          ["Best move", "Excellent move", "Good move"].includes(review.label)
+        ? CircleCheck
+        : CircleAlert;
+  const moveTitle = compactMoveDescription(move, t);
   useEffect(() => {
     if (collapsed) return;
     return () => {
+      if (review?.best) onClearInspection(review.best);
       if (review?.reply) onClearInspection(review.reply);
-      if (review?.lesson) onClearInspection(review.lesson.candidate);
+      if (review?.lesson?.kind === "consequence")
+        onClearInspection(review.lesson.candidate);
     };
-  }, [collapsed, onClearInspection, review?.reply, review?.lesson]);
+  }, [collapsed, onClearInspection, review?.best, review?.reply, review?.lesson]);
   return (
     <section
       className="move-feedback"
@@ -94,57 +107,79 @@ export function MoveFeedback({
           )}
           onClick={onToggle}
         >
-          <span className="feedback-move">
-            <span className="feedback-context">{t(context)}</span>
-            <strong>
-              <img
-                className="feedback-piece"
-                src={pieceImage({ color: move.color, type: move.piece })}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-              />
-              <span>
-                <SquareText text={moveLabel} focusable={false} />
-              </span>
-            </strong>
-          </span>
           <span className="quality-badge" role="status">
-            {result.state === "thinking" && (
-              <LoaderCircle size={14} className="spin" />
-            )}
-            {status}
+            <StatusIcon
+              size={22}
+              className={result.state === "thinking" ? "spin" : undefined}
+              aria-hidden="true"
+            />
+            <span>{status}</span>
           </span>
+          {review && (
+            <span
+              className="feedback-position-score"
+              title={t("board.evaluation.legend")}
+            >
+              <span>{t("coach.position.evaluation")}</span>
+              <strong>{formatEvaluation(review.evaluation, t.language)}</strong>
+            </span>
+          )}
           <ChevronDown
             size={18}
             className="feedback-chevron"
             aria-hidden="true"
           />
+          {collapsed && (
+            <span className="feedback-collapsed-move">
+              {t(context)} · <SquareText text={moveTitle} focusable={false} />
+            </span>
+          )}
         </button>
       </h3>
       <div id={bodyId} className="feedback-body" hidden={collapsed}>
-        {!collapsed &&
-          (result.state === "thinking" ? (
-            <p className="learning-pending">{t("coach.feedback.pending")}</p>
-          ) : result.state === "error" ? (
-            <>
-              <p>
-                <SquareText text={translateNotice(result.error, t)} />
+        {!collapsed && (
+          <div className="feedback-trail">
+            <div className="feedback-move">
+              <span className="feedback-piece-node" aria-hidden="true">
+                <img
+                  className="feedback-piece"
+                  src={pieceImage({ color: move.color, type: move.piece })}
+                  alt=""
+                  draggable={false}
+                />
+              </span>
+              <div className="feedback-move-copy">
+                <span className="feedback-context">{t(context)}</span>
+                <strong>
+                  <SquareText text={moveTitle} />
+                </strong>
+              </div>
+            </div>
+            {result.state === "thinking" ? (
+              <p className="feedback-explanation">
+                {t("coach.feedback.pending")}
               </p>
-              <button className="text-action" onClick={onReanalyze}>
-                {t("coach.feedback.retry")}
-              </button>
-            </>
-          ) : (
-            review && (
-              <MoveReviewDetails
-                review={review}
-                preview={preview}
-                onInspect={onInspect}
-                onClearInspection={onClearInspection}
-              />
-            )
-          ))}
+            ) : result.state === "error" ? (
+              <div className="feedback-explanation">
+                <p>
+                  <SquareText text={translateNotice(result.error, t)} />
+                </p>
+                <button className="text-action" onClick={onReanalyze}>
+                  {t("coach.feedback.retry")}
+                </button>
+              </div>
+            ) : (
+              review && (
+                <MoveReviewDetails
+                  review={review}
+                  preview={preview}
+                  onInspect={onInspect}
+                  onClearInspection={onClearInspection}
+                />
+              )
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

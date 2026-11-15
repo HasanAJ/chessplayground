@@ -47,6 +47,7 @@ async function renderWorkspace(
       !game.reviewing &&
       game.positionGame.turn() !== computer.side;
     const recommendations: Recommendations = {
+      settings: { seconds: 2, moves: 3 }, settingsValid: true, updateSettings() {},
       candidates,
       best: candidates[0],
       thinking: false,
@@ -125,6 +126,48 @@ async function renderWorkspace(
     },
   };
 }
+
+test("the material row follows captures, previews, history and draft positions without visible labels", async (t) => {
+  const view = await renderWorkspace(t);
+  const { document } = view;
+  const row = () => document.querySelector(".material-balance");
+  const badge = () => row()?.querySelector(".material-advantage");
+  const pieces = (color: "w" | "b") =>
+    Array.from(row()?.querySelectorAll(`img[src^="/pieces/${color}"]`) ?? [],
+      (image) => image.getAttribute("src"));
+  assert.equal(row(), null);
+  for (const [from, to] of [["e2", "e4"], ["d7", "d5"], ["e4", "d5"]] as const)
+    await act(() => view.game.playMove(from, to));
+  assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
+  assert.deepEqual(pieces("w"), []);
+  assert.equal(row()!.textContent!.trim(), "+1");
+  assert.equal(badge()!.getAttribute("aria-label"), "White is ahead by 1 material points");
+  assert.ok(badge()!.parentElement!.classList.contains("is-w"));
+  assert.ok(row()!.querySelector('[aria-label="Missing Black pieces"]'));
+
+  const capture = candidatesFor(view.game.analysisFen, [
+    { rank: 1, depth: 12, cp: 0, pv: ["d8d5"] },
+  ])[0];
+  const liveFen = view.game.fen;
+  await act(() => view.preview.inspectMove(capture, 1, "click"));
+  assert.deepEqual(pieces("w"), ["/pieces/wP.svg"]);
+  assert.equal(badge(), null);
+  assert.equal(view.game.fen, liveFen);
+  await act(() => view.preview.clearPreview());
+  assert.equal(badge()!.textContent, "+1");
+  await act(() => document.querySelector<HTMLButtonElement>(".flip-board-button")!.click());
+  assert.ok(badge()!.parentElement!.classList.contains("is-w"));
+  assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
+
+  await act(() => view.game.showHistory(2));
+  assert.equal(row(), null);
+  await act(() => view.game.showHistory(3));
+  assert.equal(badge()!.textContent, "+1");
+  await act(() => view.game.setBoardPosition({ a8: { color: "b", type: "r" } }, "w", ""));
+  assert.equal(badge()!.textContent, "+5");
+  assert.ok(badge()!.parentElement!.classList.contains("is-b"));
+  assert.equal(badge()!.getAttribute("aria-label"), "Black is ahead by 5 material points");
+});
 
 test("the board turn selector follows the displayed position and preserves editing safeguards", async (t) => {
   const view = await renderWorkspace(t);
@@ -566,13 +609,11 @@ test("the suggestion, board arrow, exploration, and Play use the engine's final 
     { rank: 1, depth: 12, cp: 30, pv: ["e2e4", "e7e5"] },
     { rank: 2, depth: 12, cp: 25, pv: ["g1f3", "g8f6"] },
     { rank: 3, depth: 12, cp: 20, pv: ["d2d4", "d7d5"] },
-    { rank: 4, depth: 12, cp: 18, pv: ["c2c4", "e7e5"] },
-    { rank: 5, depth: 12, cp: 15, pv: ["e2e3", "e7e5"] },
   ], "g1f3", { rank: 1, depth: 13, cp: 40, pv: ["g1f3", "d7d5"] }));
   assert.equal(document.querySelector(".best-move-heading")?.textContent, "Knight from g1 to f3");
   assert.equal(document.querySelector(".score-pill")?.textContent, "+0.40");
   assert.deepEqual(Array.from(document.querySelectorAll(".candidate-title"), (title) => title.textContent), [
-    "Pawn from e2 to e4", "Pawn from d2 to d4", "Pawn from c2 to c4", "Pawn from e2 to e3",
+    "Pawn from e2 to e4", "Pawn from d2 to d4",
   ]);
   assert.equal(document.querySelector(".move-arrow line")?.getAttribute("x1"), "650");
   assert.equal(document.querySelector(".move-arrow line")?.getAttribute("y1"), "750");

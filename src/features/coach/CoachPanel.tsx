@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import {
   Check,
   Clock3,
-  Eye,
   LoaderCircle,
   ShieldAlert,
   Sparkles,
@@ -13,7 +12,7 @@ import {
   ArrowRight,
   RotateCcw,
 } from "lucide-react";
-import { ending, gameMoveLabel, sideName } from "../../chess/position";
+import { ending, sideName } from "../../chess/position";
 import { moveDescription } from "../../chess/moves";
 import type { GameController } from "../game/useGameController";
 import { CoachOptions } from "../computer/CoachOptions";
@@ -27,6 +26,7 @@ import type { ReviewState } from "./moveReview";
 import type { Recommendations } from "./useRecommendations";
 import type { CoachPresentation } from "./useCoachPresentation";
 import { RecommendationsPanel } from "./RecommendationsPanel";
+import { AnalysisSettings } from "./AnalysisSettings";
 import { SquareText } from "../board/SquareHighlight";
 
 type CoachGame = Pick<
@@ -80,6 +80,7 @@ export function CoachPanel({
   onShowHistory: showHistory,
 }: Props) {
   const { t } = useTranslation();
+  const [analysisSettingsOpen, setAnalysisSettingsOpen] = useState(false);
   const [collapsedFeedbackKey, setCollapsedFeedbackKey] = useState<
     string | null
   >(null);
@@ -99,7 +100,7 @@ export function CoachPanel({
     setPromotion,
   } = game;
   const { thinking, requested: analysisRequested } = recommendations;
-  const { boardPreview, inspectionMove, inspectMove, clearInspection } =
+  const { boardPreview, inspectMove, clearInspection } =
     preview;
   const displayedGame = preview.previewGame ?? analysisGame;
   const checkedKing = game.playable && displayedGame.isCheck();
@@ -146,12 +147,15 @@ export function CoachPanel({
   }
   const showRefresh =
     analysisRequested && game.playable && !analysisTerminal && !botTurn;
-  const calculateDisabled =
+  const showComputerStatus = botBusy && !boardPreview;
+  const calculationUnavailable =
     !game.playable || thinking || boardPreview || botTurn || !!analysisTerminal;
+  const calculateDisabled =
+    calculationUnavailable || !recommendations.settingsValid;
   const showWelcome =
     !game.playable ||
     (!analysisRequested &&
-      !calculateDisabled &&
+      !calculationUnavailable &&
       !feedbackMove &&
       !reviewing &&
       !promotion);
@@ -159,6 +163,7 @@ export function CoachPanel({
     thinking ? "coach.analysis.status.thinking" : "coach.calculate.refresh",
   );
   function calculate() {
+    setAnalysisSettingsOpen(false);
     setHiddenFeedbackKey(feedback?.key ?? null);
     calculateBestMoves();
   }
@@ -180,7 +185,7 @@ export function CoachPanel({
             </span>
           </div>
         </div>
-        <div className="coach-header-actions">
+        <div className="coach-header-actions coach-toolbar">
           <CoachOptions
             enabled={computer}
             open={optionsOpen}
@@ -193,12 +198,25 @@ export function CoachPanel({
             status={computerStatus(game, settings, opponent, boardPreview, t)}
             onSideChange={setHumanSide}
             onDifficultyChange={setDifficulty}
-            onOpenChange={setOptionsOpen}
+            onOpenChange={(open) => {
+              if (open) setAnalysisSettingsOpen(false);
+              setOptionsOpen(open);
+            }}
             onEnabledChange={(enabled) => {
               setComputer(enabled);
               setError(null);
             }}
             onRetry={opponent.retry}
+          />
+          <AnalysisSettings
+            settings={recommendations.settings}
+            onChange={recommendations.updateSettings}
+            disabled={thinking}
+            open={analysisSettingsOpen}
+            onOpenChange={(open) => {
+              if (open) setOptionsOpen(false);
+              setAnalysisSettingsOpen(open);
+            }}
           />
           {showRefresh && (
             <button
@@ -351,32 +369,30 @@ export function CoachPanel({
         presentation={presentation}
         onNewGame={onNewGame}
       />
-      {game.playable && (boardPreview || botBusy) && (
+      {game.playable && (showComputerStatus || preview.pinned) && (
         <div
-          className={`coach-status ${thinking || botBusy ? "coach-status-thinking" : ""}`}
-          role={thinking || botBusy ? "status" : undefined}
+          className={`coach-status ${showComputerStatus ? "coach-status-thinking" : ""}`}
+          role={showComputerStatus ? "status" : undefined}
         >
-          {boardPreview ? (
-            <Eye size={14} />
-          ) : botState === "waiting" ? (
-            <Clock3 size={14} />
-          ) : (
-            <LoaderCircle size={14} className="spin" />
+          {showComputerStatus && (
+            <>
+              {botState === "waiting" ? (
+                <Clock3 size={14} />
+              ) : (
+                <LoaderCircle size={14} className="spin" />
+              )}
+              <span>
+                <SquareText
+                  text={t(
+                    botState === "waiting"
+                      ? "computer.status.movingSoon"
+                      : "computer.status.choosingReply",
+                  )}
+                />
+              </span>
+            </>
           )}
-          <span>
-            <SquareText
-              text={
-                inspectionMove
-                  ? t("coach.context.preview", gameMoveLabel(inspectionMove))
-                  : botBusy
-                    ? botState === "waiting"
-                      ? t("computer.status.movingSoon")
-                      : t("computer.status.choosingReply")
-                    : ""
-              }
-            />
-          </span>
-          {boardPreview && preview.pinned && (
+          {preview.pinned && (
             <button
               className="text-action coach-preview-exit"
               onClick={preview.clearPreview}

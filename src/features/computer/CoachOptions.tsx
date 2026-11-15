@@ -1,7 +1,7 @@
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { useEffect, useRef } from "react";
 import type { Color } from "chess.js";
-import { Bot, RotateCcw, SlidersHorizontal, X } from "lucide-react";
+import { Bot, ChevronDown, RotateCcw, X } from "lucide-react";
+import { useSettingsPopover } from "../../app/useSettingsPopover";
 import { sideName } from "../../chess/position";
 import { COMPUTER_LEVELS, type ComputerLevel } from "./computer";
 
@@ -33,63 +33,43 @@ export function CoachOptions({
   onRetry: () => void;
 }) {
   const { t } = useTranslation();
-  const root = useRef<HTMLDivElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
-  function close() {
-    onOpenChange(false);
-    trigger.current?.focus({ preventScroll: true });
-  }
-  useEffect(() => {
-    if (!open) return;
-    const outside = (event: PointerEvent) => {
-      if (event.target instanceof Node && !root.current?.contains(event.target))
-        onOpenChange(false);
-    };
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false);
-        trigger.current?.focus({ preventScroll: true });
-      }
-    };
-    document.addEventListener("pointerdown", outside);
-    document.addEventListener("keydown", escape);
-    return () => {
-      document.removeEventListener("pointerdown", outside);
-      document.removeEventListener("keydown", escape);
-    };
-  }, [open, onOpenChange]);
+  const { root, trigger, close } = useSettingsPopover(open, onOpenChange);
 
   return (
     <div className="coach-options" ref={root}>
-      <button
-        className="computer-toggle"
-        role="switch"
-        aria-checked={enabled}
-        aria-label={t("computer.toggle.label")}
-        title={status}
-        disabled={!enabled && startDisabled}
-        onClick={() => {
-          onEnabledChange(!enabled);
-          if (enabled) onOpenChange(false);
-        }}
-      >
-        <Bot size={15} aria-hidden="true" />
-        <span>{t("computer.toggle.text")}</span>
-        <span className="computer-switch-track" aria-hidden="true">
-          <span />
-        </span>
-      </button>
-      <button
-        className="computer-settings-trigger"
-        ref={trigger}
-        aria-expanded={open}
-        aria-controls="computer-settings"
-        aria-label={t("computer.settings.heading")}
-        title={t("computer.settings.heading")}
-        onClick={() => onOpenChange(!open)}
-      >
-        <SlidersHorizontal size={15} />
-      </button>
+      <div className="computer-control-group">
+        <button
+          type="button"
+          className="computer-toggle"
+          role="switch"
+          aria-checked={enabled}
+          aria-label={t("computer.toggle.label")}
+          title={status}
+          disabled={!enabled && startDisabled}
+          onClick={() => {
+            onEnabledChange(!enabled);
+            if (enabled) onOpenChange(false);
+          }}
+        >
+          <Bot size={15} aria-hidden="true" />
+          <span className="settings-control-label">{t("computer.toggle.text")}</span>
+          <span className="computer-switch-track" aria-hidden="true">
+            <span />
+          </span>
+        </button>
+        <button
+          type="button"
+          className="computer-settings-trigger"
+          ref={trigger}
+          aria-expanded={open}
+          aria-controls="computer-settings"
+          aria-label={t("computer.settings.heading")}
+          title={t("computer.settings.heading")}
+          onClick={() => onOpenChange(!open)}
+        >
+          <ChevronDown size={14} aria-hidden="true" />
+        </button>
+      </div>
       {failed && !open && (
         <button
           className="computer-retry"
@@ -101,12 +81,12 @@ export function CoachOptions({
         </button>
       )}
       <section
-        className="computer-settings"
+        className="computer-settings coach-settings-panel"
         id="computer-settings"
         aria-label={t("computer.settings.heading")}
         hidden={!open}
       >
-        <div className="computer-settings-heading">
+        <div className="settings-panel-heading">
           <h3>{t("computer.settings.heading")}</h3>
           <button
             className="icon-button"
@@ -116,6 +96,9 @@ export function CoachOptions({
             <X size={15} />
           </button>
         </div>
+        <p className="settings-panel-description">
+          {t("computer.settings.description")}
+        </p>
         <div className="computer-settings-fields">
           <fieldset className="computer-side-options">
             <legend>{t("computer.settings.side")}</legend>

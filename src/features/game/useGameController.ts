@@ -1,4 +1,4 @@
-import { type Diagnostic, notice } from "../../i18n/notices";
+import type { Diagnostic } from "../../i18n/notices";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Chess,
@@ -129,10 +129,7 @@ export function useGameController(onEdit: () => void) {
     openSession(session);
     if (byComputer) setComputerMove(move);
     else setRevealBoard((value) => value + 1);
-    if (reviewing) {
-      onEdit();
-      setNotice(notice("game.status.continuing"));
-    }
+    if (reviewing) onEdit();
   }
 
   function setBoardPosition(position: Position, turn: Color, rights: string) {

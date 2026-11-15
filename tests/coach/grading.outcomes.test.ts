@@ -52,6 +52,16 @@ test("an alternative checkmate explains the played move instead of the engine's 
   assert.doesNotMatch(review.text, /queen|d8|first choice/);
 });
 
+test("an excellent drawing move keeps the positive draw explanation", () => {
+  const game = new Chess();
+  const best = candidate(game.fen(), ["e2e4"], 20);
+  const move = game.move("Nf3");
+  const review = reviewMove(move, best, undefined, true);
+  assert.equal(review.label, "Excellent move");
+  assert.equal(review.text, "This secures a draw.");
+  assert.equal(review.lesson, undefined);
+});
+
 test("Black's delivered checkmate has a negative score from White's perspective", () => {
   const game = new Chess();
   for (const san of ["f3", "e5", "g4"]) game.move(san);

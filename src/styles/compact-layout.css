@@ -126,7 +126,8 @@
   .board-with-eval {
     gap: 8px;
   }
-  .piece-tray {
+  .piece-tray,
+  .material-balance {
     margin-left: 40px;
   }
   .chessboard {
@@ -253,6 +254,9 @@
     margin: 4px 0 4px 36px;
     padding: 0;
     border: 0;
+  }
+  .material-balance {
+    margin-left: 36px;
   }
   .coach-panel {
     padding: 12px;

@@ -8,9 +8,10 @@ import { BoardGrid } from "./BoardGrid";
 import { moveArrow } from "./arrows";
 import type { PositionEvaluation } from "../../chess/evaluation";
 import { EvaluationBar } from "./EvaluationBar";
+import { useHighlightedMove } from "./SquareHighlight";
 
 type Props = {
-  game: Pick<GameController, "playable" | "reviewing">;
+  game: Pick<GameController, "playable" | "reviewing" | "analysisGame">;
   board: BoardController;
   preview: BoardPreview;
   analysis: Recommendations;
@@ -27,6 +28,7 @@ export function Chessboard({
   highlights,
 }: Props) {
   const { t } = useTranslation();
+  const highlightedMove = useHighlightedMove();
   const {
     flipped,
     selected,
@@ -57,14 +59,22 @@ export function Chessboard({
       ? moveArrow(arrowMove.from, arrowMove.to, files, ranks)
       : null;
   const explanationFocus = inspection?.focus;
-  const arrows = explanationFocus
-    ? explanationFocus.arrows.map(({ from, to }) =>
-        moveArrow(from, to, files, ranks),
-      )
-    : arrow
-      ? [arrow]
-      : [];
-  const arrowhead = explanationFocus ? "explanation-arrowhead" : "arrowhead";
+  const referenceArrow =
+    highlightedMove && game.playable && !freeDrag &&
+    highlightedMove.before === (preview.previewGame ?? game.analysisGame).fen()
+      ? moveArrow(highlightedMove.from, highlightedMove.to, files, ranks)
+      : null;
+  const arrows = referenceArrow
+    ? [referenceArrow]
+    : explanationFocus
+      ? explanationFocus.arrows.map(({ from, to }) =>
+          moveArrow(from, to, files, ranks),
+        )
+      : arrow
+        ? [arrow]
+        : [];
+  const explaining = !!referenceArrow || !!explanationFocus;
+  const arrowhead = explaining ? "explanation-arrowhead" : "arrowhead";
   return (
     <div id="board" className="board-position">
       <div className="board-with-eval" ref={board.ref}>
@@ -121,7 +131,7 @@ export function Chessboard({
         >
           {arrows.length > 0 && (
             <svg
-              className={`move-arrow ${explanationFocus ? "explanation-arrows" : ""}`}
+              className={`move-arrow ${explaining ? "explanation-arrows" : ""}${referenceArrow ? " reference-move-arrow" : ""}`}
               viewBox="0 0 800 800"
               aria-hidden="true"
             >

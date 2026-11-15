@@ -5,7 +5,6 @@ import type { Translator } from "../../i18n/translate";
 export function walkthroughPresentation(
   move: Move,
   player: Color,
-  final: boolean,
   t: Translator,
 ) {
   const yours = move.color === player;
@@ -35,12 +34,10 @@ export function walkthroughPresentation(
 
   const note = new Chess(move.after).isCheckmate()
     ? t("board.walkthrough.checkmate")
-    : final
-      ? t("board.walkthrough.furtherTrades")
-      : move.san.includes("+")
-        ? t("board.walkthrough.check")
-        : new Chess(move.before).isCheck()
-          ? t("board.walkthrough.answersCheck")
-          : t("board.walkthrough.followReply");
+    : move.san.includes("+")
+      ? t("board.walkthrough.check")
+      : new Chess(move.before).isCheck()
+        ? t("board.walkthrough.answersCheck")
+        : undefined;
   return { description, note };
 }

@@ -197,7 +197,7 @@ test("automatic reviews wait for the computer reply and yield to requested analy
   assert.equal(requests[1].args[3]?.movetime, 1200);
   await click(".calculate-button");
   assert.equal(requests[1].cancelled, true);
-  assert.equal(requests[2].args[3]?.multiPV, 5);
+  assert.equal(requests[2].args[3]?.multiPV, 3);
   await act(() =>
     requests[2].args[1].onComplete([
       { rank: 1, depth: 18, cp: 20, pv: ["g1f3", "b8c6"] },

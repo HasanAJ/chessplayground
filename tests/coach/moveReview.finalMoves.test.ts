@@ -128,7 +128,7 @@ test("an unfinished deeper score retries only to that depth before grading", (t)
     "info depth 15 multipv 2 score cp 140 pv e2e3 e7e5",
     "bestmove e2e4",
   );
-  assert.equal(reviews[0].label, "Good move");
+  assert.equal(reviews[0].label, "Excellent move");
   assert.equal(reviews[0].best.depth, 15);
   assert.equal(reviews[0].played?.depth, 15);
   assert.equal(reviews[0].best.cp, 150);
@@ -197,7 +197,7 @@ test("the paired comparison targets the initial search's final alternative", (t)
     "info depth 20 multipv 2 score cp 40 pv e2e3 e7e5",
     "bestmove d2d4",
   );
-  assert.equal(reviews[0].label, "Good move");
+  assert.equal(reviews[0].label, "Excellent move");
   assert.equal(reviews[0].best.move.san, "d4");
   assert.deepEqual(errors, []);
 });

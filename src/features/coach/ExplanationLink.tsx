@@ -1,7 +1,9 @@
 import { Eye } from "lucide-react";
+import type { ReactNode } from "react";
 import { SquareText } from "../board/SquareHighlight";
 import type { BoardFocus } from "./boardFocus";
 import { movePreviewEvents, type MovePreviewProps } from "./previewEvents";
+import type { LessonWalkthrough } from "./lessonWalkthrough";
 
 export function ExplanationLink({
   candidate,
@@ -11,24 +13,28 @@ export function ExplanationLink({
   onClearInspection,
   ply = 1,
   label = focus?.label,
-  capturePly,
+  walkthrough,
+  children,
+  className,
 }: MovePreviewProps & {
   focus?: BoardFocus;
   ply?: number;
   label?: string;
-  capturePly?: number;
+  walkthrough?: LessonWalkthrough;
+  children?: ReactNode;
+  className?: string;
 }) {
   if (!label) return null;
   const current =
     preview?.candidate === candidate &&
-    (capturePly
-      ? preview.walkthrough?.capturePly === capturePly
+    (walkthrough
+      ? preview.walkthrough === walkthrough
       : preview.ply === ply && preview.focus === focus);
-  const walkthrough = capturePly && focus ? { capturePly, focus } : undefined;
   return (
     <button
       type="button"
-      className="text-action explanation-link"
+      className={`text-action explanation-link${className ? ` ${className}` : ""}`}
+      aria-label={label}
       aria-pressed={current}
       {...movePreviewEvents({
         onInspect,
@@ -49,8 +55,12 @@ export function ExplanationLink({
           );
       }}
     >
-      <Eye size={13} aria-hidden="true" />{" "}
-      <SquareText text={label} focusable={false} />
+      {children ?? (
+        <>
+          <Eye size={13} aria-hidden="true" />{" "}
+          <SquareText text={label} focusable={false} />
+        </>
+      )}
     </button>
   );
 }

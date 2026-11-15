@@ -105,11 +105,11 @@
   color: var(--ink);
 }
 .opening-search:focus-within {
-  outline: 2px solid var(--purple);
-  outline-offset: 2px;
+  border-color: #b8a6d7;
+  background: #fcfbff;
 }
 .opening-search input:focus-visible {
-  outline: none;
+  box-shadow: none;
 }
 .opening-filter {
   position: relative;

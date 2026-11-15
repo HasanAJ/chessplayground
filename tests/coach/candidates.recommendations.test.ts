@@ -56,7 +56,7 @@ test("recommendations evaluate alternatives from Black's perspective", () => {
 
 test("up to five worthwhile options retain their ranking and continuations", () => {
   const evaluated = candidates([30, 25, 20, 15, 10, 5].map((cp) => ({ cp })));
-  const result = recommendedCandidates(evaluated);
+  const result = recommendedCandidates(evaluated, evaluated[0], 5);
   assert.deepEqual(result, evaluated.slice(0, 5));
   assert.equal(result[4].continuation[0].lan, evaluated[4].move.lan);
 });
@@ -120,8 +120,8 @@ test("newer best scores do not change qualification against the completed compar
 test("a final choice outside the completed batch keeps four alternatives and no duplicates", () => {
   const evaluated = candidates([30, 25, 20, 15, 10, 5].map((cp) => ({ cp })));
   const latest = candidatesFor(START_FEN, [{ ...evaluated[5], rank: 1, depth: 16, cp: 40 }])[0];
-  assert.deepEqual(recommendedCandidates(evaluated.slice(0, 5), latest), [latest, ...evaluated.slice(0, 4)]);
-  assert.deepEqual(recommendedCandidates(evaluated, latest), [latest, ...evaluated.slice(0, 4)]);
+  assert.deepEqual(recommendedCandidates(evaluated.slice(0, 5), latest, 5), [latest, ...evaluated.slice(0, 4)]);
+  assert.deepEqual(recommendedCandidates(evaluated, latest, 5), [latest, ...evaluated.slice(0, 4)]);
 });
 
 test("grouping promotions preserves different sources and destinations before limiting cards", () => {

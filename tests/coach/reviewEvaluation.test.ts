@@ -24,6 +24,7 @@ async function mount(t: TestContext) {
     await act(() => button.click());
   };
   return {
+    dom,
     document,
     requests,
     click,
@@ -37,7 +38,7 @@ async function mount(t: TestContext) {
 
 test("reviews update the card and bar without another search; calculated scores take priority", async (t) => {
   const view = await mount(t);
-  const { document, requests, click, complete, bar, reviewScore } = view;
+  const { dom, document, requests, click, complete, bar, reviewScore } = view;
   assert.equal(bar(), "—");
   await click('[data-square="e2"]');
   await click('[data-square="e4"]');
@@ -48,11 +49,12 @@ test("reviews update the card and bar without another search; calculated scores 
   assert.equal(reviewScore(), "+0.37", "use the resulting position, not the initial +0.60");
   assert.equal(document.querySelector(".feedback-position-score span")!.textContent, "Position score");
   assert.equal(document.querySelector(".feedback-heading .score-pill"), null);
-  assert.ok(document.querySelector(".feedback-body > .feedback-position-score"));
+  assert.ok(document.querySelector(".feedback-heading .feedback-position-score"));
   assert.equal(bar(), "+0.4");
   assert.equal(document.querySelector(".eval-track")!.getAttribute("aria-label"), "White evaluation +0.37");
   assert.ok(parseFloat(document.querySelector<HTMLElement>(".eval-white")!.style.height) > 50);
   assert.equal(requests.length, 2, "the existing review searches supply both scores");
+  assert.equal(document.querySelector(".feedback-alternative"), null, "best moves need no alternative");
 
   await click(".calculate-button");
   assert.equal(bar(), "+0.4", "retain the matching review while calculating");
@@ -79,6 +81,20 @@ test("reviews update the card and bar without another search; calculated scores 
   assert.equal(bar(), "−0.2");
   assert.ok(parseFloat(document.querySelector<HTMLElement>(".eval-white")!.style.height) < 50);
   assert.equal(requests.length, 5);
+
+  assert.equal(document.querySelector(".quality-badge")!.textContent, "Excellent move");
+  assert.equal(document.querySelector(".move-feedback")!.getAttribute("data-rating"), "Excellent move");
+  const bestLink = document.querySelector<HTMLButtonElement>(".feedback-alternative .explanation-link")!;
+  assert.equal(bestLink.getAttribute("aria-label"), "Best move: Pawn from e7 to e6");
+  const history = document.querySelector(".move-history")!.textContent;
+  await act(() => bestLink.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
+  assert.ok(document.querySelector('[data-square="e6"] img[src="/pieces/bP.svg"]'));
+  assert.equal(document.querySelector('[data-square="e5"] img'), null);
+  assert.equal(document.querySelector(".move-history")!.textContent, history);
+  assert.equal(requests.length, 5, "previewing the stored best move adds no searches");
+  await act(() => bestLink.dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true })));
+  assert.ok(document.querySelector('[data-square="e5"] img[src="/pieces/bP.svg"]'));
+  assert.equal(document.querySelector('[data-square="e6"] img'), null);
 
   await click('[aria-label="Previous game move"]');
   assert.equal(bar(), "+0.4", "history restores the review for the selected position");

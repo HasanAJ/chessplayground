@@ -16,8 +16,9 @@ body {
   text-decoration: none;
 }
 .loading-intro a:focus-visible {
-  outline: 3px solid #5e47b7;
-  outline-offset: 4px;
+  outline: none;
+  background: #f0ecfa;
+  color: #5e47b7;
 }
 .loading-header {
   display: grid;

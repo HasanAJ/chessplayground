@@ -38,12 +38,32 @@ function reviewScores(
 
 test("small differences are tolerated while decisive losses remain blunders", () => {
   for (const [score, label] of [
-    [-0.2, "Good move"],
+    [-0.2, "Excellent move"],
+    [-0.3, "Good move"],
     [-0.7, "Inaccuracy"],
     [-1.7, "Mistake"],
     [-5, "Blunder"],
   ] as const)
     assert.equal(reviewScores(0, score).label, label);
+});
+
+test("nearly best moves are excellent, with good and inaccurate moves beyond the boundaries", () => {
+  for (const side of ["w", "b"] as const)
+    for (const [score, label] of [
+      [0, "Excellent move"],
+      [-0.21, "Excellent move"],
+      [-0.22, "Good move"],
+      [-0.43, "Good move"],
+      [-0.44, "Inaccuracy"],
+    ] as const)
+      assert.equal(reviewScores(0, score, side).label, label, `${side}: ${score}`);
+});
+
+test("excellent moves keep positive explanations without a corrective lesson", () => {
+  const review = reviewScores(0, -0.2);
+  assert.equal(review.label, "Excellent move");
+  assert.equal(review.text, "This keeps nearly the same chances as the best move.");
+  assert.equal(review.lesson, undefined);
 });
 
 test("large raw drops in overwhelmingly winning or losing positions are not blunders", () => {
@@ -73,15 +93,15 @@ test("the same evaluation change gets the same grade for either color", () => {
 
 test("keeping a huge advantage instead of a calculated mate is not an automatic blunder", () => {
   const review = reviewScores(0, 12, "w", 4);
-  assert.equal(review.label, "Good move");
+  assert.equal(review.label, "Excellent move");
   assert.match(review.text, /strong advantage/);
 });
 
 test("different mating distances preserve the grade for the same outcome", () => {
   const winning = reviewScores(0, 0, "w", 2, 5);
-  assert.equal(winning.label, "Good move");
+  assert.equal(winning.label, "Excellent move");
   const losing = reviewScores(0, 0, "b", -8, -2);
-  assert.equal(losing.label, "Good move");
+  assert.equal(losing.label, "Excellent move");
 });
 
 test("allowing a new forced mate remains a blunder", () => {
@@ -90,9 +110,9 @@ test("allowing a new forced mate remains a blunder", () => {
   assert.match(review.text, /can force checkmate/);
 });
 
-test("a comparison favoring the played move keeps a good grade", () => {
+test("a comparison favoring the played move keeps an excellent grade", () => {
   const review = reviewScores(0.2, 0.6);
-  assert.equal(review.label, "Good move");
+  assert.equal(review.label, "Excellent move");
   assert.equal(review.evaluation.whiteScore, 0.6);
 });
 

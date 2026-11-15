@@ -78,7 +78,7 @@ test("non-best moves are compared at the same root and depth, including selected
     { rank: 1, depth: 20, cp: 45, pv: ["d2d4", "e5d4"] },
     { rank: 2, depth: 20, cp: 40, pv: ["g1f3", "b8c6", "f1b5"] },
   ]);
-  assert.equal(observed.reviews[0].label, "Good move");
+  assert.equal(observed.reviews[0].label, "Excellent move");
   assert.equal(observed.reviews[0].reply?.move.san, "Nc6");
   assert.equal(observed.reviews[0].reply?.whiteScore, 0.4);
   assert.equal(engine.requests.length, 2);

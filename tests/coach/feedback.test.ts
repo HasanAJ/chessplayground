@@ -37,7 +37,8 @@ test("expanded move review puts the threat preview with the explanation", () => 
   assert.match(revealed, /class="feedback-piece" src="\/pieces\/wP.svg"/);
   assert.match(revealed, /class="feedback-context">Your last move<\/span>/);
   assert.match(revealed, /aria-expanded="true"/);
-  assert.match(revealed.replace(/<[^>]*>/g, ""), /2\. g4 · White/);
+  assert.match(revealed, /2\. g4 · White/);
+  assert.match(revealed.replace(/<[^>]*>/g, ""), /Pawn g2 → g4/);
   assert.doesNotMatch(revealed, /Qh4#|top choice/);
   assert.match(
     revealed.replace(/<[^>]*>/g, ""),
@@ -66,7 +67,7 @@ test("pending automatic review identifies the selected move without stale feedba
     }),
   );
   assert.match(pending, /class="feedback-context">Selected move<\/span>/);
-  assert.match(pending.replace(/<[^>]*>/g, ""), /1… e5 · Black/);
+  assert.match(pending, /1… e5 · Black/);
   assert.match(pending, /aria-busy="true"/);
   assert.match(pending, /Reviewing…/);
   assert.match(pending, /class="feedback-piece" src="\/pieces\/bP.svg"/);
@@ -90,7 +91,7 @@ test("failed automatic review offers a retry and keeps the move identified", () 
       onClearInspection() {},
     }),
   );
-  assert.match(failed.replace(/<[^>]*>/g, ""), /1\. e4 · White/);
+  assert.match(failed, /1\. e4 · White/);
   assert.match(failed, /The engine could not start/);
   assert.match(failed, /Retry move review/);
   assert.doesNotMatch(failed, /Opponent’s possible reply/);

@@ -1,5 +1,5 @@
 import { Eye } from "lucide-react";
-import { formatEvaluation } from "../../chess/evaluation";
+import { useMemo } from "react";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import type {
   ClearInspection,
@@ -10,6 +10,9 @@ import { SquareText } from "../board/SquareHighlight";
 import type { MoveReview } from "./grading";
 import { ExplanationLink } from "./ExplanationLink";
 import { movePreviewEvents } from "./previewEvents";
+import { boardFocus } from "./boardFocus";
+import { pieceImage } from "../board/pieces";
+import { compactMoveDescription, moveDescription } from "../../chess/moves";
 
 export function MoveReviewDetails({
   review,
@@ -23,20 +26,30 @@ export function MoveReviewDetails({
   onClearInspection: ClearInspection;
 }) {
   const { t } = useTranslation();
-  const { reply, lesson } = review;
+  const { best, reply, lesson } = review;
+  const consequenceMove =
+    lesson?.kind === "consequence"
+      ? lesson.candidate.continuation[1]
+      : undefined;
+  const bestMoveTitle = compactMoveDescription(best.move, t);
+  const bestMoveLabel = t("coach.feedback.bestMove", moveDescription(best.move, t));
+  const bestMoveFocus = useMemo(
+    () => boardFocus(bestMoveLabel, [{ from: best.move.from, to: best.move.to }]),
+    [bestMoveLabel, best.move.from, best.move.to],
+  );
   return (
     <>
-      <p
-        className="feedback-position-score"
-        title={t("board.evaluation.legend")}
+      <div
+        className={`feedback-explanation${lesson?.walkthrough ? " feedback-later" : ""}`}
       >
-        <span>{t("coach.position.evaluation")}</span>
-        <strong>{formatEvaluation(review.evaluation, t.language)}</strong>
-      </p>
-      <div className="feedback-explanation">
+        {lesson?.walkthrough && (
+          <span className="feedback-consequence-label">
+            {t("coach.feedback.whatThisAllows")}
+          </span>
+        )}
         {review.text && (
           <p>
-            <SquareText text={review.text} />
+            <SquareText text={review.text} move={consequenceMove} />
           </p>
         )}
         {lesson?.kind === "consequence" ? (
@@ -44,7 +57,7 @@ export function MoveReviewDetails({
             candidate={lesson.candidate}
             focus={lesson.focus}
             ply={lesson.ply}
-            capturePly={lesson.capturePly}
+            walkthrough={lesson.walkthrough}
             preview={preview}
             onInspect={onInspect}
             onClearInspection={onClearInspection}
@@ -67,24 +80,40 @@ export function MoveReviewDetails({
           )
         )}
       </div>
-      {lesson?.kind === "alternative" && (
+      {review.label !== "Best move" && (
         <div className="feedback-alternative">
-          <p>
-            <strong>
-              <SquareText
-                text={t("coach.feedback.tryInstead", lesson.candidate.move.san)}
-              />
-            </strong>
-          </p>
           <ExplanationLink
-            candidate={lesson.candidate}
-            focus={lesson.focus}
-            ply={lesson.ply}
-            label={t("coach.feedback.previewMove", lesson.candidate.move.san)}
+            className="feedback-best-move"
+            candidate={best}
+            focus={bestMoveFocus}
+            label={bestMoveLabel}
             preview={preview}
             onInspect={onInspect}
             onClearInspection={onClearInspection}
-          />
+          >
+            <img
+              className="feedback-best-piece"
+              src={pieceImage({ color: best.move.color, type: best.move.piece })}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+            />
+            <span className="feedback-best-copy">
+              <span className="feedback-best-label">{t("coach.grade.best")}</span>
+              <strong>
+                <SquareText text={bestMoveTitle} focusable={false} />
+              </strong>
+            </span>
+            <span className="feedback-preview-label">
+              <Eye size={14} aria-hidden="true" />
+              {t("board.preview.label")}
+            </span>
+          </ExplanationLink>
+          {review.bestReason && (
+            <p className="feedback-best-reason">
+              <SquareText text={review.bestReason} move={consequenceMove} />
+            </p>
+          )}
         </div>
       )}
     </>

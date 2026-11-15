@@ -17,6 +17,11 @@ export function moveDescription(move: Move, t: Translator = english): string {
   );
 }
 
+export function compactMoveDescription(move: Move, t: Translator = english): string {
+  const piece = t(pieceNameKeys[move.piece]);
+  return `${piece[0].toUpperCase()}${piece.slice(1)} ${move.from} → ${move.to}`;
+}
+
 export function uciMove(game: Chess, uci: string): Move {
   return game.move({
     from: uci.slice(0, 2),

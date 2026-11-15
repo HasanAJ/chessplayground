@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
 import { Chess } from "chess.js";
+import { moveDescription } from "../../src/chess/moves";
 import { CoachPanel } from "../../src/features/coach/CoachPanel";
 import { MoveFeedback } from "../../src/features/coach/MoveFeedback";
 import { candidatesFor } from "../../src/features/coach/candidatePresentation";
@@ -49,6 +50,7 @@ test("calculation hides the last move review until the next move, including when
         }])
       : [];
     const recommendations: Recommendations = {
+      settings: { seconds: 2, moves: 3 }, settingsValid: true, updateSettings() {},
       candidates,
       best: candidates[0],
       thinking: false,
@@ -106,7 +108,8 @@ test("calculation hides the last move review until the next move, including when
   await act(() => currentGame.playMove("e7", "e5"));
   assert.equal(toggle().getAttribute("aria-expanded"), "true");
   assert.equal(body().hidden, false);
-  assert.match(toggle().textContent!, /Last move.*Pawn from e7 to e5.*Best move/);
+  assert.match(toggle().getAttribute("aria-label")!, /Last move.*Pawn from e7 to e5.*Best move/);
+  assert.equal(document.querySelector(".feedback-move-copy strong")!.textContent, "Pawn e7 → e5");
   const reply = Array.from(body().querySelectorAll("button")).find((button) =>
     button.textContent?.includes("Opponent’s possible reply"),
   )!;
@@ -192,12 +195,18 @@ test("consequence previews stay with the explanation and preserve the tactical p
       const document = dom.window.document;
       const explanation = document.querySelector(".feedback-explanation")!;
       assert.equal(explanation.querySelector("p")!.textContent, review.text);
+      assert.equal(explanation.querySelector("img"), null, "consequences have no piece icon");
+      assert.equal(
+        explanation.querySelector(".feedback-consequence-label")?.textContent,
+        lesson.walkthrough ? "What this allows" : undefined,
+      );
       const button = explanation.querySelector<HTMLButtonElement>(".explanation-link")!;
       assert.equal(button.textContent!.trim(), lesson.focus!.label);
-      assert.equal(document.querySelector(".feedback-alternative"), null);
+      const bestLink = document.querySelector<HTMLButtonElement>(".feedback-alternative .explanation-link")!;
+      assert.equal(bestLink.getAttribute("aria-label"), `Best move: ${moveDescription(best.move)}`);
 
       await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
-      if (lesson.capturePly) {
+      if (lesson.walkthrough) {
         assert.equal(preview.inspection, null, "a walkthrough starts only when requested");
       } else {
         assert.equal(preview.inspection?.candidate, lesson.candidate);
@@ -210,12 +219,18 @@ test("consequence previews stay with the explanation and preserve the tactical p
 
       await act(() => button.click());
       assert.equal(preview.pinned, true);
-      if (lesson.capturePly) {
+      if (lesson.walkthrough) {
         assert.equal(preview.inspection?.ply, 1);
-        assert.equal(preview.inspection?.walkthrough?.capturePly, lesson.capturePly);
+        assert.equal(preview.inspection?.walkthrough, lesson.walkthrough);
         assert.equal(preview.inspection?.focus, undefined, "future capture arrows must not appear at the start");
       }
       assert.equal(button.getAttribute("aria-pressed"), "true");
+      await act(() => bestLink.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
+      assert.equal(preview.inspection?.candidate, best);
+      assert.equal(preview.previewGame!.fen(), best.move.after);
+      assert.deepEqual(preview.inspection?.focus?.arrows, [{ from: best.move.from, to: best.move.to }]);
+      await act(() => bestLink.dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true })));
+      assert.equal(preview.inspection?.candidate, lesson.candidate, "leaving the best-move link restores the pinned consequence");
       collapsed = true;
       await act(() => root.render(createElement(Harness)));
       assert.equal(preview.boardPreview, false);
@@ -224,9 +239,9 @@ test("consequence previews stay with the explanation and preserve the tactical p
 });
 
 test("better-move previews name and show the alternative for both explained and quiet moves", async (t) => {
-  for (const [fen, bestMove, playedMove] of [
-    [new Chess().fen(), "e2e4", "a2a3"],
-    ["4k3/8/8/8/8/8/8/R3K3 w - - 0 1", "e1f1", "a1a2"],
+  for (const [fen, bestMove, playedMove, title] of [
+    [new Chess().fen(), "e2e4", "a2a3", "Pawn e2 → e4"],
+    ["4k3/8/8/8/8/8/8/R3K3 w - - 0 1", "e1f1", "a1a2", "King e1 → f1"],
   ]) {
     await t.test(bestMove, async (t) => {
       const { root, dom } = createTestRoot(t);
@@ -258,10 +273,19 @@ test("better-move previews name and show the alternative for both explained and 
       await act(() => root.render(createElement(Harness)));
       const document = dom.window.document;
       const alternative = document.querySelector(".feedback-alternative")!;
-      assert.equal(alternative.querySelector("p")!.textContent, `Try ${best.move.san} instead`);
       const button = alternative.querySelector<HTMLButtonElement>("button")!;
-      assert.equal(button.textContent!.trim(), `Preview ${best.move.san}`);
+      assert.equal(button.getAttribute("aria-label"), `Best move: ${moveDescription(best.move)}`);
+      assert.equal(button.querySelector("strong")!.textContent, title);
+      assert.equal(
+        button.querySelector(".feedback-best-piece")!.getAttribute("src"),
+        `/pieces/${best.move.color}${best.move.piece.toUpperCase()}.svg`,
+      );
 
+      await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseover", { bubbles: true })));
+      assert.equal(preview.inspection?.candidate, best);
+      assert.equal(preview.previewGame!.fen(), best.move.after);
+      await act(() => button.dispatchEvent(new dom.window.MouseEvent("mouseout", { bubbles: true })));
+      assert.equal(preview.boardPreview, false);
       await act(() => button.focus());
       assert.equal(preview.inspection?.candidate, best);
       assert.equal(preview.inspection?.ply, 1);

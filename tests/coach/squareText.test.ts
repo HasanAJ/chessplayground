@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
+import { Chess } from "chess.js";
 import {
   SquareHighlightProvider,
   SquareText,
   useHighlightedSquare,
+  useHighlightedMove,
 } from "../../src/features/board/SquareHighlight";
 import { createTestRoot } from "../helpers/dom";
 
@@ -32,6 +34,40 @@ test("square references preserve prose and recognize coordinates, captures, disa
       ["e8=Q+", "e8"],
     ],
   );
+});
+
+test("move references clear on Escape, replacement, and a change of position", async (t) => {
+  const { root, dom } = createTestRoot(t);
+  let positionKey = "position";
+  let move = new Chess().move("Nf3");
+  function Probe() {
+    return createElement("output", null, useHighlightedMove()?.lan);
+  }
+  function Harness() {
+    return createElement(SquareHighlightProvider, { positionKey, children: null },
+      createElement(SquareText, { text: "Nf3", move }),
+      createElement(Probe),
+    );
+  }
+  await act(() => root.render(createElement(Harness)));
+  const document = dom.window.document;
+  const hover = () => act(() => document.querySelector(".square-reference")!.dispatchEvent(
+    new dom.window.MouseEvent("mouseover", { bubbles: true }),
+  ));
+  const highlighted = () => document.querySelector("output")!.textContent;
+  await hover();
+  assert.equal(highlighted(), "g1f3");
+  await act(() => document.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "Escape" })));
+  assert.equal(highlighted(), "");
+  await hover();
+  move = new Chess("4k3/8/8/8/8/8/3N4/4K3 w - - 0 1").move("Nf3");
+  await act(() => root.render(createElement(Harness)));
+  assert.equal(highlighted(), "", "a replacement move clears the old path even when the text is unchanged");
+  await hover();
+  assert.equal(highlighted(), "d2f3");
+  positionKey = "next-position";
+  await act(() => root.render(createElement(Harness)));
+  assert.equal(highlighted(), "");
 });
 
 test("removing or replacing highlighted text clears it without clearing another reference", async (t) => {

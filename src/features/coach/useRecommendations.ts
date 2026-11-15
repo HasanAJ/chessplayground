@@ -9,7 +9,11 @@ import {
 } from "react";
 import { useAnalysisEngine } from "../../engine/useAnalysisEngine";
 import type { GameController } from "../game/useGameController";
-import { MAX_RECOMMENDED_MOVES } from "./candidates";
+import {
+  DEFAULT_SEARCH_SETTINGS,
+  validSearchSetting,
+  type SearchSettings,
+} from "./searchSettings";
 import {
   completeAnalysis,
   localizeCandidates,
@@ -17,11 +21,6 @@ import {
   type RecommendationAnalysis,
 } from "./recommendationAnalysis";
 
-const SEARCH_OPTIONS = {
-  depth: null,
-  movetime: 2000,
-  multiPV: MAX_RECOMMENDED_MOVES,
-};
 const MAX_CACHED_ANALYSES = 64;
 
 export function useRecommendations(
@@ -38,6 +37,10 @@ export function useRecommendations(
   paused: boolean,
 ) {
   const { t } = useTranslation();
+  const [settings, setSettings] = useState(DEFAULT_SEARCH_SETTINGS);
+  const settingsValid =
+    validSearchSetting("seconds", settings.seconds) &&
+    validSearchSetting("moves", settings.moves);
   const engine = useAnalysisEngine();
   const cache = useRef(new Map<string, CompletedAnalysis>());
   const [request, setRequest] = useState<{
@@ -55,14 +58,17 @@ export function useRecommendations(
     [game.study.rootFen, game.history, game.historyPly],
   );
   // FEN alone cannot distinguish positions with different repetition histories.
-  const cacheKey = useMemo(() => JSON.stringify(history), [history]);
+  const cacheKey = useMemo(
+    () => JSON.stringify([history, settings]),
+    [history, settings],
+  );
   const requested = request?.key === game.analysisKey;
   const current =
     requested && analysis?.key === game.analysisKey && game.playable;
   const candidates = useMemo(() => {
     if (!current || analysis.state !== "ready") return [];
-    return localizeCandidates(analysis, t);
-  }, [current, analysis, t]);
+    return localizeCandidates(analysis, t, settings.moves);
+  }, [current, analysis, t, settings.moves]);
   const thinking =
     game.playable &&
     requested &&
@@ -109,7 +115,7 @@ export function useRecommendations(
         },
       },
       history,
-      SEARCH_OPTIONS,
+      { depth: null, movetime: settings.seconds * 1000, multiPV: settings.moves },
     );
     return () => {
       cancelled = true;
@@ -126,7 +132,7 @@ export function useRecommendations(
   ]);
 
   function calculate(refresh = false) {
-    if (!game.playable) return;
+    if (!game.playable || !settingsValid) return;
     if (refresh) cache.current.delete(cacheKey);
     setRequest((previous) => ({
       key: game.analysisKey,
@@ -146,7 +152,15 @@ export function useRecommendations(
 
   const clear = useCallback(() => setRequest(null), []);
 
+  function updateSettings(next: SearchSettings) {
+    setSettings(next);
+    setRequest(null);
+  }
+
   return {
+    settings,
+    settingsValid,
+    updateSettings,
     candidates,
     best: candidates.at(0),
     thinking,

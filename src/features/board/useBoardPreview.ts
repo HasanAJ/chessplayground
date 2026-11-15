@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
 import type { Candidate } from "../coach/candidatePresentation";
 import type { BoardFocus } from "../coach/boardFocus";
+import type { LessonWalkthrough } from "../coach/lessonWalkthrough";
 
 export type MovePreview = {
   candidate: Candidate;
   ply: number;
   focus?: BoardFocus;
-  walkthrough?: { capturePly: number; focus: BoardFocus };
+  walkthrough?: LessonWalkthrough;
 };
 
 type MoveInspection = MovePreview & { key: string };

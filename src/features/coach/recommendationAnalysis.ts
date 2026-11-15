@@ -46,8 +46,12 @@ export function completeAnalysis(
   return { key, state: "ready", candidates, best };
 }
 
-export function localizeCandidates(analysis: CompletedAnalysis, t: Translator) {
-  return recommendedCandidates(analysis.candidates, analysis.best).map(
+export function localizeCandidates(
+  analysis: CompletedAnalysis,
+  t: Translator,
+  limit: number,
+) {
+  return recommendedCandidates(analysis.candidates, analysis.best, limit).map(
     (candidate) => presentCandidate(candidate, t),
   );
 }

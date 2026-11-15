@@ -3,6 +3,7 @@ import { mateAfterMove, type PositionEvaluation } from "../../chess/evaluation";
 
 export type MoveGrade =
   | "Best move"
+  | "Excellent move"
   | "Good move"
   | "Inaccuracy"
   | "Mistake"
@@ -72,6 +73,7 @@ export function moveQuality(
 
 function gradeFor(best: boolean, impact: number): MoveGrade {
   if (best) return "Best move";
+  if (impact < 2) return "Excellent move";
   if (impact < 4) return "Good move";
   if (impact < 12) return "Inaccuracy";
   if (impact < 25) return "Mistake";

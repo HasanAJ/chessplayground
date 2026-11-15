@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { SquareText } from "./SquareHighlight";
 import type { BoardPreview } from "./useBoardPreview";
@@ -13,23 +13,26 @@ export function CaptureWalkthroughControls({
   const { pinnedInspection, inspectMove, clearPreview } = preview;
   if (!pinnedInspection?.walkthrough) return null;
   const { candidate, ply, walkthrough } = pinnedInspection;
-  const moves = candidate.continuation.slice(0, walkthrough.capturePly);
-  const final = ply === walkthrough.capturePly;
+  const moves = candidate.continuation.slice(0, walkthrough.endPly);
+  const annotation = walkthrough.steps[ply - 1];
   const { description, note } = walkthroughPresentation(
     moves[ply - 1],
     candidate.move.color,
-    final,
     t,
   );
   function stepLabel(step: number) {
+    if (step === 1) return t("board.walkthrough.yourMove");
+    if (step === walkthrough.capturePly) return t("board.walkthrough.capture");
+    if (
+      step === walkthrough.endPly &&
+      walkthrough.capturePly !== undefined &&
+      step > walkthrough.capturePly &&
+      !moves[step - 1].san.endsWith("#")
+    ) return t("board.walkthrough.result");
     return t(
-      step === walkthrough.capturePly
-        ? "board.walkthrough.capture"
-        : step === 1
-          ? "board.walkthrough.yourMove"
-          : moves[step - 1].color === candidate.move.color
-            ? "board.walkthrough.yourReply"
-            : "board.walkthrough.theirReply",
+      moves[step - 1].color === candidate.move.color
+        ? "board.walkthrough.yourReply"
+        : "board.walkthrough.theirReply",
     );
   }
   function selectMove(step: number) {
@@ -37,7 +40,7 @@ export function CaptureWalkthroughControls({
       candidate,
       step,
       "click",
-      step === walkthrough.capturePly ? walkthrough.focus : undefined,
+      walkthrough.steps[step - 1].focus,
       walkthrough,
     );
   }
@@ -48,14 +51,21 @@ export function CaptureWalkthroughControls({
     >
       <div className="board-preview-heading">
         <strong>{t("board.walkthrough.title")}</strong>
-        <span>{t("board.walkthrough.step", ply, moves.length)}</span>
       </div>
       <div className="walkthrough-caption" aria-live="polite" aria-atomic="true">
         <span className="walkthrough-side">{stepLabel(ply)}</span>
         <p>
           <SquareText text={description} />
         </p>
-        <p className="walkthrough-note">{note}</p>
+        {note && <p className="walkthrough-note">{note}</p>}
+        {annotation.text && (
+          <p className="walkthrough-threat">
+            <SquareText text={annotation.text} />
+          </p>
+        )}
+        {ply === walkthrough.endPly && walkthrough.outcome && (
+          <p className="walkthrough-outcome">{walkthrough.outcome}</p>
+        )}
       </div>
       <div
         className="walkthrough-moves"
@@ -79,7 +89,6 @@ export function CaptureWalkthroughControls({
               walkthroughPresentation(
                 move,
                 candidate.move.color,
-                index + 1 === walkthrough.capturePly,
                 t,
               ).description,
             )}
@@ -93,21 +102,7 @@ export function CaptureWalkthroughControls({
           </button>
         ))}
       </div>
-      <div className="board-preview-actions">
-        <button
-          type="button"
-          disabled={ply === 1}
-          onClick={() => selectMove(ply - 1)}
-        >
-          <ChevronLeft size={16} aria-hidden="true" /> {t("board.walkthrough.back")}
-        </button>
-        <button type="button" disabled={final} onClick={() => selectMove(ply + 1)}>
-          {t("board.walkthrough.next")}{" "}
-          <ChevronRight size={16} aria-hidden="true" />
-        </button>
-      </div>
       <div className="walkthrough-footer">
-        <span>{t("board.preview.label")}</span>
         <button type="button" className="preview-return" onClick={clearPreview}>
           <X size={15} aria-hidden="true" /> {t("coach.panel.returnToGame")}
         </button>

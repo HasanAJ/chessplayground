@@ -9,13 +9,13 @@ export type CandidateAnalysis = EngineLine & {
   materialLoss: number | undefined;
   whiteScore: number;
 };
-export const MAX_RECOMMENDED_MOVES = 5;
 const RECOMMENDATION_CP_GAP = 50;
 
 /** Qualify alternatives at the completed depth, keeping the final choice first. */
 export function recommendedCandidates<T extends CandidateAnalysis>(
   candidates: T[],
   best = candidates[0],
+  limit = candidates.length,
 ): T[] {
   if (!best) return [];
   const comparisonBest = candidates[0];
@@ -49,7 +49,7 @@ export function recommendedCandidates<T extends CandidateAnalysis>(
       seen.add(key);
       return true;
     })
-    .slice(0, MAX_RECOMMENDED_MOVES);
+    .slice(0, limit);
 }
 
 /** Validate the engine's moves once, independently of their display language. */

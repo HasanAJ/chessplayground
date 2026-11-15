@@ -82,6 +82,120 @@
 .calculate-button > svg {
   flex-shrink: 0;
 }
+.analysis-settings-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fcfbfe;
+  color: #79658c;
+  font-size: var(--text-sm);
+  font-weight: 550;
+}
+.analysis-settings-trigger:hover,
+.analysis-settings-trigger[aria-expanded="true"] {
+  border-color: #cfbde8;
+  background: #eee7f8;
+  color: #6845a0;
+}
+.analysis-settings-trigger.has-error {
+  border-color: #e6bac2;
+  color: #a52a3b;
+}
+.analysis-settings-panel {
+  left: auto;
+  right: 0;
+}
+.analysis-settings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-size: var(--text-sm);
+}
+.analysis-setting-field {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+.analysis-settings label {
+  color: #6b557e;
+  font-weight: 600;
+}
+.analysis-settings input {
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fcfbfe;
+  color: var(--ink);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.analysis-settings input:disabled {
+  opacity: 0.6;
+}
+.analysis-settings input[aria-invalid="true"] {
+  border-color: #a52a3b;
+}
+.analysis-settings-error {
+  color: #a52a3b;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+.analysis-setting-hint {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+@media (max-width: 540px) {
+  .analysis-settings-trigger {
+    min-height: 44px;
+  }
+  .analysis-settings input {
+    font-size: 16px;
+  }
+}
+@container coach (max-width: 500px) {
+  .computer-toggle .settings-control-label {
+    display: none;
+  }
+  .coach-heading > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+@container coach (max-width: 360px) {
+  .computer-toggle {
+    gap: 5px;
+    padding-inline: 6px;
+  }
+  .computer-settings-trigger,
+  .coach-header-actions .refresh-analysis {
+    width: 32px;
+  }
+  .computer-switch-track {
+    width: 26px;
+    height: 16px;
+  }
+  .computer-switch-track > span {
+    width: 12px;
+    height: 12px;
+  }
+  .computer-toggle[aria-checked="true"] .computer-switch-track > span {
+    transform: translateX(10px);
+  }
+}
 .primary-button {
   border-radius: 11px;
   background: var(--purple);
@@ -464,7 +578,10 @@
 }
 .footer-brand:focus-visible,
 .site-footer .privacy-link:focus-visible {
-  outline-color: #c9b6f5;
+  box-shadow: none;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 .panel-notice {
   background: #f1edf9;

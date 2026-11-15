@@ -90,7 +90,7 @@ test("the final best move replaces an older first choice without another search"
   assert.equal(read().recommendations.best?.move.san, "Nf3");
   assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["Nf3", "e4"]);
   assert.equal(requests.length, 1);
-  assert.deepEqual(requests[0].args[3], { depth: null, movetime: 2000, multiPV: 5 });
+  assert.deepEqual(requests[0].args[3], { depth: null, movetime: 2000, multiPV: 3 });
 });
 
 test("a newly discovered final move uses its own line even outside the completed candidates", async (t) => {
@@ -130,8 +130,9 @@ test("an unchanged best move keeps its newer score and useful completed alternat
   assert.deepEqual(read().recommendations.candidates.map((line) => line.move.san), ["e4", "d4"]);
 });
 
-test("the default search retains all five starting-position options when the best line deepens", async (t) => {
+test("a five-move search retains all five options when the best line deepens", async (t) => {
   const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.updateSettings({ seconds: 2, moves: 5 }));
   await act(() => read().recommendations.calculate());
   await complete(0, [
     { rank: 1, depth: 17, cp: 23, pv: ["e2e4", "e7e5"] },
@@ -278,4 +279,42 @@ test("an explicit refresh replaces a cached result with a new search", async (t)
   assert.equal(requests.length, 2);
   assert.equal(read().recommendations.best?.depth, 18);
   assert.equal(read().recommendations.best?.cp, 25);
+});
+
+test("cached analysis is specific to both time and move count", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await complete(0, [openingLine]);
+  for (const settings of [{ seconds: 5, moves: 3 }, { seconds: 5, moves: 1 }]) {
+    await act(() => read().recommendations.updateSettings(settings));
+    assert.equal(read().recommendations.requested, false);
+    assert.equal(read().recommendations.best, undefined);
+    const index = requests.length;
+    await act(() => read().recommendations.calculate());
+    assert.equal(requests.length, index + 1);
+    assert.deepEqual(requests[index].args[3], {
+      depth: null, movetime: settings.seconds * 1000, multiPV: settings.moves,
+    });
+    await complete(index, [openingLine]);
+  }
+  await act(() => read().recommendations.updateSettings({ seconds: 2, moves: 3 }));
+  await act(() => read().recommendations.calculate());
+  assert.equal(requests.length, 3);
+  assert.equal(read().recommendations.best?.depth, openingLine.depth);
+});
+
+test("changing settings cancels a search and ignores late results", async (t) => {
+  const { read, requests, complete } = await mount(t);
+  await act(() => read().recommendations.calculate());
+  await act(() => read().recommendations.updateSettings({ seconds: 3, moves: 1 }));
+  assert.equal(requests[0].cancelled, true);
+  await complete(0, [openingLine]);
+  assert.equal(read().recommendations.best, undefined);
+  await act(() => read().recommendations.calculate());
+  const finalLine = { rank: 1, depth: 16, cp: 50, pv: ["g1f3"] };
+  await complete(1, [openingLine], "g1f3", finalLine);
+  assert.deepEqual(read().recommendations.candidates.map((candidate) => candidate.move.lan), ["g1f3"]);
+  await act(() => read().recommendations.updateSettings({ seconds: 2, moves: 3 }));
+  await act(() => read().recommendations.calculate());
+  assert.equal(requests.length, 3, "cancelled analysis was not cached");
 });

@@ -5,7 +5,6 @@ import assert from "node:assert/strict";
 import { Chess } from "chess.js";
 import { AnalysisEngine } from "../../src/engine/AnalysisEngine";
 import { START_FEN } from "../../src/chess/position";
-import { MAX_RECOMMENDED_MOVES } from "../../src/features/coach/candidates";
 import { type EngineLine } from "../../src/engine/uci";
 
 class FakeWorker {
@@ -117,7 +116,7 @@ test("coaching can request five distinct moves and keeps only a complete depth",
   t.after(() => engine.dispose());
   const observed = observer();
   engine.analyze(START_FEN, observed, undefined, {
-    multiPV: MAX_RECOMMENDED_MOVES,
+    multiPV: 5,
   });
   worker.ready();
   assert.ok(worker.commands.includes("setoption name MultiPV value 5"));
@@ -334,7 +333,7 @@ test("positions with one legal move finish with a single candidate", (t) => {
   t.after(() => engine.dispose());
   const observed = observer();
   engine.analyze("7k/4K3/5B2/8/8/8/8/7R b - - 0 1", observed, undefined, {
-    multiPV: MAX_RECOMMENDED_MOVES,
+    multiPV: 5,
   });
   worker.ready();
   worker.emit("info depth 9 multipv 1 score mate -1 pv h8g8 h1h8");

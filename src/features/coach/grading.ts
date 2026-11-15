@@ -4,7 +4,7 @@ import type { PositionEvaluation } from "../../chess/evaluation";
 import { presentCandidate, type Candidate } from "./candidatePresentation";
 import { explainMove } from "./explanations";
 import { describeReply } from "./replyDescription";
-import { lessonFor, type ReviewLesson } from "./lessons";
+import { betterMoveReason, lessonFor, type ReviewLesson } from "./lessons";
 import {
   moveQuality,
   outlook,
@@ -18,6 +18,7 @@ export type MoveReview = {
   reply?: Candidate;
   label: MoveGrade;
   text: string;
+  bestReason?: string;
   lesson?: ReviewLesson;
   played?: Candidate;
   drawn: boolean;
@@ -52,21 +53,19 @@ export function reviewMove(
     outcome,
   );
   const same = move.lan === best.move.lan;
+  const isPositive =
+    label === "Best move" || label === "Excellent move" || label === "Good move";
   let text: string;
   const lesson =
-    !isDraw && label !== "Best move" && label !== "Good move"
-      ? lessonFor(move, best, reply, played, t)
-      : undefined;
+    !isDraw && !isPositive ? lessonFor(move, best, reply, played, t) : undefined;
   if (after.isCheckmate())
     text = explainMove(new Chess(move.before), after, move, t).text;
   else if (isDraw)
     text = t(
-      label === "Best move" || label === "Good move"
-        ? "coach.review.good.draw"
-        : "coach.review.consequence.draw",
+      isPositive ? "coach.review.good.draw" : "coach.review.consequence.draw",
     );
   else if (same) text = best.explanation;
-  else if (label === "Good move") {
+  else if (isPositive) {
     const description =
       result?.mate !== undefined
         ? resultingOutlook === 1
@@ -107,6 +106,9 @@ export function reviewMove(
     reply,
     label,
     text,
+    bestReason: !isPositive && !same
+      ? betterMoveReason(best, played?.continuation[1] ?? reply?.move, t)
+      : undefined,
     lesson,
     played,
     drawn: isDraw,

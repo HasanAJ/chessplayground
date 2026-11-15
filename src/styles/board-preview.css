@@ -45,6 +45,14 @@
   color: var(--muted);
   font-weight: 400;
 }
+.capture-walkthrough .walkthrough-threat {
+  font-weight: 500;
+}
+.capture-walkthrough .walkthrough-outcome {
+  padding-top: 8px;
+  border-top: 1px solid #e3dcee;
+  font-weight: 500;
+}
 .walkthrough-side,
 .walkthrough-footer {
   font-size: var(--text-xs);
@@ -87,21 +95,6 @@
 }
 .walkthrough-moves .walkthrough-capture strong {
   color: #a14230;
-}
-.capture-walkthrough .board-preview-actions {
-  justify-content: space-between;
-}
-.capture-walkthrough .board-preview-actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-height: 44px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--paper);
-  font-size: var(--text-sm);
-  font-weight: 600;
 }
 .walkthrough-footer {
   margin-top: 10px;
