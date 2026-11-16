@@ -8,24 +8,6 @@ function candidate(fen: string, pv: string[], cp = 0, mate?: number) {
   return candidatesFor(fen, [{ rank: 1, depth: 15, cp, mate, pv }])[0];
 }
 
-test("move quality uses the mover's perspective for White and Black", () => {
-  const white = new Chess();
-  const bestWhite = candidate(white.fen(), ["e2e4"], 30);
-  const moveWhite = white.move("f3");
-  const replyWhite = candidate(white.fen(), ["e7e5"], 200);
-  const reviewWhite = reviewMove(moveWhite, bestWhite, replyWhite);
-  assert.equal(reviewWhite.label, "Mistake");
-  assert.equal(reviewWhite.evaluation.whiteScore, -2);
-  const black = new Chess();
-  black.move("e4");
-  const bestBlack = candidate(black.fen(), ["e7e5"], -20);
-  const moveBlack = black.move("f6");
-  const replyBlack = candidate(black.fen(), ["d2d4"], 150);
-  const reviewBlack = reviewMove(moveBlack, bestBlack, replyBlack);
-  assert.equal(reviewBlack.label, "Inaccuracy");
-  assert.equal(reviewBlack.evaluation.whiteScore, 1.5);
-});
-
 test("terminal move grades do not require a reply candidate", () => {
   const game = new Chess("7k/6pp/8/8/8/8/6PP/4KR2 w - - 0 1");
   const best = candidate(game.fen(), ["f1f8"], 0, 1);
@@ -40,7 +22,7 @@ test("terminal move grades do not require a reply candidate", () => {
   const repeatedMove = repeat.move("Nf3");
   assert.equal(
     reviewMove(repeatedMove, alternative, undefined, true).label,
-    "Inaccuracy",
+    "Mistake",
   );
   assert.deepEqual(
     reviewMove(repeatedMove, alternative, undefined, true).evaluation,

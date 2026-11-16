@@ -83,9 +83,10 @@ function reviewText(
     const consequence =
       outcome.evaluation.mate !== undefined && chance === 0
         ? t("coach.review.consequence.allowsMate")
-        : best.mate !== undefined && outlook(best, sign) === 1
-          ? t("coach.review.consequence.missesMate")
-          : (lesson?.consequence ?? t("coach.review.consequence.worseChances"));
+        : (lesson?.consequence ??
+          (best.mate !== undefined && outlook(best, sign) === 1
+            ? t("coach.review.consequence.missesMate")
+            : t("coach.review.consequence.worseChances")));
     return [consequence, lesson?.consequence ? "" : replyText]
       .filter(Boolean)
       .join(" ");

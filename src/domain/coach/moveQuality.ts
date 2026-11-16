@@ -21,7 +21,7 @@ export type ReviewOutcome =
     };
 export type MissedOpportunity = "mate" | "material";
 
-// Lichess's evaluation-to-outlook curve; the grade bands are Tempo's policy.
+// Lichess's evaluation-to-outlook curve, independent of player rating.
 // https://lichess.org/page/accuracy
 export function outlook(score: PositionEvaluation, perspective: number) {
   const advantage = score.whiteScore * perspective;
@@ -29,11 +29,13 @@ export function outlook(score: PositionEvaluation, perspective: number) {
     ? 1 / (1 + Math.exp(-0.368208 * advantage))
     : Number(advantage > 0);
 }
+// Chess.com's published expected-points bands, applied to our outlook estimate.
+// https://support.chess.com/en/articles/8572705-how-are-moves-classified-what-is-a-blunder-or-brilliant-etc
 const bands: readonly [number, MoveGrade][] = [
   [2, "Excellent move"],
-  [4, "Good move"],
-  [12, "Inaccuracy"],
-  [25, "Mistake"],
+  [5, "Good move"],
+  [10, "Inaccuracy"],
+  [20, "Mistake"],
   [Infinity, "Blunder"],
 ];
 
@@ -86,24 +88,33 @@ export function moveQuality(
 ) {
   const perspective = move.color === "w" ? 1 : -1;
   const final = result(outcome, perspective);
-  const loss = Math.max(
-    0,
-    100 * (outlook(best, perspective) - final.resultingOutlook),
-  );
+  const bestOutlook = outlook(best, perspective);
+  const loss = Math.max(0, 100 * (bestOutlook - final.resultingOutlook));
   const label: MoveGrade =
     outcome.kind === "checkmate" || move.lan === best.move.lan
       ? "Best move"
       : bands.find(([maximum]) => loss < maximum)![1];
-  // A miss loses a winning chance (75% outlook), rather than hanging material
-  // or allowing mate. Require a concrete mate or at least an exchange's gain.
-  const opportunity =
+  // Outlook loss can hide passing up mate in one in an already won position.
+  const missedMateInOne =
+    label !== "Best move" &&
+    best.mate === 1 &&
+    final.evaluation.mate === undefined &&
+    new Chess(best.move.after).isCheckmate();
+  // Other misses must lose a winning chance (75% outlook) and a concrete tactic.
+  const losesWinningChance =
     (label === "Mistake" || label === "Blunder") &&
-    outlook(best, perspective) >= 0.75 &&
-    final.resultingOutlook < 0.75 &&
+    bestOutlook >= 0.75 &&
+    final.resultingOutlook < 0.75;
+  const opportunity =
+    (missedMateInOne || losesWinningChance) &&
     !(final.evaluation.mate !== undefined && final.resultingOutlook === 0) &&
     !hangsMaterial(continuation)
       ? winningOpportunity(best)
       : undefined;
-  const grade: MoveGrade = opportunity ? "Miss" : label;
+  const grade: MoveGrade = opportunity
+    ? "Miss"
+    : missedMateInOne && label !== "Blunder"
+      ? "Mistake"
+      : label;
   return { ...final, label: grade, opportunity };
 }

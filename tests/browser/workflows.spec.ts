@@ -120,6 +120,30 @@ test("a missed winning tactic has its own grade and a translated winning-line pr
   ).toBe(position);
 });
 
+test("hanging a rook instead of mating is a mistake even while overwhelmingly ahead", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await loadFen(
+    page,
+    "rnbqkbn1/ppp1ppp1/8/3p4/1P6/P6r/3PPP2/R1BQK3 b Qq - 0 1",
+  );
+  await move(page, "h3", "f3");
+  const feedback = page.locator('.move-feedback[data-rating="Mistake"]');
+  await expect(feedback.getByRole("status")).toHaveText("Mistake");
+  await expect(feedback).toContainText("rook on f3 has no defender");
+  await expect(feedback).toContainText("Their pawn can take it");
+  await expect(feedback.locator(".feedback-best-move")).toContainText(
+    "Rook h3 → h1",
+  );
+  await expect(feedback.locator(".feedback-best-reason")).toContainText(
+    "checkmate",
+  );
+  await expect(
+    feedback.getByRole("button", { name: "See the piece they can capture" }),
+  ).toBeVisible();
+});
+
 test("a failed worker surfaces retry and the retry loads the real engine", async ({
   page,
 }) => {

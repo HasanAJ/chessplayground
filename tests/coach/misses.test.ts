@@ -41,6 +41,16 @@ test("the bishop move misses the rook's winning tactic for either color", () => 
   }
 });
 
+test("a missed winning tactic requires a serious loss of chances", () => {
+  for (const [cp, label] of [
+    [200, "Inaccuracy"],
+    [170, "Miss"],
+  ] as const) {
+    const result = review(undefined, { cp: 310 }, { cp });
+    assert.equal(result.label, label);
+  }
+});
+
 test("a later material loss in a long engine line does not hide the missed rook tactic", () => {
   // Stockfish's completed comparison continues well beyond the missed queen win.
   const result = review(
@@ -74,10 +84,23 @@ test("a later material loss in a long engine line does not hide the missed rook 
   assert.equal(result.label, "Miss");
 });
 
-test("hanging a bishop or allowing forced mate remains a blunder despite an available win", () => {
-  const hanging = review(undefined, {}, { pv: ["f8a3", "b2a3"] });
+test("hanging material keeps the normal error grade despite an available winning tactic", () => {
+  for (const [cp, label] of [
+    [170, "Mistake"],
+    [0, "Blunder"],
+  ] as const) {
+    const hanging = review(
+      undefined,
+      { cp: 310 },
+      { cp, pv: ["f8a3", "b2a3"] },
+    );
+    assert.equal(hanging.label, label);
+    assert.doesNotMatch(hanging.text, /misses a winning tactic/);
+  }
+});
+
+test("allowing forced mate remains a blunder despite an available win", () => {
   const mated = review(undefined, {}, { cp: undefined, mate: -3 });
-  assert.equal(hanging.label, "Blunder");
   assert.equal(mated.label, "Blunder");
   assert.match(mated.text, /opponent can force checkmate/);
 });
@@ -97,9 +120,68 @@ test("losing a mating opportunity is a Miss, including when the move draws", () 
   }
 });
 
+test("passing up mate in one is a Miss even when the mover stays overwhelmingly ahead", () => {
+  for (const [fen, mate, move] of [
+    ["rnbqkbnr/ppppppp1/8/8/8/8/PPPPPP2/RNBQK3 b Qkq - 0 1", "h8h1", "d7d5"],
+    ["rnbqk3/pppppp2/8/8/8/8/PPPPPPP1/RNBQKBNR w KQq - 0 1", "h1h8", "d2d4"],
+  ]) {
+    const result = review(
+      fen,
+      { mate: 1, cp: undefined, pv: [mate] },
+      { cp: 2952, pv: [move] },
+    );
+    assert.equal(result.label, "Miss");
+    assert.match(result.text, /misses a forced checkmate/);
+    assert.equal(result.lesson?.kind, "alternative");
+  }
+});
+
+test("hanging a rook instead of mating is at least a Mistake, even while still winning", () => {
+  for (const [fen, mate, pv] of [
+    [
+      "rnbqkbn1/ppp1ppp1/8/3p4/1P6/P6r/3PPP2/R1BQK3 b Qq - 0 1",
+      "h3h1",
+      ["h3f3", "e2f3"],
+    ],
+    [
+      "r1bqk3/3ppp2/p6R/1p6/3P4/8/PPP1PPP1/RNBQKBN1 w Qq - 0 1",
+      "h6h8",
+      ["h6f6", "e7f6"],
+    ],
+  ] as const) {
+    for (const [cp, label] of [
+      [1475, "Mistake"],
+      [0, "Blunder"],
+    ] as const) {
+      const result = review(
+        fen,
+        { mate: 1, cp: undefined, pv: [mate] },
+        { cp, pv: [...pv] },
+      );
+      assert.equal(result.label, label);
+      assert.match(result.text, /rook on f[36]/);
+      assert.equal(result.lesson?.kind, "consequence");
+    }
+  }
+});
+
+test("a slower forced mate keeps its positive grade when mate in one was available", () => {
+  const result = review(
+    "7k/6pp/8/8/8/8/6PP/K2Q1R2 w - - 0 1",
+    { mate: 1, cp: undefined, pv: ["f1f8"] },
+    {
+      mate: 3,
+      cp: undefined,
+      pv: ["d1d4", "h7h6", "f1f7", "h8h7", "d4g7"],
+    },
+  );
+  assert.equal(result.label, "Excellent move");
+  assert.equal(result.lesson, undefined);
+});
+
 test("retaining a winning advantage does not become a Miss", () => {
   const result = review(undefined, { cp: 900 }, { cp: 300 });
-  assert.equal(result.label, "Mistake");
+  assert.equal(result.label, "Blunder");
   assert.doesNotMatch(result.text, /misses/);
 });
 
