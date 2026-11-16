@@ -29,6 +29,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Use project npm version
+        run: npm install --global "npm@$(node -p 'require("./package.json").engines.npm')"
       - run: npm ci
       - run: npm run format:check
       - run: npm run check

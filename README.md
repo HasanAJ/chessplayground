@@ -4,9 +4,10 @@ A browser-based chess playground with Stockfish analysis, move explanations, a c
 
 ## Run
 
-Requires Node.js 22.12+.
+Requires Node.js 22.12+ and npm 10.9.9, matching GitHub Actions. Installation enforces these versions.
 
 ```sh
+npm install --global npm@10.9.9
 npm ci
 npm run dev
 ```
