@@ -9,6 +9,8 @@ import type { Position } from "../../domain/chess/position.ts";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import { pieceImage, pieceLabel } from "./pieces.ts";
 import { useHighlightedSquare } from "./SquareHighlight.tsx";
+import { useBoardAnnotations } from "./useBoardAnnotations.ts";
+import { BoardAnnotations } from "./BoardAnnotations.tsx";
 
 type Props = {
   position: Position;
@@ -19,6 +21,7 @@ type Props = {
   checkedKing?: Square;
   focusSquares?: readonly Square[];
   squareProps?: (square: Square) => ButtonHTMLAttributes<HTMLButtonElement>;
+  onRemovePiece?: (square: Square) => void;
   children?: ReactNode;
 };
 
@@ -31,10 +34,12 @@ export function BoardGrid({
   checkedKing,
   focusSquares,
   squareProps,
+  onRemovePiece,
   children,
 }: Props) {
   const { t } = useTranslation();
   const highlighted = useHighlightedSquare();
+  const annotations = useBoardAnnotations(position, flipped, onRemovePiece);
   const [tabSquare, setTabSquare] = useState<Square>("a8");
   const files = Array.from(flipped ? "hgfedcba" : "abcdefgh");
   const ranks = Array.from({ length: 8 }, (_, index) =>
@@ -90,11 +95,15 @@ export function BoardGrid({
         role="group"
         aria-label={label}
         onKeyDown={navigate}
+        {...annotations.handlers}
       >
         {ranks.flatMap((rank) =>
           files.map((file) => {
             const square = `${file}${rank}` as Square;
             const piece = position[square];
+            const annotation = annotations.squares.find(
+              (mark) => mark.square === square,
+            );
             const props = squareProps?.(square);
             const classes = [
               "square",
@@ -115,6 +124,12 @@ export function BoardGrid({
               (square === checkedKing ? t("board.square.check") : "");
             const content = (
               <>
+                {annotation && (
+                  <span
+                    className={`square-annotation annotation-${annotation.color}`}
+                    aria-hidden="true"
+                  />
+                )}
                 {piece && (
                   <img
                     className="piece"
@@ -156,6 +171,7 @@ export function BoardGrid({
           }),
         )}
         {children}
+        <BoardAnnotations arrows={annotations.arrows} flipped={flipped} />
       </div>
       <div className="file-labels" aria-hidden="true">
         {files.map((file) => (

@@ -398,6 +398,38 @@
   stroke-width: 17;
   stroke-linecap: round;
 }
+.annotation-red {
+  --annotation-square-color: #eb6150;
+  --annotation-arrow-color: #f8553f;
+}
+.annotation-yellow {
+  --annotation-square-color: #ffaa00;
+  --annotation-arrow-color: #ffaa00;
+}
+.annotation-blue {
+  --annotation-square-color: #52b0dc;
+  --annotation-arrow-color: #48c1f9;
+}
+.annotation-green {
+  --annotation-square-color: #acce59;
+  --annotation-arrow-color: #9fcf3f;
+}
+.square-annotation {
+  position: absolute;
+  inset: 0;
+  background: var(--annotation-square-color);
+  opacity: 0.8;
+  pointer-events: none;
+}
+.annotation-arrows {
+  color: var(--annotation-arrow-color);
+  opacity: 1;
+  z-index: 5;
+}
+.annotation-arrows line {
+  /* Chess.com combines 0.8 color alpha with 0.8 opacity for each arrow. */
+  opacity: 0.64;
+}
 .move-history {
   display: flex;
   flex-wrap: wrap;

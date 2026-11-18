@@ -84,10 +84,6 @@ export function Chessboard(props: Props) {
       "aria-pressed": selected,
       draggable: !!piece,
       onClick: () => board.squareClick(square),
-      onContextMenu: (event) => {
-        event.preventDefault();
-        if (piece) board.arrangePiece(square);
-      },
       onDragStart: (event) => board.startDrag(event, square),
       onDragEnd: board.endDrag,
       onDragEnter: board.allowBoardDrop,
@@ -124,6 +120,7 @@ export function Chessboard(props: Props) {
           lastMove={game.playable ? (board.lastMove ?? undefined) : undefined}
           checkedKing={board.checkedKing}
           squareProps={squareProps}
+          onRemovePiece={board.arrangePiece}
         >
           <ArrowOverlay
             lines={appearance.lines}

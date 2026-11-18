@@ -3,8 +3,8 @@ import {
   Clock3,
   LoaderCircle,
   RotateCcw,
+  Search,
   ShieldAlert,
-  Sparkles,
   X,
 } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
@@ -143,7 +143,7 @@ export function CalculationControl({
             {thinking || busy ? (
               <LoaderCircle size={20} className="spin" />
             ) : (
-              <Sparkles size={20} />
+              <Search size={20} aria-hidden="true" />
             )}
             <span aria-hidden="true">{view.calculateText}</span>
           </button>

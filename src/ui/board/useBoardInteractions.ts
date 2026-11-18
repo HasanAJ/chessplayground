@@ -55,7 +55,8 @@ export function useBoardInteractions(
     : null;
   const position = useMemo(
     () => game.draft?.position ?? positionOf(shown!),
-    [game.draft, shown],
+    // Notices can recreate the same historical Chess instance without changing its key.
+    [game.draft, game.analysisKey, preview.previewGame],
   );
   const turn = game.draft?.turn ?? shown!.turn();
   const rights =
