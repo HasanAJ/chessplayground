@@ -21,9 +21,9 @@ export default {
   "opening.heading.start": "Schachfallen in der Eröffnung",
   "opening.heading.end": "und wie du sie abwehrst",
   "opening.subtitle":
-    "Erkunde 30 Angriffsideen in interaktiven Anleitungen. Erkenne den verlockenden Fehler, verstehe die taktische Antwort und lerne einen Zug, der die Falle vermeidet.",
+    "Entdecke 30 Angriffsideen, Zug für Zug. Erkenne den verlockenden Fehler und lerne, wie du ihn ausnutzt und die Falle vermeidest.",
   "opening.loading": "Angriffe werden geladen…",
-  "opening.error.title": "Die Eröffnungen konnten nicht geladen werden",
+  "opening.error.title": "Wir konnten die Eröffnungen nicht laden",
   "opening.error.description":
     "Prüfe deine Verbindung und lade die Seite neu. Du kannst auch zum Bereich „Spielen“ zurückkehren.",
   "opening.error.reload": "Neu laden",
@@ -61,7 +61,7 @@ export default {
   "opening.plan": "Die Angriffsidee",
   "opening.mistake": "Die Verlockung",
   "opening.defense": "Wenn sie sich verteidigen",
-  "opening.complete": "Das Ergebnis dieser Variante",
+  "opening.complete": "Das Ergebnis",
   "opening.branch.label": "Wähle einen Ablauf",
   "opening.branch.trap": "Sie nehmen den Köder",
   "opening.branch.defense": "Sie verteidigen sich",
@@ -71,7 +71,7 @@ export default {
   "opening.stage.defense": "Die Falle vermeiden",
   "opening.result.defense": "Die unmittelbare Falle ist vermieden",
   "opening.defense.takeaway":
-    "Spiele von hier weiter. Die Falle zu vermeiden beseitigt nicht immer den Druck des Angreifers.",
+    "Die Falle ist vermieden, aber der Angriff kann weitergehen. Erkunde, was als Nächstes passiert.",
   "opening.risk.low": "Taktische Gelegenheit",
   "opening.risk.gambit": "Material für den Angriff angeboten",
   "opening.risk.high": "Riskant bei guter Verteidigung",
@@ -84,7 +84,7 @@ export default {
   "opening.idea.underpromotion":
     "Die Springerumwandlung gibt Schach. Dieser zwingende Zug zählt hier mehr als eine Dame.",
   "opening.idea.check":
-    "Das ist Schach. Der König muss gesichert werden, bevor eine andere Drohung beantwortet wird.",
+    "Der König steht im Schach. Der nächste Zug muss das Schach abwehren.",
   "opening.idea.castle":
     "Die Rochade bringt den König aus dem Zentrum und den Turm näher ans Geschehen.",
   "opening.idea.capture":
@@ -128,12 +128,12 @@ export default {
   "board.material.label": "Fehlende Figuren und Materialbilanz",
   "board.material.missing": "Fehlende Figuren für {0}",
   "board.material.advantage": "{0} hat {1} Materialpunkte Vorsprung",
-  "board.walkthrough.title": "Die Variante erkunden",
+  "board.walkthrough.title": "Sieh dir an, wie es weitergeht",
   "board.walkthrough.yourMove": "Dein Zug",
   "board.walkthrough.yourReply": "Deine Antwort",
   "board.walkthrough.theirReply": "Antwort des Gegners",
   "board.walkthrough.capture": "Der Schlag",
-  "board.walkthrough.moves": "Züge der Variante",
+  "board.walkthrough.moves": "Züge in dieser Folge",
   "board.walkthrough.move.yours": "Deine Figur ({0}) zieht von {1} nach {2}.",
   "board.walkthrough.move.theirs":
     "Die gegnerische Figur ({0}) zieht von {1} nach {2}.",
@@ -153,15 +153,15 @@ export default {
   "board.preview.previous": "Vorheriger Zug in der Vorschau",
   "board.preview.next": "Nächster Zug in der Vorschau",
   "engine.error.load":
-    "Die Schachengine konnte nicht geladen werden. Prüfe deine Verbindung und starte die Analyse erneut.",
+    "Wir konnten die Schachengine nicht laden. Prüfe deine Verbindung und versuche es erneut.",
   "engine.error.loadTimeout":
     "Das Laden der Engine hat zu lange gedauert. Analysiere die Stellung erneut.",
   "engine.error.start":
-    "Die Engine konnte nicht starten. Lade die Seite neu oder nutze einen Browser mit WebAssembly-Unterstützung.",
+    "Wir konnten die Schachengine nicht starten. Lade die Seite neu. Wenn das nicht hilft, versuche es mit einem anderen Browser.",
   "engine.error.responseTimeout":
     "Die Engine hat zu lange für die Antwort gebraucht. Analysiere die Stellung erneut.",
   "engine.error.incompleteAnalysis":
-    "Es wurde keine vollständige Analyse geliefert. Versuche diese Stellung erneut.",
+    "Wir konnten diese Stellung nicht fertig analysieren. Versuche es erneut.",
   "language.selector.label": "Sprache",
   "position.error.invalidFen": "Ungültiges FEN: {0}",
   "position.error.pawnLimit":
@@ -256,22 +256,22 @@ export default {
     "Der Zug der Figur ({0}) öffnet einen Angriff der gegnerischen Figur ({1}) auf {2} gegen {3}.",
   "coach.lesson.threat.focus": "Drohungen ansehen",
   "coach.lesson.material.loss":
-    "In den gezeigten Zügen gibst du {0} Materialpunkte mehr ab, als du gewinnst (Bauer = 1).",
+    "Mit diesen Zügen verlierst du insgesamt {0} Materialpunkte (ein Bauer zählt 1 Punkt).",
   "coach.lesson.material.gain":
-    "In den gezeigten Zügen gewinnst du insgesamt {0} Materialpunkte (Bauer = 1).",
+    "Mit diesen Zügen gewinnst du insgesamt {0} Materialpunkte (ein Bauer zählt 1 Punkt).",
   "coach.lesson.material.equal":
-    "Die gezeigten Tauschvorgänge sind materiell ausgeglichen.",
+    "Nach diesen Zügen bleibt das Materialverhältnis gleich.",
   "coach.lesson.material.recapture": "Hier ist noch ein Rückschlag möglich.",
   "coach.lesson.material.incomplete":
-    "Die verfügbare Variante endet hier; spätere Tauschvorgänge sind nicht enthalten.",
+    "Die Vorschau endet hier. Weitere Schlagzüge können folgen.",
   "coach.lesson.best.avoidsAttack":
     "Deine Figur ({0}) zieht nach {1} und vermeidet den Angriff nach {2}.",
   "coach.lesson.best.position":
-    "Die Engine bevorzugt die entstehende Stellung.",
+    "Der Computer bevorzugt die Stellung nach diesem Zug.",
   "coach.piece.yoursOnSquare": "deine Figur ({0}) auf {1}",
   "common.join.and": " und ",
   "coach.review.error.needsAnalysis":
-    "Der Zug erfordert eine Analyse der resultierenden Stellung.",
+    "Wir müssen zuerst die Stellung nach diesem Zug prüfen.",
   "coach.review.good.draw": "Dieser Zug sichert ein Remis.",
   "coach.review.good.winningMate": "Du hast weiterhin ein erzwungenes Matt.",
   "coach.review.good.losingMate":
@@ -280,14 +280,14 @@ export default {
   "coach.review.good.losing":
     "Das ist nahe an der besten Möglichkeit in einer schwierigen Stellung.",
   "coach.review.good.balanced":
-    "Dieser Zug erhält fast dieselben Chancen wie der beste Zug.",
+    "Dieser Zug ist fast so stark wie der beste Zug.",
   "coach.review.consequence.draw":
     "Die Partie endet remis. Der beste Zug hätte bessere Chancen geboten.",
   "coach.review.consequence.allowsMate": "Dein Gegner kann Matt erzwingen.",
   "coach.review.consequence.missesMate":
     "Dieser Zug verpasst ein erzwungenes Matt.",
   "coach.review.consequence.missesMaterial":
-    "Dieser Zug verpasst eine gewinnbringende Taktik, die Material gewinnt. Erkunde den besten Zug, um die Idee zu sehen.",
+    "Du hast eine Chance verpasst, Material zu gewinnen. Schau dir den besten Zug an, um zu sehen, wie es geht.",
   "coach.review.consequence.worseChances":
     "Dein Gegner bekommt bessere Chancen als nach dem besten Zug.",
   "coach.explanation.pressure.title": "Druck auf {0} aufbauen",
@@ -391,20 +391,20 @@ export default {
   "coach.warning.undefended":
     "Deine Figur ({0}) auf {1} ist angegriffen und ungedeckt.",
   "coach.continuation.replyHeading": "Mögliche Antwort des Gegners",
-  "coach.continuation.label": "Eine mögliche Zugfolge",
+  "coach.continuation.label": "So könnte die Partie weitergehen",
   "coach.continuation.previewMove": "Zug {0} ansehen: {1}, {2}",
   "engine.error.noLegalCandidates":
-    "Die Engine hat keine legalen Züge geliefert. Starte die Analyse erneut.",
+    "Wir konnten keinen Zug vorschlagen. Versuche es erneut.",
   "coach.analysis.status.thinking": "Analyse läuft…",
-  "coach.analysis.status.unavailable": "Engine nicht verfügbar",
-  "coach.analysis.status.ready": "Empfehlungen bereit",
+  "coach.analysis.status.unavailable": "Analyse nicht verfügbar",
+  "coach.analysis.status.ready": "Zugvorschläge sind bereit",
   "coach.analysis.errorHeading": "Versuchen wir es noch einmal.",
   "coach.analysis.retry": "Analyse erneut starten",
   "coach.analysis.label": "Zugvorschlag und Analyse",
   "coach.analysis.search.heading": "Analyse läuft…",
   "coach.analysis.search.bestMove": "Bester Zug für {0} wird gesucht…",
   "coach.analysis.search.history":
-    "Deine Optionen und die Antworten aus dieser früheren Stellung werden geprüft.",
+    "Wir prüfen deine Züge und die Antworten deines Gegners aus dieser früheren Stellung.",
   "coach.analysis.search.live":
     "Deine Optionen und gegnerische Antworten werden geprüft. Du kannst weiterspielen.",
   "coach.warnings.heading": "Achte auf",
@@ -414,11 +414,11 @@ export default {
   "coach.best.forced": "Einziger legaler Zug",
   "coach.best.play": "Besten Zug {0} spielen",
   "coach.review.error.failed":
-    "Die Engine konnte diesen Zug nicht bewerten. Versuche es erneut.",
+    "Wir konnten diesen Zug nicht bewerten. Versuche es erneut.",
   "coach.review.error.comparison":
-    "Die Engine konnte diesen Zug nicht zuverlässig vergleichen. Versuche es erneut.",
+    "Wir konnten diesen Zug nicht mit dem besten Zug vergleichen. Versuche es erneut.",
   "coach.review.error.reply":
-    "Die Engine konnte die Antwort nicht prüfen. Versuche es erneut.",
+    "Wir konnten die Antwort deines Gegners nicht prüfen. Versuche es erneut.",
   "coach.feedback.status.reviewing": "Wird geprüft…",
   "coach.feedback.status.unavailable": "Zugbewertung nicht verfügbar",
   "coach.feedback.label": "Zugbewertung",
@@ -454,10 +454,10 @@ export default {
   "coach.welcome.description":
     "Finde einen starken Zug und verstehe, warum er funktioniert.",
   "coach.calculate.label.waiting": "Warten auf den Computer",
-  "coach.calculate.label.thinking": "Beste Züge werden berechnet",
-  "coach.calculate.label.ready": "Beste Züge berechnen",
+  "coach.calculate.label.thinking": "Beste Züge werden gesucht",
+  "coach.calculate.label.ready": "Beste Züge finden",
   "coach.calculate.text.waiting": "Warten auf den Computer…",
-  "coach.calculate.text.thinking": "Berechnung läuft…",
+  "coach.calculate.text.thinking": "Züge werden gesucht…",
   "common.dismissError": "Fehlermeldung schließen",
   "game.history.backToLatest": "Zur aktuellen Stellung",
   "computer.status.movingSoon": "Der Computer zieht gleich…",
@@ -487,33 +487,33 @@ export default {
   "computer.retry": "Computer erneut starten",
   "computer.settings.close": "Computereinstellungen schließen",
   "computer.settings.side": "Deine Farbe",
-  "computer.settings.difficulty": "Deine Herausforderung",
+  "computer.settings.difficulty": "Spielstärke",
   "common.retry": "Erneut versuchen",
   "common.done": "Fertig",
   "game.save.error.unavailable":
-    "Der Browserspeicher ist nicht verfügbar oder voll. Deine letzten Änderungen könnten beim Neuladen verloren gehen.",
+    "Dein Browser kann diese Partie gerade nicht speichern. Wenn du die Seite neu lädst, können deine letzten Änderungen verloren gehen.",
   "game.save.error.backup":
-    "Die ursprünglichen Daten konnten nicht gesichert werden. Automatisches Speichern bleibt pausiert. Letzte Änderungen könnten beim Neuladen verloren gehen.",
+    "Wir konnten keine Kopie deiner ursprünglichen Partie sichern. Das Speichern ist weiterhin pausiert. Wenn du die Seite neu lädst, können deine letzten Änderungen verloren gehen.",
   "game.result.label": "Partieergebnis",
   "game.result.checkmate": "SCHACHMATT",
   "game.result.draw": "REMIS",
-  "game.result.drawHeading": "Die Punkte werden geteilt.",
-  "game.result.checkmateMessage": "Ein königlicher Abschluss. Noch eine Runde?",
-  "game.result.drawMessage": "Gut gespielt. Die nächste Runde wartet.",
+  "game.result.drawHeading": "Die Partie endet remis.",
+  "game.result.checkmateMessage": "Noch eine Partie?",
+  "game.result.drawMessage": "Noch eine Partie?",
   "game.result.playAgain": "Erneut spielen",
   "game.promotion.label": "Umwandlungsfigur wählen",
   "game.promotion.cancel": "Umwandlung abbrechen",
-  "game.promotion.heading": "Dein Bauer hat es geschafft.",
-  "game.promotion.description": "Wähle sein nächstes Kapitel.",
+  "game.promotion.heading": "Verwandle deinen Bauern",
+  "game.promotion.description": "Wähle eine Figur für deinen Bauern.",
   "game.promotion.choose": "In {0} umwandeln",
   "game.save.label": "Speicherstatus der Partie",
   "game.save.recoveryHeading":
-    "Gespeicherte Partie muss wiederhergestellt werden",
-  "game.save.unavailableHeading": "Speichern nicht verfügbar",
-  "game.save.backupHeading": "Ursprüngliche Daten bewahrt",
+    "Wir konnten deine gespeicherte Partie nicht laden",
+  "game.save.unavailableHeading": "Deine Partie wird nicht gespeichert",
+  "game.save.backupHeading": "Deine ursprüngliche Partie ist gesichert",
   "game.save.backupDescription":
-    "Die ursprünglichen Daten sind in einer separaten Wiederherstellungskopie im Browser gesichert. Automatisches Speichern ist wieder aktiv.",
-  "game.save.resume": "Partie behalten und Speichern fortsetzen",
+    "Eine Kopie deiner ursprünglichen Partie bleibt in diesem Browser gespeichert. Deine aktuelle Partie wird jetzt wieder automatisch gespeichert.",
+  "game.save.resume": "Diese Partie behalten und wieder speichern",
   "game.save.dismiss": "Wiederherstellungshinweis schließen",
   "position.error.invalidInput": "Dieses FEN ist ungültig.",
   "position.error.clipboard":
@@ -524,13 +524,13 @@ export default {
   "position.controls.copy": "Aktuelles FEN kopieren",
   "position.controls.load": "Laden",
   "game.save.error.readStorage":
-    "Der Browserspeicher konnte nicht gelesen werden. Deine gespeicherte Partie ist möglicherweise nicht verfügbar.",
+    "Wir konnten die gespeicherten Daten deines Browsers nicht öffnen. Deine gespeicherte Partie ist möglicherweise nicht verfügbar.",
   "game.save.error.restoredPosition":
-    "Deine gespeicherte Partie konnte nicht gelesen werden. Die letzte gültige Stellung wurde ohne Verlauf wiederhergestellt. Automatisches Speichern ist zum Schutz der ursprünglichen Daten pausiert.",
+    "Wir konnten deine gespeicherte Partie nicht laden. Die letzte gültige Stellung ist wiederhergestellt, aber ohne Zugverlauf. Das Speichern ist pausiert, um deine ursprüngliche Partie zu schützen.",
   "game.save.error.freshBoard":
-    "Deine gespeicherte Partie konnte nicht gelesen werden. Ein neues Brett wurde geöffnet. Automatisches Speichern ist zum Schutz der ursprünglichen Daten pausiert.",
+    "Wir konnten deine gespeicherte Partie nicht laden und haben ein neues Brett geöffnet. Das Speichern ist pausiert, um deine ursprüngliche Partie zu schützen.",
   "game.save.error.verifyBackup":
-    "Die Wiederherstellungskopie konnte nicht überprüft werden.",
+    "Wir konnten die Sicherungskopie deiner Partie nicht prüfen.",
   "game.history.label": "Partiezüge",
   "game.history.heading": "Zugverlauf",
   "game.history.viewStart": "Anfangsstellung ansehen",
@@ -583,18 +583,20 @@ export default {
   "coach.exploration.open": "Diesen Zug erkunden",
   "coach.exploration.close": "Vorschau schließen",
   "coach.exploration.note":
-    "Wähle einen Zug für die Brettvorschau. Dies ist eine mögliche Zugfolge; deine Partie bleibt unverändert.",
+    "Wähle einen Zug, um ihn auf dem Brett zu sehen. Du siehst eine mögliche Zugfolge, ohne deine Partie zu verändern.",
   "coach.position.evaluation": "Stellungsbewertung",
   "coach.calculate.refresh": "Analyse aktualisieren",
   "coach.settings.heading": "Analyseeinstellungen",
   "coach.settings.close": "Analyseeinstellungen schließen",
-  "coach.settings.description": "Gilt beim Berechnen der besten Züge.",
+  "coach.settings.description":
+    "Wähle, wie lange der Computer sucht und wie viele Züge er vergleicht.",
   "coach.settings.checkInputs": "Analyseeinstellungen prüfen",
   "coach.settings.seconds": "Zeit (s)",
-  "coach.settings.seconds.hint": "Mehr Zeit ermöglicht eine tiefere Analyse.",
-  "coach.settings.moves": "Kandidatenzüge",
+  "coach.settings.seconds.hint":
+    "Gib dem Computer mehr Zeit, um weiter vorauszuschauen.",
+  "coach.settings.moves": "Züge zum Vergleichen",
   "coach.settings.moves.hint":
-    "Weniger Züge ermöglichen eine tiefere Analyse jeder Option.",
+    "Bei weniger Zügen bleibt mehr Zeit für jeden einzelnen.",
   "coach.settings.seconds.invalid":
     "Die Zeit muss {0}–{1} Sekunden in Schritten von {2} betragen.",
   "coach.settings.moves.invalid":

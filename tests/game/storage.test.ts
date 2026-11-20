@@ -72,7 +72,7 @@ test("unavailable browser storage still permits a fresh game and computer play",
   assert.equal(replayStudy(loaded.study).game.fen(), START_FEN);
   assert.match(
     translateNotice(loaded.storageError, english),
-    /could not be read/,
+    /couldn’t open your browser’s saved data/,
   );
   assert.equal(readDifficulty(blocked), "medium");
 });
@@ -98,11 +98,11 @@ test("a corrupt session preserves its exact data and recovers a valid fallback F
   assert.deepEqual(loaded.recovery?.data, { [SESSION_KEY]: "{broken" });
   assert.match(
     translateNotice(loaded.recovery!.message, english),
-    /without its move history/,
+    /but not its move history/,
   );
   assert.match(
     translateNotice(loaded.recovery!.message, english),
-    /Autosave is paused/,
+    /Saving is paused/,
   );
   assert.deepEqual(values, { [SESSION_KEY]: "{broken", "tempo-position": fen });
 });
@@ -150,7 +150,7 @@ test("failed or discarded recovery writes cannot authorize overwriting the origi
   );
   assert.throws(
     () => preserveRecovery(recovery, { ...source, setItem() {} }),
-    /verified/,
+    /couldn’t check the recovery copy/,
   );
   assert.equal(values[SESSION_KEY], "{broken");
 });

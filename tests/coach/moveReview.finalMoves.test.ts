@@ -159,7 +159,7 @@ test("a comparison that is still inconsistent after one retry reports an error",
   reverseAwayFromPlayed(worker);
   assert.equal(reviews.length, 0);
   assert.equal(errors.length, 1);
-  assert.match(errors[0], /reliably compare/);
+  assert.match(errors[0], /couldn’t tell how this move compares/);
   assert.equal(
     worker.commands.filter((command) => command.startsWith("go ")).length,
     3,
@@ -230,7 +230,7 @@ test("a final move without a scored legal line reports an error instead of using
     "bestmove e2e3",
   );
   assert.equal(reviews.length, 0);
-  assert.match(errors[0], /could not review/);
+  assert.match(errors[0], /couldn’t review/);
   assert.equal(
     worker.commands.filter((command) => command.startsWith("go ")).length,
     1,

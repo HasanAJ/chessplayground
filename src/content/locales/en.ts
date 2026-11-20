@@ -19,9 +19,9 @@ const en = {
   "opening.heading.start": "Chess opening traps",
   "opening.heading.end": "and how to defend them",
   "opening.subtitle":
-    "Explore 30 attacking ideas through interactive walkthroughs. Learn the tempting mistake, understand the punishment, and see a reply that avoids the trap.",
+    "Explore 30 attacking ideas, one move at a time. See the tempting mistake, how to take advantage of it, and how to avoid the trap.",
   "opening.loading": "Loading attacks…",
-  "opening.error.title": "Openings could not load",
+  "opening.error.title": "We couldn’t load the openings",
   "opening.error.description":
     "Check your connection and reload to try again. You can also return to Play.",
   "opening.error.reload": "Reload",
@@ -59,7 +59,7 @@ const en = {
   "opening.plan": "The attacking idea",
   "opening.mistake": "The temptation",
   "opening.defense": "If they defend",
-  "opening.complete": "The result of this line",
+  "opening.complete": "The result",
   "opening.branch.label": "Choose a walkthrough",
   "opening.branch.trap": "They take the bait",
   "opening.branch.defense": "They defend",
@@ -69,7 +69,7 @@ const en = {
   "opening.stage.defense": "Avoid the trap",
   "opening.result.defense": "The immediate trap is avoided",
   "opening.defense.takeaway":
-    "Continue from this position. Avoiding the trap does not always remove the attacker’s pressure.",
+    "The trap is avoided, but the attack may continue. Keep exploring from here.",
   "opening.risk.low": "Tactical opportunity",
   "opening.risk.gambit": "Material offered for attack",
   "opening.risk.high": "Risky if avoided",
@@ -82,7 +82,7 @@ const en = {
   "opening.idea.underpromotion":
     "Promoting to a knight gives check. That extra forcing move matters more than choosing a queen here.",
   "opening.idea.check":
-    "This is check. The king’s safety must be answered before another threat can be dealt with.",
+    "The king is in check. The next move must get it out of check.",
   "opening.idea.castle":
     "Castling moves the king away from the centre and brings the rook closer to the action.",
   "opening.idea.capture":
@@ -126,12 +126,12 @@ const en = {
   "board.material.label": "Missing pieces and material balance",
   "board.material.missing": "Missing {0} pieces",
   "board.material.advantage": "{0} is ahead by {1} material points",
-  "board.walkthrough.title": "Explore the continuation",
+  "board.walkthrough.title": "See what happens next",
   "board.walkthrough.yourMove": "Your move",
   "board.walkthrough.yourReply": "Your reply",
   "board.walkthrough.theirReply": "Opponent’s reply",
   "board.walkthrough.capture": "The capture",
-  "board.walkthrough.moves": "Moves in the continuation",
+  "board.walkthrough.moves": "Moves in this sequence",
   "board.walkthrough.move.yours": "Your {0} moves from {1} to {2}.",
   "board.walkthrough.move.theirs": "Their {0} moves from {1} to {2}.",
   "board.walkthrough.capture.yours":
@@ -150,15 +150,15 @@ const en = {
   "board.preview.previous": "Previous preview move",
   "board.preview.next": "Next preview move",
   "engine.error.load":
-    "The chess engine could not load. Check your connection and retry analysis.",
+    "We couldn’t load the chess engine. Check your connection and try again.",
   "engine.error.loadTimeout":
     "The engine took too long to load. Try analyzing the position again.",
   "engine.error.start":
-    "The chess engine could not start. Try refreshing the page or using a browser with WebAssembly support.",
+    "We couldn’t start the chess engine. Refresh the page. If that doesn’t help, try another browser.",
   "engine.error.responseTimeout":
     "The engine took too long to respond. Try analyzing the position again.",
   "engine.error.incompleteAnalysis":
-    "No complete analysis was returned. Try this position again.",
+    "We couldn’t finish checking this position. Try again.",
   "language.selector.label": "Language",
   "position.error.invalidFen": "Invalid FEN: {0}",
   "position.error.pawnLimit":
@@ -249,20 +249,22 @@ const en = {
     "Moving the {0} opens an attack by their {1} on {2} against {3}.",
   "coach.lesson.threat.focus": "See the threats",
   "coach.lesson.material.loss":
-    "In the moves shown, you give up {0} more points of material than you gain (pawn = 1).",
+    "In these moves, you lose {0} material points overall (a pawn is worth 1).",
   "coach.lesson.material.gain":
-    "In the moves shown, you gain {0} points of material overall (pawn = 1).",
-  "coach.lesson.material.equal": "The exchanges shown are equal in material.",
+    "In these moves, you gain {0} material points overall (a pawn is worth 1).",
+  "coach.lesson.material.equal":
+    "The material balance stays the same after these moves.",
   "coach.lesson.material.recapture": "A recapture is still possible here.",
   "coach.lesson.material.incomplete":
-    "The available line ends here; later exchanges are not included.",
+    "The preview stops here. More captures may follow.",
   "coach.lesson.best.avoidsAttack":
     "This moves your {0} to {1}, avoiding the attack after {2}.",
-  "coach.lesson.best.position": "The engine prefers the resulting position.",
+  "coach.lesson.best.position":
+    "The computer prefers the position after this move.",
   "coach.piece.yoursOnSquare": "your {0} on {1}",
   "common.join.and": " and ",
   "coach.review.error.needsAnalysis":
-    "The move needs analysis of the resulting position.",
+    "We need to check the position after this move first.",
   "coach.review.good.draw": "This secures a draw.",
   "coach.review.good.winningMate": "You still have a forced checkmate.",
   "coach.review.good.losingMate":
@@ -270,14 +272,13 @@ const en = {
   "coach.review.good.winning": "You keep a strong advantage.",
   "coach.review.good.losing":
     "This is close to the best option in a difficult position.",
-  "coach.review.good.balanced":
-    "This keeps nearly the same chances as the best move.",
+  "coach.review.good.balanced": "This is almost as strong as the best move.",
   "coach.review.consequence.draw":
     "This ends the game in a draw. The best move offered better chances.",
   "coach.review.consequence.allowsMate": "Your opponent can force checkmate.",
   "coach.review.consequence.missesMate": "This misses a forced checkmate.",
   "coach.review.consequence.missesMaterial":
-    "This misses a winning tactic that gains material. Explore the best move to see the idea.",
+    "You missed a chance to win material. Explore the best move to see how.",
   "coach.review.consequence.worseChances":
     "Your opponent gets better chances than after the best move.",
   "coach.explanation.pressure.title": "Build pressure on {0}",
@@ -367,20 +368,20 @@ const en = {
   "coach.warning.undefended":
     "Your {0} on {1} is under attack with no defender.",
   "coach.continuation.replyHeading": "Opponent’s possible reply",
-  "coach.continuation.label": "One possible line of play",
+  "coach.continuation.label": "One way the game could continue",
   "coach.continuation.previewMove": "Preview move {0}: {1}, {2}",
   "engine.error.noLegalCandidates":
-    "The engine returned no legal candidates. Please retry analysis.",
+    "We couldn’t find a move to suggest. Try again.",
   "coach.analysis.status.thinking": "Analyzing…",
-  "coach.analysis.status.unavailable": "Engine unavailable",
-  "coach.analysis.status.ready": "Recommendations ready",
+  "coach.analysis.status.unavailable": "Analysis unavailable",
+  "coach.analysis.status.ready": "Suggested moves are ready",
   "coach.analysis.errorHeading": "Let’s try that again.",
   "coach.analysis.retry": "Retry analysis",
   "coach.analysis.label": "Suggested move and analysis",
   "coach.analysis.search.heading": "Analyzing…",
   "coach.analysis.search.bestMove": "Finding {0}’s best move…",
   "coach.analysis.search.history":
-    "Looking at your options and their replies from this earlier position.",
+    "Checking your moves and your opponent’s replies from this earlier position.",
   "coach.analysis.search.live":
     "Checking your options and your opponent’s replies. Feel free to keep playing.",
   "coach.warnings.heading": "Watch out for",
@@ -389,12 +390,11 @@ const en = {
   "coach.best.heading": "Suggested move",
   "coach.best.forced": "Only legal move",
   "coach.best.play": "Play best move {0}",
-  "coach.review.error.failed":
-    "The engine could not review this move. Try again.",
+  "coach.review.error.failed": "We couldn’t review this move. Try again.",
   "coach.review.error.comparison":
-    "The engine could not reliably compare this move. Try again.",
+    "We couldn’t tell how this move compares to the best move. Try again.",
   "coach.review.error.reply":
-    "The engine could not check the reply. Try again.",
+    "We couldn’t check your opponent’s reply. Try again.",
   "coach.feedback.status.reviewing": "Reviewing…",
   "coach.feedback.status.unavailable": "Review unavailable",
   "coach.feedback.label": "Move feedback",
@@ -429,10 +429,10 @@ const en = {
   "coach.welcome.description":
     "Find a strong move and understand why it works.",
   "coach.calculate.label.waiting": "Waiting for computer",
-  "coach.calculate.label.thinking": "Calculating best moves",
-  "coach.calculate.label.ready": "Calculate best moves",
+  "coach.calculate.label.thinking": "Finding the best moves",
+  "coach.calculate.label.ready": "Find the best moves",
   "coach.calculate.text.waiting": "Waiting for computer…",
-  "coach.calculate.text.thinking": "Calculating…",
+  "coach.calculate.text.thinking": "Finding moves…",
   "common.dismissError": "Dismiss error",
   "game.history.backToLatest": "Back to latest",
   "computer.status.movingSoon": "Computer moves in a moment…",
@@ -457,32 +457,32 @@ const en = {
   "computer.retry": "Retry computer",
   "computer.settings.close": "Close computer settings",
   "computer.settings.side": "You play as",
-  "computer.settings.difficulty": "Your challenge",
+  "computer.settings.difficulty": "Difficulty",
   "common.retry": "Retry",
   "common.done": "Done",
   "game.save.error.unavailable":
-    "Browser storage is unavailable or full. Your latest changes may not survive a reload.",
+    "Your browser can’t save this game right now. You may lose your latest changes if you reload the page.",
   "game.save.error.backup":
-    "The original save could not be backed up. Autosave remains paused. Your latest changes may not survive a reload.",
+    "We couldn’t make a copy of your original save. Saving is still paused. You may lose your latest changes if you reload the page.",
   "game.result.label": "Game result",
   "game.result.checkmate": "CHECKMATE",
   "game.result.draw": "DRAW",
-  "game.result.drawHeading": "Honors shared.",
-  "game.result.checkmateMessage": "A royal finish. Ready for another round?",
-  "game.result.drawMessage": "Good game. There’s always another round.",
+  "game.result.drawHeading": "It’s a draw.",
+  "game.result.checkmateMessage": "Want to play again?",
+  "game.result.drawMessage": "Want to play again?",
   "game.result.playAgain": "Play again",
   "game.promotion.label": "Choose a promotion piece",
   "game.promotion.cancel": "Cancel promotion",
-  "game.promotion.heading": "Your pawn made it.",
-  "game.promotion.description": "Choose its next chapter.",
+  "game.promotion.heading": "Promote your pawn",
+  "game.promotion.description": "Choose a piece for your pawn.",
   "game.promotion.choose": "Promote to {0}",
   "game.save.label": "Game saving status",
-  "game.save.recoveryHeading": "Saved game needs recovery",
-  "game.save.unavailableHeading": "Browser save unavailable",
-  "game.save.backupHeading": "Original save preserved",
+  "game.save.recoveryHeading": "We couldn’t load your saved game",
+  "game.save.unavailableHeading": "Your game isn’t being saved",
+  "game.save.backupHeading": "Your original save is safe",
   "game.save.backupDescription":
-    "The original data is kept in a separate browser recovery backup. Autosave has resumed.",
-  "game.save.resume": "Keep current game & resume saving",
+    "We kept a copy of your original save in this browser. Your current game is now saving automatically.",
+  "game.save.resume": "Keep this game and resume saving",
   "game.save.dismiss": "Dismiss recovery notice",
   "position.error.invalidInput": "This FEN is not valid.",
   "position.error.clipboard":
@@ -493,12 +493,13 @@ const en = {
   "position.controls.copy": "Copy current FEN",
   "position.controls.load": "Load",
   "game.save.error.readStorage":
-    "Browser storage could not be read. Your saved game may be unavailable.",
+    "We couldn’t open your browser’s saved data. Your saved game may not be available.",
   "game.save.error.restoredPosition":
-    "Your saved game could not be read. The last valid position was restored, without its move history. Autosave is paused to protect the original data.",
+    "We couldn’t load your saved game. We restored the last valid position, but not its move history. Saving is paused to protect your original save.",
   "game.save.error.freshBoard":
-    "Your saved game could not be read. A fresh board is open. Autosave is paused to protect the original data.",
-  "game.save.error.verifyBackup": "Recovery backup could not be verified.",
+    "We couldn’t load your saved game, so we opened a new board. Saving is paused to protect your original save.",
+  "game.save.error.verifyBackup":
+    "We couldn’t check the recovery copy of your saved game.",
   "game.history.label": "Game moves",
   "game.history.heading": "Move history",
   "game.history.viewStart": "View starting position",
@@ -548,18 +549,19 @@ const en = {
   "coach.exploration.open": "Explore this move",
   "coach.exploration.close": "Close exploration",
   "coach.exploration.note":
-    "Select a move to preview it on the board. This is one possible line; your game stays unchanged.",
+    "Select a move to see it on the board. This shows one possible sequence without changing your game.",
   "coach.position.evaluation": "Position score",
   "coach.calculate.refresh": "Refresh analysis",
   "coach.settings.heading": "Analysis settings",
   "coach.settings.close": "Close analysis settings",
-  "coach.settings.description": "Used when you calculate best moves.",
+  "coach.settings.description":
+    "Choose how long to search and how many moves to compare.",
   "coach.settings.checkInputs": "Check analysis settings",
   "coach.settings.seconds": "Time (seconds)",
-  "coach.settings.seconds.hint": "More time allows deeper analysis.",
-  "coach.settings.moves": "Candidate moves",
+  "coach.settings.seconds.hint": "Give the computer more time to look ahead.",
+  "coach.settings.moves": "Moves to compare",
   "coach.settings.moves.hint":
-    "Fewer moves allow deeper analysis of each choice.",
+    "Compare fewer moves to spend more time on each one.",
   "coach.settings.seconds.invalid":
     "Time must be {0}–{1} seconds, in steps of {2}.",
   "coach.settings.moves.invalid":

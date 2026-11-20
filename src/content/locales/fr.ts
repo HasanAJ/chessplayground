@@ -21,9 +21,9 @@ export default {
   "opening.heading.start": "Pièges d’ouverture aux échecs",
   "opening.heading.end": "et comment les éviter",
   "opening.subtitle":
-    "Explorez 30 idées d’attaque avec des parcours interactifs. Repérez le coup tentant mais fautif, comprenez sa punition et découvrez une réponse qui évite le piège.",
+    "Découvrez 30 idées d’attaque, coup par coup. Repérez l’erreur tentante, apprenez à en profiter et à éviter le piège.",
   "opening.loading": "Chargement des attaques…",
-  "opening.error.title": "Impossible de charger les ouvertures",
+  "opening.error.title": "Nous n’avons pas pu charger les ouvertures",
   "opening.error.description":
     "Vérifiez votre connexion et rechargez la page pour réessayer. Vous pouvez aussi revenir à la section « Jouer ».",
   "opening.error.reload": "Recharger",
@@ -62,7 +62,7 @@ export default {
   "opening.plan": "L’idée d’attaque",
   "opening.mistake": "La tentation",
   "opening.defense": "S’ils se défendent",
-  "opening.complete": "Le résultat de cette ligne",
+  "opening.complete": "Le résultat",
   "opening.branch.label": "Choisissez un parcours",
   "opening.branch.trap": "Ils mordent à l’appât",
   "opening.branch.defense": "Ils se défendent",
@@ -72,7 +72,7 @@ export default {
   "opening.stage.defense": "Éviter le piège",
   "opening.result.defense": "Le piège immédiat est évité",
   "opening.defense.takeaway":
-    "Continuez depuis cette position. Éviter le piège ne supprime pas toujours la pression de l’attaquant.",
+    "Le piège est évité, mais l’attaque peut continuer. Explorez la suite depuis cette position.",
   "opening.risk.low": "Occasion tactique",
   "opening.risk.gambit": "Matériel offert pour l’attaque",
   "opening.risk.high": "Risqué face à une bonne défense",
@@ -85,7 +85,7 @@ export default {
   "opening.idea.underpromotion":
     "Promouvoir en cavalier donne échec et impose une réponse à l’adversaire. Ici, cela compte plus que le choix d’une dame.",
   "opening.idea.check":
-    "C’est un échec. Il faut protéger le roi avant de répondre à une autre menace.",
+    "Le roi est en échec. Le prochain coup doit le sortir de l’échec.",
   "opening.idea.castle":
     "Le roque éloigne le roi du centre et rapproche la tour de l’action.",
   "opening.idea.capture":
@@ -130,12 +130,12 @@ export default {
   "board.material.missing": "Pièces manquantes pour les {0}",
   "board.material.advantage":
     "Les {0} ont un avantage de {1} points de matériel",
-  "board.walkthrough.title": "Explorer la variante",
+  "board.walkthrough.title": "Découvrez la suite",
   "board.walkthrough.yourMove": "Votre coup",
   "board.walkthrough.yourReply": "Votre réponse",
   "board.walkthrough.theirReply": "Réponse adverse",
   "board.walkthrough.capture": "La capture",
-  "board.walkthrough.moves": "Coups de la variante",
+  "board.walkthrough.moves": "Coups de cette suite",
   "board.walkthrough.move.yours": "Votre pièce ({0}) se déplace de {1} à {2}.",
   "board.walkthrough.move.theirs":
     "La pièce adverse ({0}) se déplace de {1} à {2}.",
@@ -156,15 +156,15 @@ export default {
   "board.preview.previous": "Coup précédent dans l’aperçu",
   "board.preview.next": "Coup suivant dans l’aperçu",
   "engine.error.load":
-    "Le moteur n’a pas pu se charger. Vérifiez votre connexion et relancez l’analyse.",
+    "Nous n’avons pas pu charger le moteur d’échecs. Vérifiez votre connexion et réessayez.",
   "engine.error.loadTimeout":
     "Le chargement du moteur a pris trop de temps. Analysez à nouveau la position.",
   "engine.error.start":
-    "Le moteur n’a pas pu démarrer. Actualisez la page ou utilisez un navigateur compatible avec WebAssembly.",
+    "Nous n’avons pas pu démarrer le moteur d’échecs. Actualisez la page. Si cela ne suffit pas, essayez un autre navigateur.",
   "engine.error.responseTimeout":
     "Le moteur a mis trop de temps à répondre. Analysez à nouveau la position.",
   "engine.error.incompleteAnalysis":
-    "Aucune analyse complète reçue. Réessayez cette position.",
+    "Nous n’avons pas pu terminer l’analyse de cette position. Réessayez.",
   "language.selector.label": "Langue",
   "position.error.invalidFen": "FEN non valide : {0}",
   "position.error.pawnLimit":
@@ -257,21 +257,22 @@ export default {
     "Le déplacement de la pièce adverse ({0}) découvre une attaque de sa pièce ({1}) en {2} contre {3}.",
   "coach.lesson.threat.focus": "Voir les menaces",
   "coach.lesson.material.loss":
-    "Dans les coups montrés, vous cédez {0} points de matériel de plus que vous en gagnez (pion = 1).",
+    "Avec ces coups, vous perdez {0} points de matériel au total (un pion vaut 1 point).",
   "coach.lesson.material.gain":
-    "Dans les coups montrés, vous gagnez {0} points de matériel au total (pion = 1).",
+    "Avec ces coups, vous gagnez {0} points de matériel au total (un pion vaut 1 point).",
   "coach.lesson.material.equal":
-    "Les échanges montrés sont équilibrés en matériel.",
+    "L’équilibre matériel reste le même après ces coups.",
   "coach.lesson.material.recapture": "Une reprise est encore possible ici.",
   "coach.lesson.material.incomplete":
-    "La variante disponible se termine ici ; les échanges ultérieurs ne sont pas inclus.",
+    "L’aperçu s’arrête ici. D’autres captures peuvent suivre.",
   "coach.lesson.best.avoidsAttack":
     "Votre pièce ({0}) va en {1}, évitant l’attaque après {2}.",
-  "coach.lesson.best.position": "Le moteur préfère la position obtenue.",
+  "coach.lesson.best.position":
+    "L’ordinateur préfère la position après ce coup.",
   "coach.piece.yoursOnSquare": "votre {0} en {1}",
   "common.join.and": " et ",
   "coach.review.error.needsAnalysis":
-    "Le coup nécessite une analyse de la position résultante.",
+    "Nous devons d’abord analyser la position après ce coup.",
   "coach.review.good.draw": "Ce coup assure la nulle.",
   "coach.review.good.winningMate": "Vous avez toujours un mat forcé.",
   "coach.review.good.losingMate":
@@ -280,13 +281,13 @@ export default {
   "coach.review.good.losing":
     "Ce coup est proche du meilleur choix dans une position difficile.",
   "coach.review.good.balanced":
-    "Ce coup conserve presque les mêmes chances que le meilleur coup.",
+    "Ce coup est presque aussi fort que le meilleur coup.",
   "coach.review.consequence.draw":
     "La partie se termine par la nulle. Le meilleur coup offrait de meilleures chances.",
   "coach.review.consequence.allowsMate": "Votre adversaire peut forcer le mat.",
   "coach.review.consequence.missesMate": "Ce coup manque un mat forcé.",
   "coach.review.consequence.missesMaterial":
-    "Ce coup manque une tactique gagnante qui permet de gagner du matériel. Explorez le meilleur coup pour voir l’idée.",
+    "Vous avez manqué une occasion de gagner du matériel. Explorez le meilleur coup pour voir comment.",
   "coach.review.consequence.worseChances":
     "Votre adversaire obtient de meilleures chances qu’après le meilleur coup.",
   "coach.explanation.pressure.title": "Accentuez la pression sur {0}",
@@ -382,20 +383,20 @@ export default {
   "coach.warning.undefended":
     "Ta pièce ({0}) en {1} est attaquée et sans défenseur.",
   "coach.continuation.replyHeading": "Réponse possible de l’adversaire",
-  "coach.continuation.label": "Une suite possible",
+  "coach.continuation.label": "Une suite possible de la partie",
   "coach.continuation.previewMove": "Aperçu du coup {0} : {1}, {2}",
   "engine.error.noLegalCandidates":
-    "Le moteur n’a renvoyé aucun coup légal. Relancez l’analyse.",
+    "Nous n’avons pas trouvé de coup à vous proposer. Réessayez.",
   "coach.analysis.status.thinking": "Analyse en cours…",
-  "coach.analysis.status.unavailable": "Moteur indisponible",
-  "coach.analysis.status.ready": "Recommandations prêtes",
+  "coach.analysis.status.unavailable": "Analyse indisponible",
+  "coach.analysis.status.ready": "Les coups proposés sont prêts",
   "coach.analysis.errorHeading": "Essayons à nouveau.",
   "coach.analysis.retry": "Relancer l’analyse",
   "coach.analysis.label": "Coup suggéré et analyse",
   "coach.analysis.search.heading": "Analyse en cours…",
   "coach.analysis.search.bestMove": "Recherche du meilleur coup des {0}…",
   "coach.analysis.search.history":
-    "Examen de vos options et de leurs réponses depuis cette position antérieure.",
+    "Nous examinons vos coups et les réponses adverses depuis cette position précédente.",
   "coach.analysis.search.live":
     "Examen de vos options et des réponses adverses. Vous pouvez continuer à jouer.",
   "coach.warnings.heading": "Attention à",
@@ -405,11 +406,11 @@ export default {
   "coach.best.forced": "Seul coup légal",
   "coach.best.play": "Jouer le meilleur coup {0}",
   "coach.review.error.failed":
-    "Le moteur n’a pas pu examiner ce coup. Réessayez.",
+    "Nous n’avons pas pu examiner ce coup. Réessayez.",
   "coach.review.error.comparison":
-    "Le moteur n’a pas pu comparer ce coup de façon fiable. Réessayez.",
+    "Nous n’avons pas pu comparer ce coup au meilleur coup. Réessayez.",
   "coach.review.error.reply":
-    "Le moteur n’a pas pu vérifier la réponse. Réessayez.",
+    "Nous n’avons pas pu examiner la réponse adverse. Réessayez.",
   "coach.feedback.status.reviewing": "Examen en cours…",
   "coach.feedback.status.unavailable": "Examen indisponible",
   "coach.feedback.label": "Évaluation du coup",
@@ -445,10 +446,10 @@ export default {
   "coach.welcome.description":
     "Trouvez un bon coup et comprenez pourquoi il fonctionne.",
   "coach.calculate.label.waiting": "En attente de l’ordinateur",
-  "coach.calculate.label.thinking": "Calcul des meilleurs coups",
-  "coach.calculate.label.ready": "Calculer les meilleurs coups",
+  "coach.calculate.label.thinking": "Recherche des meilleurs coups",
+  "coach.calculate.label.ready": "Trouver les meilleurs coups",
   "coach.calculate.text.waiting": "En attente de l’ordinateur…",
-  "coach.calculate.text.thinking": "Calcul en cours…",
+  "coach.calculate.text.thinking": "Recherche de coups…",
   "common.dismissError": "Fermer l’erreur",
   "game.history.backToLatest": "Revenir au présent",
   "computer.status.movingSoon": "L’ordinateur va jouer dans un instant…",
@@ -475,33 +476,34 @@ export default {
   "computer.retry": "Relancer l’ordinateur",
   "computer.settings.close": "Fermer les réglages de l’ordinateur",
   "computer.settings.side": "Votre camp",
-  "computer.settings.difficulty": "Votre défi",
+  "computer.settings.difficulty": "Difficulté",
   "common.retry": "Réessayer",
   "common.done": "Terminé",
   "game.save.error.unavailable":
-    "Le stockage du navigateur est indisponible ou plein. Vos dernières modifications pourraient être perdues au rechargement.",
+    "Votre navigateur ne peut pas enregistrer cette partie pour le moment. Si vous rechargez la page, vous risquez de perdre vos dernières modifications.",
   "game.save.error.backup":
-    "Impossible de sauvegarder les données d’origine. L’enregistrement automatique reste en pause. Les dernières modifications pourraient être perdues au rechargement.",
+    "Nous n’avons pas pu faire une copie de votre sauvegarde d’origine. L’enregistrement reste en pause. Si vous rechargez la page, vous risquez de perdre vos dernières modifications.",
   "game.result.label": "Résultat de la partie",
   "game.result.checkmate": "ÉCHEC ET MAT",
   "game.result.draw": "NULLE",
-  "game.result.drawHeading": "Les honneurs sont partagés.",
-  "game.result.checkmateMessage": "Une fin royale. Une autre partie ?",
-  "game.result.drawMessage":
-    "Belle partie. Il y aura toujours une autre manche.",
+  "game.result.drawHeading": "La partie est nulle.",
+  "game.result.checkmateMessage": "Une autre partie ?",
+  "game.result.drawMessage": "Une autre partie ?",
   "game.result.playAgain": "Rejouer",
   "game.promotion.label": "Choisissez une pièce de promotion",
   "game.promotion.cancel": "Annuler la promotion",
-  "game.promotion.heading": "Votre pion y est arrivé.",
-  "game.promotion.description": "Choisissez sa nouvelle vie.",
+  "game.promotion.heading": "Promouvez votre pion",
+  "game.promotion.description":
+    "Choisissez une pièce pour remplacer votre pion.",
   "game.promotion.choose": "Promouvoir en {0}",
   "game.save.label": "État de l’enregistrement",
-  "game.save.recoveryHeading": "La partie enregistrée doit être récupérée",
-  "game.save.unavailableHeading": "Enregistrement indisponible",
-  "game.save.backupHeading": "Données d’origine conservées",
+  "game.save.recoveryHeading":
+    "Nous n’avons pas pu charger votre partie enregistrée",
+  "game.save.unavailableHeading": "Votre partie n’est pas enregistrée",
+  "game.save.backupHeading": "Votre sauvegarde d’origine est conservée",
   "game.save.backupDescription":
-    "Les données d’origine sont conservées dans une copie de récupération distincte du navigateur. L’enregistrement automatique a repris.",
-  "game.save.resume": "Garder la partie et reprendre l’enregistrement",
+    "Nous avons gardé une copie de votre sauvegarde d’origine dans ce navigateur. Votre partie actuelle est à nouveau enregistrée automatiquement.",
+  "game.save.resume": "Garder cette partie et reprendre l’enregistrement",
   "game.save.dismiss": "Fermer l’avis de récupération",
   "position.error.invalidInput": "Ce FEN n’est pas valide.",
   "position.error.clipboard":
@@ -512,13 +514,13 @@ export default {
   "position.controls.copy": "Copier le FEN actuel",
   "position.controls.load": "Charger",
   "game.save.error.readStorage":
-    "Impossible de lire le stockage du navigateur. Votre partie enregistrée pourrait être indisponible.",
+    "Nous n’avons pas pu ouvrir les données enregistrées dans votre navigateur. Votre partie enregistrée n’est peut-être pas disponible.",
   "game.save.error.restoredPosition":
-    "Impossible de lire votre partie enregistrée. La dernière position valide a été restaurée sans historique. L’enregistrement automatique est en pause pour protéger les données d’origine.",
+    "Nous n’avons pas pu charger votre partie enregistrée. Nous avons récupéré la dernière position valide, mais pas l’historique des coups. L’enregistrement est en pause pour protéger votre sauvegarde d’origine.",
   "game.save.error.freshBoard":
-    "Impossible de lire votre partie enregistrée. Un nouvel échiquier est ouvert. L’enregistrement automatique est en pause pour protéger les données d’origine.",
+    "Nous n’avons pas pu charger votre partie enregistrée. Nous avons donc ouvert un nouvel échiquier. L’enregistrement est en pause pour protéger votre sauvegarde d’origine.",
   "game.save.error.verifyBackup":
-    "La copie de récupération n’a pas pu être vérifiée.",
+    "Nous n’avons pas pu vérifier la copie de récupération de votre partie.",
   "game.history.label": "Coups de la partie",
   "game.history.heading": "Historique des coups",
   "game.history.viewStart": "Voir la position initiale",
@@ -571,19 +573,20 @@ export default {
   "coach.exploration.open": "Explorer ce coup",
   "coach.exploration.close": "Fermer l’exploration",
   "coach.exploration.note":
-    "Choisis un coup pour le voir sur l’échiquier. C’est une suite possible ; ta partie reste inchangée.",
+    "Sélectionnez un coup pour le voir sur l’échiquier. Vous verrez une suite possible sans modifier votre partie.",
   "coach.position.evaluation": "Score de la position",
   "coach.calculate.refresh": "Actualiser l’analyse",
   "coach.settings.heading": "Réglages de l’analyse",
   "coach.settings.close": "Fermer les réglages de l’analyse",
-  "coach.settings.description": "S’applique au calcul des meilleurs coups.",
+  "coach.settings.description":
+    "Choisissez le temps de recherche et le nombre de coups à comparer.",
   "coach.settings.checkInputs": "Vérifiez les réglages de l’analyse",
   "coach.settings.seconds": "Temps (s)",
   "coach.settings.seconds.hint":
-    "Plus de temps permet une analyse plus approfondie.",
-  "coach.settings.moves": "Coups candidats",
+    "Donnez plus de temps à l’ordinateur pour anticiper les coups suivants.",
+  "coach.settings.moves": "Coups à comparer",
   "coach.settings.moves.hint":
-    "Moins de coups permettent d’analyser chaque option plus en profondeur.",
+    "Comparez moins de coups pour consacrer plus de temps à chacun.",
   "coach.settings.seconds.invalid":
     "Le temps doit être de {0} à {1} secondes, par pas de {2}.",
   "coach.settings.moves.invalid":

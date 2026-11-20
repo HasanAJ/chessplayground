@@ -182,7 +182,7 @@ test("unreadable sessions are untouched until recovery is explicitly resolved", 
   const notice = dom.window.document.querySelector(".save-notice")!;
   const buttons = Array.from(notice.querySelectorAll("button"));
   assert.equal(buttons.length, 1);
-  assert.equal(buttons[0].textContent, "Keep current game & resume saving");
+  assert.equal(buttons[0].textContent, "Keep this game and resume saving");
   await act(() =>
     buttons
       .find((button) => button.textContent?.includes("resume saving"))!
@@ -215,11 +215,11 @@ test("quota failures keep recovery paused and expose a complete save warning", a
   assert.equal(dom.window.localStorage.getItem(SESSION_KEY), "{broken");
   assert.match(
     dom.window.document.querySelector(".save-notice")!.textContent!,
-    /Autosave remains paused/,
+    /Saving is still paused/,
   );
   assert.match(
     dom.window.document.querySelector(".save-notice")!.textContent!,
-    /Your latest changes may not survive a reload/,
+    /You may lose your latest changes if you reload the page/,
   );
 });
 
@@ -234,7 +234,7 @@ test("ordinary autosave failures keep play usable and show a live save warning",
   assert.equal(notice.getAttribute("role"), "status");
   assert.match(
     notice.textContent!,
-    /Your latest changes may not survive a reload/,
+    /You may lose your latest changes if you reload the page/,
   );
   assert.equal(notice.querySelector("button"), null);
 });

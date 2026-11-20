@@ -72,7 +72,10 @@ test("later captures explain the checking sequence without asserting the exchang
   );
   assert.equal(result.lesson!.ply, 1);
   assert.equal(result.lesson!.walkthrough!.capturePly, 4);
-  assert.match(result.lesson!.walkthrough!.outcome!, /give up 2 more points/);
+  assert.match(
+    result.lesson!.walkthrough!.outcome!,
+    /lose 2 material points overall/,
+  );
   assert.equal(
     new Chess(result.lesson!.candidate.continuation[2].after).get("c7")?.type,
     "r",
@@ -120,7 +123,7 @@ test("the h3 lesson explains the discovered attack and follows the bishop exchan
   assert.equal(walkthrough.endPly, 5);
   assert.equal(
     walkthrough.outcome,
-    "The exchanges shown are equal in material.",
+    "The material balance stays the same after these moves.",
   );
   assert.doesNotMatch(result.text, /loses|wins|give up|takes your/);
 });
@@ -169,7 +172,7 @@ test("an unrelated equal exchange is not used as the reason for the grade", () =
   assert.doesNotMatch(result.text, /captures|takes your|loses|wins/);
   assert.equal(
     result.lesson!.walkthrough!.outcome,
-    "The exchanges shown are equal in material.",
+    "The material balance stays the same after these moves.",
   );
 });
 
@@ -186,7 +189,10 @@ test("a truncated line warns about the recapture instead of implying the exchang
   assert.equal(played.continuation.length, 4);
   assert.equal(played.materialLoss, undefined);
   const walkthrough = lessonWalkthrough(played, english);
-  assert.match(walkthrough.outcome!, /In the moves shown.*3 more points/);
+  assert.match(
+    walkthrough.outcome!,
+    /In these moves.*lose 3 material points overall/,
+  );
   assert.match(walkthrough.outcome!, /recapture is still possible/);
 });
 
@@ -201,7 +207,7 @@ test("an intermediate check and king response do not hide a later recapture", ()
   assert.equal(result.lesson!.walkthrough!.endPly, 5);
   assert.equal(
     result.lesson!.walkthrough!.outcome,
-    "The exchanges shown are equal in material.",
+    "The material balance stays the same after these moves.",
   );
 });
 
@@ -231,7 +237,7 @@ test("the reviewed Stockfish stalemate line reports the draw instead of its mate
     const t = translator(language);
     const walkthrough = lessonWalkthrough(played, t);
     assert.equal(walkthrough.outcome, t("game.ending.stalemate"));
-    assert.doesNotMatch(walkthrough.outcome!, /points of material|recapture/);
+    assert.doesNotMatch(walkthrough.outcome!, /material points|recapture/);
   }
 });
 
@@ -278,7 +284,7 @@ test("material summaries count promotions and describe gains from the reviewed p
     ])[0];
     assert.match(
       lessonWalkthrough(played, english).outcome!,
-      /give up 8 more points/,
+      /lose 8 material points overall/,
     );
   }
 });

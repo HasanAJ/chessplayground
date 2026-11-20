@@ -215,7 +215,7 @@ test("the capture walkthrough connects the played move, check, reply, and captur
   );
   assert.match(
     document.querySelector(".walkthrough-outcome")!.textContent!,
-    /give up 2 more points/,
+    /lose 2 material points overall/,
   );
   assert.ok(document.querySelector('[data-square="c7"].strategy-square'));
   assert.ok(document.querySelector(".explanation-arrows"));
@@ -311,7 +311,7 @@ test("the h3 walkthrough shows both Nd5 threats, the safer queen move, and the r
   assert.equal(view.preview.previewGame!.get("e3")?.type, "q");
   assert.match(
     document.querySelector(".walkthrough-outcome")!.textContent!,
-    /equal in material/,
+    /material balance stays the same/,
   );
   assert.equal(view.game.fen, originalFen);
   await act(() => button("Return to game").click());
@@ -341,7 +341,7 @@ test("the stalemate walkthrough explains the drawn endpoint without a material-l
   );
   assert.doesNotMatch(
     document.querySelector(".walkthrough-caption")!.textContent!,
-    /points of material|recapture/,
+    /material points|recapture/,
   );
   assert.equal(view.game.fen, originalFen);
   await act(() => button("Return to game").click());

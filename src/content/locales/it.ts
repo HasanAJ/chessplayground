@@ -20,9 +20,9 @@ export default {
   "opening.heading.start": "Trappole di apertura negli scacchi",
   "opening.heading.end": "e come difendersi",
   "opening.subtitle":
-    "Esplora 30 idee d’attacco con percorsi interattivi. Riconosci l’errore invitante, comprendi la punizione e scopri una risposta che evita la trappola.",
+    "Scopri 30 idee d’attacco, una mossa alla volta. Riconosci l’errore invitante, scopri come sfruttarlo e come evitare la trappola.",
   "opening.loading": "Caricamento degli attacchi…",
-  "opening.error.title": "Impossibile caricare le aperture",
+  "opening.error.title": "Non siamo riusciti a caricare le aperture",
   "opening.error.description":
     "Controlla la connessione e ricarica per riprovare. Puoi anche tornare alla sezione «Gioca».",
   "opening.error.reload": "Ricarica",
@@ -61,7 +61,7 @@ export default {
   "opening.plan": "L’idea d’attacco",
   "opening.mistake": "La tentazione",
   "opening.defense": "Se si difendono",
-  "opening.complete": "Il risultato di questa linea",
+  "opening.complete": "Il risultato",
   "opening.branch.label": "Scegli un percorso",
   "opening.branch.trap": "Accettano l’esca",
   "opening.branch.defense": "Si difendono",
@@ -71,7 +71,7 @@ export default {
   "opening.stage.defense": "Evita la trappola",
   "opening.result.defense": "La trappola immediata è evitata",
   "opening.defense.takeaway":
-    "Continua da questa posizione. Evitare la trappola non elimina sempre la pressione dell’attaccante.",
+    "La trappola è evitata, ma l’attacco può continuare. Esplora le mosse successive.",
   "opening.risk.low": "Occasione tattica",
   "opening.risk.gambit": "Materiale offerto per attaccare",
   "opening.risk.high": "Rischioso se l’avversario si difende",
@@ -84,7 +84,7 @@ export default {
   "opening.idea.underpromotion":
     "Promuovere a cavallo dà scacco e obbliga l’avversario a rispondere. Qui conta più di scegliere una donna.",
   "opening.idea.check":
-    "È scacco. Bisogna proteggere il re prima di rispondere a un’altra minaccia.",
+    "Il re è sotto scacco. La prossima mossa deve risolvere lo scacco.",
   "opening.idea.castle":
     "L’arrocco allontana il re dal centro e avvicina la torre all’azione.",
   "opening.idea.capture":
@@ -128,12 +128,12 @@ export default {
   "board.material.label": "Pezzi mancanti e bilancio del materiale",
   "board.material.missing": "Pezzi mancanti per {0}",
   "board.material.advantage": "{0} ha un vantaggio di {1} punti di materiale",
-  "board.walkthrough.title": "Esplora la continuazione",
+  "board.walkthrough.title": "Scopri cosa succede dopo",
   "board.walkthrough.yourMove": "La tua mossa",
   "board.walkthrough.yourReply": "La tua risposta",
   "board.walkthrough.theirReply": "Risposta avversaria",
   "board.walkthrough.capture": "La cattura",
-  "board.walkthrough.moves": "Mosse della continuazione",
+  "board.walkthrough.moves": "Mosse di questa sequenza",
   "board.walkthrough.move.yours": "Il tuo pezzo ({0}) si muove da {1} a {2}.",
   "board.walkthrough.move.theirs":
     "Il pezzo avversario ({0}) si muove da {1} a {2}.",
@@ -153,15 +153,15 @@ export default {
   "board.preview.previous": "Mossa precedente nell’anteprima",
   "board.preview.next": "Mossa successiva nell’anteprima",
   "engine.error.load":
-    "Impossibile caricare il motore. Controlla la connessione e riprova l'analisi.",
+    "Non siamo riusciti a caricare il motore di scacchi. Controlla la connessione e riprova.",
   "engine.error.loadTimeout":
     "Il motore ha impiegato troppo tempo a caricarsi. Analizza di nuovo la posizione.",
   "engine.error.start":
-    "Impossibile avviare il motore. Ricarica la pagina o usa un browser che supporti WebAssembly.",
+    "Non siamo riusciti ad avviare il motore di scacchi. Ricarica la pagina. Se non basta, prova un altro browser.",
   "engine.error.responseTimeout":
     "Il motore ha impiegato troppo tempo a rispondere. Analizza di nuovo la posizione.",
   "engine.error.incompleteAnalysis":
-    "Nessuna analisi completa ricevuta. Riprova questa posizione.",
+    "Non siamo riusciti a finire l’analisi di questa posizione. Riprova.",
   "language.selector.label": "Lingua",
   "position.error.invalidFen": "FEN non valido: {0}",
   "position.error.pawnLimit":
@@ -254,21 +254,22 @@ export default {
     "Muovere il pezzo avversario ({0}) scopre un attacco del suo pezzo ({1}) in {2} contro {3}.",
   "coach.lesson.threat.focus": "Mostra le minacce",
   "coach.lesson.material.loss":
-    "Nelle mosse mostrate cedi {0} punti di materiale in più di quanti ne guadagni (pedone = 1).",
+    "Con queste mosse perdi {0} punti di materiale in totale (un pedone vale 1 punto).",
   "coach.lesson.material.gain":
-    "Nelle mosse mostrate guadagni complessivamente {0} punti di materiale (pedone = 1).",
+    "Con queste mosse guadagni {0} punti di materiale in totale (un pedone vale 1 punto).",
   "coach.lesson.material.equal":
-    "Gli scambi mostrati sono equilibrati in materiale.",
+    "L’equilibrio materiale resta lo stesso dopo queste mosse.",
   "coach.lesson.material.recapture": "Qui è ancora possibile ricatturare.",
   "coach.lesson.material.incomplete":
-    "La variante disponibile termina qui; non include gli scambi successivi.",
+    "L’anteprima si ferma qui. Potrebbero seguire altre catture.",
   "coach.lesson.best.avoidsAttack":
     "Il tuo pezzo ({0}) si muove in {1}, evitando l’attacco dopo {2}.",
-  "coach.lesson.best.position": "Il motore preferisce la posizione risultante.",
+  "coach.lesson.best.position":
+    "Il computer preferisce la posizione dopo questa mossa.",
   "coach.piece.yoursOnSquare": "il tuo pezzo ({0}) in {1}",
   "common.join.and": " e ",
   "coach.review.error.needsAnalysis":
-    "La mossa richiede l'analisi della posizione risultante.",
+    "Dobbiamo prima analizzare la posizione dopo questa mossa.",
   "coach.review.good.draw": "Questa mossa assicura la patta.",
   "coach.review.good.winningMate": "Hai ancora un matto forzato.",
   "coach.review.good.losingMate":
@@ -277,14 +278,14 @@ export default {
   "coach.review.good.losing":
     "È vicina alla migliore scelta in una posizione difficile.",
   "coach.review.good.balanced":
-    "Mantiene quasi le stesse possibilità della mossa migliore.",
+    "Questa mossa è quasi al livello della migliore.",
   "coach.review.consequence.draw":
     "La partita finisce in patta. La mossa migliore offriva più possibilità.",
   "coach.review.consequence.allowsMate":
     "Il tuo avversario può forzare il matto.",
   "coach.review.consequence.missesMate": "Questa mossa manca un matto forzato.",
   "coach.review.consequence.missesMaterial":
-    "Questa mossa manca una tattica vincente che guadagna materiale. Esplora la mossa migliore per vedere l’idea.",
+    "Hai perso un’occasione per guadagnare materiale. Esplora la mossa migliore per scoprire come.",
   "coach.review.consequence.worseChances":
     "Il tuo avversario ottiene più possibilità rispetto alla mossa migliore.",
   "coach.explanation.pressure.title": "Aumenta la pressione su {0}",
@@ -386,20 +387,20 @@ export default {
   "coach.warning.undefended":
     "Il tuo pezzo ({0}) in {1} è attaccato e non è difeso.",
   "coach.continuation.replyHeading": "Possibile risposta dell’avversario",
-  "coach.continuation.label": "Una possibile continuazione",
+  "coach.continuation.label": "Un possibile seguito della partita",
   "coach.continuation.previewMove": "Anteprima della mossa {0}: {1}, {2}",
   "engine.error.noLegalCandidates":
-    "Il motore non ha restituito mosse legali. Riprova l'analisi.",
+    "Non abbiamo trovato una mossa da suggerire. Riprova.",
   "coach.analysis.status.thinking": "Analisi in corso…",
-  "coach.analysis.status.unavailable": "Motore non disponibile",
-  "coach.analysis.status.ready": "Consigli pronti",
+  "coach.analysis.status.unavailable": "Analisi non disponibile",
+  "coach.analysis.status.ready": "Le mosse suggerite sono pronte",
   "coach.analysis.errorHeading": "Riproviamo.",
   "coach.analysis.retry": "Riprova analisi",
   "coach.analysis.label": "Mossa suggerita e analisi",
   "coach.analysis.search.heading": "Analisi in corso…",
   "coach.analysis.search.bestMove": "Ricerca della mossa migliore per {0}…",
   "coach.analysis.search.history":
-    "Analisi delle tue opzioni e delle risposte da questa posizione precedente.",
+    "Stiamo esaminando le tue mosse e le risposte dell’avversario da questa posizione precedente.",
   "coach.analysis.search.live":
     "Analisi delle tue opzioni e delle risposte avversarie. Puoi continuare a giocare.",
   "coach.warnings.heading": "Fai attenzione a",
@@ -409,11 +410,11 @@ export default {
   "coach.best.forced": "Unica mossa legale",
   "coach.best.play": "Gioca la mossa migliore {0}",
   "coach.review.error.failed":
-    "Il motore non ha potuto valutare la mossa. Riprova.",
+    "Non siamo riusciti a valutare questa mossa. Riprova.",
   "coach.review.error.comparison":
-    "Il motore non ha potuto confrontare la mossa in modo affidabile. Riprova.",
+    "Non siamo riusciti a confrontare questa mossa con la migliore. Riprova.",
   "coach.review.error.reply":
-    "Il motore non ha potuto verificare la risposta. Riprova.",
+    "Non siamo riusciti a verificare la risposta dell’avversario. Riprova.",
   "coach.feedback.status.reviewing": "Revisione in corso…",
   "coach.feedback.status.unavailable": "Revisione non disponibile",
   "coach.feedback.label": "Valutazione della mossa",
@@ -449,10 +450,10 @@ export default {
   "coach.welcome.description":
     "Trova una buona mossa e scopri perché funziona.",
   "coach.calculate.label.waiting": "In attesa del computer",
-  "coach.calculate.label.thinking": "Calcolo delle migliori mosse",
-  "coach.calculate.label.ready": "Calcola le migliori mosse",
+  "coach.calculate.label.thinking": "Ricerca delle mosse migliori",
+  "coach.calculate.label.ready": "Trova le mosse migliori",
   "coach.calculate.text.waiting": "In attesa del computer…",
-  "coach.calculate.text.thinking": "Calcolo in corso…",
+  "coach.calculate.text.thinking": "Ricerca delle mosse…",
   "common.dismissError": "Chiudi errore",
   "game.history.backToLatest": "Torna all'ultima",
   "computer.status.movingSoon": "Il computer muoverà tra poco…",
@@ -479,32 +480,33 @@ export default {
   "computer.retry": "Riprova computer",
   "computer.settings.close": "Chiudi impostazioni del computer",
   "computer.settings.side": "Il tuo lato",
-  "computer.settings.difficulty": "La tua sfida",
+  "computer.settings.difficulty": "Difficoltà",
   "common.retry": "Riprova",
   "common.done": "Fatto",
   "game.save.error.unavailable":
-    "Lo spazio del browser è pieno o non disponibile. Le ultime modifiche potrebbero andare perse ricaricando.",
+    "Il browser non riesce a salvare questa partita al momento. Se ricarichi la pagina, potresti perdere le ultime modifiche.",
   "game.save.error.backup":
-    "Impossibile creare una copia del salvataggio originale. Il salvataggio automatico resta in pausa. Le ultime modifiche potrebbero andare perse ricaricando.",
+    "Non siamo riusciti a creare una copia del salvataggio originale. Il salvataggio è ancora in pausa. Se ricarichi la pagina, potresti perdere le ultime modifiche.",
   "game.result.label": "Risultato della partita",
   "game.result.checkmate": "SCACCO MATTO",
   "game.result.draw": "PATTA",
-  "game.result.drawHeading": "Onori condivisi.",
-  "game.result.checkmateMessage": "Un finale regale. Un'altra partita?",
-  "game.result.drawMessage": "Bella partita. C'è sempre un'altra occasione.",
+  "game.result.drawHeading": "La partita è patta.",
+  "game.result.checkmateMessage": "Un’altra partita?",
+  "game.result.drawMessage": "Un’altra partita?",
   "game.result.playAgain": "Gioca ancora",
   "game.promotion.label": "Scegli un pezzo per la promozione",
   "game.promotion.cancel": "Annulla promozione",
-  "game.promotion.heading": "Il pedone è arrivato.",
-  "game.promotion.description": "Scegli il suo prossimo capitolo.",
+  "game.promotion.heading": "Promuovi il tuo pedone",
+  "game.promotion.description": "Scegli un pezzo per il tuo pedone.",
   "game.promotion.choose": "Promuovi a {0}",
   "game.save.label": "Stato del salvataggio",
-  "game.save.recoveryHeading": "La partita salvata richiede un recupero",
-  "game.save.unavailableHeading": "Salvataggio non disponibile",
-  "game.save.backupHeading": "Salvataggio originale conservato",
+  "game.save.recoveryHeading":
+    "Non siamo riusciti a caricare la partita salvata",
+  "game.save.unavailableHeading": "La partita non viene salvata",
+  "game.save.backupHeading": "Il salvataggio originale è al sicuro",
   "game.save.backupDescription":
-    "I dati originali sono conservati in una copia di recupero separata nel browser. Il salvataggio automatico è ripreso.",
-  "game.save.resume": "Mantieni partita e riprendi salvataggio",
+    "Abbiamo conservato una copia del salvataggio originale in questo browser. La partita attuale viene di nuovo salvata automaticamente.",
+  "game.save.resume": "Mantieni questa partita e riprendi a salvare",
   "game.save.dismiss": "Chiudi avviso di recupero",
   "position.error.invalidInput": "Questo FEN non è valido.",
   "position.error.clipboard":
@@ -515,13 +517,13 @@ export default {
   "position.controls.copy": "Copia FEN attuale",
   "position.controls.load": "Carica",
   "game.save.error.readStorage":
-    "Impossibile leggere lo spazio del browser. La partita salvata potrebbe non essere disponibile.",
+    "Non siamo riusciti ad aprire i dati salvati nel browser. La partita salvata potrebbe non essere disponibile.",
   "game.save.error.restoredPosition":
-    "Impossibile leggere la partita salvata. È stata ripristinata l'ultima posizione valida, senza cronologia. Il salvataggio automatico è in pausa per proteggere i dati originali.",
+    "Non siamo riusciti a caricare la partita salvata. Abbiamo ripristinato l’ultima posizione valida, ma non la cronologia delle mosse. Il salvataggio è in pausa per proteggere la partita originale.",
   "game.save.error.freshBoard":
-    "Impossibile leggere la partita salvata. È stata aperta una nuova scacchiera. Il salvataggio automatico è in pausa per proteggere i dati originali.",
+    "Non siamo riusciti a caricare la partita salvata, quindi abbiamo aperto una nuova scacchiera. Il salvataggio è in pausa per proteggere la partita originale.",
   "game.save.error.verifyBackup":
-    "Impossibile verificare la copia di recupero.",
+    "Non siamo riusciti a verificare la copia di recupero della partita.",
   "game.history.label": "Mosse della partita",
   "game.history.heading": "Cronologia delle mosse",
   "game.history.viewStart": "Vedi posizione iniziale",
@@ -575,19 +577,20 @@ export default {
   "coach.exploration.open": "Esplora questa mossa",
   "coach.exploration.close": "Chiudi esplorazione",
   "coach.exploration.note":
-    "Seleziona una mossa per vederla sulla scacchiera. È una possibile continuazione; la tua partita resta invariata.",
+    "Seleziona una mossa per vederla sulla scacchiera. Vedrai una possibile sequenza senza modificare la partita.",
   "coach.position.evaluation": "Punteggio della posizione",
   "coach.calculate.refresh": "Aggiorna analisi",
   "coach.settings.heading": "Impostazioni dell’analisi",
   "coach.settings.close": "Chiudi le impostazioni dell’analisi",
-  "coach.settings.description": "Si applica al calcolo delle mosse migliori.",
+  "coach.settings.description":
+    "Scegli quanto tempo dedicare alla ricerca e quante mosse confrontare.",
   "coach.settings.checkInputs": "Controlla le impostazioni dell’analisi",
   "coach.settings.seconds": "Tempo (s)",
   "coach.settings.seconds.hint":
-    "Più tempo permette un’analisi più approfondita.",
-  "coach.settings.moves": "Mosse candidate",
+    "Dai al computer più tempo per guardare avanti.",
+  "coach.settings.moves": "Mosse da confrontare",
   "coach.settings.moves.hint":
-    "Meno mosse permettono di analizzare ogni opzione più a fondo.",
+    "Confronta meno mosse per dedicare più tempo a ciascuna.",
   "coach.settings.seconds.invalid":
     "Il tempo deve essere da {0} a {1} secondi, con incrementi di {2}.",
   "coach.settings.moves.invalid":

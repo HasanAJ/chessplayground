@@ -19,9 +19,9 @@ export const siteContent: Record<Language, SiteContent> = {
     imageAlt: "Tempo: free chess analysis with move explanations.",
     heading: "How to use Tempo",
     intro:
-      "Set up a position on the board, calculate suggested moves with Stockfish, then preview replies or play a suggestion to explore what happens next.",
+      "Set up a position and find strong moves with Stockfish. Try a suggested move or preview a reply to see what happens next.",
     analysis:
-      "The coach explains captures, threats, and other tactical features using short engine continuations. Analysis runs in your browser, and your game saves locally when storage is available. A deeper search may change the assessment.",
+      "Your coach explains captures and threats by showing how the next few moves could play out. Everything runs in your browser. Your game saves here when your browser allows it. More time to analyze can change the suggested moves and position score.",
     languagesLabel: "Available languages",
     javascript:
       "Enable JavaScript to use the interactive chessboard and local engine.",
@@ -33,9 +33,9 @@ export const siteContent: Record<Language, SiteContent> = {
     imageAlt: "Tempo: análisis de ajedrez gratis con jugadas explicadas.",
     heading: "Cómo usar Tempo",
     intro:
-      "Prepara una posición en el tablero, calcula jugadas con Stockfish y previsualiza respuestas o juega una sugerencia para explorar qué ocurre después.",
+      "Prepara una posición y encuentra buenas jugadas con Stockfish. Prueba una sugerencia o mira una posible respuesta para descubrir qué pasa después.",
     analysis:
-      "El entrenador explica capturas, amenazas y otros aspectos tácticos a partir de variantes cortas del motor. El análisis se ejecuta en tu navegador y la partida se guarda localmente cuando el almacenamiento está disponible. Una búsqueda más profunda puede cambiar la valoración.",
+      "Tu entrenador explica capturas y amenazas mostrando cómo podrían seguir las próximas jugadas. Todo funciona en tu navegador. Tu partida se guarda aquí cuando el navegador lo permite. Con más tiempo de análisis, las jugadas sugeridas y la valoración pueden cambiar.",
     languagesLabel: "Idiomas disponibles",
     javascript:
       "Activa JavaScript para usar el tablero interactivo y el motor local.",
@@ -47,9 +47,9 @@ export const siteContent: Record<Language, SiteContent> = {
     imageAlt: "Tempo: kostenlose Schachanalyse mit erklärten Zügen.",
     heading: "So nutzt du Tempo",
     intro:
-      "Baue eine Stellung auf dem Brett auf, berechne Zugvorschläge mit Stockfish und sieh dir Antworten an oder spiele einen Vorschlag, um die Fortsetzung zu erkunden.",
+      "Baue eine Stellung auf und finde starke Züge mit Stockfish. Probiere einen Zugvorschlag aus oder sieh dir eine Antwort an, um zu sehen, wie es weitergeht.",
     analysis:
-      "Der Trainer erklärt Schlagzüge, Drohungen und andere taktische Merkmale anhand kurzer Engine-Varianten. Die Analyse läuft in deinem Browser, und deine Partie wird bei verfügbarem Browserspeicher lokal gespeichert. Eine tiefere Suche kann die Bewertung ändern.",
+      "Dein Trainer erklärt Schlagzüge und Drohungen anhand der nächsten möglichen Züge. Alles läuft in deinem Browser. Deine Partie wird hier gespeichert, wenn dein Browser es zulässt. Mehr Zeit für die Analyse kann die Zugvorschläge und die Stellungsbewertung verändern.",
     languagesLabel: "Verfügbare Sprachen",
     javascript:
       "Aktiviere JavaScript, um das interaktive Schachbrett und die lokale Engine zu nutzen.",
@@ -61,9 +61,9 @@ export const siteContent: Record<Language, SiteContent> = {
     imageAlt: "Tempo: analisi scacchistica gratuita con mosse spiegate.",
     heading: "Come usare Tempo",
     intro:
-      "Prepara una posizione sulla scacchiera, calcola le mosse con Stockfish, poi visualizza le risposte o gioca un suggerimento per esplorare il seguito.",
+      "Prepara una posizione e trova buone mosse con Stockfish. Prova una mossa suggerita o guarda una possibile risposta per scoprire cosa succede dopo.",
     analysis:
-      "L’allenatore spiega catture, minacce e altri aspetti tattici usando brevi varianti del motore. L’analisi viene eseguita nel browser e la partita viene salvata localmente quando lo spazio di archiviazione è disponibile. Una ricerca più approfondita può cambiare la valutazione.",
+      "Il tuo allenatore spiega catture e minacce mostrando come potrebbero proseguire le prossime mosse. Tutto funziona nel browser. La partita viene salvata qui quando il browser lo consente. Con più tempo per l’analisi, le mosse suggerite e la valutazione possono cambiare.",
     languagesLabel: "Lingue disponibili",
     javascript:
       "Attiva JavaScript per usare la scacchiera interattiva e il motore locale.",
@@ -75,9 +75,9 @@ export const siteContent: Record<Language, SiteContent> = {
     imageAlt: "Tempo : analyse d’échecs gratuite avec coups expliqués.",
     heading: "Comment utiliser Tempo",
     intro:
-      "Préparez une position sur l’échiquier, calculez des coups avec Stockfish, puis prévisualisez les réponses ou jouez une suggestion pour explorer la suite.",
+      "Préparez une position et trouvez de bons coups avec Stockfish. Essayez un coup proposé ou regardez une réponse possible pour découvrir la suite.",
     analysis:
-      "Le coach explique les captures, les menaces et d’autres aspects tactiques à partir de courtes variantes du moteur. L’analyse s’exécute dans votre navigateur et la partie est enregistrée localement quand le stockage est disponible. Une recherche plus poussée peut modifier l’évaluation.",
+      "Votre coach explique les captures et les menaces en montrant les prochains coups possibles. Tout fonctionne dans votre navigateur. Votre partie y est enregistrée quand le navigateur le permet. Avec plus de temps d’analyse, les coups proposés et l’évaluation peuvent changer.",
     languagesLabel: "Langues disponibles",
     javascript:
       "Activez JavaScript pour utiliser l’échiquier interactif et le moteur local.",

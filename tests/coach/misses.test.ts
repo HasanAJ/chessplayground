@@ -35,7 +35,7 @@ test("the bishop move misses the rook's winning tactic for either color", () => 
     ],
   ] as const) {
     assert.equal(result.label, "Miss");
-    assert.match(result.text, /misses a winning tactic that gains material/);
+    assert.match(result.text, /missed a chance to win material/);
     assert.equal(result.lesson?.kind, "alternative");
     assert.equal(result.evaluation.whiteScore, whiteScore);
   }
@@ -95,7 +95,7 @@ test("hanging material keeps the normal error grade despite an available winning
       { cp, pv: ["f8a3", "b2a3"] },
     );
     assert.equal(hanging.label, label);
-    assert.doesNotMatch(hanging.text, /misses a winning tactic/);
+    assert.doesNotMatch(hanging.text, /missed a chance to win material/);
   }
 });
 
@@ -218,7 +218,7 @@ test("counter-recaptures preserve the missed material win at every exchange cuto
         { cp: 0, pv: [...played] },
       );
       assert.equal(result.label, "Miss", `${fen}: exchange cutoff ${length}`);
-      assert.match(result.text, /winning tactic that gains material/);
+      assert.match(result.text, /missed a chance to win material/);
     }
   }
 });

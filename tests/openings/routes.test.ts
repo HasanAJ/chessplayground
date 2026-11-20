@@ -139,7 +139,7 @@ test("a failed lesson renders a recoverable error and leaves a way back to Play"
     ),
   );
   const alert = dom.window.document.querySelector('[role="alert"]')!;
-  assert.match(alert.textContent!, /Openings could not load/);
+  assert.match(alert.textContent!, /We couldn’t load the openings/);
   assert.match(alert.textContent!, /Reload/);
   const play = Array.from(alert.querySelectorAll("button")).find(
     (button) => button.textContent === "Play",

@@ -41,7 +41,7 @@ test("checkmate celebrates the correct winner without a score row", () => {
 test("losing to the computer gets a gentle result without celebrating the opponent", () => {
   const lost = renderResult(blackMate, "w");
   assert.match(lost, /Black wins!/);
-  assert.match(lost, /Good game/);
+  assert.match(lost, /Want to play again/);
   assert.doesNotMatch(
     lost,
     /has-celebration|animate-celebration|result-confetti/,
@@ -55,7 +55,7 @@ test("draws keep both kings and the actual draw reason without a score", () => {
     ["4k3/8/8/8/8/8/8/4K3 w - - 0 1", /Neither side has enough material/],
   ] as const) {
     const draw = renderResult(fen);
-    assert.match(draw, /Honors shared/);
+    assert.match(draw, /It’s a draw/);
     assert.doesNotMatch(draw, /Final score|result-score/);
     assert.match(draw, /src="\/pieces\/wK.svg"/);
     assert.match(draw, /src="\/pieces\/bK.svg"/);

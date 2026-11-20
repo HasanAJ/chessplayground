@@ -145,7 +145,7 @@ test("incomplete comparisons report an error instead of assigning a harsh grade"
   engine.complete(0, [{ rank: 1, depth: 18, cp: 30, pv: ["e2e4"] }]);
   engine.complete(1, [{ rank: 1, depth: 20, cp: 30, pv: ["e2e4"] }]);
   assert.equal(observed.reviews.length, 0);
-  assert.match(observed.errors[0], /reliably compare/);
+  assert.match(observed.errors[0], /couldn’t tell how this move compares/);
 });
 
 test("a mating move finishes its review without searching a terminal position", () => {

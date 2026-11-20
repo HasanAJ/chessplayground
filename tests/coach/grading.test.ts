@@ -59,10 +59,7 @@ test("both colors use the published 2, 5, 10 and 20 point loss boundaries", () =
 test("excellent moves keep positive explanations without a corrective lesson", () => {
   const review = reviewScores(0, -0.2);
   assert.equal(review.label, "Excellent move");
-  assert.equal(
-    review.text,
-    "This keeps nearly the same chances as the best move.",
-  );
+  assert.equal(review.text, "This is almost as strong as the best move.");
   assert.equal(review.lesson, undefined);
 });
 

@@ -96,7 +96,7 @@ test("a missed winning tactic has its own grade and a translated winning-line pr
   await move(page, "f8", "e7");
   const feedback = page.locator('.move-feedback[data-rating="Miss"]');
   await expect(feedback.getByRole("status")).toHaveText("Miss");
-  await expect(feedback).toContainText("misses a winning tactic");
+  await expect(feedback).toContainText("missed a chance to win material");
   await expect(feedback.locator(".feedback-best-move")).toContainText(
     "Rook h8 → h1",
   );
@@ -110,7 +110,7 @@ test("a missed winning tactic has its own grade and a translated winning-line pr
   await page.keyboard.press("Escape");
   await page.locator(".language-selector select").selectOption("de");
   await expect(feedback.getByRole("status")).toHaveText("Verpasste Chance");
-  await expect(feedback).toContainText("Material gewinnt");
+  await expect(feedback).toContainText("Material zu gewinnen");
   await feedback.locator(".feedback-best-move").click();
   await expect(
     page.locator("#play-workspace .chessboard.previewing"),

@@ -21,9 +21,9 @@ export default {
   "opening.heading.start": "Trampas de apertura de ajedrez",
   "opening.heading.end": "y cómo defenderte",
   "opening.subtitle":
-    "Explora 30 ideas de ataque con recorridos interactivos. Reconoce el error tentador, entiende el castigo y descubre una respuesta que evita la trampa.",
+    "Explora 30 ideas de ataque, jugada a jugada. Descubre el error tentador, cómo aprovecharlo y cómo evitar la trampa.",
   "opening.loading": "Cargando ataques…",
-  "opening.error.title": "No se pudieron cargar las aperturas",
+  "opening.error.title": "No hemos podido cargar las aperturas",
   "opening.error.description":
     "Comprueba tu conexión y recarga para intentarlo de nuevo. También puedes volver a Jugar.",
   "opening.error.reload": "Recargar",
@@ -62,7 +62,7 @@ export default {
   "opening.plan": "La idea de ataque",
   "opening.mistake": "La tentación",
   "opening.defense": "Si se defienden",
-  "opening.complete": "El resultado de esta línea",
+  "opening.complete": "El resultado",
   "opening.branch.label": "Elige un recorrido",
   "opening.branch.trap": "Caen en la trampa",
   "opening.branch.defense": "Se defienden",
@@ -72,7 +72,7 @@ export default {
   "opening.stage.defense": "Evita la trampa",
   "opening.result.defense": "Se evita la trampa inmediata",
   "opening.defense.takeaway":
-    "Continúa desde esta posición. Evitar la trampa no siempre elimina la presión del atacante.",
+    "La trampa se ha evitado, pero el ataque puede continuar. Sigue explorando desde aquí.",
   "opening.risk.low": "Oportunidad táctica",
   "opening.risk.gambit": "Material ofrecido para atacar",
   "opening.risk.high": "Arriesgado si el rival se defiende",
@@ -85,7 +85,7 @@ export default {
   "opening.idea.underpromotion":
     "Promocionar a caballo da jaque y obliga al rival a responder. Aquí eso importa más que elegir dama.",
   "opening.idea.check":
-    "Es jaque. Hay que proteger al rey antes de responder a otra amenaza.",
+    "El rey está en jaque. La siguiente jugada debe sacarlo del jaque.",
   "opening.idea.castle":
     "El enroque aleja al rey del centro y acerca la torre a la acción.",
   "opening.idea.capture":
@@ -129,12 +129,12 @@ export default {
   "board.material.label": "Piezas que faltan y balance de material",
   "board.material.missing": "Piezas que faltan de {0}",
   "board.material.advantage": "{0} tiene una ventaja de {1} puntos de material",
-  "board.walkthrough.title": "Explorar la continuación",
+  "board.walkthrough.title": "Mira qué pasa después",
   "board.walkthrough.yourMove": "Tu jugada",
   "board.walkthrough.yourReply": "Tu respuesta",
   "board.walkthrough.theirReply": "Respuesta rival",
   "board.walkthrough.capture": "La captura",
-  "board.walkthrough.moves": "Jugadas de la continuación",
+  "board.walkthrough.moves": "Jugadas de esta secuencia",
   "board.walkthrough.move.yours": "Tu pieza ({0}) se mueve de {1} a {2}.",
   "board.walkthrough.move.theirs":
     "La pieza rival ({0}) se mueve de {1} a {2}.",
@@ -154,15 +154,15 @@ export default {
   "board.preview.previous": "Jugada anterior de la vista previa",
   "board.preview.next": "Siguiente jugada de la vista previa",
   "engine.error.load":
-    "El motor de ajedrez no se pudo cargar. Comprueba tu conexión y vuelve a analizar.",
+    "No hemos podido cargar el motor de ajedrez. Comprueba tu conexión e inténtalo de nuevo.",
   "engine.error.loadTimeout":
     "El motor tardó demasiado en cargar. Vuelve a analizar la posición.",
   "engine.error.start":
-    "El motor no pudo iniciarse. Recarga la página o usa un navegador compatible con WebAssembly.",
+    "No hemos podido iniciar el motor de ajedrez. Recarga la página. Si no funciona, prueba con otro navegador.",
   "engine.error.responseTimeout":
     "El motor tardó demasiado en responder. Vuelve a analizar la posición.",
   "engine.error.incompleteAnalysis":
-    "No se recibió un análisis completo. Vuelve a probar esta posición.",
+    "No hemos podido terminar de analizar esta posición. Inténtalo de nuevo.",
   "language.selector.label": "Idioma",
   "position.error.invalidFen": "FEN no válido: {0}",
   "position.error.pawnLimit":
@@ -255,21 +255,22 @@ export default {
     "Mover su pieza ({0}) descubre un ataque de su pieza ({1}) en {2} contra {3}.",
   "coach.lesson.threat.focus": "Ver las amenazas",
   "coach.lesson.material.loss":
-    "En las jugadas mostradas, cedes {0} puntos de material más de los que ganas (peón = 1).",
+    "En estas jugadas, pierdes {0} puntos de material en total (un peón vale 1 punto).",
   "coach.lesson.material.gain":
-    "En las jugadas mostradas, ganas {0} puntos de material en total (peón = 1).",
+    "En estas jugadas, ganas {0} puntos de material en total (un peón vale 1 punto).",
   "coach.lesson.material.equal":
-    "Los cambios mostrados están equilibrados en material.",
+    "El equilibrio de material se mantiene tras estas jugadas.",
   "coach.lesson.material.recapture": "Aquí todavía es posible recapturar.",
   "coach.lesson.material.incomplete":
-    "La variante disponible termina aquí; no incluye cambios posteriores.",
+    "La vista previa termina aquí. Puede haber más capturas después.",
   "coach.lesson.best.avoidsAttack":
     "Tu pieza ({0}) se mueve a {1}, evitando el ataque tras {2}.",
-  "coach.lesson.best.position": "El motor prefiere la posición resultante.",
+  "coach.lesson.best.position":
+    "El ordenador prefiere la posición después de esta jugada.",
   "coach.piece.yoursOnSquare": "tu {0} en {1}",
   "common.join.and": " y ",
   "coach.review.error.needsAnalysis":
-    "La jugada requiere analizar la posición resultante.",
+    "Primero tenemos que analizar la posición después de esta jugada.",
   "coach.review.good.draw": "Esta jugada asegura tablas.",
   "coach.review.good.winningMate": "Todavía tienes un mate forzado.",
   "coach.review.good.losingMate":
@@ -277,14 +278,13 @@ export default {
   "coach.review.good.winning": "Conservas una gran ventaja.",
   "coach.review.good.losing":
     "Se acerca a la mejor opción en una posición difícil.",
-  "coach.review.good.balanced":
-    "Mantiene casi las mismas posibilidades que la mejor jugada.",
+  "coach.review.good.balanced": "Esta jugada es casi tan buena como la mejor.",
   "coach.review.consequence.draw":
     "La partida termina en tablas. La mejor jugada ofrecía más posibilidades.",
   "coach.review.consequence.allowsMate": "Tu rival puede forzar mate.",
   "coach.review.consequence.missesMate": "Dejas escapar un mate forzado.",
   "coach.review.consequence.missesMaterial":
-    "Dejas escapar una táctica ganadora que permite ganar material. Explora la mejor jugada para ver la idea.",
+    "Has dejado escapar una oportunidad de ganar material. Explora la mejor jugada para ver cómo.",
   "coach.review.consequence.worseChances":
     "Tu rival obtiene más posibilidades que con la mejor jugada.",
   "coach.explanation.pressure.title": "Aumenta la presión sobre {0}",
@@ -372,20 +372,20 @@ export default {
   "coach.warning.undefended":
     "Tu {0} en {1} está bajo ataque y no tiene defensor.",
   "coach.continuation.replyHeading": "Posible respuesta del rival",
-  "coach.continuation.label": "Una posible continuación",
+  "coach.continuation.label": "Una forma de continuar la partida",
   "coach.continuation.previewMove": "Vista previa de la jugada {0}: {1}, {2}",
   "engine.error.noLegalCandidates":
-    "El motor no devolvió jugadas legales. Vuelve a analizar.",
+    "No hemos encontrado una jugada que sugerirte. Inténtalo de nuevo.",
   "coach.analysis.status.thinking": "Analizando…",
-  "coach.analysis.status.unavailable": "Motor no disponible",
-  "coach.analysis.status.ready": "Recomendaciones listas",
+  "coach.analysis.status.unavailable": "Análisis no disponible",
+  "coach.analysis.status.ready": "Las jugadas sugeridas están listas",
   "coach.analysis.errorHeading": "Vamos a intentarlo de nuevo.",
   "coach.analysis.retry": "Reintentar análisis",
   "coach.analysis.label": "Jugada sugerida y análisis",
   "coach.analysis.search.heading": "Analizando…",
   "coach.analysis.search.bestMove": "Buscando la mejor jugada de {0}…",
   "coach.analysis.search.history":
-    "Analizando tus opciones y sus respuestas desde esta posición anterior.",
+    "Estamos analizando tus jugadas y las respuestas del rival desde esta posición anterior.",
   "coach.analysis.search.live":
     "Analizando tus opciones y las respuestas del rival. Puedes seguir jugando.",
   "coach.warnings.heading": "Presta atención a",
@@ -395,11 +395,11 @@ export default {
   "coach.best.forced": "Única jugada legal",
   "coach.best.play": "Jugar la mejor jugada {0}",
   "coach.review.error.failed":
-    "El motor no pudo revisar esta jugada. Inténtalo de nuevo.",
+    "No hemos podido revisar esta jugada. Inténtalo de nuevo.",
   "coach.review.error.comparison":
-    "El motor no pudo comparar esta jugada con fiabilidad. Inténtalo de nuevo.",
+    "No hemos podido comparar esta jugada con la mejor. Inténtalo de nuevo.",
   "coach.review.error.reply":
-    "El motor no pudo comprobar la respuesta. Inténtalo de nuevo.",
+    "No hemos podido analizar la respuesta del rival. Inténtalo de nuevo.",
   "coach.feedback.status.reviewing": "Revisando…",
   "coach.feedback.status.unavailable": "Revisión no disponible",
   "coach.feedback.label": "Valoración de la jugada",
@@ -434,10 +434,10 @@ export default {
   "coach.welcome.description":
     "Encuentra una buena jugada y entiende por qué funciona.",
   "coach.calculate.label.waiting": "Esperando al ordenador",
-  "coach.calculate.label.thinking": "Calculando mejores jugadas",
-  "coach.calculate.label.ready": "Calcular mejores jugadas",
+  "coach.calculate.label.thinking": "Buscando las mejores jugadas",
+  "coach.calculate.label.ready": "Buscar las mejores jugadas",
   "coach.calculate.text.waiting": "Esperando al ordenador…",
-  "coach.calculate.text.thinking": "Calculando…",
+  "coach.calculate.text.thinking": "Buscando jugadas…",
   "common.dismissError": "Cerrar error",
   "game.history.backToLatest": "Volver a la actual",
   "computer.status.movingSoon": "El ordenador moverá en un momento…",
@@ -464,32 +464,32 @@ export default {
   "computer.retry": "Reintentar ordenador",
   "computer.settings.close": "Cerrar ajustes del ordenador",
   "computer.settings.side": "Tu bando",
-  "computer.settings.difficulty": "Tu nivel de desafío",
+  "computer.settings.difficulty": "Dificultad",
   "common.retry": "Reintentar",
   "common.done": "Listo",
   "game.save.error.unavailable":
-    "El almacenamiento del navegador no está disponible o está lleno. Tus últimos cambios podrían perderse al recargar.",
+    "Tu navegador no puede guardar esta partida ahora. Si recargas la página, puedes perder tus últimos cambios.",
   "game.save.error.backup":
-    "No se pudo crear una copia del guardado original. El guardado automático sigue en pausa. Tus últimos cambios podrían perderse al recargar.",
+    "No hemos podido crear una copia de tu partida original. El guardado sigue en pausa. Si recargas la página, puedes perder tus últimos cambios.",
   "game.result.label": "Resultado de la partida",
   "game.result.checkmate": "JAQUE MATE",
   "game.result.draw": "TABLAS",
-  "game.result.drawHeading": "Empate bien luchado.",
-  "game.result.checkmateMessage": "Un final real. ¿Otra partida?",
-  "game.result.drawMessage": "Buena partida. Siempre hay otra oportunidad.",
+  "game.result.drawHeading": "La partida termina en tablas.",
+  "game.result.checkmateMessage": "¿Otra partida?",
+  "game.result.drawMessage": "¿Otra partida?",
   "game.result.playAgain": "Jugar de nuevo",
   "game.promotion.label": "Elige una pieza para coronar",
   "game.promotion.cancel": "Cancelar coronación",
-  "game.promotion.heading": "Tu peón ha llegado.",
-  "game.promotion.description": "Elige su siguiente capítulo.",
+  "game.promotion.heading": "Promociona tu peón",
+  "game.promotion.description": "Elige una pieza para tu peón.",
   "game.promotion.choose": "Coronar a {0}",
   "game.save.label": "Estado del guardado",
-  "game.save.recoveryHeading": "La partida guardada necesita recuperarse",
-  "game.save.unavailableHeading": "Guardado no disponible",
-  "game.save.backupHeading": "Guardado original conservado",
+  "game.save.recoveryHeading": "No hemos podido cargar tu partida guardada",
+  "game.save.unavailableHeading": "Tu partida no se está guardando",
+  "game.save.backupHeading": "Tu partida original está a salvo",
   "game.save.backupDescription":
-    "Los datos originales se conservan en una copia de recuperación del navegador. El guardado automático se ha reanudado.",
-  "game.save.resume": "Conservar partida y reanudar guardado",
+    "Hemos guardado una copia de tu partida original en este navegador. Tu partida actual ya se guarda automáticamente.",
+  "game.save.resume": "Conservar esta partida y volver a guardar",
   "game.save.dismiss": "Cerrar aviso de recuperación",
   "position.error.invalidInput": "Este FEN no es válido.",
   "position.error.clipboard":
@@ -500,13 +500,13 @@ export default {
   "position.controls.copy": "Copiar FEN actual",
   "position.controls.load": "Cargar",
   "game.save.error.readStorage":
-    "No se pudo leer el almacenamiento del navegador. Tu partida guardada podría no estar disponible.",
+    "No hemos podido abrir los datos guardados en tu navegador. Puede que tu partida guardada no esté disponible.",
   "game.save.error.restoredPosition":
-    "No se pudo leer tu partida guardada. Se recuperó la última posición válida sin su historial. El guardado automático está en pausa para proteger los datos originales.",
+    "No hemos podido cargar tu partida guardada. Hemos recuperado la última posición válida, pero no el historial de jugadas. El guardado está en pausa para proteger tu partida original.",
   "game.save.error.freshBoard":
-    "No se pudo leer tu partida guardada. Se abrió un tablero nuevo. El guardado automático está en pausa para proteger los datos originales.",
+    "No hemos podido cargar tu partida guardada, así que hemos abierto un tablero nuevo. El guardado está en pausa para proteger tu partida original.",
   "game.save.error.verifyBackup":
-    "No se pudo verificar la copia de recuperación.",
+    "No hemos podido comprobar la copia de recuperación de tu partida.",
   "game.history.label": "Jugadas de la partida",
   "game.history.heading": "Historial de jugadas",
   "game.history.viewStart": "Ver posición inicial",
@@ -558,18 +558,20 @@ export default {
   "coach.exploration.open": "Explorar esta jugada",
   "coach.exploration.close": "Cerrar exploración",
   "coach.exploration.note":
-    "Selecciona una jugada para verla en el tablero. Es una posible continuación; tu partida sigue igual.",
+    "Selecciona una jugada para verla en el tablero. Verás una posible secuencia sin cambiar tu partida.",
   "coach.position.evaluation": "Puntuación de la posición",
   "coach.calculate.refresh": "Actualizar análisis",
   "coach.settings.heading": "Ajustes del análisis",
   "coach.settings.close": "Cerrar ajustes del análisis",
-  "coach.settings.description": "Se aplica al calcular las mejores jugadas.",
+  "coach.settings.description":
+    "Elige cuánto tiempo buscar y cuántas jugadas comparar.",
   "coach.settings.checkInputs": "Revisa los ajustes del análisis",
   "coach.settings.seconds": "Tiempo (s)",
-  "coach.settings.seconds.hint": "Más tiempo permite un análisis más profundo.",
-  "coach.settings.moves": "Jugadas candidatas",
+  "coach.settings.seconds.hint":
+    "Dale al ordenador más tiempo para anticipar las siguientes jugadas.",
+  "coach.settings.moves": "Jugadas a comparar",
   "coach.settings.moves.hint":
-    "Menos jugadas permiten analizar cada opción con más profundidad.",
+    "Compara menos jugadas para dedicar más tiempo a cada una.",
   "coach.settings.seconds.invalid":
     "El tiempo debe ser de {0} a {1} segundos, en pasos de {2}.",
   "coach.settings.moves.invalid":
