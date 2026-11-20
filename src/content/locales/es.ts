@@ -218,7 +218,7 @@ export default {
   "board.clear": "Vaciar tablero",
   "board.turn.white": "Juegan blancas",
   "board.turn.black": "Juegan negras",
-  "board.turn.select": "Quién juega ahora",
+  "board.turn.switch": "Cambiar el turno",
   "board.turn.changeDescription":
     "Cambiar el turno inicia una nueva posición y borra el historial.",
   "board.navigation.label": "Navegación de jugadas",
@@ -272,6 +272,8 @@ export default {
   "coach.review.error.needsAnalysis":
     "Primero tenemos que analizar la posición después de esta jugada.",
   "coach.review.good.draw": "Esta jugada asegura tablas.",
+  "coach.review.good.best":
+    "Es la primera opción del motor. No se identificó una razón táctica o posicional concreta.",
   "coach.review.good.winningMate": "Todavía tienes un mate forzado.",
   "coach.review.good.losingMate":
     "Se acerca a la mejor defensa, pero tu rey sigue en una red de mate.",
@@ -330,9 +332,15 @@ export default {
   "coach.explanation.capture.text": "Tu {0} captura su {1} en {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " al paso, llegando a ",
   "coach.explanation.capture.focus": "Ver la captura y los posibles atacantes",
-  "coach.explanation.materialRisk.text":
-    "En esta línea, entregas más material del que capturas.",
-  "coach.explanation.materialRisk.focus": "Ver la posible captura",
+  "coach.explanation.reply.focus": "Ver la posible captura",
+  "coach.explanation.sacrifice.mate":
+    "Sacrificar tu {0} en {1} mantiene un mate forzado en {2} jugadas.",
+  "coach.explanation.sacrifice.capture":
+    "Si su {0} desde {1} captura tu {2} en {3}{7}, tu {4} puede capturar su {5} en {6}.",
+  "coach.explanation.sacrifice.promotion": " y promociona a {0}",
+  "coach.explanation.openDiagonal.title": "Abre una diagonal para tu alfil",
+  "coach.explanation.openDiagonal.text":
+    "Esta jugada abre una diagonal para tu alfil en {0}.",
   "coach.explanation.check.title": "Da jaque",
   "coach.explanation.check.focus": "Ver el ataque a su rey",
   "coach.explanation.develop.centerControl":
@@ -352,6 +360,27 @@ export default {
   "coach.explanation.rook.focus": "Ver la jugada de tu torre",
   "coach.explanation.king.title": "Mueve tu rey a {0}",
   "coach.explanation.king.focus": "Ver la jugada de tu rey",
+  "coach.explanation.plan.defend.title": "Prepara la defensa: {0}",
+  "coach.explanation.plan.defend.text":
+    "Tu {0} puede dirigirse a {1} para ayudar a defender tu {2} en {3}.",
+  "coach.explanation.plan.sharedDefense":
+    "La pieza en {1} ({0}) es actualmente su única defensa; esta maniobra añade apoyo.",
+  "coach.explanation.plan.focus": "Ver la maniobra y su objetivo",
+  "coach.explanation.plan.outcome": "Una posible continuación: {0}",
+  "coach.explanation.plan.capture.title": "Prepara una captura",
+  "coach.explanation.plan.check.title": "Prepara un jaque",
+  "coach.explanation.plan.promotion.title": "Prepara una promoción",
+  "coach.explanation.plan.attack.title": "Maniobra para crear un ataque",
+  "coach.explanation.draw.title": "Termina la partida en tablas",
+  "coach.explanation.draw.focus": "Ver la posición de tablas",
+  "coach.explanation.blockade.title": "Bloquea el avance de su peón",
+  "coach.explanation.blockade.text":
+    "Tu {0} en {1} bloquea el avance de su peón en {2}.",
+  "coach.explanation.blockade.pressure":
+    "Mantiene la presión sobre su {0} en {1}.",
+  "coach.explanation.blockade.focus": "Ver el peón bloqueado",
+  "coach.explanation.plan.attack.text":
+    "Tu {0} puede dirigirse a {1} para atacar su {2} en {3}.",
   "coach.explanation.pawn.title": "Avanza tu peón a {0}",
   "coach.explanation.pawn.focus": "Ver el avance de tu peón",
   "coach.explanation.nearCenter.title": "Mejora una pieza cerca del centro",
@@ -549,8 +578,6 @@ export default {
   "position.fen.illegalEnPassant": "casilla al paso ilegal",
   "position.fen.pawnOnEdge": "hay peones en la primera o última fila",
   "coach.feedback.context.lastMove": "Última jugada",
-  "position.notice.loaded": "Posición cargada",
-  "position.notice.copied": "Posición copiada",
   "position.fen.emptySquares": "usa 1–8 para las casillas vacías",
   "game.result.winner": "¡Ganan {0}!",
   "board.tray.label": "Piezas de {0}",
@@ -576,4 +603,99 @@ export default {
     "El tiempo debe ser de {0} a {1} segundos, en pasos de {2}.",
   "coach.settings.moves.invalid":
     "El número de jugadas debe ser un entero entre {0} y {1}.",
+  "coach.hint.request": "Pedir una pista",
+  "coach.hint.considerPiece": "Fíjate en tu {0} en {1}.",
+  "coach.hint.next": "Otra pista",
+  "coach.hint.loading": "Buscando una pista…",
+  "coach.hint.ready": "Tu pista está lista",
+  "coach.hint.label": "Pistas para esta posición",
+  "coach.hint.idea.escapeCheck":
+    "Tu rey está en jaque. Busca una forma segura de salir.",
+  "coach.hint.idea.checkmate":
+    "Hay un movimiento que da jaque mate. Revisa las casillas de escape del rey.",
+  "coach.hint.idea.matingAttack":
+    "Hay una línea de mate forzado. Encuentra la jugada que la mantiene disponible.",
+  "coach.hint.idea.defense":
+    "Tu rey se enfrenta a un mate forzado. Busca la defensa más resistente.",
+  "coach.hint.idea.promotion":
+    "Busca una oportunidad para coronar un peón. Compara las opciones de promoción.",
+  "coach.hint.idea.capture": "Busca una captura de una pieza rival: {0}.",
+  "coach.hint.idea.check":
+    "Busca un movimiento que dé jaque. ¿Qué respuestas obligaría a jugar?",
+  "coach.hint.idea.castle":
+    "Piensa en la seguridad de tu rey y en poner una torre en juego.",
+  "coach.hint.idea.develop": "Saca al juego una pieza de tu primera fila.",
+  "coach.hint.idea.center": "Gana más espacio avanzando un peón central.",
+  "board.random.label": "Posición aleatoria",
+  "coach.hint.idea.escapeAttack":
+    "Busca cómo alejar una pieza atacada del alcance rival.",
+  "coach.hint.idea.defend":
+    "Una pieza sin defensa puede ser capturada. Busca cómo apoyarla.",
+  "coach.hint.idea.fork":
+    "Busca una jugada que ataque dos piezas rivales a la vez.",
+  "coach.hint.idea.attack":
+    "Busca una jugada que cree un nuevo ataque contra una pieza rival.",
+  "coach.hint.idea.openFile":
+    "Busca cómo llevar una torre a una columna abierta.",
+  "coach.hint.idea.centerControl": "Refuerza tu influencia sobre el centro.",
+  "coach.hint.clue.promotion": "Considera esta pieza para la promoción: {0}.",
+  "coach.hint.clue.doubleCheck":
+    "Busca una jugada que dé jaque con dos piezas a la vez.",
+  "coach.hint.clue.check": "Busca un jaque con esta pieza: {0}.",
+  "coach.hint.clue.discoveredCheck":
+    "Mover una pieza puede descubrir un jaque de otra.",
+  "coach.hint.clue.captureChecker": "Se puede capturar la pieza que da jaque.",
+  "coach.hint.clue.moveKing": "Busca una jugada de rey a una casilla segura.",
+  "coach.hint.clue.blockCheck":
+    "Una pieza puede bloquear la línea entre el atacante y tu rey.",
+  "coach.hint.clue.recapture":
+    "Tu rival puede recapturar. Compara las piezas que entrega cada bando.",
+  "coach.hint.clue.noRecapture":
+    "Busca una captura que no permita una recaptura inmediata.",
+  "coach.hint.clue.castleKingside":
+    "El enroque corto está disponible en esta posición.",
+  "coach.hint.clue.castleQueenside":
+    "El enroque largo está disponible en esta posición.",
+  "coach.hint.clue.escapeAttack":
+    "Esta pieza puede ir a una casilla donde no puedan capturarla de inmediato: {0}.",
+  "coach.hint.clue.defend":
+    "Busca una jugada que permita recapturar si toman tu pieza ({0} en {1}).",
+  "coach.hint.clue.attack": "Objetivos para un nuevo ataque: {0}.",
+  "coach.hint.clue.openFile":
+    "La columna {0} no tiene peones. Una de tus torres puede ocuparla.",
+  "coach.hint.clue.centerControl":
+    "Busca una jugada con esta pieza ({0}) que añada un ataque sobre {1}.",
+  "coach.hint.clue.develop":
+    "Busca una jugada desde tu primera fila con esta pieza: {0}.",
+  "coach.hint.clue.pawnAdvance":
+    "Busca un peón central que pueda avanzar una casilla.",
+  "coach.hint.progress": "Pista {0} de {1}",
+  "coach.hint.previous": "Anterior",
+  "coach.hint.title.escapeCheck": "Sal del jaque",
+  "coach.hint.title.checkmate": "Encuentra el mate",
+  "coach.hint.title.matingAttack": "Encuentra una línea de mate",
+  "coach.hint.title.defense": "Encuentra tu mejor defensa",
+  "coach.hint.title.promotion": "Piensa en la promoción",
+  "coach.hint.title.capture": "Busca una captura",
+  "coach.hint.title.check": "Busca un jaque",
+  "coach.hint.title.castle": "Considera el enroque",
+  "coach.hint.title.escapeAttack": "Aléjate del peligro",
+  "coach.hint.title.defend": "Protege tu pieza",
+  "coach.hint.title.fork": "Encuentra un ataque doble",
+  "coach.hint.title.attack": "Crea un nuevo ataque",
+  "coach.hint.title.openFile": "Busca una columna abierta",
+  "coach.hint.title.develop": "Pon una pieza en juego",
+  "coach.hint.title.center": "Fíjate en el centro",
+  "coach.hint.title.piece": "Fíjate en esta pieza",
+  "coach.hint.idea.centerDevelopment":
+    "Gana espacio en el centro y abre una diagonal para un alfil.",
+  "coach.hint.clue.pawnControl":
+    "Busca un avance de peón que empiece a atacar {0}.",
+  "coach.hint.clue.pawnDoubleAdvance":
+    "Busca un peón central que pueda avanzar dos casillas.",
+  "coach.hint.clue.freeBishop":
+    "Busca un avance de peón que abra una diagonal para un alfil.",
+  "coach.hint.idea.captureCheck": "Busca una captura que también dé jaque.",
+  "coach.hint.clue.matingSetup":
+    "La línea de mate empieza con una jugada que no da jaque.",
 } satisfies Catalog;

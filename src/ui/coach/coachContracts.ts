@@ -6,7 +6,7 @@ import type { Recommendations } from "./useRecommendations.ts";
 import type { CoachPresentation } from "./useCoachPresentation.ts";
 import type { ReviewState } from "../../application/review/moveReview.ts";
 
-export type CoachGame = Pick<
+type CoachGame = Pick<
   GameController,
   | "analysisGame"
   | "analysisKey"
@@ -14,7 +14,6 @@ export type CoachGame = Pick<
   | "error"
   | "history"
   | "lastMove"
-  | "notice"
   | "playMove"
   | "playable"
   | "positionIssue"
@@ -35,7 +34,7 @@ export type CoachPanelProps = {
   feedbackPly: number;
   onPlayMove: GameController["playMove"];
   onReviewRetry: () => void;
-  onCalculate: () => void;
+  onCalculate: (reuseAnalysis?: boolean) => void;
   onNewGame: () => void;
   onShowHistory: (ply: number) => void;
 };

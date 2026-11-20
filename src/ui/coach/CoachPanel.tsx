@@ -9,7 +9,7 @@ import { RecommendationsPanel } from "./RecommendationsPanel.tsx";
 import {
   CoachHeader,
   CalculationControl,
-  CoachNotices,
+  CoachError,
   CoachStatusStrip,
 } from "./CoachControls.tsx";
 import { coachView } from "./coachView.ts";
@@ -29,9 +29,25 @@ export function CoachPanel(props: CoachPanelProps) {
     { analysisOpen: false, hiddenReview: null, collapsedReview: null },
   );
   const view = coachView(props, t);
-  const calculate = () => {
+  const refresh = (reuseAnalysis = false) => {
     update({ analysisOpen: false, hiddenReview: feedback?.key ?? null });
-    props.onCalculate();
+    props.onCalculate(reuseAnalysis);
+  };
+  const calculate = () => {
+    const reuseHint =
+      props.presentation.hinting &&
+      recommendations.requested &&
+      recommendations.analysis?.state !== "error";
+    props.presentation.revealMove();
+    refresh(reuseHint);
+  };
+  const requestHint = () => {
+    props.presentation.startHints();
+    if (
+      !recommendations.requested ||
+      recommendations.analysis?.state === "error"
+    )
+      refresh();
   };
   const move = view.feedbackMove;
   const promotion = game.promotion;
@@ -42,7 +58,7 @@ export function CoachPanel(props: CoachPanelProps) {
       : "coach.feedback.context.lastMove";
   return (
     <aside
-      className={`coach-panel${view.showWelcome ? " is-welcoming" : ""}`}
+      className="coach-panel"
       id="coach"
       aria-label={t("coach.panel.label")}
     >
@@ -51,7 +67,7 @@ export function CoachPanel(props: CoachPanelProps) {
         view={view}
         analysisOpen={disclosure.analysisOpen}
         onAnalysisOpen={(analysisOpen) => update({ analysisOpen })}
-        onCalculate={calculate}
+        onCalculate={() => refresh()}
       />
       {game.playable &&
         feedback &&
@@ -85,11 +101,12 @@ export function CoachPanel(props: CoachPanelProps) {
       )}
       <CalculationControl
         view={view}
-        thinking={recommendations.thinking}
+        thinking={recommendations.thinking && !props.presentation.hinting}
         busy={opponent.busy}
         onCalculate={calculate}
+        onHint={requestHint}
       />
-      <CoachNotices game={game} />
+      <CoachError game={game} />
       {promotion && (
         <PromotionCard
           color={game.analysisGame.turn()}

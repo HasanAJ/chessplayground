@@ -78,6 +78,7 @@ async function renderWorkspace(
         analysis: recommendations,
         highlights: presentation,
         onNewGame() {},
+        onRandomPosition() {},
         onShowHistory() {},
       }),
       createElement(CoachPanel, {
@@ -129,14 +130,14 @@ async function renderWorkspace(
   };
 }
 
-test("the material row follows captures, previews, history and draft positions without visible labels", async (t) => {
+test("the material row groups opposing pieces with the capturing side through previews, history and edits", async (t) => {
   const view = await renderWorkspace(t);
   const { document } = view;
   const row = () => document.querySelector(".material-balance");
   const badge = () => row()?.querySelector(".material-advantage");
-  const pieces = (color: "w" | "b") =>
+  const pieces = (capturer: "w" | "b") =>
     Array.from(
-      row()?.querySelectorAll(`img[src^="/pieces/${color}"]`) ?? [],
+      row()?.querySelectorAll(`.material-pieces.is-${capturer} img`) ?? [],
       (image) => image.getAttribute("src"),
     );
   assert.equal(row(), null);
@@ -146,8 +147,8 @@ test("the material row follows captures, previews, history and draft positions w
     ["e4", "d5"],
   ] as const)
     await act(() => view.game.playMove(from, to));
-  assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
-  assert.deepEqual(pieces("w"), []);
+  assert.deepEqual(pieces("w"), ["/pieces/bP.svg"]);
+  assert.deepEqual(pieces("b"), []);
   assert.equal(row()!.textContent!.trim(), "+1");
   assert.equal(
     badge()!.getAttribute("aria-label"),
@@ -161,7 +162,7 @@ test("the material row follows captures, previews, history and draft positions w
   ])[0];
   const liveFen = view.game.fen;
   await act(() => view.preview.inspectMove(capture, 1, "click"));
-  assert.deepEqual(pieces("w"), ["/pieces/wP.svg"]);
+  assert.deepEqual(pieces("b"), ["/pieces/wP.svg"]);
   assert.equal(badge(), null);
   assert.equal(view.game.fen, liveFen);
   await act(() => view.preview.clearPreview());
@@ -170,7 +171,7 @@ test("the material row follows captures, previews, history and draft positions w
     document.querySelector<HTMLButtonElement>(".flip-board-button")!.click(),
   );
   assert.ok(badge()!.parentElement!.classList.contains("is-w"));
-  assert.deepEqual(pieces("b"), ["/pieces/bP.svg"]);
+  assert.deepEqual(pieces("w"), ["/pieces/bP.svg"]);
 
   await act(() => view.game.showHistory(2));
   assert.equal(row(), null);
@@ -181,66 +182,116 @@ test("the material row follows captures, previews, history and draft positions w
   );
   assert.equal(badge()!.textContent, "+5");
   assert.ok(badge()!.parentElement!.classList.contains("is-b"));
+  assert.ok(pieces("b").length > 0);
+  assert.ok(pieces("b").every((src) => src?.startsWith("/pieces/w")));
   assert.equal(
     badge()!.getAttribute("aria-label"),
     "Black is ahead by 5 material points",
   );
 });
 
-test("the board turn selector follows the displayed position and preserves editing safeguards", async (t) => {
-  const view = await renderWorkspace(t);
-  const { dom, document, boardPanel, candidates } = view;
-  const select = boardPanel.querySelector<HTMLSelectElement>(
-    '.board-toolbar select[aria-label="Who plays next"]',
-  )!;
-  const choose = async (color: "w" | "b") => {
-    await act(() => {
-      select.value = color;
-      select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-    });
-  };
-  assert.ok(select);
-  assert.equal(document.querySelector(".coach-panel .turn-select"), null);
-  assert.equal(select.selectedOptions[0].textContent, "White to move");
+test("the material row follows promotions and promoted captures in previews, history and branches", async (t) => {
+  const view = await renderWorkspace(t, "1r5k/P7/8/8/8/8/8/3QK3 w - - 0 1", [
+    { rank: 1, depth: 15, cp: 400, pv: ["a7a8q", "b8a8"] },
+  ]);
+  const losses = () =>
+    Array.from(
+      view.document.querySelectorAll('.material-pieces.is-b [role="img"]'),
+      (group) => group.getAttribute("aria-label"),
+    );
+  const score = () =>
+    view.document.querySelector(".material-advantage")!.textContent;
+  const initial = losses();
   const liveFen = view.game.fen;
-  await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
-  assert.equal(select.value, "b");
-  assert.equal(select.disabled, true);
-  assert.ok(select.parentElement!.classList.contains("is-black"));
+  assert.ok(initial.includes("White pawn × 7"));
+  await act(() => view.preview.inspectMove(view.candidates[0], 1, "click"));
+  assert.deepEqual(losses(), initial);
+  assert.equal(score(), "+13");
+  await act(() => view.preview.inspectMove(view.candidates[0], 2, "click"));
+  assert.deepEqual(losses(), ["White queen × 1", ...initial]);
+  assert.equal(score(), "+4");
   assert.equal(view.game.fen, liveFen);
   await act(() => view.preview.clearPreview());
-  assert.equal(select.value, "w");
-  assert.equal(select.disabled, false);
+  await act(() => view.game.playMove("a7", "a8", "q"));
+  assert.deepEqual(losses(), initial);
+  assert.equal(score(), "+13");
+  await act(() => view.game.playMove("b8", "a8"));
+  assert.deepEqual(losses(), ["White queen × 1", ...initial]);
+  assert.equal(score(), "+4");
 
-  await choose("b");
+  // A feedback preview can begin before the last played move.
+  await act(() => view.preview.inspectMove(view.candidates[0], 1, "click"));
+  assert.deepEqual(losses(), initial);
+  assert.equal(score(), "+13");
+  await act(() => view.preview.clearPreview());
+  await act(() => view.game.showHistory(1));
+  assert.deepEqual(losses(), initial);
+  assert.equal(score(), "+13");
+  await act(() => view.game.showHistory(0));
+  assert.deepEqual(losses(), initial);
+  assert.equal(score(), "+5");
+  await act(() => view.game.playMove("a7", "a8", "n"));
+  assert.deepEqual(losses(), initial);
+  await act(() => view.game.playMove("b8", "a8"));
+  assert.ok(losses().includes("White knight × 3"));
+  assert.ok(!losses().includes("White queen × 1"));
+});
+
+test("the board turn switch follows the displayed position and preserves editing safeguards", async (t) => {
+  const view = await renderWorkspace(t);
+  const { document, boardPanel, candidates } = view;
+  const turnSwitch = boardPanel.querySelector<HTMLButtonElement>(
+    ".board-toolbar .turn-switch",
+  )!;
+  const switchTurn = async () => act(() => turnSwitch.click());
+  assert.ok(turnSwitch);
+  assert.equal(document.querySelector(".coach-panel .turn-switch"), null);
+  assert.equal(turnSwitch.textContent, "White to move");
+  assert.equal(
+    turnSwitch.getAttribute("aria-label"),
+    "White to move. Switch turn",
+  );
+  const liveFen = view.game.fen;
+  await act(() => view.preview.inspectMove(candidates[0], 1, "click"));
+  assert.equal(turnSwitch.textContent, "Black to move");
+  assert.equal(turnSwitch.disabled, true);
+  assert.ok(turnSwitch.classList.contains("is-black"));
+  await switchTurn();
+  assert.equal(view.game.fen, liveFen);
+  await act(() => view.preview.clearPreview());
+  assert.equal(turnSwitch.textContent, "White to move");
+  assert.equal(turnSwitch.disabled, false);
+
+  await switchTurn();
   assert.equal(view.game.positionGame.turn(), "b");
-  assert.equal(select.selectedOptions[0].textContent, "Black to move");
-  await choose("w");
+  assert.equal(turnSwitch.textContent, "Black to move");
+  await switchTurn();
+  assert.equal(view.game.positionGame.turn(), "w");
   await act(() => view.game.playMove("e2", "e4"));
-  assert.equal(select.value, "b");
-  assert.ok(select.title.includes("clears the move history"));
-  await choose("w");
+  assert.equal(turnSwitch.textContent, "Black to move");
+  assert.ok(turnSwitch.title.includes("clears the move history"));
+  await switchTurn();
   assert.equal(view.game.history.length, 0);
   assert.equal(view.game.positionGame.get("e4")?.type, "p");
-  assert.equal(select.parentElement!.classList.contains("is-black"), false);
+  assert.equal(turnSwitch.classList.contains("is-black"), false);
 
   await act(() => {
     view.computer.setSide("b");
     view.computer.setEnabled(true);
   });
   assert.equal(
-    select.disabled,
+    turnSwitch.disabled,
     true,
     "the computer turn cannot be changed mid-search",
   );
   await act(() => view.computer.setOpen(true));
   assert.equal(
-    select.disabled,
+    turnSwitch.disabled,
     false,
     "pausing the computer allows position editing",
   );
   await act(() => view.game.setBoardPosition({}, "b", ""));
-  await choose("w");
+  await switchTurn();
   assert.equal(view.game.draft?.turn, "w");
 });
 
@@ -264,11 +315,12 @@ test("hovered and pinned previews preserve board structure and square highlights
     const clone = left.cloneNode(true) as Element;
     clone.querySelector(".eval-number")!.remove();
     clone.querySelector(".board-preview-controls")?.remove();
+    clone.querySelector(".turn-switch")!.remove();
     return clone.textContent;
   };
   const initialText = leftText();
   const initialChildren = Array.from(board.children);
-  const initialToolbar = left.querySelector(".board-toolbar")!.textContent;
+  const initialToolbar = left.querySelector(".board-toolbar");
   const arrowFrames = () =>
     Array.from(left.querySelectorAll(".move-arrow line"), (line) =>
       ["x1", "y1", "x2", "y2"].map((attribute) =>
@@ -305,10 +357,7 @@ test("hovered and pinned previews preserve board structure and square highlights
       left.querySelectorAll(".board-preview-actions > button").length,
       action === "click" ? 3 : 0,
     );
-    assert.equal(
-      left.querySelector(".board-toolbar")!.textContent,
-      initialToolbar,
-    );
+    assert.equal(left.querySelector(".board-toolbar"), initialToolbar);
     assert.equal(left.querySelectorAll(".square").length, 64);
     assert.ok(left.querySelectorAll(".strategy-square").length > 0);
     assert.ok(left.querySelector(".explanation-arrows"));
@@ -597,7 +646,7 @@ test("ready analysis keeps refresh secondary and alternatives visible; collapsin
   assert.equal(alternatives.querySelectorAll(".candidate-toggle").length, 1);
 });
 
-test("quiet pawn suggestions retain action tags alongside specific strategy tags", async (t) => {
+test("quiet pawn suggestions show concrete strategy tags and keep action tags as a fallback", async (t) => {
   const game = new Chess();
   game.move("e4");
   const view = await renderWorkspace(t, game.fen(), [
@@ -610,19 +659,22 @@ test("quiet pawn suggestions retain action tags alongside specific strategy tags
   assert.equal(
     view.document.querySelector(".strategy-card .move-strategy-tag")!
       .textContent,
-    "Advance your pawn to e6",
+    "Open a diagonal for your bishop",
   );
-  assert.equal(view.document.querySelector(".strategy-card > p"), null);
+  assert.match(
+    view.document.querySelector(".strategy-card > p")!.textContent!,
+    /opens a diagonal for your bishop on f8/,
+  );
   assert.deepEqual(
     Array.from(
       view.document.querySelectorAll(".candidate-card .move-strategy-tag"),
       (tag) => tag.textContent,
     ),
     [
-      "Claim the center",
+      "Block their pawn’s advance",
       "Advance your pawn to c5",
       "Advance your pawn to c6",
-      "Advance your pawn to d6",
+      "Open a diagonal for your bishop",
     ],
   );
 });

@@ -75,7 +75,8 @@ function reviewText(
   }
   if (outcome.kind === "draw")
     return t(good ? "coach.review.good.draw" : "coach.review.consequence.draw");
-  if (best.move.lan === move.lan) return best.explanation;
+  const isBest = best.move.lan === move.lan;
+  if (isBest && best.explanation) return best.explanation;
   if (!good) {
     const replyText = reply ? describeReply(reply.move, t, move) : "";
     if (reply?.move.san.endsWith("#")) return replyText;
@@ -91,11 +92,13 @@ function reviewText(
       .filter(Boolean)
       .join(" ");
   }
-  const idea =
-    played?.explanation ??
-    explainMove(new Chess(move.before), new Chess(move.after), move, t).text;
-  const fallback =
-    outcome.evaluation.mate !== undefined
+  const idea = isBest
+    ? best.explanation
+    : (played?.explanation ??
+      explainMove(new Chess(move.before), new Chess(move.after), move, t).text);
+  const fallback = isBest
+    ? t("coach.review.good.best")
+    : outcome.evaluation.mate !== undefined
       ? t(
           chance === 1
             ? "coach.review.good.winningMate"

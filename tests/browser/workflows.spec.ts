@@ -88,6 +88,68 @@ test("real Stockfish calculates, previews and plays its legal suggestion", async
   expect(errors).toEqual([]);
 });
 
+test("focused hints navigate without changing the best-move button", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const find = page.getByRole("button", {
+    name: "Find the best moves",
+    exact: true,
+  });
+  const hintButton = page.getByRole("button", {
+    name: "Get a hint",
+    exact: true,
+  });
+  await hintButton.click();
+  await expect(find).toBeVisible();
+  await expect(find).toBeEnabled();
+  await expect(find).toHaveText("Find the best moves");
+  const hint = page.locator(".hint-card");
+  await expect(hint).toBeVisible();
+  await expect(hint.locator(".hint-label")).toHaveText("Hint 1 of 3");
+  await expect(hint.locator(".hint-previous")).toBeDisabled();
+  await expect(page.locator(".best-move-heading")).toHaveCount(0);
+  await expect(page.locator(".alternative-moves")).toHaveCount(0);
+  await expect(page.locator(".move-arrow")).toHaveCount(0);
+  const next = hint.locator(".hint-next");
+  const previous = hint.locator(".hint-previous");
+  await next.focus();
+  await page.keyboard.press("Enter");
+  await expect(hint.locator(".hint-label")).toHaveText("Hint 2 of 3");
+  await expect(hint.locator(".hint-description")).not.toContainText(
+    "Consider your",
+  );
+  await expect(next).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(hint.locator(".hint-label")).toHaveText("Hint 3 of 3");
+  await expect(hint.locator(".hint-description")).toContainText(
+    "Consider your",
+  );
+  await expect(next).toBeDisabled();
+  await previous.focus();
+  await page.keyboard.press("Enter");
+  await expect(hint.locator(".hint-label")).toHaveText("Hint 2 of 3");
+  await expect(hint.locator(".hint-description")).not.toContainText(
+    "Consider your",
+  );
+  await expect(previous).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(hint.locator(".hint-label")).toHaveText("Hint 1 of 3");
+  await expect(previous).toBeDisabled();
+  await expect(find).toBeVisible();
+  await expect(find).toBeEnabled();
+  await expect(find).toHaveText("Find the best moves");
+  await expect(page.locator(".move-arrow")).toHaveCount(0);
+  await square(page, "b1").click();
+  await expect(page.locator(".selected-square")).toHaveCount(1);
+  await find.click();
+  await expect(hint).toHaveCount(0);
+  await expect(page.locator(".selected-square")).toHaveCount(0);
+  await expect(page.locator(".best-move-heading")).toBeInViewport();
+  await expect(page.locator(".strategy-card .plan-actions")).toBeVisible();
+  await expect(page.locator(".move-arrow line")).toHaveCount(1);
+});
+
 test("a missed winning tactic has its own grade and a translated winning-line preview", async ({
   page,
 }) => {

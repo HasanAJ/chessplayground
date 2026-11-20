@@ -68,7 +68,7 @@ test("explanation highlights follow the actual checking pieces and defense", () 
     { from: "d3", to: "e4" },
   ]);
   const openFile = candidatesFor("4k3/8/8/8/8/8/8/R3K3 w - - 0 1", [
-    { rank: 1, depth: 12, pv: ["a1a2"] },
+    { rank: 1, depth: 12, pv: ["a1b1"] },
   ])[0];
   assert.equal(openFile.explanationFocus?.squares.length, 8);
   assert.match(openFile.explanation, /column/);

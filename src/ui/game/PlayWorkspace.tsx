@@ -21,6 +21,7 @@ export function PlayWorkspace({ active }: { active: boolean }) {
     selectionReset,
     setDragging,
     newGame,
+    randomPosition,
     showHistory,
     playSuggestedMove,
     calculateBestMoves,
@@ -56,6 +57,7 @@ export function PlayWorkspace({ active }: { active: boolean }) {
             reviewEvaluation={reviewEvaluation}
             highlights={presentation}
             onNewGame={newGame}
+            onRandomPosition={randomPosition}
             onShowHistory={showHistory}
           />
           <CoachPanel

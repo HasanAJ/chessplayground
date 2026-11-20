@@ -4,6 +4,7 @@ import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import { sideName } from "../../domain/chess/position.ts";
 import { GameOverCard } from "../game/GameOverCard.tsx";
 import { BestMoveContent } from "./BestMoveContent.tsx";
+import { HintContent } from "./HintContent.tsx";
 import { AlternativeMoves } from "./AlternativeMoves.tsx";
 import { SquareText } from "../board/SquareHighlight.tsx";
 import type { CoachPanelProps } from "./coachContracts.ts";
@@ -46,7 +47,9 @@ export function RecommendationsPanel(props: Props) {
       ? "coach.analysis.status.thinking"
       : result.analysis.state === "error"
         ? "coach.analysis.status.unavailable"
-        : "coach.analysis.status.ready",
+        : focus.hinting
+          ? "coach.hint.ready"
+          : "coach.analysis.status.ready",
   );
   const error =
     result.current && result.analysis.state === "error"
@@ -96,8 +99,10 @@ export function RecommendationsPanel(props: Props) {
             </p>
           )}
           <section
-            className="strategy-card"
-            aria-label={t("coach.analysis.label")}
+            className={`strategy-card${focus.hinting ? " hint-card" : ""}`}
+            aria-label={t(
+              focus.hinting ? "coach.hint.label" : "coach.analysis.label",
+            )}
             aria-busy={result.thinking}
             onMouseEnter={() => focus.setHovered(0)}
             onMouseLeave={() => focus.setHovered(null)}
@@ -107,7 +112,12 @@ export function RecommendationsPanel(props: Props) {
                 focus.setBestFocused(false);
             }}
           >
-            {best ? (
+            {best && focus.hinting ? (
+              <HintContent
+                key={`${game.analysisKey}:${best.move.lan}`}
+                candidate={best}
+              />
+            ) : best ? (
               <BestMoveContent
                 key={`${game.analysisKey}:${best.move.lan}`}
                 candidate={best}
@@ -131,7 +141,9 @@ export function RecommendationsPanel(props: Props) {
                 </div>
                 <h3>
                   {t(
-                    "coach.analysis.search.bestMove",
+                    focus.hinting
+                      ? "coach.hint.loading"
+                      : "coach.analysis.search.bestMove",
                     sideName(game.analysisGame.turn(), t),
                   )}
                 </h3>
@@ -148,7 +160,7 @@ export function RecommendationsPanel(props: Props) {
               </>
             )}
           </section>
-          {best && (
+          {best && !focus.hinting && (
             <AlternativeMoves
               key={game.analysisKey}
               candidates={result.candidates}

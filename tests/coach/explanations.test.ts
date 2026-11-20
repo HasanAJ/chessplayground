@@ -56,8 +56,8 @@ test("capturing with the checking piece combines both actions without repeating 
 
 test("capture explanations use concrete replies instead of generic safety advice", () => {
   for (const [fen, uci, square] of [
-    ["7k/r7/8/1N6/8/8/8/7K w - - 0 1", "b5a7", "a7"],
-    ["7k/8/8/8/1n6/8/R7/7K b - - 0 1", "b4a2", "a2"],
+    ["7k/r7/7p/1N6/8/8/8/7K w - - 0 1", "b5a7", "a7"],
+    ["7k/8/8/8/1n6/7P/R7/7K b - - 0 1", "b4a2", "a2"],
   ]) {
     const candidate = candidatesFor(fen, [
       { rank: 1, depth: 12, cp: 0, pv: [uci] },

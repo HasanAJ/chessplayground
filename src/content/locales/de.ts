@@ -218,7 +218,7 @@ export default {
   "board.clear": "Brett leeren",
   "board.turn.white": "Weiß am Zug",
   "board.turn.black": "Schwarz am Zug",
-  "board.turn.select": "Wer ist am Zug",
+  "board.turn.switch": "Zugrecht wechseln",
   "board.turn.changeDescription":
     "Ein Farbwechsel startet eine neue Stellung und löscht den Zugverlauf.",
   "board.navigation.label": "Zugnavigation",
@@ -273,6 +273,8 @@ export default {
   "coach.review.error.needsAnalysis":
     "Wir müssen zuerst die Stellung nach diesem Zug prüfen.",
   "coach.review.good.draw": "Dieser Zug sichert ein Remis.",
+  "coach.review.good.best":
+    "Dies ist die erste Wahl der Engine. Ein konkreter taktischer oder positioneller Grund wurde nicht erkannt.",
   "coach.review.good.winningMate": "Du hast weiterhin ein erzwungenes Matt.",
   "coach.review.good.losingMate":
     "Das ist nahe an der besten Verteidigung, aber deinem König droht weiterhin Matt.",
@@ -344,9 +346,17 @@ export default {
     "Deine Figur ({0}) schlägt die gegnerische Figur ({1}) auf {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant und landet auf ",
   "coach.explanation.capture.focus": "Schlag und mögliche Angreifer ansehen",
-  "coach.explanation.materialRisk.text":
-    "In dieser Variante gibst du mehr Material ab, als du schlägst.",
-  "coach.explanation.materialRisk.focus": "Den möglichen Schlag ansehen",
+  "coach.explanation.reply.focus": "Den möglichen Schlag ansehen",
+  "coach.explanation.sacrifice.mate":
+    "Das Opfer deiner Figur ({0}) auf {1} hält ein erzwungenes Matt in {2} Zügen aufrecht.",
+  "coach.explanation.sacrifice.capture":
+    "Wenn die gegnerische Figur ({0}) von {1} deine Figur ({2}) auf {3} schlägt{7}, kann deine Figur ({4}) die gegnerische Figur ({5}) auf {6} schlagen.",
+  "coach.explanation.sacrifice.promotion":
+    " und sich in eine Figur vom Typ {0} umwandelt",
+  "coach.explanation.openDiagonal.title":
+    "Eine Diagonale für deinen Läufer öffnen",
+  "coach.explanation.openDiagonal.text":
+    "Dieser Zug öffnet eine Diagonale für deinen Läufer auf {0}.",
   "coach.explanation.check.title": "Schach bieten",
   "coach.explanation.check.focus": "Angriff auf den gegnerischen König ansehen",
   "coach.explanation.develop.centerControl":
@@ -366,6 +376,27 @@ export default {
   "coach.explanation.rook.focus": "Turmzug ansehen",
   "coach.explanation.king.title": "Ziehe deinen König nach {0}",
   "coach.explanation.king.focus": "Königszug ansehen",
+  "coach.explanation.plan.defend.title": "Verteidigung vorbereiten: {0}",
+  "coach.explanation.plan.defend.text":
+    "Deine Figur ({0}) kann nach {1} gelangen, um die Figur auf {3} ({2}) zu decken.",
+  "coach.explanation.plan.sharedDefense":
+    "Die Figur auf {1} ({0}) ist bisher die einzige Deckung; das Manöver bringt Unterstützung.",
+  "coach.explanation.plan.focus": "Das Manöver und sein Ziel ansehen",
+  "coach.explanation.plan.outcome": "Ein möglicher weiterer Verlauf: {0}",
+  "coach.explanation.plan.capture.title": "Einen Schlag vorbereiten",
+  "coach.explanation.plan.check.title": "Ein Schach vorbereiten",
+  "coach.explanation.plan.promotion.title": "Eine Umwandlung vorbereiten",
+  "coach.explanation.plan.attack.title": "Ein Angriffsmanöver planen",
+  "coach.explanation.draw.title": "Die Partie mit Remis beenden",
+  "coach.explanation.draw.focus": "Die Remisstellung ansehen",
+  "coach.explanation.blockade.title": "Den Bauernvormarsch blockieren",
+  "coach.explanation.blockade.text":
+    "Deine Figur auf {1} ({0}) blockiert den gegnerischen Bauern auf {2}, sodass er nicht vorrücken kann.",
+  "coach.explanation.blockade.pressure":
+    "Sie hält den Druck auf die gegnerische Figur auf {1} ({0}) aufrecht.",
+  "coach.explanation.blockade.focus": "Den blockierten Bauern ansehen",
+  "coach.explanation.plan.attack.text":
+    "Deine Figur ({0}) kann {1} erreichen, um die gegnerische Figur auf {3} ({2}) anzugreifen.",
   "coach.explanation.pawn.title": "Ziehe deinen Bauern nach {0}",
   "coach.explanation.pawn.focus": "Bauernvorstoß ansehen",
   "coach.explanation.nearCenter.title":
@@ -574,8 +605,6 @@ export default {
   "position.fen.illegalEnPassant": "illegales En-passant-Feld",
   "position.fen.pawnOnEdge": "Bauern stehen auf der ersten oder letzten Reihe",
   "coach.feedback.context.lastMove": "Letzter Zug",
-  "position.notice.loaded": "Stellung geladen",
-  "position.notice.copied": "Stellung kopiert",
   "position.fen.emptySquares": "leere Felder müssen mit 1–8 angegeben werden",
   "game.result.winner": "{0} gewinnt!",
   "board.tray.label": "Figuren von {0}",
@@ -601,4 +630,105 @@ export default {
     "Die Zeit muss {0}–{1} Sekunden in Schritten von {2} betragen.",
   "coach.settings.moves.invalid":
     "Die Anzahl der Züge muss eine ganze Zahl von {0} bis {1} sein.",
+  "coach.hint.request": "Tipp holen",
+  "coach.hint.considerPiece": "Schau dir diese Figur an: {0} auf {1}.",
+  "coach.hint.next": "Weiterer Tipp",
+  "coach.hint.loading": "Tipp wird gesucht…",
+  "coach.hint.ready": "Dein Tipp ist bereit",
+  "coach.hint.label": "Tipps zu dieser Stellung",
+  "coach.hint.idea.escapeCheck":
+    "Dein König steht im Schach. Suche einen sicheren Ausweg.",
+  "coach.hint.idea.checkmate":
+    "Ein Zug setzt schachmatt. Prüfe die Fluchtfelder des Königs.",
+  "coach.hint.idea.matingAttack":
+    "Es gibt eine erzwungene Mattfolge. Finde den Zug, der sie ermöglicht.",
+  "coach.hint.idea.defense":
+    "Deinem König droht ein erzwungenes Matt. Suche nach dem stärksten Widerstand.",
+  "coach.hint.idea.promotion":
+    "Suche nach einer Möglichkeit, einen Bauern umzuwandeln. Vergleiche die Umwandlungsfiguren.",
+  "coach.hint.idea.capture":
+    "Suche nach einem Schlagzug gegen einen gegnerischen Stein: {0}.",
+  "coach.hint.idea.check":
+    "Suche nach einem Schachgebot. Welche Antworten würde es erzwingen?",
+  "coach.hint.idea.castle":
+    "Denke an die Sicherheit deines Königs und daran, einen Turm ins Spiel zu bringen.",
+  "coach.hint.idea.develop":
+    "Bringe einen Stein von deiner Grundreihe ins Spiel.",
+  "coach.hint.idea.center":
+    "Gewinne mit einem zentralen Bauernvorstoß mehr Raum.",
+  "board.random.label": "Zufällige Stellung",
+  "coach.hint.idea.escapeAttack":
+    "Suche einen Zug, der einen angegriffenen Stein außer Reichweite bringt.",
+  "coach.hint.idea.defend":
+    "Ein ungedeckter Stein kann geschlagen werden. Suche nach einer Möglichkeit, ihn zu decken.",
+  "coach.hint.idea.fork":
+    "Suche einen Zug, der zwei gegnerische Steine gleichzeitig angreift.",
+  "coach.hint.idea.attack":
+    "Suche einen Zug, der einen neuen Angriff auf einen gegnerischen Stein erzeugt.",
+  "coach.hint.idea.openFile":
+    "Suche nach einer Möglichkeit, einen Turm auf eine offene Linie zu bringen.",
+  "coach.hint.idea.centerControl": "Verstärke deinen Einfluss auf das Zentrum.",
+  "coach.hint.clue.promotion": "Prüfe diese Umwandlungsfigur: {0}.",
+  "coach.hint.clue.doubleCheck":
+    "Suche einen Zug, der mit zwei Figuren gleichzeitig Schach gibt.",
+  "coach.hint.clue.check":
+    "Suche nach einem Schachgebot mit dieser Figur: {0}.",
+  "coach.hint.clue.discoveredCheck":
+    "Der Zug einer Figur kann ein Abzugsschach durch eine andere ermöglichen.",
+  "coach.hint.clue.captureChecker":
+    "Die schachgebende Figur kann geschlagen werden.",
+  "coach.hint.clue.moveKing": "Suche einen Königszug auf ein sicheres Feld.",
+  "coach.hint.clue.blockCheck":
+    "Ein Stein kann die Linie zwischen dem Angreifer und deinem König blockieren.",
+  "coach.hint.clue.recapture":
+    "Dein Gegner kann zurückschlagen. Vergleiche, welche Steine beide Seiten abgeben.",
+  "coach.hint.clue.noRecapture":
+    "Suche einen Schlagzug, nach dem dein Gegner nicht sofort zurückschlagen kann.",
+  "coach.hint.clue.castleKingside":
+    "Die kurze Rochade ist in dieser Stellung möglich.",
+  "coach.hint.clue.castleQueenside":
+    "Die lange Rochade ist in dieser Stellung möglich.",
+  "coach.hint.clue.escapeAttack":
+    "Dieser Stein kann auf ein Feld ziehen, auf dem er nicht sofort geschlagen werden kann: {0}.",
+  "coach.hint.clue.defend":
+    "Suche einen Zug, der ein Zurückschlagen ermöglicht, falls dein angegriffener Stein ({0} auf {1}) geschlagen wird.",
+  "coach.hint.clue.attack": "Ziele für einen neuen Angriff: {0}.",
+  "coach.hint.clue.openFile":
+    "Auf der {0}-Linie stehen keine Bauern. Einer deiner Türme kann dorthin ziehen.",
+  "coach.hint.clue.centerControl":
+    "Suche einen Zug mit dem Stein {0}, der einen zusätzlichen Angriff auf {1} schafft.",
+  "coach.hint.clue.develop":
+    "Suche einen Zug von deiner Grundreihe mit diesem Stein: {0}.",
+  "coach.hint.clue.pawnAdvance":
+    "Suche einen zentralen Bauern, der ein Feld vorrücken kann.",
+  "coach.hint.progress": "Tipp {0} von {1}",
+  "coach.hint.previous": "Zurück",
+  "coach.hint.title.escapeCheck": "Wehre das Schach ab",
+  "coach.hint.title.checkmate": "Finde das Matt",
+  "coach.hint.title.matingAttack": "Finde eine Mattfolge",
+  "coach.hint.title.defense": "Finde die beste Verteidigung",
+  "coach.hint.title.promotion": "Denke an eine Umwandlung",
+  "coach.hint.title.capture": "Suche einen Schlagzug",
+  "coach.hint.title.check": "Suche ein Schachgebot",
+  "coach.hint.title.castle": "Denke an die Rochade",
+  "coach.hint.title.escapeAttack": "Entkomme dem Angriff",
+  "coach.hint.title.defend": "Decke deinen Stein",
+  "coach.hint.title.fork": "Finde einen Doppelangriff",
+  "coach.hint.title.attack": "Schaffe einen neuen Angriff",
+  "coach.hint.title.openFile": "Finde eine offene Linie",
+  "coach.hint.title.develop": "Bringe eine Figur ins Spiel",
+  "coach.hint.title.center": "Achte auf das Zentrum",
+  "coach.hint.title.piece": "Achte auf diesen Stein",
+  "coach.hint.idea.centerDevelopment":
+    "Gewinne Raum im Zentrum und öffne eine Diagonale für einen Läufer.",
+  "coach.hint.clue.pawnControl":
+    "Suche einen Bauernvorstoß, der einen neuen Angriff auf {0} schafft.",
+  "coach.hint.clue.pawnDoubleAdvance":
+    "Suche einen zentralen Bauern, der zwei Felder vorrücken kann.",
+  "coach.hint.clue.freeBishop":
+    "Suche einen Bauernvorstoß, der eine Diagonale für einen Läufer öffnet.",
+  "coach.hint.idea.captureCheck":
+    "Suche einen Schlagzug, der zugleich Schach gibt.",
+  "coach.hint.clue.matingSetup":
+    "Die Mattfolge beginnt mit einem Zug ohne Schachgebot.",
 } satisfies Catalog;

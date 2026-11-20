@@ -217,7 +217,7 @@ export default {
   "board.clear": "Svuota scacchiera",
   "board.turn.white": "Muove il Bianco",
   "board.turn.black": "Muove il Nero",
-  "board.turn.select": "Chi gioca adesso",
+  "board.turn.switch": "Cambia il turno",
   "board.turn.changeDescription":
     "Cambiare il turno avvia una nuova posizione e cancella la cronologia.",
   "board.navigation.label": "Navigazione delle mosse",
@@ -271,6 +271,8 @@ export default {
   "coach.review.error.needsAnalysis":
     "Dobbiamo prima analizzare la posizione dopo questa mossa.",
   "coach.review.good.draw": "Questa mossa assicura la patta.",
+  "coach.review.good.best":
+    "È la prima scelta del motore. Non è stato individuato un motivo tattico o posizionale specifico.",
   "coach.review.good.winningMate": "Hai ancora un matto forzato.",
   "coach.review.good.losingMate":
     "È vicina alla migliore difesa, ma il tuo re resta sotto minaccia di matto.",
@@ -342,9 +344,16 @@ export default {
     "Il tuo pezzo ({0}) cattura il pezzo avversario ({1}) in {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant, arrivando in ",
   "coach.explanation.capture.focus": "Vedi la cattura e i possibili attaccanti",
-  "coach.explanation.materialRisk.text":
-    "In questa linea, cedi più materiale di quanto catturi.",
-  "coach.explanation.materialRisk.focus": "Vedi la possibile cattura",
+  "coach.explanation.reply.focus": "Vedi la possibile cattura",
+  "coach.explanation.sacrifice.mate":
+    "Sacrificare il tuo pezzo ({0}) in {1} mantiene un matto forzato in {2} mosse.",
+  "coach.explanation.sacrifice.capture":
+    "Se il pezzo avversario ({0}) da {1} cattura il tuo pezzo ({2}) in {3}{7}, il tuo pezzo ({4}) può catturare il pezzo avversario ({5}) in {6}.",
+  "coach.explanation.sacrifice.promotion": " e viene promosso a {0}",
+  "coach.explanation.openDiagonal.title":
+    "Apri una diagonale per il tuo alfiere",
+  "coach.explanation.openDiagonal.text":
+    "Questa mossa apre una diagonale per il tuo alfiere in {0}.",
   "coach.explanation.check.title": "Dai scacco",
   "coach.explanation.check.focus": "Vedi l'attacco al re avversario",
   "coach.explanation.develop.centerControl":
@@ -364,6 +373,27 @@ export default {
   "coach.explanation.rook.focus": "Vedi la mossa della torre",
   "coach.explanation.king.title": "Muovi il re in {0}",
   "coach.explanation.king.focus": "Vedi la mossa del re",
+  "coach.explanation.plan.defend.title": "Prepara la difesa: {0}",
+  "coach.explanation.plan.defend.text":
+    "Il tuo pezzo ({0}) può raggiungere {1} per aiutare a difendere il tuo pezzo in {3} ({2}).",
+  "coach.explanation.plan.sharedDefense":
+    "Il pezzo in {1} ({0}) è attualmente l’unico difensore; questa manovra aggiunge sostegno.",
+  "coach.explanation.plan.focus": "Vedi la manovra e il suo obiettivo",
+  "coach.explanation.plan.outcome": "Un possibile seguito: {0}",
+  "coach.explanation.plan.capture.title": "Prepara una cattura",
+  "coach.explanation.plan.check.title": "Prepara uno scacco",
+  "coach.explanation.plan.promotion.title": "Prepara una promozione",
+  "coach.explanation.plan.attack.title": "Manovra per creare un attacco",
+  "coach.explanation.draw.title": "Concludi la partita in patta",
+  "coach.explanation.draw.focus": "Vedi la posizione di patta",
+  "coach.explanation.blockade.title": "Blocca l’avanzata del pedone avversario",
+  "coach.explanation.blockade.text":
+    "Il tuo pezzo in {1} ({0}) blocca l’avanzata del pedone avversario in {2}.",
+  "coach.explanation.blockade.pressure":
+    "Mantiene la pressione sul pezzo avversario in {1} ({0}).",
+  "coach.explanation.blockade.focus": "Vedi il pedone bloccato",
+  "coach.explanation.plan.attack.text":
+    "Il tuo pezzo ({0}) può raggiungere {1} per attaccare il pezzo avversario in {3} ({2}).",
   "coach.explanation.pawn.title": "Avanza il pedone in {0}",
   "coach.explanation.pawn.focus": "Vedi l'avanzata del pedone",
   "coach.explanation.nearCenter.title": "Migliora un pezzo vicino al centro",
@@ -568,8 +598,6 @@ export default {
   "position.fen.pawnOnEdge":
     "ci sono pedoni sulla prima o sull'ultima traversa",
   "coach.feedback.context.lastMove": "Ultima mossa",
-  "position.notice.loaded": "Posizione caricata",
-  "position.notice.copied": "Posizione copiata",
   "position.fen.emptySquares": "usa 1–8 per le caselle vuote",
   "game.result.winner": "{0} vince!",
   "board.tray.label": "Pezzi di {0}",
@@ -595,4 +623,101 @@ export default {
     "Il tempo deve essere da {0} a {1} secondi, con incrementi di {2}.",
   "coach.settings.moves.invalid":
     "Il numero di mosse deve essere un intero da {0} a {1}.",
+  "coach.hint.request": "Chiedi un indizio",
+  "coach.hint.considerPiece": "Considera il tuo pezzo: {0} in {1}.",
+  "coach.hint.next": "Un altro indizio",
+  "coach.hint.loading": "Ricerca di un indizio…",
+  "coach.hint.ready": "Il tuo indizio è pronto",
+  "coach.hint.label": "Indizi per questa posizione",
+  "coach.hint.idea.escapeCheck":
+    "Il tuo re è sotto scacco. Cerca una via d’uscita sicura.",
+  "coach.hint.idea.checkmate":
+    "C’è una mossa che dà scacco matto. Controlla le case di fuga del re.",
+  "coach.hint.idea.matingAttack":
+    "C’è una sequenza di matto forzato. Trova la mossa che la mantiene possibile.",
+  "coach.hint.idea.defense":
+    "Il tuo re affronta un matto forzato. Cerca la resistenza più tenace.",
+  "coach.hint.idea.promotion":
+    "Cerca un’occasione per promuovere un pedone. Confronta le opzioni di promozione.",
+  "coach.hint.idea.capture": "Cerca una cattura di un pezzo avversario: {0}.",
+  "coach.hint.idea.check":
+    "Cerca una mossa che dia scacco. Quali risposte costringerebbe a giocare?",
+  "coach.hint.idea.castle":
+    "Pensa alla sicurezza del tuo re e a mettere in gioco una torre.",
+  "coach.hint.idea.develop":
+    "Metti in gioco un pezzo dalla tua prima traversa.",
+  "coach.hint.idea.center": "Guadagna spazio avanzando un pedone centrale.",
+  "board.random.label": "Posizione casuale",
+  "coach.hint.idea.escapeAttack":
+    "Cerca come spostare un pezzo attaccato fuori dalla portata avversaria.",
+  "coach.hint.idea.defend":
+    "Un pezzo indifeso può essere catturato. Cerca come sostenerlo.",
+  "coach.hint.idea.fork":
+    "Cerca una mossa che attacchi due pezzi avversari contemporaneamente.",
+  "coach.hint.idea.attack":
+    "Cerca una mossa che crei un nuovo attacco contro un pezzo avversario.",
+  "coach.hint.idea.openFile":
+    "Cerca come portare una torre su una colonna aperta.",
+  "coach.hint.idea.centerControl": "Rafforza la tua influenza sul centro.",
+  "coach.hint.clue.promotion": "Considera questo pezzo per la promozione: {0}.",
+  "coach.hint.clue.doubleCheck":
+    "Cerca una mossa che dia scacco con due pezzi contemporaneamente.",
+  "coach.hint.clue.check": "Cerca uno scacco con questo pezzo: {0}.",
+  "coach.hint.clue.discoveredCheck":
+    "Spostare un pezzo può scoprire uno scacco dato da un altro.",
+  "coach.hint.clue.captureChecker":
+    "Il pezzo che dà scacco può essere catturato.",
+  "coach.hint.clue.moveKing": "Cerca una mossa di re verso una casa sicura.",
+  "coach.hint.clue.blockCheck":
+    "Un pezzo può bloccare la linea tra l’attaccante e il tuo re.",
+  "coach.hint.clue.recapture":
+    "L’avversario può ricatturare. Confronta i pezzi ceduti da ciascuna parte.",
+  "coach.hint.clue.noRecapture":
+    "Cerca una cattura che non permetta una ricattura immediata.",
+  "coach.hint.clue.castleKingside":
+    "L’arrocco corto è disponibile in questa posizione.",
+  "coach.hint.clue.castleQueenside":
+    "L’arrocco lungo è disponibile in questa posizione.",
+  "coach.hint.clue.escapeAttack":
+    "Questo pezzo può raggiungere una casa dove non può essere catturato subito: {0}.",
+  "coach.hint.clue.defend":
+    "Cerca una mossa che permetta di ricatturare se il tuo pezzo ({0} in {1}) viene catturato.",
+  "coach.hint.clue.attack": "Bersagli di un nuovo attacco: {0}.",
+  "coach.hint.clue.openFile":
+    "La colonna {0} non ha pedoni. Una delle tue torri può occuparla.",
+  "coach.hint.clue.centerControl":
+    "Cerca una mossa con questo pezzo ({0}) che aggiunga un attacco su {1}.",
+  "coach.hint.clue.develop":
+    "Cerca una mossa dalla tua prima traversa con questo pezzo: {0}.",
+  "coach.hint.clue.pawnAdvance":
+    "Cerca un pedone centrale che possa avanzare di una casa.",
+  "coach.hint.progress": "Indizio {0} di {1}",
+  "coach.hint.previous": "Precedente",
+  "coach.hint.title.escapeCheck": "Esci dallo scacco",
+  "coach.hint.title.checkmate": "Trova il matto",
+  "coach.hint.title.matingAttack": "Trova una sequenza di matto",
+  "coach.hint.title.defense": "Trova la difesa migliore",
+  "coach.hint.title.promotion": "Pensa alla promozione",
+  "coach.hint.title.capture": "Cerca una cattura",
+  "coach.hint.title.check": "Cerca uno scacco",
+  "coach.hint.title.castle": "Considera l’arrocco",
+  "coach.hint.title.escapeAttack": "Allontanati dal pericolo",
+  "coach.hint.title.defend": "Proteggi il tuo pezzo",
+  "coach.hint.title.fork": "Trova un attacco doppio",
+  "coach.hint.title.attack": "Crea un nuovo attacco",
+  "coach.hint.title.openFile": "Trova una colonna aperta",
+  "coach.hint.title.develop": "Metti un pezzo in gioco",
+  "coach.hint.title.center": "Guarda il centro",
+  "coach.hint.title.piece": "Concentrati su questo pezzo",
+  "coach.hint.idea.centerDevelopment":
+    "Guadagna spazio al centro e apri una diagonale per un alfiere.",
+  "coach.hint.clue.pawnControl":
+    "Cerca un’avanzata di pedone che inizi ad attaccare {0}.",
+  "coach.hint.clue.pawnDoubleAdvance":
+    "Cerca un pedone centrale che possa avanzare di due case.",
+  "coach.hint.clue.freeBishop":
+    "Cerca un’avanzata di pedone che apra una diagonale per un alfiere.",
+  "coach.hint.idea.captureCheck": "Cerca una cattura che dia anche scacco.",
+  "coach.hint.clue.matingSetup":
+    "La sequenza di matto inizia con una mossa che non dà scacco.",
 } satisfies Catalog;

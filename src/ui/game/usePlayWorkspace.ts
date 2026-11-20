@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { practicePositions } from "../../content/practice/positions.ts";
+import {
+  choosePracticePosition,
+  RECENT_PRACTICE_LIMIT,
+} from "../../domain/practice/positions.ts";
 import { useGameController, type GameController } from "./useGameController.ts";
 import { useBoardPreview } from "../board/useBoardPreview.ts";
 import { scrollToBoard } from "../board/scrollToBoard.ts";
@@ -12,6 +17,7 @@ import { usePanelFocus } from "../shell/usePanelFocus.ts";
 export function usePlayWorkspace(active: boolean) {
   const [dragging, setDragging] = useState(false);
   const [selectionReset, setSelectionReset] = useState(0);
+  const recentPractice = useRef<string[]>([]);
   const computer = useComputerSettings();
   const game = useGameController(computer.disable);
   const preview = useBoardPreview(game.analysisKey, game.playable);
@@ -67,6 +73,21 @@ export function usePlayWorkspace(active: boolean) {
     computer.setOpen(false);
   }
 
+  function randomPosition() {
+    const position = choosePracticePosition(practicePositions, {
+      recent: recentPractice.current,
+      currentFen: game.analysisFen,
+      side: computer.enabled ? computer.side : undefined,
+    });
+    recentPractice.current = [...recentPractice.current, position.id].slice(
+      -RECENT_PRACTICE_LIMIT,
+    );
+    preview.clearPreview();
+    recommendations.clear();
+    game.startGame(position.fen);
+    computer.setOpen(false);
+  }
+
   const showHistory = useCallback(
     (ply: number) => {
       preview.clearPreview();
@@ -84,13 +105,13 @@ export function usePlayWorkspace(active: boolean) {
     game.playMove(from, to, promote);
   };
 
-  function calculateBestMoves() {
+  function calculateBestMoves(reuseAnalysis = false) {
     if (!game.playable) return;
     preview.clearPreview();
     game.setTool("move");
     setSelectionReset((value) => value + 1);
     game.setError(null);
-    recommendations.calculate(recommendations.requested);
+    if (!reuseAnalysis) recommendations.calculate(recommendations.requested);
     if (window.matchMedia("(max-width: 900px)").matches)
       document.getElementById("coach")?.scrollIntoView({
         block: "start",
@@ -115,6 +136,7 @@ export function usePlayWorkspace(active: boolean) {
     selectionReset,
     setDragging,
     newGame,
+    randomPosition,
     showHistory,
     playSuggestedMove,
     calculateBestMoves,

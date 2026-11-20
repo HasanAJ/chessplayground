@@ -124,9 +124,6 @@
   padding-left: 58px;
   margin-top: 12px;
 }
-.feedback-explanation:empty {
-  display: none;
-}
 .feedback-later {
   margin-top: 24px;
 }
@@ -350,9 +347,6 @@
   font-size: var(--text-sm);
   font-weight: 600;
 }
-.strategy-card .card-eyebrow {
-  color: #6a558a;
-}
 .plan-actions {
   display: flex;
   align-items: center;
@@ -397,9 +391,6 @@
 .explanation-link {
   min-height: 36px;
   line-height: 1.5;
-}
-.explanation-link[aria-pressed="true"] {
-  color: #087f80;
 }
 .move-arrow.explanation-arrows {
   color: #087f80;

@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useReducer, type SetStateAction } from "react";
+import {
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+  type SetStateAction,
+} from "react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import { watchOutFor } from "../../domain/coach/warnings.ts";
 import type { GameController } from "../game/useGameController.ts";
@@ -41,6 +47,11 @@ export function useCoachPresentation(
 ) {
   const { t } = useTranslation();
   const [state, dispatch] = useReducer(reduce, initial);
+  const [hintKey, setHintKey] = useState<string | null>(null);
+  const hinting = game.playable && hintKey === game.analysisKey;
+  useEffect(() => {
+    setHintKey(null);
+  }, [game.analysisKey, game.playable]);
   const actions = useMemo(
     () => ({
       setActive: (value: SetStateAction<number | null>) =>
@@ -75,10 +86,13 @@ export function useCoachPresentation(
   const index = state.hovered ?? (state.bestFocused ? 0 : (state.active ?? 0));
   return {
     ...actions,
+    hinting,
+    startHints: () => setHintKey(game.analysisKey),
+    revealMove: () => setHintKey(null),
     active: state.active,
     watching,
     forcedMove,
-    shownCandidate: recommendations.candidates[index],
+    shownCandidate: hinting ? undefined : recommendations.candidates[index],
     showWarning:
       (state.hoveredWarning || state.focusedWarning) &&
       watching.target !== null &&

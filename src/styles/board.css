@@ -1,6 +1,8 @@
 .board-toolbar {
+  container: board-toolbar / inline-size;
+  --board-control-size: 36px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding-bottom: 16px;
@@ -17,10 +19,13 @@
   gap: 6px;
 }
 .board-toolbar .new-game-button {
+  height: var(--board-control-size);
+  padding-block: 0;
   white-space: nowrap;
 }
-.board-toolbar .flip-board-button {
-  margin-left: 0;
+.board-toolbar .icon-button {
+  width: var(--board-control-size);
+  height: var(--board-control-size);
 }
 .piece-tray {
   margin: 7px 0 7px 42px;
@@ -173,6 +178,13 @@
 .icon-button:hover:not(:disabled) {
   background: #eae4f6;
   color: var(--purple-dark);
+}
+.random-position-button {
+  background: #eae4f6;
+  color: var(--purple-dark);
+}
+.random-position-button:hover:not(:disabled) {
+  background: #ddd4f5;
 }
 .board-with-eval {
   display: flex;

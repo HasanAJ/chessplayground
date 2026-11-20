@@ -221,7 +221,7 @@ export default {
   "board.clear": "Vider l’échiquier",
   "board.turn.white": "Trait aux blancs",
   "board.turn.black": "Trait aux noirs",
-  "board.turn.select": "Qui joue maintenant",
+  "board.turn.switch": "Changer le trait",
   "board.turn.changeDescription":
     "Changer le trait crée une nouvelle position et efface l’historique.",
   "board.navigation.label": "Navigation des coups",
@@ -274,6 +274,8 @@ export default {
   "coach.review.error.needsAnalysis":
     "Nous devons d’abord analyser la position après ce coup.",
   "coach.review.good.draw": "Ce coup assure la nulle.",
+  "coach.review.good.best":
+    "C’est le premier choix du moteur. Aucune raison tactique ou positionnelle précise n’a été identifiée.",
   "coach.review.good.winningMate": "Vous avez toujours un mat forcé.",
   "coach.review.good.losingMate":
     "Ce coup est proche de la meilleure défense, mais votre roi reste menacé de mat.",
@@ -339,9 +341,15 @@ export default {
   "coach.explanation.capture.enPassant": " en passant, en arrivant en ",
   "coach.explanation.capture.focus":
     "Voir la capture et les attaquants possibles",
-  "coach.explanation.materialRisk.text":
-    "Dans cette ligne, vous cédez plus de matériel que vous n’en capturez.",
-  "coach.explanation.materialRisk.focus": "Voir la capture possible",
+  "coach.explanation.reply.focus": "Voir la capture possible",
+  "coach.explanation.sacrifice.mate":
+    "Sacrifier votre {0} en {1} maintient un mat forcé en {2} coups.",
+  "coach.explanation.sacrifice.capture":
+    "Si leur {0} depuis {1} prend votre {2} en {3}{7}, votre {4} peut prendre leur {5} en {6}.",
+  "coach.explanation.sacrifice.promotion": " et est promu en {0}",
+  "coach.explanation.openDiagonal.title": "Ouvrez une diagonale pour votre fou",
+  "coach.explanation.openDiagonal.text":
+    "Ce coup ouvre une diagonale pour votre fou en {0}.",
   "coach.explanation.check.title": "Donnez échec",
   "coach.explanation.check.focus": "Voir l’attaque sur leur roi",
   "coach.explanation.develop.centerControl":
@@ -362,6 +370,27 @@ export default {
   "coach.explanation.rook.focus": "Voir le coup de votre tour",
   "coach.explanation.king.title": "Déplace ton roi en {0}",
   "coach.explanation.king.focus": "Voir le coup de votre roi",
+  "coach.explanation.plan.defend.title": "Préparez la défense : {0}",
+  "coach.explanation.plan.defend.text":
+    "Votre {0} peut se diriger vers {1} pour aider à défendre votre {2} en {3}.",
+  "coach.explanation.plan.sharedDefense":
+    "Votre {0} en {1} est actuellement son seul défenseur ; cette manœuvre apporte du soutien.",
+  "coach.explanation.plan.focus": "Voir la manœuvre et sa cible",
+  "coach.explanation.plan.outcome": "Une suite possible : {0}",
+  "coach.explanation.plan.capture.title": "Préparez une prise",
+  "coach.explanation.plan.check.title": "Préparez un échec",
+  "coach.explanation.plan.promotion.title": "Préparez une promotion",
+  "coach.explanation.plan.attack.title": "Manœuvrez pour créer une attaque",
+  "coach.explanation.draw.title": "Terminez la partie par la nulle",
+  "coach.explanation.draw.focus": "Voir la position nulle",
+  "coach.explanation.blockade.title": "Bloquez l’avancée de leur pion",
+  "coach.explanation.blockade.text":
+    "Votre {0} en {1} empêche leur pion en {2} d’avancer.",
+  "coach.explanation.blockade.pressure":
+    "Cette pièce maintient la pression sur la pièce adverse en {1} ({0}).",
+  "coach.explanation.blockade.focus": "Voir le pion bloqué",
+  "coach.explanation.plan.attack.text":
+    "Votre {0} peut se diriger vers {1} pour attaquer la pièce adverse en {3} ({2}).",
   "coach.explanation.pawn.title": "Avance ton pion en {0}",
   "coach.explanation.pawn.focus": "Voir l’avancée de votre pion",
   "coach.explanation.nearCenter.title": "Améliorez une pièce près du centre",
@@ -564,8 +593,6 @@ export default {
   "position.fen.pawnOnEdge":
     "des pions sont sur la première ou la dernière rangée",
   "coach.feedback.context.lastMove": "Dernier coup",
-  "position.notice.loaded": "Position chargée",
-  "position.notice.copied": "Position copiée",
   "position.fen.emptySquares": "utilisez 1–8 pour les cases vides",
   "game.result.winner": "Les {0} gagnent !",
   "board.tray.label": "Pièces des {0}",
@@ -591,4 +618,99 @@ export default {
     "Le temps doit être de {0} à {1} secondes, par pas de {2}.",
   "coach.settings.moves.invalid":
     "Le nombre de coups doit être un entier de {0} à {1}.",
+  "coach.hint.request": "Obtenir un indice",
+  "coach.hint.considerPiece": "Examinez votre pièce : {0} en {1}.",
+  "coach.hint.next": "Un autre indice",
+  "coach.hint.loading": "Recherche d’un indice…",
+  "coach.hint.ready": "Votre indice est prêt",
+  "coach.hint.label": "Indices pour cette position",
+  "coach.hint.idea.escapeCheck":
+    "Votre roi est en échec. Cherchez un moyen sûr d’en sortir.",
+  "coach.hint.idea.checkmate":
+    "Un coup permet de faire échec et mat. Vérifiez les cases de fuite du roi.",
+  "coach.hint.idea.matingAttack":
+    "Il existe une suite de mat forcé. Trouvez le coup qui la préserve.",
+  "coach.hint.idea.defense":
+    "Votre roi fait face à un mat forcé. Cherchez la résistance la plus tenace.",
+  "coach.hint.idea.promotion":
+    "Cherchez une occasion de promouvoir un pion. Comparez les choix de promotion.",
+  "coach.hint.idea.capture": "Cherchez une prise sur une pièce adverse : {0}.",
+  "coach.hint.idea.check":
+    "Cherchez un coup qui donne échec. Quelles réponses imposerait-il ?",
+  "coach.hint.idea.castle":
+    "Pensez à la sécurité de votre roi et à la mise en jeu d’une tour.",
+  "coach.hint.idea.develop": "Développez une pièce de votre première rangée.",
+  "coach.hint.idea.center": "Gagnez de l’espace en avançant un pion central.",
+  "board.random.label": "Position aléatoire",
+  "coach.hint.idea.escapeAttack":
+    "Cherchez à mettre une pièce attaquée hors de portée.",
+  "coach.hint.idea.defend":
+    "Une pièce non défendue peut être prise. Cherchez à la protéger.",
+  "coach.hint.idea.fork":
+    "Cherchez un coup qui attaque deux pièces adverses à la fois.",
+  "coach.hint.idea.attack":
+    "Cherchez un coup qui crée une nouvelle attaque sur une pièce adverse.",
+  "coach.hint.idea.openFile":
+    "Cherchez à placer une tour sur une colonne ouverte.",
+  "coach.hint.idea.centerControl": "Renforcez votre influence sur le centre.",
+  "coach.hint.clue.promotion": "Envisagez cette pièce pour la promotion : {0}.",
+  "coach.hint.clue.doubleCheck":
+    "Cherchez un coup qui donne échec avec deux pièces à la fois.",
+  "coach.hint.clue.check": "Cherchez un échec avec cette pièce : {0}.",
+  "coach.hint.clue.discoveredCheck":
+    "Déplacer une pièce peut découvrir un échec donné par une autre.",
+  "coach.hint.clue.captureChecker": "La pièce qui donne échec peut être prise.",
+  "coach.hint.clue.moveKing": "Cherchez un coup de roi vers une case sûre.",
+  "coach.hint.clue.blockCheck":
+    "Une pièce peut bloquer la ligne entre l’attaquant et votre roi.",
+  "coach.hint.clue.recapture":
+    "Votre adversaire peut reprendre. Comparez les pièces cédées par chaque camp.",
+  "coach.hint.clue.noRecapture":
+    "Cherchez une prise qui ne permet pas de reprise immédiate.",
+  "coach.hint.clue.castleKingside":
+    "Le petit roque est possible dans cette position.",
+  "coach.hint.clue.castleQueenside":
+    "Le grand roque est possible dans cette position.",
+  "coach.hint.clue.escapeAttack":
+    "Cette pièce peut rejoindre une case où elle ne peut pas être prise immédiatement : {0}.",
+  "coach.hint.clue.defend":
+    "Cherchez un coup qui permet de reprendre si votre pièce ({0} en {1}) est prise.",
+  "coach.hint.clue.attack": "Cibles possibles d’une nouvelle attaque : {0}.",
+  "coach.hint.clue.openFile":
+    "La colonne {0} ne contient aucun pion. Une de vos tours peut l’occuper.",
+  "coach.hint.clue.centerControl":
+    "Cherchez un coup avec cette pièce ({0}) qui ajoute une attaque sur {1}.",
+  "coach.hint.clue.develop":
+    "Cherchez un coup depuis votre première rangée avec cette pièce : {0}.",
+  "coach.hint.clue.pawnAdvance":
+    "Cherchez un pion central qui peut avancer d’une case.",
+  "coach.hint.progress": "Indice {0} sur {1}",
+  "coach.hint.previous": "Précédent",
+  "coach.hint.title.escapeCheck": "Sortez de l’échec",
+  "coach.hint.title.checkmate": "Trouvez le mat",
+  "coach.hint.title.matingAttack": "Trouvez une suite de mat",
+  "coach.hint.title.defense": "Trouvez votre meilleure défense",
+  "coach.hint.title.promotion": "Pensez à la promotion",
+  "coach.hint.title.capture": "Cherchez une prise",
+  "coach.hint.title.check": "Cherchez un échec",
+  "coach.hint.title.castle": "Envisagez le roque",
+  "coach.hint.title.escapeAttack": "Éloignez-vous du danger",
+  "coach.hint.title.defend": "Protégez votre pièce",
+  "coach.hint.title.fork": "Trouvez une double attaque",
+  "coach.hint.title.attack": "Créez une nouvelle attaque",
+  "coach.hint.title.openFile": "Trouvez une colonne ouverte",
+  "coach.hint.title.develop": "Mettez une pièce en jeu",
+  "coach.hint.title.center": "Observez le centre",
+  "coach.hint.title.piece": "Concentrez-vous sur cette pièce",
+  "coach.hint.idea.centerDevelopment":
+    "Gagnez de l’espace au centre tout en ouvrant une diagonale pour un fou.",
+  "coach.hint.clue.pawnControl":
+    "Cherchez une avancée de pion qui crée une attaque sur {0}.",
+  "coach.hint.clue.pawnDoubleAdvance":
+    "Cherchez un pion central qui peut avancer de deux cases.",
+  "coach.hint.clue.freeBishop":
+    "Cherchez une avancée de pion qui ouvre une diagonale pour un fou.",
+  "coach.hint.idea.captureCheck": "Cherchez une prise qui donne aussi échec.",
+  "coach.hint.clue.matingSetup":
+    "La suite de mat commence par un coup qui ne donne pas échec.",
 } satisfies Catalog;

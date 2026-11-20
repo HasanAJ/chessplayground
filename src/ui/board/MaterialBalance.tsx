@@ -1,10 +1,21 @@
+import type { Move } from "chess.js";
 import { materialBalance } from "../../domain/chess/material.ts";
-import { sideName, type Position } from "../../domain/chess/position.ts";
+import {
+  opposite,
+  sideName,
+  type Position,
+} from "../../domain/chess/position.ts";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import { pieceImage, pieceLabel } from "./pieces.ts";
-export function MaterialBalance({ position }: { position: Position }) {
+export function MaterialBalance({
+  position,
+  history,
+}: {
+  position: Position;
+  history?: readonly Move[];
+}) {
   const { t } = useTranslation();
-  const balance = materialBalance(position);
+  const balance = materialBalance(position, history);
   if (
     balance.difference === 0 &&
     balance.missing.w.length + balance.missing.b.length === 0
@@ -22,7 +33,11 @@ export function MaterialBalance({ position }: { position: Position }) {
       aria-label={t("board.material.label")}
     >
       {(["b", "w"] as const).map((color) => {
-        const description = t("board.material.missing", sideName(color, t));
+        const capturedColor = opposite(color);
+        const description = t(
+          "board.material.missing",
+          sideName(capturedColor, t),
+        );
         return (
           <div
             key={color}
@@ -31,17 +46,17 @@ export function MaterialBalance({ position }: { position: Position }) {
             aria-label={description}
             title={description}
           >
-            {balance.missing[color].map(({ type, count }) => (
+            {balance.missing[capturedColor].map(({ type, count }) => (
               <span
                 key={type}
                 className="material-piece-stack"
                 role="img"
-                aria-label={`${pieceLabel({ color, type }, t)} × ${count}`}
+                aria-label={`${pieceLabel({ color: capturedColor, type }, t)} × ${count}`}
               >
                 {Array.from({ length: count }, (_, index) => (
                   <img
                     key={index}
-                    src={pieceImage({ color, type })}
+                    src={pieceImage({ color: capturedColor, type })}
                     alt=""
                     draggable={false}
                   />

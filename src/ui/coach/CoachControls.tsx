@@ -1,6 +1,6 @@
 import {
-  Check,
   Clock3,
+  Lightbulb,
   LoaderCircle,
   RotateCcw,
   Search,
@@ -111,11 +111,13 @@ export function CalculationControl({
   thinking,
   busy,
   onCalculate,
+  onHint,
 }: {
   view: CoachView;
   thinking: boolean;
   busy: boolean;
   onCalculate: () => void;
+  onHint: () => void;
 }) {
   const { t } = useTranslation();
   return (
@@ -131,6 +133,19 @@ export function CalculationControl({
       )}
       {!view.showRefresh && (
         <div className="calculation-controls">
+          <button
+            type="button"
+            className="hint-button"
+            disabled={view.hintDisabled}
+            aria-label={t("coach.hint.request")}
+            title={t("coach.hint.request")}
+            aria-describedby={
+              view.calculateReason ? "calculation-reason" : undefined
+            }
+            onClick={onHint}
+          >
+            <Lightbulb size={18} aria-hidden="true" />
+          </button>
           <button
             className="primary-button calculate-button"
             disabled={view.calculateDisabled}
@@ -157,33 +172,22 @@ export function CalculationControl({
     </>
   );
 }
-export function CoachNotices({ game }: Pick<Inputs, "game">) {
+export function CoachError({ game }: Pick<Inputs, "game">) {
   const { t } = useTranslation();
+  if (!game.error) return null;
   return (
-    <>
-      {game.notice && (
-        <div className="panel-notice" role="status">
-          <Check size={15} />
-          <span>
-            <SquareText text={translateNotice(game.notice, t)} />
-          </span>
-        </div>
-      )}
-      {game.error && (
-        <div className="error-message" role="alert">
-          <ShieldAlert size={16} />
-          <span>
-            <SquareText text={translateNotice(game.error, t)} />
-          </span>
-          <button
-            aria-label={t("common.dismissError")}
-            onClick={() => game.setError(null)}
-          >
-            <X size={14} />
-          </button>
-        </div>
-      )}
-    </>
+    <div className="error-message" role="alert">
+      <ShieldAlert size={16} />
+      <span>
+        <SquareText text={translateNotice(game.error, t)} />
+      </span>
+      <button
+        aria-label={t("common.dismissError")}
+        onClick={() => game.setError(null)}
+      >
+        <X size={14} />
+      </button>
+    </div>
   );
 }
 export function CoachStatusStrip({

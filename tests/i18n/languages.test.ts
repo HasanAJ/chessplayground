@@ -209,7 +209,7 @@ test("structured diagnostics translate by key while unknown raw errors stay read
     "game.save.error.unavailable",
     "game.save.error.restoredPosition",
     "computer.error.saveDifficulty",
-    "position.notice.loaded",
+    "position.error.invalidInput",
   ];
   for (const language of Object.keys(languages) as (keyof typeof languages)[]) {
     const t = translator(language);

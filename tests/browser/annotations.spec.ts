@@ -189,10 +189,9 @@ test("copying a historical position preserves annotations and a new game clears 
   await page
     .getByRole("button", { name: "Copy current FEN", exact: true })
     .click();
-  await expect(page.locator(".panel-notice")).toHaveText("Position copied");
-  await expect(square(page, "d4").locator(".annotation-red")).toBeVisible();
-  await expect(arrows(page)).toHaveCount(1);
-  await expect(page.locator(".panel-notice")).toHaveCount(0);
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(await page.locator("#fen-input").inputValue());
   await expect(square(page, "d4").locator(".annotation-red")).toBeVisible();
   await expect(arrows(page)).toHaveCount(1);
   await page.getByRole("button", { name: "New game", exact: true }).click();

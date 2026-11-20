@@ -3,16 +3,16 @@ import type { Color } from "chess.js";
 import {
   ArrowDownUp,
   ArrowRight,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Dices,
   Eraser,
   Pencil,
   Plus,
+  RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
-import { notice } from "../../i18n/notices.ts";
-import { setupFen } from "../../domain/chess/position.ts";
+import { opposite, setupFen } from "../../domain/chess/position.ts";
 import type { PositionEvaluation } from "../../domain/chess/evaluation.ts";
 import type { GameController } from "../game/useGameController.ts";
 import type { ComputerSettings } from "../computer/useComputerSettings.ts";
@@ -51,7 +51,6 @@ type BoardGame = Pick<
   | "reviewing"
   | "setBoardPosition"
   | "setError"
-  | "setNotice"
   | "setTool"
   | "tool"
 >;
@@ -66,6 +65,7 @@ type Props = {
   reviewEvaluation?: PositionEvaluation;
   highlights: CoachPresentation;
   onNewGame: () => void;
+  onRandomPosition: () => void;
   onShowHistory: (ply: number) => void;
 };
 function Toolbar({
@@ -75,11 +75,13 @@ function Toolbar({
   botTurn,
   clear,
   reset,
+  randomize,
   navigate,
 }: Pick<Props, "game" | "preview" | "botTurn"> & {
   board: BoardController;
   clear: () => void;
   reset: () => void;
+  randomize: () => void;
   navigate: (ply: number) => void;
 }) {
   const { t } = useTranslation();
@@ -99,6 +101,9 @@ function Toolbar({
     },
   ];
   const flip = t("board.flip");
+  const turnLabel = t(
+    board.turn === "w" ? "board.turn.white" : "board.turn.black",
+  );
   return (
     <div className="board-toolbar">
       <div className="toolbar-actions">
@@ -111,6 +116,15 @@ function Toolbar({
           <Plus size={15} /> <span>{t("board.newGame.label")}</span>
         </button>
         <button
+          type="button"
+          className="icon-button random-position-button"
+          onClick={randomize}
+          title={t("board.random.label")}
+          aria-label={t("board.random.label")}
+        >
+          <Dices size={17} />
+        </button>
+        <button
           className="icon-button desktop-editor-action"
           onClick={clear}
           title={t("board.clear")}
@@ -119,28 +133,21 @@ function Toolbar({
           <Eraser size={16} />
         </button>
       </div>
-      <div className={`turn-select ${board.turn === "b" ? "is-black" : ""}`}>
-        <select
-          aria-label={t("board.turn.select")}
-          value={board.turn}
-          disabled={preview.boardPreview || botTurn}
-          title={
-            game.playable && game.history.length
-              ? t("board.turn.changeDescription")
-              : undefined
-          }
-          onChange={(event) =>
-            game.chooseNextPlayer(event.currentTarget.value as Color)
-          }
-        >
-          {(["w", "b"] as const).map((side) => (
-            <option key={side} value={side}>
-              {t(side === "w" ? "board.turn.white" : "board.turn.black")}
-            </option>
-          ))}
-        </select>
-        <ChevronDown size={14} aria-hidden="true" />
-      </div>
+      <button
+        type="button"
+        className={`turn-switch ${board.turn === "b" ? "is-black" : ""}`}
+        aria-label={`${turnLabel}. ${t("board.turn.switch")}`}
+        disabled={preview.boardPreview || botTurn}
+        title={
+          game.playable && game.history.length
+            ? t("board.turn.changeDescription")
+            : t("board.turn.switch")
+        }
+        onClick={() => game.chooseNextPlayer(opposite(board.turn))}
+      >
+        <span>{turnLabel}</span>
+        <RefreshCw size={15} aria-hidden="true" />
+      </button>
       <div className="board-navigation-actions">
         <div
           className="board-history-navigation"
@@ -213,6 +220,18 @@ export function BoardPanel(props: Props) {
   const fen = game.draft
     ? setupFen(game.draft.position, game.draft.turn, game.draft.rights)
     : game.analysisFen;
+  const inspection = preview.inspection;
+  const materialHistory = inspection
+    ? [
+        ...game.history.slice(
+          0,
+          game.history.findIndex(
+            (move) => move.after === inspection.candidate.move.before,
+          ) + 1,
+        ),
+        ...inspection.candidate.continuation.slice(0, inspection.ply),
+      ]
+    : game.history.slice(0, game.historyPly ?? game.history.length);
   return (
     <section
       className={`board-panel ${editor ? "is-editing" : ""}`}
@@ -225,6 +244,10 @@ export function BoardPanel(props: Props) {
         botTurn={props.botTurn}
         clear={clear}
         reset={reset}
+        randomize={() => {
+          setEditor(false);
+          props.onRandomPosition();
+        }}
         navigate={props.onShowHistory}
       />
       <div className="board-surface">
@@ -238,7 +261,10 @@ export function BoardPanel(props: Props) {
           highlights={props.highlights}
         />
         {tray(bottom, "board-bottom-tray")}
-        <MaterialBalance position={board.position} />
+        <MaterialBalance
+          position={board.position}
+          history={game.draft ? undefined : materialHistory}
+        />
       </div>
       <BoardPreviewControls preview={preview} />
       <div className="board-secondary-actions">
@@ -276,9 +302,7 @@ export function BoardPanel(props: Props) {
             onLoad={(position) => {
               game.replaceGame(position);
               setEditor(false);
-              game.setNotice(notice("position.notice.loaded"));
             }}
-            onCopied={() => game.setNotice(notice("position.notice.copied"))}
           />
         </div>
       </div>

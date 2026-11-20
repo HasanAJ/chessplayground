@@ -98,6 +98,35 @@ test("failed automatic review offers a retry and keeps the move identified", () 
   assert.doesNotMatch(failed, /Opponent’s possible reply/);
 });
 
+test("a best quiet move renders an honest explanation when no specific reason is available", () => {
+  const fen = "2k4r/2r2p2/4p3/3nP3/1p1P2p1/1K4B1/1PPR3P/2R5 b - - 0 1";
+  const [best] = candidatesFor(fen, [
+    { rank: 1, depth: 20, cp: -50, pv: ["c8d7", "c1g1"] },
+  ]);
+  assert.equal(best.explanation, "");
+  const review = reviewMove(best.move, best, undefined, false, best);
+  const html = renderToStaticMarkup(
+    createElement(MoveFeedback, {
+      result: { key: "quiet", state: "ready", review },
+      move: best.move,
+      moveLabel: "King from c8 to d7",
+      collapsed: false,
+      onToggle() {},
+      onReanalyze() {},
+      onInspect() {},
+      onClearInspection() {},
+    }),
+  );
+  const dom = new JSDOM(html);
+  const text = dom.window.document.querySelector(
+    ".feedback-explanation p",
+  )?.textContent;
+  assert.match(text ?? "", /engine’s top choice/);
+  assert.match(text ?? "", /No specific tactical or positional reason/);
+  assert.equal(review.label, "Best move");
+  dom.window.close();
+});
+
 test("the best move starts compact, with its reply and continuation hidden", () => {
   const game = new Chess();
   const candidate = candidatesFor(game.fen(), [

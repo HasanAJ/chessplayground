@@ -1,11 +1,22 @@
 import { Chess, type Move, type Square } from "chess.js";
 import { english, type Translator } from "../../i18n/translate.ts";
-import { opposite, pieceNameKeys, positionOf } from "../chess/position.ts";
+import {
+  ending,
+  opposite,
+  pieceNameKeys,
+  positionOf,
+  withTurn,
+} from "../chess/position.ts";
 import { capturedSquare } from "../chess/moves.ts";
 import { pieceValues } from "../chess/material.ts";
 import { boardFocus, type BoardFocus } from "./boardFocus.ts";
 
-type Explanation = { title: string; text: string; focus?: BoardFocus };
+export type Explanation = {
+  title: string;
+  text: string;
+  focus?: BoardFocus;
+};
+type MoveExplanation = Explanation & { kind: "observation" | "activity" };
 const center: Square[] = ["d4", "e4", "d5", "e5"];
 const nearCenter: Square[] = [
   "c3",
@@ -27,8 +38,13 @@ function explanation(
   label: string,
   arrows: BoardFocus["arrows"],
   squares: Square[] = [],
-): Explanation {
-  return { title, text, focus: boardFocus(label, arrows, squares) };
+): MoveExplanation {
+  return {
+    kind: "observation",
+    title,
+    text,
+    focus: boardFocus(label, arrows, squares),
+  };
 }
 
 /** Explain observed board facts in priority order; an attack is never a promised capture. */
@@ -37,7 +53,7 @@ export function explainMove(
   after: Chess,
   move: Move,
   t: Translator = english,
-): Explanation {
+): MoveExplanation {
   const name = (type: Move["piece"]) => t(pieceNameKeys[type]);
   const piece = name(move.promotion ?? move.piece);
   const travel = [{ from: move.from, to: move.to }];
@@ -84,6 +100,13 @@ export function explainMove(
           ),
       t("coach.explanation.checkmate.focus"),
       checkingArrows,
+    );
+  if (after.isDraw())
+    return explanation(
+      t("coach.explanation.draw.title"),
+      ending(after, t)!,
+      t("coach.explanation.draw.focus"),
+      travel,
     );
   if (move.promotion)
     return explanation(
@@ -224,9 +247,26 @@ export function explainMove(
   )
     return explanation(
       t("coach.explanation.escapeAttack.title", piece),
-      t("coach.explanation.escapeAttack.text", piece),
+      [
+        t("coach.explanation.escapeAttack.text", piece),
+        newTargets.length
+          ? t(
+              "coach.explanation.attack.text",
+              piece,
+              name(newTargets[0][1]!.type),
+              newTargets[0][0],
+            )
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" "),
       t("coach.explanation.escapeAttack.focus", piece),
-      travel,
+      [
+        ...travel,
+        ...newTargets
+          .slice(0, 1)
+          .map(([to]) => ({ from: move.to, to: to as Square })),
+      ],
     );
   if (newTargets.length) {
     const [square, target] = newTargets[0];
@@ -237,14 +277,60 @@ export function explainMove(
       [{ from: move.to, to: square as Square }],
     );
   }
-  return activity(after, move, t);
+  const pawnSquare =
+    `${move.to[0]}${Number(move.to[1]) + (move.color === "w" ? 1 : -1)}` as Square;
+  const pawn = before.get(pawnSquare);
+  if (
+    pawn?.type === "p" &&
+    pawn.color !== move.color &&
+    !before.get(move.to) &&
+    withTurn(before.fen(), pawn.color)
+      .moves({ square: pawnSquare, verbose: true })
+      .some((advance) => advance.to === move.to && !advance.captured)
+  ) {
+    const pressure = Object.entries(positionOf(after))
+      .filter(
+        ([square, target]) =>
+          target?.color !== move.color &&
+          target?.type !== "k" &&
+          before.attackers(square as Square, move.color).includes(move.from) &&
+          after.attackers(square as Square, move.color).includes(move.to),
+      )
+      .sort((a, b) => pieceValues[b[1]!.type] - pieceValues[a[1]!.type])[0];
+    return explanation(
+      t("coach.explanation.blockade.title"),
+      [
+        t("coach.explanation.blockade.text", piece, move.to, pawnSquare),
+        pressure
+          ? t(
+              "coach.explanation.blockade.pressure",
+              name(pressure[1]!.type),
+              pressure[0],
+            )
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" "),
+      t("coach.explanation.blockade.focus"),
+      travel,
+      [pawnSquare],
+    );
+  }
+  return { ...activity(before, after, move, t), kind: "activity" };
 }
 
-function activity(board: Chess, move: Move, t: Translator): Explanation {
+function activity(
+  before: Chess,
+  board: Chess,
+  move: Move,
+  t: Translator,
+): Explanation {
   const piece = t(pieceNameKeys[move.piece]);
   const travel = [{ from: move.from, to: move.to }];
-  const controlled = center.filter((square) =>
-    board.attackers(square, move.color).includes(move.to),
+  const controlled = center.filter(
+    (square) =>
+      board.attackers(square, move.color).includes(move.to) &&
+      !before.attackers(square, move.color).includes(move.from),
   );
   const control = controlled.length
     ? t(
@@ -253,6 +339,30 @@ function activity(board: Chess, move: Move, t: Translator): Explanation {
       )
     : "";
   const controlArrows = controlled.map((to) => ({ from: move.to, to }));
+  const openedBishop = before
+    .board()
+    .flat()
+    .find((bishop) => {
+      if (
+        bishop?.type !== "b" ||
+        bishop.color !== move.color ||
+        board.get(bishop.square)?.type !== "b" ||
+        board.get(bishop.square)?.color !== bishop.color ||
+        !before.attackers(move.from, move.color).includes(bishop.square)
+      )
+        return false;
+      const previous = new Set(
+        before
+          .moves({ square: bishop.square, verbose: true })
+          .map((step) => step.to),
+      );
+      return withTurn(board.fen(), move.color)
+        .moves({ square: bishop.square, verbose: true })
+        .some((step) => step.to !== move.from && !previous.has(step.to));
+    });
+  const diagonal = openedBishop
+    ? t("coach.explanation.openDiagonal.text", openedBishop.square)
+    : "";
   if (
     ["n", "b"].includes(move.piece) &&
     move.from[1] === (move.color === "w" ? "1" : "8")
@@ -271,16 +381,29 @@ function activity(board: Chess, move: Move, t: Translator): Explanation {
     );
     return explanation(
       t("coach.explanation.center.title"),
-      t("coach.explanation.center.text", targets.join(t("common.join.and"))),
+      [
+        t("coach.explanation.center.text", targets.join(t("common.join.and"))),
+        diagonal,
+      ]
+        .filter(Boolean)
+        .join(" "),
       t("coach.explanation.center.focus"),
       targets.map((to) => ({ from: move.to, to })),
     );
   }
+  if (openedBishop)
+    return explanation(
+      t("coach.explanation.openDiagonal.title"),
+      diagonal,
+      t("coach.explanation.develop.focus"),
+      travel,
+      [openedBishop.square],
+    );
   if (move.piece === "r") {
     const open = !Object.entries(positionOf(board)).some(
       ([square, piece]) => square[0] === move.to[0] && piece?.type === "p",
     );
-    return open
+    return open && move.from[0] !== move.to[0]
       ? explanation(
           t("coach.explanation.openFile.title"),
           t("coach.explanation.openFile.text", move.to[0]),

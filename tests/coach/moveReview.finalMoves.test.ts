@@ -124,7 +124,7 @@ test("reply previews follow the final reply when its newest exact line predates 
   assert.equal(reviews[0].reply?.cp, 10);
 });
 
-test("an unfinished deeper score retries only to that depth before grading", (t) => {
+test("a deeper partial score preserves a complete comparison with the same winner", (t) => {
   const { worker, reviews, errors } = fixture(t);
   initialSearch(worker);
   worker.emit(
@@ -133,22 +133,16 @@ test("an unfinished deeper score retries only to that depth before grading", (t)
     "info depth 15 multipv 1 score cp 150 pv e2e4 c7c5",
     "bestmove e2e4",
   );
-  assert.equal(reviews.length, 0);
+  assert.equal(reviews[0].label, "Blunder");
+  assert.equal(reviews[0].best.depth, 14);
+  assert.equal(reviews[0].played?.depth, 14);
+  assert.equal(reviews[0].best.cp, 100);
+  assert.equal(reviews[0].played?.cp, -500);
+  assert.equal(reviews[0].evaluation.whiteScore, -5);
   assert.equal(
-    worker.commands.at(-1),
-    "go depth 15 movetime 1800 searchmoves e2e4 e2e3",
+    worker.commands.filter((command) => command.startsWith("go ")).length,
+    2,
   );
-  worker.emit(
-    "info depth 15 multipv 1 score cp 150 pv e2e4 c7c5",
-    "info depth 15 multipv 2 score cp 140 pv e2e3 e7e5",
-    "bestmove e2e4",
-  );
-  assert.equal(reviews[0].label, "Excellent move");
-  assert.equal(reviews[0].best.depth, 15);
-  assert.equal(reviews[0].played?.depth, 15);
-  assert.equal(reviews[0].best.cp, 150);
-  assert.equal(reviews[0].played?.cp, 140);
-  assert.equal(reviews[0].evaluation.whiteScore, 1.4);
   assert.deepEqual(errors, []);
 });
 

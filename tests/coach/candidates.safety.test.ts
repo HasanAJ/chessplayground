@@ -28,10 +28,9 @@ test("the screenshot position explains Bxg5 without overriding Stockfish's ranki
     knightMove,
     { rank: 3, depth: 16, cp: -718, pv: ["h3h4", "f3f4"] },
   ]);
-  assert.match(evaluated[0].explanation, /give up more material/);
-  assert.match(
+  assert.equal(
     evaluated[0].explanation,
-    /Their bishop can take your pawn on g5/,
+    "Your pawn on g5 blocks their pawn on g4 from advancing. Their bishop can take your pawn on g5.",
   );
   assert.deepEqual(evaluated[0].explanationFocus?.arrows, [
     { from: "g6", to: "g5" },
@@ -50,7 +49,7 @@ test("the screenshot position explains Bxg5 without overriding Stockfish's ranki
   );
 });
 
-test("material warnings also preserve the engine ranking from White's perspective", () => {
+test("capture replies preserve the engine ranking from White's perspective", () => {
   const evaluated = candidatesFor("8/8/4bk1K/6p1/p7/N5P1/8/8 w - - 0 1", [
     { rank: 1, depth: 16, cp: -700, pv: ["g3g4", "e6g4"] },
     { rank: 2, depth: 16, cp: -718, pv: ["a3b5", "g5g4"] },
@@ -63,39 +62,14 @@ test("material warnings also preserve the engine ranking from White's perspectiv
   assert.equal(evaluated[0].whiteScore, -7);
 });
 
-test("a stronger sacrifice stays first when alternatives exceed the score gap", () => {
-  const evaluated = candidatesFor(SCREENSHOT_FEN, [
-    pawnPush,
-    { ...knightMove, cp: -751 },
-  ]);
-  assert.deepEqual(recommendedCandidates(evaluated), [evaluated[0]]);
-  assert.match(evaluated[0].explanation, /give up more material/);
-});
-
-test("missing replies do not invent a capture or material loss", () => {
+test("missing replies do not invent a capture", () => {
   const candidate = candidatesFor(SCREENSHOT_FEN, [
     { ...pawnPush, pv: ["g6g5"] },
   ])[0];
-  assert.doesNotMatch(
-    candidate.explanation,
-    /bishop can take|give up more material/,
-  );
+  assert.doesNotMatch(candidate.explanation, /bishop can take/);
 });
 
-test("recaptures and material gained by the first move count toward compensation", () => {
-  for (const [fen, pv] of [
-    ["4k3/8/8/3p4/8/3P4/4P3/4K3 w - - 0 1", ["e2e4", "d5e4", "d3e4"]],
-    ["4k3/8/2p5/3q4/8/8/8/3QK3 w - - 0 1", ["d1d5", "c6d5"]],
-  ] as const) {
-    const candidate = candidatesFor(fen, [
-      { rank: 1, depth: 16, cp: 0, pv: [...pv] },
-    ])[0];
-    assert.doesNotMatch(candidate.explanation, /give up more material/);
-    assert.deepEqual(recommendedCandidates([candidate]), [candidate]);
-  }
-});
-
-test("equal queen trades use plain move order without a material-loss warning", () => {
+test("equal queen trades describe the capture and recapture in plain language", () => {
   for (const [fen, pv, square] of [
     ["8/k5q1/8/8/8/8/6Q1/7K b - - 0 1", ["g7g2", "h1g2"], "g2"],
     ["7k/6q1/8/8/8/8/6Q1/7K w - - 0 1", ["g2g7", "h8g7"], "g7"],
@@ -111,42 +85,20 @@ test("equal queen trades use plain move order without a material-loss warning", 
     const review = reviewMove(candidate.move, candidate, reply);
     assert.equal(review.label, "Best move");
     assert.equal(review.text, expected);
-    assert.doesNotMatch(review.text, /Qx|Kx|top choice|give up more material/);
   }
 });
 
-test("a recapture beyond the old six-move cutoff keeps the exchange balanced", () => {
-  for (const [fen, pv] of [
-    [
-      "5r2/k5q1/7p/8/8/4p3/6Q1/5R1K b - - 0 1",
-      ["g7g2", "h1g2", "a7b6", "g2h2", "f8f2", "f1f2", "e3f2"],
-    ],
-    [
-      "5r1k/6q1/4P3/8/8/7P/K5Q1/5R2 w - - 0 1",
-      ["g2g7", "h8g7", "a2b3", "g7h7", "f1f7", "f8f7", "e6f7"],
-    ],
-  ] as const) {
-    const candidate = candidatesFor(fen, [
-      { rank: 1, depth: 18, cp: 0, pv: [...pv] },
-    ])[0];
-    assert.ok(candidate);
-    assert.equal(candidate.continuation.length, 7);
-    assert.equal(candidate.continuation.at(-1)?.captured, "r");
-    assert.doesNotMatch(candidate.explanation, /give up more material/);
-  }
-});
-
-test("a genuinely losing exchange states the reply before the net outcome", () => {
-  const candidate = candidatesFor("7k/6r1/8/8/8/8/6Q1/7K w - - 0 1", [
+test("losing exchanges describe the capture and recapture without a generic warning", () => {
+  const candidate = candidatesFor("7k/p5r1/8/8/8/8/6Q1/7K w - - 0 1", [
     { rank: 1, depth: 18, cp: -400, pv: ["g2g7", "h8g7"] },
   ])[0];
   assert.equal(
     candidate.explanation,
-    "Your queen takes their rook on g7 and gives check. Their king can take your queen in return. In this line, you give up more material than you take.",
+    "Your queen takes their rook on g7 and gives check. Their king can take your queen in return.",
   );
 });
 
-test("an invalid continuation cannot produce a net material-loss claim", () => {
+test("an invalid continuation tail is rejected while its legal capture reply remains", () => {
   const candidate = candidatesFor(SCREENSHOT_FEN, [
     { ...pawnPush, pv: ["g6g5", "e3g5", "a6a8"] },
   ])[0];
@@ -155,36 +107,40 @@ test("an invalid continuation cannot produce a net material-loss claim", () => {
     ["g6g5", "e3g5"],
   );
   assert.match(candidate.explanation, /Their bishop can take your pawn/);
-  assert.doesNotMatch(candidate.explanation, /give up more material/);
 });
 
-test("a forced mating sacrifice keeps its priority over material", () => {
+test("a mating sacrifice describes the forced mate instead of the recapture", () => {
   const evaluated = candidatesFor("5r1k/6pp/7N/3Q4/8/8/8/K7 w - - 0 1", [
     { rank: 1, depth: 16, mate: 2, pv: ["d5g8", "f8g8", "h6f7"] },
     { rank: 2, depth: 16, mate: 4, pv: ["d5e4", "g7g6"] },
   ]);
   assert.equal(evaluated[0].continuation.at(-1)?.san, "Nf7#");
   assert.equal(recommendedCandidates(evaluated)[0], evaluated[0]);
-  assert.doesNotMatch(evaluated[0].explanation, /give up more material/);
+  assert.match(
+    evaluated[0].explanation,
+    /Giving up your queen on g8 keeps a forced checkmate in 2 moves/,
+  );
+  assert.doesNotMatch(evaluated[0].explanation, /Their rook can take/);
 });
 
-test("en passant identifies the captured pawn square and promotions count their material gain", () => {
+test("en passant and promotion replies identify the piece and captured square", () => {
   const enPassant = candidatesFor("4k3/8/8/8/3p4/8/4P3/4K3 w - - 0 1", [
     { rank: 1, depth: 16, cp: -100, pv: ["e2e4", "d4e3"] },
   ])[0];
-  assert.match(enPassant.explanation, /give up more material/);
   assert.match(enPassant.explanation, /can take your pawn on e4/);
   assert.ok(enPassant.explanationFocus?.squares.includes("e4"));
   const promotion = candidatesFor("1r5k/P7/8/8/8/8/8/4K3 w - - 0 1", [
     { rank: 1, depth: 16, cp: -500, pv: ["a7a8q", "b8a8"] },
   ])[0];
-  assert.match(promotion.explanation, /give up more material/);
+  assert.match(
+    promotion.explanation,
+    /promotes to a queen on a8.*Their rook can take your queen on a8/,
+  );
   const compensated = candidatesFor("7r/P5k1/8/8/8/8/8/4K2R w - - 0 1", [
     { rank: 1, depth: 16, cp: 300, pv: ["a7a8q", "h8h1"] },
   ])[0];
   assert.match(compensated.explanation, /promotes to a queen/);
   assert.match(compensated.explanation, /take your rook on h1/);
-  assert.doesNotMatch(compensated.explanation, /give up more material/);
 });
 
 test("the best-move card shows the capture before Play without opening the preview", () => {
@@ -200,23 +156,15 @@ test("the best-move card shows the capture before Play without opening the previ
     }),
   );
   const text = html.replace(/<[^>]*>/g, "");
-  assert.match(text, /Their bishop can take your pawn on g5/);
-  assert.ok(text.indexOf("give up more material") < text.indexOf("Play"));
+  assert.match(text, /Their bishop can take your pawn on g5.*Play/s);
   for (const language of ["de", "es", "it", "fr"] as const) {
     const localized = candidatesFor(
       SCREENSHOT_FEN,
       [pawnPush],
       translator(language),
     )[0];
-    assert.ok(
-      localized.explanation.includes(
-        translator(language)("coach.explanation.materialRisk.text"),
-      ),
-    );
+    assert.notEqual(localized.explanation, candidate.explanation);
     assert.match(localized.explanation, /g5/);
-    assert.doesNotMatch(
-      localized.explanation,
-      /\{\d+\}|their bishop|material loss/,
-    );
+    assert.doesNotMatch(localized.explanation, /\{\d+\}|Their bishop/);
   }
 });

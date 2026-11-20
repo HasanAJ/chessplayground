@@ -213,7 +213,7 @@ const en = {
   "board.clear": "Clear board",
   "board.turn.white": "White to move",
   "board.turn.black": "Black to move",
-  "board.turn.select": "Who plays next",
+  "board.turn.switch": "Switch turn",
   "board.turn.changeDescription":
     "Changing the player starts a new position and clears the move history.",
   "board.navigation.label": "Game move navigation",
@@ -266,6 +266,8 @@ const en = {
   "coach.review.error.needsAnalysis":
     "We need to check the position after this move first.",
   "coach.review.good.draw": "This secures a draw.",
+  "coach.review.good.best":
+    "This is the engine’s top choice. No specific tactical or positional reason was identified.",
   "coach.review.good.winningMate": "You still have a forced checkmate.",
   "coach.review.good.losingMate":
     "This is close to the best defense, but your king still faces checkmate.",
@@ -326,9 +328,15 @@ const en = {
   "coach.explanation.capture.text": "Your {0} takes their {1} on {2}{3}.{4}",
   "coach.explanation.capture.enPassant": " en passant, landing on ",
   "coach.explanation.capture.focus": "See the capture and possible attackers",
-  "coach.explanation.materialRisk.text":
-    "In this line, you give up more material than you take.",
-  "coach.explanation.materialRisk.focus": "See the possible capture",
+  "coach.explanation.reply.focus": "See the possible capture",
+  "coach.explanation.sacrifice.mate":
+    "Giving up your {0} on {1} keeps a forced checkmate in {2} moves.",
+  "coach.explanation.sacrifice.capture":
+    "If their {0} from {1} takes your {2} on {3}{7}, your {4} can take their {5} on {6}.",
+  "coach.explanation.sacrifice.promotion": " and promotes to a {0}",
+  "coach.explanation.openDiagonal.title": "Open a diagonal for your bishop",
+  "coach.explanation.openDiagonal.text":
+    "This opens a diagonal for your bishop on {0}.",
   "coach.explanation.check.title": "Give check",
   "coach.explanation.check.focus": "See the attack on their king",
   "coach.explanation.develop.centerControl":
@@ -348,6 +356,27 @@ const en = {
   "coach.explanation.rook.focus": "See your rook’s move",
   "coach.explanation.king.title": "Move your king to {0}",
   "coach.explanation.king.focus": "See your king’s move",
+  "coach.explanation.plan.defend.title": "Plan to defend your {0}",
+  "coach.explanation.plan.defend.text":
+    "Your {0} can head toward {1} to help defend your {2} on {3}.",
+  "coach.explanation.plan.sharedDefense":
+    "Your {0} on {1} is currently its only defender; this maneuver adds support.",
+  "coach.explanation.plan.focus": "See the maneuver and its target",
+  "coach.explanation.plan.outcome": "A possible follow-up: {0}",
+  "coach.explanation.plan.capture.title": "Prepare a capture",
+  "coach.explanation.plan.check.title": "Prepare a check",
+  "coach.explanation.plan.promotion.title": "Prepare a promotion",
+  "coach.explanation.plan.attack.title": "Maneuver toward an attack",
+  "coach.explanation.draw.title": "End the game in a draw",
+  "coach.explanation.draw.focus": "See the drawn position",
+  "coach.explanation.blockade.title": "Block their pawn’s advance",
+  "coach.explanation.blockade.text":
+    "Your {0} on {1} blocks their pawn on {2} from advancing.",
+  "coach.explanation.blockade.pressure":
+    "It keeps pressure on their {0} on {1}.",
+  "coach.explanation.blockade.focus": "See the blocked pawn",
+  "coach.explanation.plan.attack.text":
+    "Your {0} can head toward {1} to attack their {2} on {3}.",
   "coach.explanation.pawn.title": "Advance your pawn to {0}",
   "coach.explanation.pawn.focus": "See your pawn’s advance",
   "coach.explanation.nearCenter.title": "Improve a piece near the center",
@@ -540,8 +569,6 @@ const en = {
   "position.fen.illegalEnPassant": "illegal en-passant square",
   "position.fen.pawnOnEdge": "some pawns are on the edge rows",
   "coach.feedback.context.lastMove": "Last move",
-  "position.notice.loaded": "Position loaded",
-  "position.notice.copied": "Position copied",
   "position.fen.emptySquares": "piece data must use 1–8 for empty squares.",
   "game.result.winner": "{0} wins!",
   "board.tray.label": "{0} pieces",
@@ -566,6 +593,101 @@ const en = {
     "Time must be {0}–{1} seconds, in steps of {2}.",
   "coach.settings.moves.invalid":
     "Moves must be a whole number from {0} to {1}.",
+  "coach.hint.request": "Get a hint",
+  "coach.hint.considerPiece": "Consider your {0} on {1}.",
+  "coach.hint.next": "Another hint",
+  "coach.hint.loading": "Finding a hint…",
+  "coach.hint.ready": "Your hint is ready",
+  "coach.hint.label": "Hints for this position",
+  "coach.hint.idea.escapeCheck":
+    "Your king is in check. Look for a safe way out.",
+  "coach.hint.idea.checkmate":
+    "There is a move that gives checkmate. Check the king’s escape squares.",
+  "coach.hint.idea.matingAttack":
+    "There is a forced mating line. Find the move that keeps it available.",
+  "coach.hint.idea.defense":
+    "Your king faces a forced checkmate. Look for the strongest resistance.",
+  "coach.hint.idea.promotion":
+    "Look for a chance to promote a pawn. Compare the promotion choices.",
+  "coach.hint.idea.capture": "Look for a capture of an opposing {0}.",
+  "coach.hint.idea.check":
+    "Look for a move that gives check. What replies would it force?",
+  "coach.hint.idea.castle":
+    "Think about your king’s safety and bringing a rook into play.",
+  "coach.hint.idea.develop": "Bring a back-rank piece into play.",
+  "coach.hint.idea.center": "Use a central pawn advance to claim more space.",
+  "board.random.label": "Random position",
+  "coach.hint.idea.escapeAttack":
+    "Look for a way to move an attacked piece out of reach.",
+  "coach.hint.idea.defend":
+    "An undefended piece can be captured. Look for a way to support it.",
+  "coach.hint.idea.fork":
+    "Look for a move that attacks two opposing pieces at once.",
+  "coach.hint.idea.attack":
+    "Look for a move that creates a new attack on an opposing piece.",
+  "coach.hint.idea.openFile":
+    "Look for a way to bring a rook onto an open file.",
+  "coach.hint.idea.centerControl": "Strengthen your influence over the center.",
+  "coach.hint.clue.promotion": "Compare promoting to a {0}.",
+  "coach.hint.clue.doubleCheck":
+    "Look for a move that gives check with two pieces at once.",
+  "coach.hint.clue.check": "Look for a check with your {0}.",
+  "coach.hint.clue.discoveredCheck":
+    "Moving one piece can uncover a check from another.",
+  "coach.hint.clue.captureChecker": "The checking piece can be captured.",
+  "coach.hint.clue.moveKing": "Look for a king move to a safe square.",
+  "coach.hint.clue.blockCheck":
+    "A piece can block the line between the attacker and your king.",
+  "coach.hint.clue.recapture":
+    "Your opponent can recapture. Compare the pieces each side gives up.",
+  "coach.hint.clue.noRecapture":
+    "Look for a capture that cannot be immediately recaptured.",
+  "coach.hint.clue.castleKingside":
+    "Kingside castling is available in this position.",
+  "coach.hint.clue.castleQueenside":
+    "Queenside castling is available in this position.",
+  "coach.hint.clue.escapeAttack":
+    "Your {0} can move to a square where it cannot be captured immediately.",
+  "coach.hint.clue.defend":
+    "Find a move that lets you recapture if your {0} on {1} is taken.",
+  "coach.hint.clue.attack": "A new attack can target the opposing {0}.",
+  "coach.hint.clue.openFile":
+    "The {0}-file has no pawns. One of your rooks can move onto it.",
+  "coach.hint.clue.centerControl":
+    "Look for a {0} move that adds an attack on {1}.",
+  "coach.hint.clue.develop":
+    "Look for a move with your {0} from the back rank.",
+  "coach.hint.clue.pawnAdvance":
+    "Look for a central pawn that can advance one square.",
+  "coach.hint.progress": "Hint {0} of {1}",
+  "coach.hint.previous": "Previous",
+  "coach.hint.title.escapeCheck": "Get out of check",
+  "coach.hint.title.checkmate": "Find the checkmate",
+  "coach.hint.title.matingAttack": "Find a mating line",
+  "coach.hint.title.defense": "Find your best defense",
+  "coach.hint.title.promotion": "Think about promotion",
+  "coach.hint.title.capture": "Look for a capture",
+  "coach.hint.title.check": "Look for a check",
+  "coach.hint.title.castle": "Consider castling",
+  "coach.hint.title.escapeAttack": "Move out of danger",
+  "coach.hint.title.defend": "Protect your piece",
+  "coach.hint.title.fork": "Find a double attack",
+  "coach.hint.title.attack": "Create a new attack",
+  "coach.hint.title.openFile": "Find an open file",
+  "coach.hint.title.develop": "Bring a piece into play",
+  "coach.hint.title.center": "Look at the center",
+  "coach.hint.title.piece": "Focus on this piece",
+  "coach.hint.idea.centerDevelopment":
+    "Claim space in the center while opening a diagonal for a bishop.",
+  "coach.hint.clue.pawnControl":
+    "Look for a pawn advance that starts attacking {0}.",
+  "coach.hint.clue.pawnDoubleAdvance":
+    "Look for a central pawn that can advance two squares.",
+  "coach.hint.clue.freeBishop":
+    "Look for a pawn advance that opens a diagonal for a bishop.",
+  "coach.hint.idea.captureCheck": "Look for a capture that also gives check.",
+  "coach.hint.clue.matingSetup":
+    "The mating line starts with a move that does not give check.",
 } as const;
 
 export type Catalog = { [Key in keyof typeof en]: string };

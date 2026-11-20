@@ -103,20 +103,16 @@
     gap: 6px;
     padding-bottom: 6px;
   }
+  .coach-header {
+    padding-bottom: 6px;
+  }
   .new-game-button {
-    min-height: 32px;
-    padding: 7px 9px;
+    padding-inline: 9px;
     gap: 5px;
     border-radius: 8px;
   }
-  .toolbar-actions .icon-button {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-  }
+  .toolbar-actions .icon-button,
   .board-toolbar .flip-board-button {
-    width: 32px;
-    height: 32px;
     border-radius: 8px;
   }
   .board-surface {
@@ -181,7 +177,6 @@
     position: fixed;
     inset: auto 0 0;
     z-index: 30;
-    grid-template-columns: minmax(0, 1fr);
     margin: 0;
     padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
     gap: 8px;
@@ -192,13 +187,7 @@
   }
   .calculation-controls .calculate-button {
     width: 100%;
-    min-height: 50px;
     padding: 12px;
-  }
-}
-@media (max-width: 600px) {
-  .board-toolbar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 }
 @media (max-width: 540px) {
@@ -217,10 +206,13 @@
     font-size: 32px;
   }
   main {
-    padding: 24px 8px 0;
+    padding: 16px 8px 0;
   }
   .page-heading {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+  }
+  #play-workspace .page-heading:not(.guide-open) > div > p {
+    display: none;
   }
   .page-heading h1 {
     font-size: 22px;
@@ -231,21 +223,8 @@
     border-radius: 12px;
   }
   .board-toolbar {
+    --board-control-size: 44px;
     padding-bottom: 6px;
-  }
-  .toolbar-actions .new-game-button,
-  .toolbar-actions .icon-button {
-    min-height: 44px;
-  }
-  .toolbar-actions .icon-button {
-    width: 44px;
-  }
-  .board-toolbar .flip-board-button {
-    width: 44px;
-    min-height: 44px;
-  }
-  .turn-select select {
-    min-height: 42px;
   }
   .board-with-eval {
     gap: 4px;
@@ -274,26 +253,24 @@
     display: none;
   }
 }
+@media (max-width: 420px) {
+  .board-toolbar .new-game-button,
+  .board-toolbar .icon-button {
+    width: 36px;
+  }
+}
 @media (max-width: 360px) {
   .board-toolbar {
     gap: 4px;
-  }
-  .board-toolbar .new-game-button,
-  .board-toolbar .flip-board-button {
-    width: 36px;
   }
   .board-navigation-actions {
     gap: 4px;
   }
   .board-history-navigation {
     gap: 0;
-    padding: 1px;
   }
   .board-history-navigation .icon-button {
     width: 32px;
-  }
-  .turn-select select {
-    padding-inline: 8px 22px;
   }
 }
 
@@ -312,12 +289,6 @@
   .header-actions {
     grid-column: 2;
     grid-row: 1;
-  }
-}
-
-@media (max-width: 900px) {
-  .coach-heading {
-    display: block;
   }
 }
 

@@ -84,15 +84,6 @@ export function startMoveReview(
             return;
           }
           const completedDepth = lines[0]?.depth ?? 0;
-          if (
-            winner.move.lan !== lines[0]?.pv[0] ||
-            winner.depth > completedDepth
-          ) {
-            if (catchUp)
-              compare(best, Math.max(winner.depth, completedDepth), false);
-            else fail(notice("coach.review.error.comparison"));
-            return;
-          }
           const choices = candidatesFor(move.before, lines);
           const played = choices.find(
             (candidate) => candidate.move.lan === move.lan,
@@ -100,18 +91,26 @@ export function startMoveReview(
           const alternative = choices.find(
             (candidate) => candidate.move.lan === winner.move.lan,
           );
-          if (!played || !alternative || played.depth !== alternative.depth) {
-            fail(notice("coach.review.error.comparison"));
+          // A newer partial score does not invalidate an unchanged, complete ranking.
+          if (
+            winner.move.lan === lines[0]?.pv[0] &&
+            played &&
+            alternative &&
+            played.depth === alternative.depth
+          ) {
+            finish(alternative, replyFor(played), played);
             return;
           }
-          finish(alternative, replyFor(played), played);
+          if (catchUp)
+            compare(best, Math.max(winner.depth, completedDepth), false);
+          else fail(notice("coach.review.error.comparison"));
         },
       },
       beforeHistory,
       {
         multiPV: 2,
         depth,
-        movetime: 1800,
+        movetime: catchUp ? 1800 : 3000,
         searchMoves: [best.move.lan, move.lan],
       },
     );

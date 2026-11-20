@@ -14,11 +14,9 @@ type State = { text: string; error: Diagnostic | null };
 export function PositionLoader({
   fen,
   onLoad,
-  onCopied,
 }: {
   fen: string;
   onLoad: (game: Chess) => void;
-  onCopied: () => void;
 }) {
   const { t } = useTranslation();
   const [draft, update] = useReducer(
@@ -50,7 +48,6 @@ export function PositionLoader({
       return;
     }
     update({ error: null });
-    onCopied();
   }
   const copyLabel = t("position.controls.copy");
   return (

@@ -11,9 +11,18 @@ type Input = Pick<
   | "opponent"
   | "recommendations"
   | "feedbackPly"
+  | "presentation"
 >;
 export function coachView(
-  { game, preview, computer, opponent, recommendations, feedbackPly }: Input,
+  {
+    game,
+    preview,
+    computer,
+    opponent,
+    recommendations,
+    feedbackPly,
+    presentation,
+  }: Input,
   t: Translator,
 ) {
   const board = preview.previewGame ?? game.analysisGame;
@@ -65,9 +74,10 @@ export function coachView(
         : "computer.status.thinking",
     );
   else computerStatus = t("computer.status.yourTurn");
+  const thinking = recommendations.thinking && !presentation.hinting;
   const unavailable =
     !game.playable ||
-    recommendations.thinking ||
+    thinking ||
     preview.boardPreview ||
     opponent.turn ||
     !!game.analysisTerminal;
@@ -79,6 +89,7 @@ export function coachView(
     feedbackMove,
     showRefresh:
       recommendations.requested &&
+      !presentation.hinting &&
       game.playable &&
       !game.analysisTerminal &&
       !opponent.turn,
@@ -90,18 +101,20 @@ export function coachView(
         !game.reviewing &&
         !game.promotion),
     calculateDisabled: unavailable || !recommendations.settingsValid,
+    hintDisabled:
+      unavailable || recommendations.thinking || !recommendations.settingsValid,
     calculateReason: translateNotice(game.positionIssue, t),
     calculateLabel: t(
       opponent.turn
         ? "coach.calculate.label.waiting"
-        : recommendations.thinking
+        : thinking
           ? "coach.calculate.label.thinking"
           : "coach.calculate.label.ready",
     ),
     calculateText: t(
       opponent.turn
         ? "coach.calculate.text.waiting"
-        : recommendations.thinking
+        : thinking
           ? "coach.calculate.text.thinking"
           : "coach.calculate.label.ready",
     ),

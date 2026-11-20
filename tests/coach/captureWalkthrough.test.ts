@@ -90,6 +90,7 @@ async function mount(
         selectionReset: 0,
         onDraggingChange() {},
         onNewGame() {},
+        onRandomPosition() {},
         onShowHistory() {},
       }),
       createElement(CoachPanel, {

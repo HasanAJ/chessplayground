@@ -1,6 +1,6 @@
 # Tempo
 
-A browser-based chess playground with Stockfish analysis, move explanations, a computer opponent, and interactive opening lessons. Available in English, Spanish, German, Italian, and French. Games save locally in your browser.
+A browser-based chess playground with Stockfish analysis, move explanations, a computer opponent, random practice positions, and interactive opening lessons. Available in English, Spanish, German, Italian, and French. Games save locally in your browser.
 
 ## Run
 

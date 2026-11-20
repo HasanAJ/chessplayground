@@ -2,14 +2,17 @@ import { Chess, type Move } from "chess.js";
 import { english, type Translator } from "../../i18n/translate.ts";
 import { capturedSquare } from "../chess/moves.ts";
 import { pieceNameKeys } from "../chess/position.ts";
-import { candidatesFor, type Candidate } from "./candidatePresentation.ts";
+import {
+  candidatesFor,
+  explainCandidate,
+  type Candidate,
+} from "./candidatePresentation.ts";
 import { boardFocus, type BoardFocus } from "./boardFocus.ts";
 import { tacticalThreats } from "./tacticalThreats.ts";
 import {
   lessonWalkthrough,
   type LessonWalkthrough,
 } from "./lessonWalkthrough.ts";
-import { explainMove } from "./explanations.ts";
 export type ReviewLesson = {
   kind: "consequence" | "alternative";
   consequence?: string;
@@ -125,12 +128,5 @@ export function betterMoveReason(
         );
     }
   }
-  return best.mate !== undefined
-    ? best.explanation
-    : explainMove(
-        new Chess(best.move.before),
-        new Chess(best.move.after),
-        best.move,
-        t,
-      ).text || t("coach.lesson.best.position");
+  return explainCandidate(best, t).text || t("coach.lesson.best.position");
 }

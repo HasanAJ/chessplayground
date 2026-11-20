@@ -1,52 +1,44 @@
-.turn-select {
-  position: relative;
+.turn-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--board-control-size);
   justify-self: center;
+  padding: 0 9px 0 12px;
   border: 1px solid var(--purple);
   border-radius: 10px;
   background: #fff;
   color: var(--purple-dark);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.2;
   box-shadow: 0 2px 4px #30204006;
   transition:
     border-color 150ms ease,
     background 150ms ease;
 }
-.turn-select.is-black {
+.turn-switch.is-black {
   background: #111;
   color: #fff;
 }
-.turn-select:hover {
+.turn-switch:hover {
   border-color: #ac9ac7;
 }
-.turn-select select {
-  appearance: none;
-  width: 100%;
-  min-height: 36px;
-  padding: 7px 25px 7px 12px;
-  border: 0;
-  border-radius: inherit;
-  background: transparent;
-  color: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-}
-.turn-select select:disabled {
-  cursor: default;
-}
-.turn-select:has(select:disabled) {
+.turn-switch:disabled {
   opacity: 0.5;
 }
-.turn-select option {
-  background: #fff;
-  color: #4c3d5f;
-}
-.turn-select > svg {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  right: 9px;
+.turn-switch > svg {
   opacity: 0.65;
+}
+@container board-toolbar (max-width: 500px) {
+  .turn-switch {
+    min-width: 0;
+    max-width: 100%;
+    justify-self: stretch;
+    gap: 4px;
+    padding-inline: 6px;
+    font-size: var(--text-xs);
+  }
 }
 .turn-status {
   border-radius: 5px;
@@ -55,6 +47,7 @@
   color: #674a93;
   font-size: var(--text-xs);
   font-weight: 650;
+  white-space: nowrap;
 }
 .turn-status.is-check {
   color: #a52a3b;
@@ -67,27 +60,23 @@
   color: var(--muted);
 }
 .calculation-controls .calculate-button {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   justify-content: center;
   min-width: 0;
-  min-height: 58px;
+  min-height: 50px;
   padding: 14px 18px;
   font-size: 14px;
   font-weight: 650;
   gap: 9px;
   box-shadow: 0 4px 12px #7560cd26;
-  white-space: nowrap;
-}
-.calculate-button > svg {
-  flex-shrink: 0;
 }
 .analysis-settings-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  min-height: 36px;
+  width: var(--coach-control-size);
+  min-height: var(--coach-control-size);
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 9px;
@@ -158,9 +147,6 @@
   line-height: 1.45;
 }
 @media (max-width: 540px) {
-  .analysis-settings-trigger {
-    min-height: 44px;
-  }
   .analysis-settings input {
     font-size: 16px;
   }
@@ -170,19 +156,30 @@
     display: none;
   }
   .coach-heading > div {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+    row-gap: 0;
+  }
+  .coach-heading h2 {
+    font-size: 18px;
+    line-height: 18px;
+  }
+  .turn-status {
+    line-height: 16px;
   }
 }
 @container coach (max-width: 360px) {
+  .coach-heading h2 {
+    font-size: 16px;
+  }
   .computer-toggle {
     gap: 5px;
     padding-inline: 6px;
   }
-  .computer-settings-trigger,
-  .coach-header-actions .refresh-analysis {
+  .computer-settings-trigger {
     width: 32px;
+  }
+  .analysis-settings-trigger,
+  .coach-header-actions .refresh-analysis {
+    width: 36px;
   }
   .computer-switch-track {
     width: 26px;
@@ -537,21 +534,6 @@
   color: #fff;
   text-decoration: underline;
   text-decoration-thickness: 2px;
-}
-.panel-notice {
-  background: #f1edf9;
-  color: #694b91;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-}
-.panel-notice > svg {
-  flex-shrink: 0;
 }
 .panel-dialog {
   position: relative;

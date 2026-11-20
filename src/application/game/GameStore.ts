@@ -37,7 +37,6 @@ type Controls = {
   computerMove: Move | null;
   revealBoard: number;
   error: Diagnostic | null;
-  notice: Diagnostic | null;
 };
 const controls = (): Controls => ({
   draft: null,
@@ -47,7 +46,6 @@ const controls = (): Controls => ({
   computerMove: null,
   revealBoard: 0,
   error: null,
-  notice: null,
 });
 
 function derive(session: StudySession, state: Controls) {
@@ -115,12 +113,12 @@ export class GameStore extends ObservableState<GameSnapshot> {
   setPromotion = (promotion: Controls["promotion"]) =>
     this.update({ promotion });
   setError = (error: Diagnostic | null) => this.update({ error });
-  setNotice = (notice: Diagnostic | null) => this.update({ notice });
-  newGame = () => {
+  startGame = (fen: string) => {
     const revealBoard = this.value.revealBoard + 1;
-    this.open(createStudy(START_FEN));
+    this.open(createStudy(fen));
     this.update({ revealBoard });
   };
+  newGame = () => this.startGame(START_FEN);
   replaceGame = (game: Chess) => {
     this.onEdit();
     this.open(createStudy(game.fen()));

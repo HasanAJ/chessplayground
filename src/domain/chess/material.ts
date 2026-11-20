@@ -1,5 +1,5 @@
-import type { Color, Move, PieceSymbol } from "chess.js";
-import type { Position } from "./position.ts";
+import { Chess, type Color, type Move, type PieceSymbol } from "chess.js";
+import { opposite, positionOf, type Position } from "./position.ts";
 
 export const pieceValues = {
   p: 1,
@@ -21,27 +21,46 @@ export function materialGain(moves: readonly Move[], side: Color) {
   }, 0);
 }
 
-export function materialBalance(position: Position) {
+export function materialBalance(
+  position: Position,
+  history: readonly Move[] = [],
+) {
   const counts: Record<Color, Partial<Record<PieceSymbol, number>>> = {
     w: {},
     b: {},
   };
-  let difference = 0;
-  for (const square in position) {
-    const piece = position[square as keyof Position];
+  const captures: typeof counts = { w: {}, b: {} };
+  // A FEN cannot reveal past captures. Keep its initial deficit, then count
+  // recorded captures so promotions neither lose a pawn nor hide a captured piece.
+  const initial = history[0]
+    ? positionOf(new Chess(history[0].before))
+    : position;
+  for (const piece of Object.values(initial)) {
     if (!piece) continue;
     const side = counts[piece.color];
     side[piece.type] = (side[piece.type] ?? 0) + 1;
-    difference += (piece.color === "w" ? 1 : -1) * pieceValues[piece.type];
+  }
+  for (const move of history) {
+    if (!move.captured) continue;
+    const side = captures[opposite(move.color)];
+    side[move.captured] = (side[move.captured] ?? 0) + 1;
   }
   function missing(color: Color) {
     return (Object.keys(inventory) as MaterialPiece[]).reduce<
       { type: MaterialPiece; count: number }[]
     >((pieces, type) => {
-      const count = inventory[type] - (counts[color][type] ?? 0);
+      const count =
+        Math.max(0, inventory[type] - (counts[color][type] ?? 0)) +
+        (captures[color][type] ?? 0);
       if (count > 0) pieces.push({ type, count });
       return pieces;
     }, []);
   }
+  const difference = Object.values(position).reduce(
+    (total, piece) =>
+      total +
+      (piece ? (piece.color === "w" ? 1 : -1) * pieceValues[piece.type] : 0),
+    0,
+  );
   return { difference, missing: { w: missing("w"), b: missing("b") } };
 }
