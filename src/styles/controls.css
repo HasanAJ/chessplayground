@@ -55,13 +55,25 @@
 }
 .calculation-reason {
   grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #f0ddc5;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #744b31;
   font-size: var(--text-sm);
-  line-height: 1.45;
-  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.calculation-reason > svg {
+  flex-shrink: 0;
+  padding: 5px;
+  border-radius: 7px;
+  background: #f9e7d1;
 }
 .calculation-controls .calculate-button {
-  grid-column: 2;
-  grid-row: 1;
   justify-content: center;
   min-width: 0;
   min-height: 50px;

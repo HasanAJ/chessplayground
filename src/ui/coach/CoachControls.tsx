@@ -1,4 +1,5 @@
 import {
+  CircleAlert,
   Clock3,
   Lightbulb,
   LoaderCircle,
@@ -120,6 +121,7 @@ export function CalculationControl({
   onHint: () => void;
 }) {
   const { t } = useTranslation();
+  const reasonId = view.calculateReason ? "calculation-reason" : undefined;
   return (
     <>
       {view.showWelcome && (
@@ -133,15 +135,21 @@ export function CalculationControl({
       )}
       {!view.showRefresh && (
         <div className="calculation-controls">
+          {view.calculateReason && (
+            <p className="calculation-reason" id={reasonId}>
+              <CircleAlert size={26} aria-hidden="true" />
+              <span>
+                <SquareText text={view.calculateReason} />
+              </span>
+            </p>
+          )}
           <button
             type="button"
             className="hint-button"
             disabled={view.hintDisabled}
             aria-label={t("coach.hint.request")}
             title={t("coach.hint.request")}
-            aria-describedby={
-              view.calculateReason ? "calculation-reason" : undefined
-            }
+            aria-describedby={reasonId}
             onClick={onHint}
           >
             <Lightbulb size={18} aria-hidden="true" />
@@ -150,9 +158,7 @@ export function CalculationControl({
             className="primary-button calculate-button"
             disabled={view.calculateDisabled}
             aria-label={view.calculateLabel}
-            aria-describedby={
-              view.calculateReason ? "calculation-reason" : undefined
-            }
+            aria-describedby={reasonId}
             onClick={onCalculate}
           >
             {thinking || busy ? (
@@ -162,11 +168,6 @@ export function CalculationControl({
             )}
             <span aria-hidden="true">{view.calculateText}</span>
           </button>
-          {view.calculateReason && (
-            <p className="calculation-reason" id="calculation-reason">
-              <SquareText text={view.calculateReason} />
-            </p>
-          )}
         </div>
       )}
     </>

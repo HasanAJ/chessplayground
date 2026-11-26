@@ -673,7 +673,6 @@
 .calculation-controls {
   display: grid;
   grid-template-columns: 50px minmax(0, 1fr);
-  align-items: stretch;
   gap: 10px;
   margin-bottom: 14px;
   padding: 0 0 14px;
