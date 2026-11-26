@@ -516,6 +516,14 @@ const en = {
   "position.error.invalidInput": "This FEN is not valid.",
   "position.error.clipboard":
     "Clipboard access is unavailable. Select the FEN text and copy it manually.",
+  "position.screenshot.open": "Import screenshot",
+  "position.screenshot.correctOrientation": "Correct screenshot orientation",
+  "position.screenshot.unavailable":
+    "Couldn’t load screenshot recognition. Try importing again.",
+  "position.screenshot.reading": "Reading the board…",
+  "position.screenshot.error":
+    "Couldn’t read the board clearly. Try a sharp screenshot cropped to the board.",
+  "position.screenshot.drop": "Drop screenshot to import",
   "position.controls.label": "FEN position controls",
   "position.controls.heading": "FEN position",
   "position.controls.input": "Paste a FEN position",

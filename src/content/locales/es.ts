@@ -523,6 +523,15 @@ export default {
   "position.error.invalidInput": "Este FEN no es válido.",
   "position.error.clipboard":
     "El portapapeles no está disponible. Selecciona el texto FEN y cópialo manualmente.",
+  "position.screenshot.open": "Importar captura",
+  "position.screenshot.correctOrientation":
+    "Corregir la orientación de la captura",
+  "position.screenshot.unavailable":
+    "No se pudo cargar el reconocimiento de capturas. Vuelve a intentar la importación.",
+  "position.screenshot.reading": "Reconociendo el tablero…",
+  "position.screenshot.error":
+    "No se pudo reconocer bien el tablero. Prueba con una captura nítida recortada al tablero.",
+  "position.screenshot.drop": "Suelta la captura para importarla",
   "position.controls.label": "Controles de posición FEN",
   "position.controls.heading": "Posición FEN",
   "position.controls.input": "Pega una posición FEN",

@@ -541,6 +541,15 @@ export default {
   "position.error.invalidInput": "Questo FEN non è valido.",
   "position.error.clipboard":
     "Gli appunti non sono disponibili. Seleziona il testo FEN e copialo manualmente.",
+  "position.screenshot.open": "Importa screenshot",
+  "position.screenshot.correctOrientation":
+    "Correggi l’orientamento dello screenshot",
+  "position.screenshot.unavailable":
+    "Impossibile caricare il riconoscimento degli screenshot. Riprova a importare.",
+  "position.screenshot.reading": "Riconoscimento della scacchiera…",
+  "position.screenshot.error":
+    "Impossibile leggere chiaramente la scacchiera. Prova con uno screenshot nitido ritagliato sulla scacchiera.",
+  "position.screenshot.drop": "Rilascia lo screenshot per importarlo",
   "position.controls.label": "Controlli della posizione FEN",
   "position.controls.heading": "Posizione FEN",
   "position.controls.input": "Incolla una posizione FEN",

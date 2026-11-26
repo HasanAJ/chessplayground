@@ -240,7 +240,7 @@
   .coach-panel {
     padding: 12px;
   }
-  .fen-controls input {
+  .fen-controls input[type="text"] {
     font-size: 16px;
   }
 }

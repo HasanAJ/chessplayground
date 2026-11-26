@@ -70,12 +70,6 @@
   .move-history > button small {
     margin-right: 4px;
   }
-  .fen-controls form {
-    grid-template-columns: minmax(0, 1fr) 44px;
-  }
-  .fen-controls .small-button {
-    grid-column: 1 / -1;
-  }
   .panel-dialog {
     padding: 14px;
   }

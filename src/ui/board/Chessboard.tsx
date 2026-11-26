@@ -1,5 +1,11 @@
-import type { ButtonHTMLAttributes } from "react";
+import {
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type DragEvent,
+} from "react";
 import type { Move, Square } from "chess.js";
+import { ImagePlus, LoaderCircle } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import type { PositionEvaluation } from "../../domain/chess/evaluation.ts";
 import type { GameController } from "../game/useGameController.ts";
@@ -19,7 +25,18 @@ type Props = {
   analysis: Recommendations;
   reviewEvaluation?: PositionEvaluation;
   highlights: CoachPresentation;
+  importingScreenshot: boolean;
+  onScreenshotDrop: (image: File) => void;
 };
+
+function allowFileDrop(event: DragEvent<HTMLDivElement>) {
+  if (!event.dataTransfer.types.includes("Files")) return false;
+  event.preventDefault();
+  event.stopPropagation();
+  event.dataTransfer.dropEffect = "copy";
+  return true;
+}
+
 function decorations(
   { game, board, preview, analysis, highlights }: Props,
   reference: Move | null,
@@ -60,6 +77,8 @@ function decorations(
 export function Chessboard(props: Props) {
   const { t } = useTranslation();
   const { board, preview, game, highlights } = props;
+  const fileDragDepth = useRef(0);
+  const [fileOverBoard, setFileOverBoard] = useState(false);
   const appearance = decorations(props, useHighlightedMove());
   const legal = new Set(board.legalMoves.map((move) => move.to));
   const squareProps = (
@@ -104,9 +123,37 @@ export function Chessboard(props: Props) {
     game.playable && !preview.boardPreview
       ? (props.analysis.best ?? props.reviewEvaluation)
       : undefined;
+
+  function enterFileDrag(event: DragEvent<HTMLDivElement>) {
+    if (!allowFileDrop(event)) return;
+    if (fileDragDepth.current === 0) setFileOverBoard(true);
+    fileDragDepth.current += 1;
+  }
+  function leaveFileDrag() {
+    if (fileDragDepth.current === 0) return;
+    fileDragDepth.current -= 1;
+    if (fileDragDepth.current === 0) setFileOverBoard(false);
+  }
+  function dropFile(event: DragEvent<HTMLDivElement>) {
+    if (!allowFileDrop(event)) return;
+    fileDragDepth.current = 0;
+    setFileOverBoard(false);
+    const files = Array.from(event.dataTransfer.files);
+    const image =
+      files.find((file) => file.type.startsWith("image/")) ?? files[0];
+    if (image) props.onScreenshotDrop(image);
+  }
+
   return (
     <div id="board" className="board-position">
-      <div className="board-with-eval" ref={board.ref}>
+      <div
+        className="board-with-eval"
+        ref={board.ref}
+        onDragEnterCapture={enterFileDrag}
+        onDragLeaveCapture={leaveFileDrag}
+        onDragOverCapture={allowFileDrop}
+        onDropCapture={dropFile}
+      >
         <EvaluationBar
           evaluation={evaluation}
           paused={preview.boardPreview}
@@ -129,6 +176,22 @@ export function Chessboard(props: Props) {
               appearance.explaining ? "explanation-arrowhead" : "arrowhead"
             }
           />
+          {(fileOverBoard || props.importingScreenshot) && (
+            <div className="screenshot-drop-overlay" role="status">
+              <span>
+                {fileOverBoard ? (
+                  <ImagePlus size={27} aria-hidden="true" />
+                ) : (
+                  <LoaderCircle className="spin" size={27} aria-hidden="true" />
+                )}
+                {t(
+                  fileOverBoard
+                    ? "position.screenshot.drop"
+                    : "position.screenshot.reading",
+                )}
+              </span>
+            </div>
+          )}
         </BoardGrid>
       </div>
     </div>

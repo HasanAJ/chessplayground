@@ -2,6 +2,8 @@
 
 A browser-based chess playground with Stockfish analysis, move explanations, a computer opponent, random practice positions, and interactive opening lessons. Available in English, Spanish, German, Italian, and French. Games save locally in your browser.
 
+To load a Chess.com screenshot, drop it on the board, paste it, or choose a file with **Import screenshot** next to the FEN controls. When Tempo is unsure which side is at the bottom, it offers **Correct screenshot orientation**. The board controls let you change whose turn it is or flip the view. Castling and en passant rights start empty.
+
 ## Run
 
 Requires Node.js 22.12+ and npm 10.9.9, matching GitHub Actions. Installation enforces these versions.
@@ -37,5 +39,6 @@ GitHub Actions tests, builds, and deploys pushes to `main` to Cloudflare. Manual
 - [chess.js](https://github.com/jhlywa/chess.js), BSD-2-Clause.
 - Cburnett piece SVGs from [Lichess](https://github.com/lichess-org/lila/tree/master/public/piece/cburnett), GPL-2.0-or-later. See [asset credits](https://github.com/lichess-org/lila/blob/master/COPYING.md).
 - [Lucide](https://lucide.dev/), ISC license.
+- [fenshot](https://github.com/scoriiu/fenshot) and [ONNX Runtime Web](https://github.com/microsoft/onnxruntime), MIT. Their licenses are served at `/licenses/screenshot-recognition.txt`.
 
 Project source is GPL-3.0-or-later. Third-party components retain their own licenses.

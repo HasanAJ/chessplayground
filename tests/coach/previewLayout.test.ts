@@ -69,6 +69,7 @@ async function renderWorkspace(
       SquareHighlightProvider,
       { positionKey: game.analysisKey, children: null },
       createElement(BoardPanel, {
+        active: true,
         game,
         onDraggingChange() {},
         selectionReset: 0,

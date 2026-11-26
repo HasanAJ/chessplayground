@@ -1,6 +1,6 @@
-import { useEffect, useReducer, type FormEvent } from "react";
+import { useEffect, useReducer, useRef, type FormEvent } from "react";
 import type { Chess } from "chess.js";
-import { Copy } from "lucide-react";
+import { Copy, ImagePlus } from "lucide-react";
 import { checkedGame } from "../../domain/chess/position.ts";
 import {
   notice,
@@ -14,11 +14,14 @@ type State = { text: string; error: Diagnostic | null };
 export function PositionLoader({
   fen,
   onLoad,
+  onImportScreenshot,
 }: {
   fen: string;
   onLoad: (game: Chess) => void;
+  onImportScreenshot: (image: File) => void;
 }) {
   const { t } = useTranslation();
+  const screenshotPicker = useRef<HTMLInputElement>(null);
   const [draft, update] = useReducer(
     (state: State, patch: Partial<State>) => ({ ...state, ...patch }),
     { text: fen, error: null },
@@ -50,6 +53,7 @@ export function PositionLoader({
     update({ error: null });
   }
   const copyLabel = t("position.controls.copy");
+  const screenshotLabel = t("position.screenshot.open");
   return (
     <section className="fen-controls" aria-label={t("position.controls.label")}>
       <form onSubmit={submit}>
@@ -58,6 +62,7 @@ export function PositionLoader({
         </label>
         <input
           id="fen-input"
+          type="text"
           value={draft.text}
           spellCheck={false}
           placeholder={t("position.controls.input")}
@@ -77,6 +82,27 @@ export function PositionLoader({
         <button type="submit" className="small-button">
           {t("position.controls.load")}
         </button>
+        <button
+          type="button"
+          className="icon-button screenshot-trigger"
+          aria-label={screenshotLabel}
+          title={screenshotLabel}
+          onClick={() => screenshotPicker.current?.click()}
+        >
+          <ImagePlus size={17} aria-hidden="true" />
+          <span>{screenshotLabel}</span>
+        </button>
+        <input
+          ref={screenshotPicker}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          hidden
+          onChange={(event) => {
+            const file = event.currentTarget.files?.[0];
+            event.currentTarget.value = "";
+            if (file) onImportScreenshot(file);
+          }}
+        />
       </form>
       {draft.error && (
         <p className="fen-error" role="alert">

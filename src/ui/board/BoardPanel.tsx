@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { Color } from "chess.js";
+import { useCallback, useEffect, useState } from "react";
+import type { Chess, Color } from "chess.js";
 import {
   ArrowDownUp,
   ArrowRight,
@@ -10,9 +10,10 @@ import {
   Pencil,
   Plus,
   RefreshCw,
+  RotateCw,
 } from "lucide-react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
-import { opposite, setupFen } from "../../domain/chess/position.ts";
+import { opposite, setupFen, withTurn } from "../../domain/chess/position.ts";
 import type { PositionEvaluation } from "../../domain/chess/evaluation.ts";
 import type { GameController } from "../game/useGameController.ts";
 import type { ComputerSettings } from "../computer/useComputerSettings.ts";
@@ -24,6 +25,7 @@ import { BoardPreviewControls } from "./BoardPreviewControls.tsx";
 import { MaterialBalance } from "./MaterialBalance.tsx";
 import { PieceTray } from "./PieceTray.tsx";
 import { Chessboard } from "./Chessboard.tsx";
+import { scrollToBoard } from "./scrollToBoard.ts";
 import {
   useBoardInteractions,
   type BoardController,
@@ -55,6 +57,7 @@ type BoardGame = Pick<
   | "tool"
 >;
 type Props = {
+  active: boolean;
   game: BoardGame;
   preview: BoardPreview;
   computer: ComputerSettings;
@@ -68,6 +71,10 @@ type Props = {
   onRandomPosition: () => void;
   onShowHistory: (ply: number) => void;
 };
+type ScreenshotImport =
+  | { key: string; state: "reading"; image: File }
+  | { key: string; state: "unreadable" | "unavailable" };
+type ScreenshotOrientation = { position: Chess; alternate: Chess };
 function Toolbar({
   game,
   board,
@@ -189,10 +196,12 @@ export function BoardPanel(props: Props) {
     props.botTurn,
     props.selectionReset,
   );
+  const { setFlipped } = board;
   const [editor, setEditor] = useState(false);
-  useEffect(() => {
-    props.onDraggingChange(board.freeDrag !== null);
-  }, [props.onDraggingChange, board.freeDrag]);
+  const [screenshotImport, setScreenshotImport] =
+    useState<ScreenshotImport | null>(null);
+  const [screenshotOrientation, setScreenshotOrientation] =
+    useState<ScreenshotOrientation | null>(null);
   const clear = () => {
     preview.clearPreview();
     analysis.clear();
@@ -201,8 +210,106 @@ export function BoardPanel(props: Props) {
   };
   const reset = () => {
     setEditor(false);
+    setScreenshotOrientation(null);
     props.onNewGame();
   };
+  const loadPosition = useCallback(
+    (position: Chess, alternate: Chess | null = null) => {
+      game.replaceGame(position);
+      setEditor(false);
+      setScreenshotOrientation(alternate ? { position, alternate } : null);
+    },
+    [game.replaceGame],
+  );
+  const fen = game.draft
+    ? setupFen(game.draft.position, game.draft.turn, game.draft.rights)
+    : game.analysisFen;
+  const correction =
+    screenshotOrientation &&
+    game.history.length === 0 &&
+    fen.split(" ")[0] === screenshotOrientation.position.fen().split(" ")[0]
+      ? screenshotOrientation
+      : null;
+  useEffect(() => {
+    if (screenshotOrientation && !correction) setScreenshotOrientation(null);
+  }, [correction, screenshotOrientation]);
+
+  function correctScreenshotOrientation() {
+    if (!correction) return;
+    const turn = game.draft?.turn ?? game.analysisGame.turn();
+    let position = correction.alternate;
+    try {
+      position = withTurn(position.fen(), turn);
+    } catch {
+      // Keep the validated turn if the rotated position requires it.
+    }
+    loadPosition(position, correction.position);
+    setFlipped(!board.flipped);
+  }
+  const positionKey = game.draft
+    ? `${game.analysisKey}:${fen}`
+    : game.analysisKey;
+  const currentImport =
+    props.active && screenshotImport?.key === positionKey
+      ? screenshotImport
+      : null;
+  const readingScreenshot = currentImport?.state === "reading";
+  const importScreenshot = useCallback(
+    (image: File) => {
+      setScreenshotImport({ key: positionKey, state: "reading", image });
+      scrollToBoard();
+    },
+    [positionKey],
+  );
+  useEffect(() => {
+    props.onDraggingChange(board.freeDrag !== null || readingScreenshot);
+  }, [props.onDraggingChange, board.freeDrag, readingScreenshot]);
+  useEffect(() => {
+    if (!props.active) return;
+    function pasteScreenshot(event: ClipboardEvent) {
+      if (event.defaultPrevented) return;
+      const image = Array.from(event.clipboardData?.files ?? []).find((file) =>
+        file.type.startsWith("image/"),
+      );
+      if (!image) return;
+      event.preventDefault();
+      importScreenshot(image);
+    }
+    document.addEventListener("paste", pasteScreenshot);
+    return () => document.removeEventListener("paste", pasteScreenshot);
+  }, [props.active, importScreenshot]);
+  useEffect(() => {
+    if (!currentImport) {
+      if (screenshotImport) setScreenshotImport(null);
+      return;
+    }
+    if (currentImport.state !== "reading") return;
+    let cancelled = false;
+    void import("../../infrastructure/screenshot/recognizeBoard.ts")
+      .then(({ recognizePlayableBoard }) =>
+        recognizePlayableBoard(currentImport.image),
+      )
+      .then((result) => {
+        if (cancelled) return;
+        if (result?.state !== "ready") {
+          setScreenshotImport({
+            key: currentImport.key,
+            state: result?.state ?? "unreadable",
+          });
+          return;
+        }
+        loadPosition(result.game, result.alternate);
+        setFlipped(result.flipped);
+        setScreenshotImport(null);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setScreenshotImport({ key: currentImport.key, state: "unavailable" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentImport, loadPosition, screenshotImport, setFlipped]);
   const top: Color = board.flipped ? "w" : "b",
     bottom: Color = board.flipped ? "b" : "w";
   const tray = (color: Color, id: string) => (
@@ -217,9 +324,6 @@ export function BoardPanel(props: Props) {
       }}
     />
   );
-  const fen = game.draft
-    ? setupFen(game.draft.position, game.draft.turn, game.draft.rights)
-    : game.analysisFen;
   const inspection = preview.inspection;
   const materialHistory = inspection
     ? [
@@ -246,6 +350,7 @@ export function BoardPanel(props: Props) {
         reset={reset}
         randomize={() => {
           setEditor(false);
+          setScreenshotOrientation(null);
           props.onRandomPosition();
         }}
         navigate={props.onShowHistory}
@@ -259,7 +364,28 @@ export function BoardPanel(props: Props) {
           analysis={analysis}
           reviewEvaluation={props.reviewEvaluation}
           highlights={props.highlights}
+          importingScreenshot={readingScreenshot}
+          onScreenshotDrop={importScreenshot}
         />
+        {correction && !readingScreenshot && (
+          <button
+            type="button"
+            className="small-button screenshot-orientation"
+            onClick={correctScreenshotOrientation}
+          >
+            <RotateCw size={15} aria-hidden="true" />
+            {t("position.screenshot.correctOrientation")}
+          </button>
+        )}
+        {currentImport && !readingScreenshot && (
+          <p className="fen-error" role="alert">
+            {t(
+              currentImport.state === "unavailable"
+                ? "position.screenshot.unavailable"
+                : "position.screenshot.error",
+            )}
+          </p>
+        )}
         {tray(bottom, "board-bottom-tray")}
         <MaterialBalance
           position={board.position}
@@ -299,10 +425,8 @@ export function BoardPanel(props: Props) {
           </button>
           <PositionLoader
             fen={fen}
-            onLoad={(position) => {
-              game.replaceGame(position);
-              setEditor(false);
-            }}
+            onLoad={loadPosition}
+            onImportScreenshot={importScreenshot}
           />
         </div>
       </div>

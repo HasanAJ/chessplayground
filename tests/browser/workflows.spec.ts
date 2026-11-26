@@ -18,6 +18,179 @@ async function loadFen(page: Page, fen: string) {
   await page.locator(".fen-controls button[type=submit]").click();
 }
 
+async function chooseScreenshot(page: Page, buffer: Buffer) {
+  const edit = page.getByRole("button", { name: "Edit position" });
+  if (await edit.isVisible()) await edit.click();
+  const [picker] = await Promise.all([
+    page.waitForEvent("filechooser"),
+    page.getByRole("button", { name: "Import screenshot" }).click(),
+  ]);
+  await picker.setFiles({ name: "board.png", mimeType: "image/png", buffer });
+}
+
+const screenshotPosition =
+  "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4";
+
+test("dropping or choosing a screenshot loads a position for play and analysis", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await loadFen(page, screenshotPosition);
+  const playBoard = page.locator(".board-surface .chessboard");
+  const screenshot = await playBoard.screenshot();
+  const labels = await playBoard
+    .locator("[data-square]")
+    .evaluateAll((squares) =>
+      squares.map((square) => square.getAttribute("aria-label")),
+    );
+  await page.getByRole("button", { name: "New game", exact: true }).click();
+  await page.getByRole("button", { name: "Flip board" }).click();
+  let releaseModel = () => {};
+  const allowModelLoad = new Promise<void>((resolve) => {
+    releaseModel = resolve;
+  });
+  await page.route("**/chess-tiles-*.onnx", async (route) => {
+    await allowModelLoad;
+    await route.continue();
+  });
+  const dataTransfer = await page.evaluateHandle((base64) => {
+    const transfer = new DataTransfer();
+    const bytes = Uint8Array.from(atob(base64), (byte) => byte.charCodeAt(0));
+    transfer.items.add(new File([bytes], "board.png", { type: "image/png" }));
+    return transfer;
+  }, screenshot.toString("base64"));
+  const firstSquare = playBoard.locator("[data-square]").first();
+  const nextSquare = playBoard.locator("[data-square]").nth(1);
+  const dropPrompt = playBoard.getByText("Drop screenshot to import");
+  await firstSquare.dispatchEvent("dragenter", { dataTransfer });
+  await expect(dropPrompt).toBeVisible();
+  await nextSquare.dispatchEvent("dragenter", { dataTransfer });
+  await firstSquare.dispatchEvent("dragleave", { dataTransfer });
+  await expect(dropPrompt).toBeVisible();
+  await nextSquare.dispatchEvent("dragleave", { dataTransfer });
+  await expect(dropPrompt).toBeHidden();
+
+  const dialog = page.getByRole("dialog");
+  try {
+    await nextSquare.dispatchEvent("dragenter", { dataTransfer });
+    await nextSquare.dispatchEvent("drop", { dataTransfer });
+    await expect(playBoard.getByRole("status")).toHaveText(
+      "Reading the board…",
+    );
+  } finally {
+    releaseModel();
+  }
+
+  await expect(playBoard.getByRole("status")).toHaveCount(0);
+  await expect(dialog).toHaveCount(0);
+  await expect(playBoard.locator("[data-square]").first()).toHaveAttribute(
+    "data-square",
+    "a8",
+  );
+  expect(
+    await playBoard
+      .locator("[data-square]")
+      .evaluateAll((squares) =>
+        squares.map((square) => square.getAttribute("aria-label")),
+      ),
+  ).toEqual(labels);
+  await expect(
+    page.getByRole("button", { name: "Correct screenshot orientation" }),
+  ).toHaveCount(0);
+
+  const turnSwitch = page.locator(".turn-switch");
+  await expect(turnSwitch).toHaveText("White to move");
+  await turnSwitch.click();
+  await expect(turnSwitch).toHaveText("Black to move");
+  await expect(
+    page.getByRole("button", { name: "Find the best moves", exact: true }),
+  ).toBeEnabled();
+  await move(page, "d7", "d6");
+  await expect(page.locator(".move-history")).toContainText("d6");
+  const invalidImage = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File(["invalid"], "broken.png", { type: "image/png" }),
+    );
+    return transfer;
+  });
+  await playBoard.dispatchEvent("drop", { dataTransfer: invalidImage });
+  await expect(page.getByRole("alert")).toContainText(
+    "Couldn’t read the board",
+  );
+  await expect(playBoard.locator('[data-square="d6"] img')).toHaveAttribute(
+    "src",
+    "/pieces/bP.svg",
+  );
+
+  await chooseScreenshot(page, screenshot);
+  await expect(playBoard.locator('[data-square="d7"] img')).toHaveAttribute(
+    "src",
+    "/pieces/bP.svg",
+  );
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(dialog).toHaveCount(0);
+});
+
+test("a pawnless screenshot can be corrected on the board before play", async ({
+  page,
+}) => {
+  const viewport = page.viewportSize()!;
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto("/");
+  await loadFen(page, "8/3k4/8/8/8/6Q1/1K6/8 w - - 0 1");
+  await page.getByRole("button", { name: "Flip board" }).click();
+  const screenshot = await page
+    .locator(".board-surface .board-grid")
+    .screenshot({ scale: "css" });
+  await page.setViewportSize(viewport);
+  await page.getByRole("button", { name: "New game", exact: true }).click();
+  await chooseScreenshot(page, screenshot);
+
+  await expect(square(page, "g7").locator("img")).toHaveAttribute(
+    "src",
+    "/pieces/wK.svg",
+  );
+  const turnSwitch = page.locator(".turn-switch");
+  await turnSwitch.click();
+  const correct = page.getByRole("button", {
+    name: "Correct screenshot orientation",
+  });
+  await correct.click();
+  await expect(page.locator("#fen-input")).toHaveValue(
+    "8/3k4/8/8/8/6Q1/1K6/8 b - - 0 1",
+  );
+  await move(page, "d7", "e7");
+  await expect(correct).toHaveCount(0);
+});
+
+test("screenshot import retries a failed model download", async ({ page }) => {
+  await page.goto("/");
+  await loadFen(page, screenshotPosition);
+  const screenshot = await page
+    .locator(".board-surface .chessboard")
+    .screenshot();
+  await page.getByRole("button", { name: "New game", exact: true }).click();
+  let modelRequests = 0;
+  await page.route("**/chess-tiles-*.onnx", async (route) => {
+    modelRequests += 1;
+    if (modelRequests === 1) await route.abort();
+    else await route.continue();
+  });
+
+  await chooseScreenshot(page, screenshot);
+  await expect(page.getByRole("alert")).toHaveText(
+    "Couldn’t load screenshot recognition. Try importing again.",
+  );
+  await chooseScreenshot(page, screenshot);
+  await expect(square(page, "e4").locator("img")).toHaveAttribute(
+    "src",
+    "/pieces/wP.svg",
+  );
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  expect(modelRequests).toBe(2);
+});
+
 test("legal play, history branching and reload keep the chosen game", async ({
   page,
 }) => {

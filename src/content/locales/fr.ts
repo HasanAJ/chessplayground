@@ -537,6 +537,15 @@ export default {
   "position.error.invalidInput": "Ce FEN n’est pas valide.",
   "position.error.clipboard":
     "Le presse-papiers est indisponible. Sélectionnez le texte FEN et copiez-le manuellement.",
+  "position.screenshot.open": "Importer une capture d’écran",
+  "position.screenshot.correctOrientation":
+    "Corriger l’orientation de la capture",
+  "position.screenshot.unavailable":
+    "Impossible de charger la reconnaissance des captures. Réessayez l’importation.",
+  "position.screenshot.reading": "Reconnaissance de l’échiquier…",
+  "position.screenshot.error":
+    "La position n’a pas pu être lue correctement. Essayez une capture nette, recadrée sur l’échiquier.",
+  "position.screenshot.drop": "Déposez la capture pour l’importer",
   "position.controls.label": "Commandes de position FEN",
   "position.controls.heading": "Position FEN",
   "position.controls.input": "Collez une position FEN",

@@ -81,6 +81,7 @@ async function mount(
       SquareHighlightProvider,
       { positionKey: game.analysisKey, children: null },
       createElement(BoardPanel, {
+        active: true,
         game,
         preview,
         computer,

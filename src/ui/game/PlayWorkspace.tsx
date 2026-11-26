@@ -47,6 +47,7 @@ export function PlayWorkspace({ active }: { active: boolean }) {
       <SquareHighlightProvider positionKey={game.analysisKey}>
         <div className="workspace">
           <BoardPanel
+            active={active}
             game={game}
             preview={preview}
             computer={computer}
