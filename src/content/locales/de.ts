@@ -311,6 +311,12 @@ export default {
   "coach.explanation.attack.text":
     "Deine Figur ({0}) greift nun die gegnerische Figur ({1}) auf {2} an.",
   "coach.explanation.attack.title": "Die gegnerische Figur ({0}) angreifen",
+  "coach.explanation.fork.title": "Einen Doppelangriff starten",
+  "coach.explanation.fork.text":
+    "Deine Figur auf {1} ({0}) greift mehrere gegnerische Figuren zugleich an: {2}.",
+  "coach.explanation.fork.focus": "Die Ziele des Doppelangriffs ansehen",
+  "coach.explanation.checkFork.text":
+    "Deine Figur auf {1} ({0}) greift dabei weiteres Material an ({2}).",
   "coach.piece.onSquare": "{0} auf {1}",
   "coach.explanation.check.plural": "Deine Figuren ({0}) bieten Schach.",
   "coach.explanation.check.singular": "Deine Figur ({0}) bietet Schach.",
@@ -671,7 +677,7 @@ export default {
   "coach.hint.idea.defend":
     "Ein ungedeckter Stein kann geschlagen werden. Suche nach einer Möglichkeit, ihn zu decken.",
   "coach.hint.idea.fork":
-    "Suche einen Zug, der zwei gegnerische Steine gleichzeitig angreift.",
+    "Suche einen Zug, der mindestens zwei gegnerische Steine gleichzeitig angreift.",
   "coach.hint.idea.attack":
     "Suche einen Zug, der einen neuen Angriff auf einen gegnerischen Stein erzeugt.",
   "coach.hint.idea.openFile":
@@ -740,4 +746,20 @@ export default {
     "Suche einen Schlagzug, der zugleich Schach gibt.",
   "coach.hint.clue.matingSetup":
     "Die Mattfolge beginnt mit einem Zug ohne Schachgebot.",
+  "coach.hint.clue.checkFork":
+    "Die Figur, die Schach bietet, kann auch gegnerisches Material angreifen ({0}).",
+  "coach.hint.idea.plan.defend":
+    "Suche einen Weg, eine angegriffene Figur zusätzlich zu decken.",
+  "coach.hint.idea.plan.attack":
+    "Suche einen Zug, der einen späteren Angriff vorbereitet.",
+  "coach.hint.idea.plan.capture":
+    "Suche einen Zug, der später das Schlagen einer Figur ermöglicht.",
+  "coach.hint.idea.plan.check":
+    "Suche einen Zug, der ein späteres Schach vorbereitet.",
+  "coach.hint.idea.plan.promotion":
+    "Suche einen Weg, einen Bauern näher an die Umwandlung zu bringen.",
+  "coach.hint.idea.plan.draw": "Suche einen Weg zu einer Remisstellung.",
+  "coach.hint.clue.plan.target": "Achte auf die Figur auf {1} ({0}).",
+  "coach.hint.clue.plan.defender":
+    "Du deckst deine Figur auf {1} ({0}) nur mit der Figur auf {3} ({2}).",
 } satisfies Catalog;

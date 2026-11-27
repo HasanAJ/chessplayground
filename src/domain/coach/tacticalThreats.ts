@@ -1,4 +1,4 @@
-import { Chess, type Move, type Square } from "chess.js";
+import { Chess, type Color, type Move, type Square } from "chess.js";
 import { opposite, pieceNameKeys } from "../chess/position.ts";
 import { pieceValues } from "../chess/material.ts";
 import type { Translator } from "../../i18n/translate.ts";
@@ -17,11 +17,13 @@ export function movedOrigins(move: Move) {
   return origins;
 }
 
-/** Retain only newly created attacks; pinned non-king captures are not threats. */
-function newAttacks(move: Move, board: Chess, origins: Map<Square, Square>) {
-  const before = new Chess(move.before);
+function attackArrows(
+  board: Chess,
+  color: Color,
+  selectAttackers: (target: Square, attackers: Square[]) => Square[],
+) {
   const fields = board.fen().split(" ");
-  fields[1] = move.color;
+  fields[1] = color;
   fields[3] = "-";
   const captures = new Chess(fields.join(" "));
   const legal = new Map<Square, Set<Square>>();
@@ -29,17 +31,17 @@ function newAttacks(move: Move, board: Chess, origins: Map<Square, Square>) {
     .board()
     .flat()
     .filter((piece) => piece !== null)
-    .filter(
-      (piece) => piece.color === opposite(move.color) && piece.type !== "p",
-    );
+    .filter((piece) => piece.color === opposite(color) && piece.type !== "p");
   const importance = (piece: (typeof targets)[number]) =>
     piece.type === "k" ? 100 : pieceValues[piece.type];
   targets.sort((a, b) => importance(b) - importance(a));
   const arrows: BoardFocus["arrows"] = [];
   for (const target of targets) {
-    const oldAttackers = new Set(before.attackers(target.square, move.color));
-    for (const from of board.attackers(target.square, move.color)) {
-      if (oldAttackers.has(origins.get(from) ?? from)) continue;
+    const attackers = selectAttackers(
+      target.square,
+      board.attackers(target.square, color),
+    );
+    for (const from of attackers) {
       if (target.type !== "k") {
         if (!legal.has(from))
           legal.set(
@@ -58,15 +60,58 @@ function newAttacks(move: Move, board: Chess, origins: Map<Square, Square>) {
   return arrows;
 }
 
-export function newThreatArrows(move: Move) {
-  return newAttacks(move, new Chess(move.after), movedOrigins(move));
+export function newThreatArrows(
+  move: Move,
+  before = new Chess(move.before),
+  after = new Chess(move.after),
+) {
+  const origins = movedOrigins(move);
+  return attackArrows(after, move.color, (target, attackers) => {
+    const oldAttackers = before.attackers(target, move.color);
+    return attackers.filter(
+      (from) => !oldAttackers.includes(origins.get(from) ?? from),
+    );
+  });
+}
+
+export function forkArrows(attacks: BoardFocus["arrows"]) {
+  for (const from of new Set(attacks.map((attack) => attack.from))) {
+    const targets = attacks.filter((attack) => attack.from === from);
+    if (targets.length > 1) return targets;
+  }
+  return [];
+}
+
+export function checkingFork(move: Move, after: Chess) {
+  if (!move.san.endsWith("+") || after.isDraw()) return undefined;
+  const [king] = after.findPiece({ type: "k", color: opposite(move.color) });
+  const checkers = new Set(after.attackers(king, move.color));
+  // A check can fork a piece that the checker was already attacking.
+  const attacks = attackArrows(after, move.color, (_, attackers) =>
+    attackers.filter((from) => checkers.has(from)),
+  );
+  const arrows = forkArrows(attacks);
+  if (!arrows.length) return undefined;
+  return { arrows, targets: arrows.filter(({ to }) => to !== king) };
+}
+
+export function describeTargets(
+  board: Chess,
+  attacks: BoardFocus["arrows"],
+  t: Translator,
+) {
+  return attacks
+    .map(({ to }) =>
+      t("coach.piece.onSquare", t(pieceNameKeys[board.get(to)!.type]), to),
+    )
+    .join(t("common.join.and"));
 }
 
 export function tacticalThreats(move: Move, t: Translator) {
   const board = new Chess(move.after);
-  const origins = movedOrigins(move);
-  const arrows = newAttacks(move, board, origins);
+  const arrows = newThreatArrows(move, new Chess(move.before), board);
   if (arrows.length === 0) return undefined;
+  const origins = movedOrigins(move);
   const sources = Array.from(new Set(arrows.map((arrow) => arrow.from)));
   sources.sort((a, b) => Number(b === move.to) - Number(a === move.to));
   const text = sources

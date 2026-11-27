@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 const changed = "tempo:navigate";
-export const locationSnapshot = () =>
+const locationSnapshot = () =>
   `${window.location.pathname}${window.location.search}${window.location.hash}`;
 function subscribe(listener: () => void) {
   for (const event of ["popstate", "hashchange", changed])

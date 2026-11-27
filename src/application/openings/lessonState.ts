@@ -1,6 +1,6 @@
 import type { OpeningBranch } from "../../content/openings/lessons.ts";
-export type LessonState = { branch: OpeningBranch; step: number };
-export type LessonAction =
+type LessonState = { branch: OpeningBranch; step: number };
+type LessonAction =
   | { type: "branch"; branch: OpeningBranch }
   | { type: "step"; step: number; total: number }
   | { type: "advance"; offset: number; total: number };

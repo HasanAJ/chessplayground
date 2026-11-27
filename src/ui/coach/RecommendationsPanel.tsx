@@ -114,8 +114,9 @@ export function RecommendationsPanel(props: Props) {
           >
             {best && focus.hinting ? (
               <HintContent
-                key={`${game.analysisKey}:${best.move.lan}`}
-                candidate={best}
+                hints={focus.hints}
+                step={focus.hintStep}
+                onStep={focus.setHintStep}
               />
             ) : best ? (
               <BestMoveContent

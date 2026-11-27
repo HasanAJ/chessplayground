@@ -10,13 +10,22 @@ import {
 import { capturedSquare } from "../chess/moves.ts";
 import { pieceValues } from "../chess/material.ts";
 import { boardFocus, type BoardFocus } from "./boardFocus.ts";
+import {
+  checkingFork,
+  describeTargets,
+  forkArrows,
+  newThreatArrows,
+} from "./tacticalThreats.ts";
 
 export type Explanation = {
   title: string;
   text: string;
   focus?: BoardFocus;
 };
-type MoveExplanation = Explanation & { kind: "observation" | "activity" };
+type MoveExplanation = Explanation & {
+  kind: "observation" | "activity";
+  focus: BoardFocus;
+};
 const center: Square[] = ["d4", "e4", "d5", "e5"];
 const nearCenter: Square[] = [
   "c3",
@@ -47,12 +56,45 @@ function explanation(
   };
 }
 
-/** Explain observed board facts in priority order; an attack is never a promised capture. */
 export function explainMove(
   before: Chess,
   after: Chess,
   move: Move,
   t: Translator = english,
+): MoveExplanation {
+  const observed = explainBoardChanges(before, after, move, t);
+  const fork = checkingFork(move, after);
+  if (!fork) return observed;
+
+  const { from } = fork.arrows[0];
+  const threat = t(
+    "coach.explanation.checkFork.text",
+    t(pieceNameKeys[after.get(from)!.type]),
+    from,
+    describeTargets(after, fork.targets, t),
+  );
+  const { arrows, squares } = observed.focus;
+  const drawn = new Set(arrows.map(({ from, to }) => from + to));
+  return {
+    ...observed,
+    text: `${observed.text} ${threat}`,
+    focus: boardFocus(
+      t("coach.explanation.fork.focus"),
+      [
+        ...arrows,
+        ...fork.arrows.filter(({ from, to }) => !drawn.has(from + to)),
+      ],
+      squares,
+    ),
+  };
+}
+
+/** Explain observed board facts in priority order; an attack is never a promised capture. */
+function explainBoardChanges(
+  before: Chess,
+  after: Chess,
+  move: Move,
+  t: Translator,
 ): MoveExplanation {
   const name = (type: Move["piece"]) => t(pieceNameKeys[type]);
   const piece = name(move.promotion ?? move.piece);
@@ -161,12 +203,8 @@ export function explainMove(
       ownKing ? [ownKing] : [],
     );
   }
-  if (move.captured)
-    return explanation(
-      checkers.length
-        ? t("coach.explanation.captureCheck.title")
-        : t("coach.explanation.capture.title", name(move.captured)),
-      t(
+  const capture = move.captured
+    ? t(
         directCheck
           ? "coach.explanation.captureCheck.text"
           : "coach.explanation.capture.text",
@@ -177,7 +215,32 @@ export function explainMove(
           ? t("coach.explanation.capture.enPassant") + move.to
           : "",
         checkText ? ` ${checkText}` : "",
-      ),
+      )
+    : "";
+  const fork = checkers.length
+    ? []
+    : forkArrows(newThreatArrows(move, before, after));
+  if (fork.length) {
+    const attack = t(
+      "coach.explanation.fork.text",
+      name(after.get(fork[0].from)!.type),
+      fork[0].from,
+      describeTargets(after, fork, t),
+    );
+    return explanation(
+      t("coach.explanation.fork.title"),
+      capture ? `${capture} ${attack}` : attack,
+      t("coach.explanation.fork.focus"),
+      fork,
+      move.captured ? [capturedSquare(move)] : [],
+    );
+  }
+  if (move.captured)
+    return explanation(
+      checkers.length
+        ? t("coach.explanation.captureCheck.title")
+        : t("coach.explanation.capture.title", name(move.captured)),
+      capture,
       t("coach.explanation.capture.focus"),
       [
         ...travel,
@@ -324,7 +387,7 @@ function activity(
   board: Chess,
   move: Move,
   t: Translator,
-): Explanation {
+): MoveExplanation {
   const piece = t(pieceNameKeys[move.piece]);
   const travel = [{ from: move.from, to: move.to }];
   const controlled = center.filter(

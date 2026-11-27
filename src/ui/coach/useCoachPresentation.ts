@@ -1,11 +1,6 @@
-import {
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-  type SetStateAction,
-} from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
+import { moveHints } from "../../domain/coach/hints.ts";
 import { watchOutFor } from "../../domain/coach/warnings.ts";
 import type { GameController } from "../game/useGameController.ts";
 import type { BoardPreview } from "../board/useBoardPreview.ts";
@@ -17,6 +12,7 @@ type State = {
   bestFocused: boolean;
   hoveredWarning: boolean;
   focusedWarning: boolean;
+  hintStep: number;
 };
 const initial: State = {
   active: null,
@@ -24,21 +20,11 @@ const initial: State = {
   bestFocused: false,
   hoveredWarning: false,
   focusedWarning: false,
+  hintStep: 0,
 };
-type Action =
-  | { type: "reset" }
-  | { type: "active"; value: SetStateAction<number | null> }
-  | { type: "patch"; patch: Partial<State> };
+type Action = { type: "reset" } | { type: "patch"; patch: Partial<State> };
 function reduce(state: State, action: Action): State {
-  if (action.type === "reset") return initial;
-  if (action.type === "patch") return { ...state, ...action.patch };
-  return {
-    ...state,
-    active:
-      typeof action.value === "function"
-        ? action.value(state.active)
-        : action.value,
-  };
+  return action.type === "reset" ? initial : { ...state, ...action.patch };
 }
 export function useCoachPresentation(
   game: Pick<GameController, "analysisGame" | "analysisKey" | "playable">,
@@ -49,13 +35,18 @@ export function useCoachPresentation(
   const [state, dispatch] = useReducer(reduce, initial);
   const [hintKey, setHintKey] = useState<string | null>(null);
   const hinting = game.playable && hintKey === game.analysisKey;
+  const hintedCandidate = hinting ? recommendations.best : undefined;
+  const hints = useMemo(
+    () => (hintedCandidate ? moveHints(hintedCandidate, t) : []),
+    [hintedCandidate, t],
+  );
   useEffect(() => {
     setHintKey(null);
   }, [game.analysisKey, game.playable]);
   const actions = useMemo(
     () => ({
-      setActive: (value: SetStateAction<number | null>) =>
-        dispatch({ type: "active", value }),
+      setActive: (active: number | null) =>
+        dispatch({ type: "patch", patch: { active } }),
       setHovered: (hovered: number | null) =>
         dispatch({ type: "patch", patch: { hovered } }),
       setBestFocused: (bestFocused: boolean) =>
@@ -64,6 +55,8 @@ export function useCoachPresentation(
         dispatch({ type: "patch", patch: { hoveredWarning } }),
       setFocusedWarning: (focusedWarning: boolean) =>
         dispatch({ type: "patch", patch: { focusedWarning } }),
+      setHintStep: (hintStep: number) =>
+        dispatch({ type: "patch", patch: { hintStep } }),
     }),
     [],
   );
@@ -84,10 +77,17 @@ export function useCoachPresentation(
     recommendations.thinking,
   ]);
   const index = state.hovered ?? (state.bestFocused ? 0 : (state.active ?? 0));
+  const hintStep = Math.max(0, Math.min(state.hintStep, hints.length - 1));
   return {
     ...actions,
     hinting,
-    startHints: () => setHintKey(game.analysisKey),
+    hints,
+    hintStep,
+    hintSquares: hints[hintStep]?.squares,
+    startHints: () => {
+      if (!hinting) actions.setHintStep(0);
+      setHintKey(game.analysisKey);
+    },
     revealMove: () => setHintKey(null),
     active: state.active,
     watching,

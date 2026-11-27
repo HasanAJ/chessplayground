@@ -296,6 +296,11 @@ const en = {
   "coach.explanation.escapeAttack.focus": "See your {0} move out of danger",
   "coach.explanation.attack.text": "Your {0} now attacks their {1} on {2}.",
   "coach.explanation.attack.title": "Attack the {0}",
+  "coach.explanation.fork.title": "Create a double attack",
+  "coach.explanation.fork.text":
+    "Your {0} on {1} attacks their {2} at the same time.",
+  "coach.explanation.fork.focus": "See the fork targets",
+  "coach.explanation.checkFork.text": "The {0} on {1} also attacks their {2}.",
   "coach.piece.onSquare": "{0} on {1}",
   "coach.explanation.check.plural": "Your {0} give check.",
   "coach.explanation.check.singular": "Your {0} gives check.",
@@ -630,7 +635,7 @@ const en = {
   "coach.hint.idea.defend":
     "An undefended piece can be captured. Look for a way to support it.",
   "coach.hint.idea.fork":
-    "Look for a move that attacks two opposing pieces at once.",
+    "Look for a move that attacks at least two opposing pieces at once.",
   "coach.hint.idea.attack":
     "Look for a move that creates a new attack on an opposing piece.",
   "coach.hint.idea.openFile":
@@ -659,6 +664,8 @@ const en = {
   "coach.hint.clue.defend":
     "Find a move that lets you recapture if your {0} on {1} is taken.",
   "coach.hint.clue.attack": "A new attack can target the opposing {0}.",
+  "coach.hint.clue.checkFork":
+    "The piece giving check can also attack the opposing {0}.",
   "coach.hint.clue.openFile":
     "The {0}-file has no pawns. One of your rooks can move onto it.",
   "coach.hint.clue.centerControl":
@@ -696,6 +703,20 @@ const en = {
   "coach.hint.idea.captureCheck": "Look for a capture that also gives check.",
   "coach.hint.clue.matingSetup":
     "The mating line starts with a move that does not give check.",
+  "coach.hint.idea.plan.defend":
+    "Look for a way to add a defender to a piece under attack.",
+  "coach.hint.idea.plan.attack":
+    "Look for a move that sets up an attack on a later turn.",
+  "coach.hint.idea.plan.capture":
+    "Look for a move that prepares a capture on a later turn.",
+  "coach.hint.idea.plan.check":
+    "Look for a move that prepares a check on a later turn.",
+  "coach.hint.idea.plan.promotion":
+    "Look for a way to bring a pawn closer to promotion.",
+  "coach.hint.idea.plan.draw": "Look for a way to reach a drawn position.",
+  "coach.hint.clue.plan.target": "Look at the {0} on {1}.",
+  "coach.hint.clue.plan.defender":
+    "Your {0} on {1} has one defender, the {2} on {3}.",
 } as const;
 
 export type Catalog = { [Key in keyof typeof en]: string };

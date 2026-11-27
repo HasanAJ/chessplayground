@@ -302,6 +302,12 @@ export default {
   "coach.explanation.escapeAttack.focus": "Ver cómo tu {0} sale del peligro",
   "coach.explanation.attack.text": "Tu {0} ataca ahora su {1} en {2}.",
   "coach.explanation.attack.title": "Ataca su {0}",
+  "coach.explanation.fork.title": "Crea un ataque doble",
+  "coach.explanation.fork.text":
+    "Tu {0} en {1} ataca varias piezas rivales a la vez: {2}.",
+  "coach.explanation.fork.focus": "Ve los objetivos del ataque doble",
+  "coach.explanation.checkFork.text":
+    "Tu {0} en {1} también ataca material rival ({2}).",
   "coach.piece.onSquare": "{0} en {1}",
   "coach.explanation.check.plural": "Tus piezas ({0}) dan jaque.",
   "coach.explanation.check.singular": "Tu {0} da jaque.",
@@ -641,7 +647,7 @@ export default {
   "coach.hint.idea.defend":
     "Una pieza sin defensa puede ser capturada. Busca cómo apoyarla.",
   "coach.hint.idea.fork":
-    "Busca una jugada que ataque dos piezas rivales a la vez.",
+    "Busca una jugada que ataque al menos dos piezas rivales a la vez.",
   "coach.hint.idea.attack":
     "Busca una jugada que cree un nuevo ataque contra una pieza rival.",
   "coach.hint.idea.openFile":
@@ -707,4 +713,20 @@ export default {
   "coach.hint.idea.captureCheck": "Busca una captura que también dé jaque.",
   "coach.hint.clue.matingSetup":
     "La línea de mate empieza con una jugada que no da jaque.",
+  "coach.hint.clue.checkFork":
+    "La pieza que da jaque también puede atacar material rival ({0}).",
+  "coach.hint.idea.plan.defend":
+    "Busca cómo sumar un defensor a una pieza atacada.",
+  "coach.hint.idea.plan.attack":
+    "Busca una jugada que prepare un ataque más adelante.",
+  "coach.hint.idea.plan.capture":
+    "Busca una jugada que prepare una captura más adelante.",
+  "coach.hint.idea.plan.check":
+    "Busca una jugada que prepare un jaque más adelante.",
+  "coach.hint.idea.plan.promotion":
+    "Busca cómo acercar un peón a la promoción.",
+  "coach.hint.idea.plan.draw": "Busca cómo llegar a una posición de tablas.",
+  "coach.hint.clue.plan.target": "Fíjate en la pieza de {1} ({0}).",
+  "coach.hint.clue.plan.defender":
+    "Tu pieza de {1} ({0}) tiene un solo defensor: la pieza de {3} ({2}).",
 } satisfies Catalog;

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
+import { moveHints } from "../../src/domain/coach/hints.ts";
 import { betterMoveReason } from "../../src/domain/coach/lessons.ts";
 import {
   english,
@@ -45,6 +46,27 @@ test("both king moves explain the goal and defensive job without listing the rou
       result.explanation,
     );
   }
+});
+
+test("a quiet plan supplies spoiler-free hints only when the line reaches its goal", () => {
+  const result = candidate(fen, kingRoutes[1]);
+  for (const language of Object.keys(languages) as Language[]) {
+    const hints = moveHints(result, translator(language));
+    assert.deepEqual(
+      hints.map((hint) => hint.squares),
+      [undefined, ["b4", "d5"], ["c8"]],
+    );
+    assert.match(hints[1].text, /b4.*d5/);
+    assert.doesNotMatch(
+      hints.map(({ heading, text }) => `${heading} ${text}`).join(" "),
+      /\b(d7|c6|b5)\b|\{\d+\}/,
+    );
+  }
+  const short = candidate(fen, kingRoutes[1].slice(0, 2));
+  assert.deepEqual(
+    moveHints(short).map((hint) => hint.squares),
+    [["c8"]],
+  );
 });
 
 test("king plans work for White and translate their goal and defender", () => {
@@ -203,6 +225,10 @@ test("quiet preparations explain later captures, checks, and promotions without 
   assert.equal(promotion.title, "Prepare a promotion");
   assert.match(promotion.explanation, /pawn promotes to a queen/);
   assert.doesNotMatch(promotion.explanation, /→|possible continuation/);
+  const hints = moveHints(promotion);
+  assert.equal(hints.length, 2);
+  assert.match(hints[0].text, /closer to promotion/);
+  assert.doesNotMatch(hints.map((hint) => hint.text).join(" "), /a7|a8|queen/);
 });
 
 test("a suggested move does not inherit a later attack by a different piece", () => {

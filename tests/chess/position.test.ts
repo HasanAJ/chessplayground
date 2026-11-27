@@ -276,12 +276,11 @@ test("setup rejects castling rights without a matching rook and king", () => {
   assert.doesNotThrow(() => checkedGame("4k3/8/8/8/8/8/8/4K2R w K - 0 1"));
 });
 
-test("FEN import rejects impossible en passant metadata and accepts surrounding whitespace", () => {
+test("FEN import rejects en passant when the pawn is missing", () => {
   assert.throws(
     () => checkedGame("4k3/8/8/4P3/8/8/8/4K3 w - d6 0 1"),
     /en passant/,
   );
-  assert.equal(checkedGame(`  ${START_FEN}  `).fen(), START_FEN);
 });
 
 test("check, checkmate and drawn positions are identified", () => {

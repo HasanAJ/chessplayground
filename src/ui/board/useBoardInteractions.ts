@@ -157,7 +157,6 @@ export function useBoardInteractions(
     };
   }, []);
   function play(from: Square, to: Square) {
-    if (!interactive) return;
     setSelected(null);
     game.playMove(from, to);
   }

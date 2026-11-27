@@ -1,4 +1,4 @@
-import { Chess, type Move, type Square } from "chess.js";
+import { Chess, type Move, type PieceSymbol, type Square } from "chess.js";
 import type { Translator } from "../../i18n/translate.ts";
 import {
   ending,
@@ -13,6 +13,12 @@ import type { CandidateAnalysis } from "./candidates.ts";
 import { explainMove, type Explanation } from "./explanations.ts";
 
 const PLAN_PLIES = 7;
+
+type PlanPiece = { square: Square; type: PieceSymbol };
+export type ContinuationPlan =
+  | { kind: "defend"; step: Move; target: PlanPiece; defender?: PlanPiece }
+  | { kind: "attack"; step: Move; target: PlanPiece }
+  | { kind: "draw" | "capture" | "check" | "promotion"; step: Move };
 
 function canSupport(board: Chess, from: Square, target: Square) {
   const captures = board
@@ -29,11 +35,11 @@ function canSupport(board: Chess, from: Square, target: Square) {
   );
 }
 
-/** Follow a quiet move's piece, and describe only goals reached in the supplied line. */
-export function explainContinuationPlan(
-  { move, continuation }: CandidateAnalysis,
-  t: Translator,
-): Explanation | undefined {
+/** Follow a quiet move's piece and keep only goals reached in the supplied line. */
+function findContinuationPlan({
+  move,
+  continuation,
+}: CandidateAnalysis): ContinuationPlan | undefined {
   const before = new Chess(move.before);
   const targets = before
     .board()
@@ -41,18 +47,7 @@ export function explainContinuationPlan(
     .filter((piece) => piece !== null)
     .filter((piece) => piece.type !== "k")
     .sort((a, b) => pieceValues[b.type] - pieceValues[a.type]);
-  const name = (type: Move["piece"]) => t(pieceNameKeys[type]);
   const route: Square[] = [move.from];
-  const plan = (title: string, text: string, target: Square): Explanation => ({
-    title,
-    text,
-    // The first preview still shows the first move, not the future position.
-    focus: boardFocus(
-      t("coach.explanation.plan.focus"),
-      [{ from: move.from, to: move.to }],
-      [target],
-    ),
-  });
 
   for (const step of continuation.slice(0, PLAN_PLIES)) {
     if (step.color !== move.color) {
@@ -63,30 +58,20 @@ export function explainContinuationPlan(
     route.push(step.to);
     const after = new Chess(step.after);
 
-    if (after.isDraw())
-      return plan(
-        t("coach.explanation.draw.title"),
-        t("coach.explanation.plan.outcome", ending(after, t)!),
-        step.to,
-      );
+    if (after.isDraw()) return { kind: "draw", step };
 
     if (
       route.length > 2 &&
       (step.captured || step.promotion || after.isCheck())
-    ) {
-      const outcome = explainMove(new Chess(step.before), after, step, t);
-      return plan(
-        t(
-          step.promotion
-            ? "coach.explanation.plan.promotion.title"
-            : step.captured
-              ? "coach.explanation.plan.capture.title"
-              : "coach.explanation.plan.check.title",
-        ),
-        t("coach.explanation.plan.outcome", outcome.text),
-        step.captured ? capturedSquare(step) : step.to,
-      );
-    }
+    )
+      return {
+        kind: step.promotion
+          ? "promotion"
+          : step.captured
+            ? "capture"
+            : "check",
+        step,
+      };
 
     const defended = targets.find(
       (target) =>
@@ -105,35 +90,16 @@ export function explainContinuationPlan(
       const defenders = before
         .attackers(defended.square, move.color)
         .filter((from) => canSupport(opponent, from, defended.square));
-      const defender = defenders.length === 1 ? defenders[0] : undefined;
-      const sharedDefense =
-        defender &&
-        after.get(defender)?.type === before.get(defender)?.type &&
-        after.get(defender)?.color === move.color &&
-        after.attackers(defended.square, move.color).includes(defender) &&
-        canSupport(after, defender, defended.square)
-          ? t(
-              "coach.explanation.plan.sharedDefense",
-              name(before.get(defender)!.type),
-              defender,
-            )
-          : "";
-      return plan(
-        t("coach.explanation.plan.defend.title", name(defended.type)),
-        [
-          t(
-            "coach.explanation.plan.defend.text",
-            name(move.piece),
-            step.to,
-            name(defended.type),
-            defended.square,
-          ),
-          sharedDefense,
-        ]
-          .filter(Boolean)
-          .join(" "),
-        defended.square,
-      );
+      const square = defenders.length === 1 ? defenders[0] : undefined;
+      const defender =
+        square &&
+        after.get(square)?.type === before.get(square)?.type &&
+        after.get(square)?.color === move.color &&
+        after.attackers(defended.square, move.color).includes(square) &&
+        canSupport(after, square, defended.square)
+          ? { square, type: before.get(square)!.type }
+          : undefined;
+      return { kind: "defend", step, target: defended, defender };
     }
 
     const attacks = targets.filter(
@@ -155,18 +121,65 @@ export function explainContinuationPlan(
         .map((capture) => capture.to),
     );
     const attacked = attacks.find((target) => legalTargets.has(target.square));
-    if (attacked)
-      return plan(
-        t("coach.explanation.plan.attack.title"),
-        t(
-          "coach.explanation.plan.attack.text",
-          name(move.piece),
-          step.to,
-          name(attacked.type),
-          attacked.square,
-        ),
-        attacked.square,
-      );
+    if (attacked) return { kind: "attack", step, target: attacked };
   }
   return undefined;
+}
+
+export function explainContinuationPlan(
+  candidate: CandidateAnalysis,
+  t: Translator,
+): (Explanation & { plan: ContinuationPlan }) | undefined {
+  const plan = findContinuationPlan(candidate);
+  if (!plan) return undefined;
+  const { move } = candidate;
+  const { kind, step } = plan;
+  const name = (type: PieceSymbol) => t(pieceNameKeys[type]);
+  const explain = (title: string, text: string, target: Square) => ({
+    title,
+    text,
+    plan,
+    focus: boardFocus(
+      t("coach.explanation.plan.focus"),
+      [{ from: move.from, to: move.to }],
+      [target],
+    ),
+  });
+  if (kind === "defend" || kind === "attack") {
+    const { target } = plan;
+    const description = t(
+      `coach.explanation.plan.${kind}.text`,
+      name(move.piece),
+      step.to,
+      name(target.type),
+      target.square,
+    );
+    const defender = kind === "defend" ? plan.defender : undefined;
+    const sharedDefense = defender
+      ? t(
+          "coach.explanation.plan.sharedDefense",
+          name(defender.type),
+          defender.square,
+        )
+      : "";
+    return explain(
+      t(`coach.explanation.plan.${kind}.title`, name(target.type)),
+      [description, sharedDefense].filter(Boolean).join(" "),
+      target.square,
+    );
+  }
+  const after = new Chess(step.after);
+  const outcome =
+    kind === "draw"
+      ? ending(after, t)!
+      : explainMove(new Chess(step.before), after, step, t).text;
+  return explain(
+    t(
+      kind === "draw"
+        ? "coach.explanation.draw.title"
+        : `coach.explanation.plan.${kind}.title`,
+    ),
+    t("coach.explanation.plan.outcome", outcome),
+    kind !== "draw" && step.captured ? capturedSquare(step) : step.to,
+  );
 }

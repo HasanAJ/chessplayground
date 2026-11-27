@@ -1,12 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { START_FEN } from "../../src/domain/chess/position.ts";
-import { analyzeCandidates } from "../../src/domain/coach/candidates.ts";
+import { candidatesFor } from "../../src/domain/coach/candidatePresentation.ts";
 import { moveHints } from "../../src/domain/coach/hints.ts";
 import { languages, translator } from "../../src/i18n/translate.ts";
 
 function candidate(fen: string, uci: string) {
-  const [result] = analyzeCandidates(fen, [
+  const [result] = candidatesFor(fen, [
     { rank: 1, depth: 15, cp: 30, pv: [uci] },
   ]);
   assert.ok(result, `${fen}: ${uci} must be legal`);
@@ -251,7 +251,7 @@ test("opening a diagonal is mentioned only when a bishop gains legal moves overa
   assert.doesNotMatch(freed[1].text, /attacking|e5/);
 });
 
-test("checking captures and capturing forks explain the tactic before the captured material", () => {
+test("checking captures explain the check before the captured material", () => {
   const check = moveHints(candidate("7k/6q1/8/8/8/8/6Q1/7K w - - 0 1", "g2g7"));
   assert.match(check[0].text, /capture that also gives check/);
   assert.match(check[1].text, /check with your queen/);
@@ -260,15 +260,9 @@ test("checking captures and capturing forks explain the tactic before the captur
   );
   assert.match(discovery[0].text, /capture that also gives check/);
   assert.match(discovery[1].text, /uncover a check from another/);
-  const fork = moveHints(
-    candidate("7k/8/8/8/3n4/8/2P5/R3Q1K1 b - - 0 1", "d4c2"),
-  );
-  assert.match(fork[0].text, /two opposing pieces/);
-  assert.match(fork[1].text, /queen on e1 and rook on a1/);
   for (const [hints, destination] of [
     [check, "g7"],
     [discovery, "c3"],
-    [fork, "c2"],
   ] as const)
     assert.doesNotMatch(
       hints.map(({ text }) => text).join(" "),
@@ -277,7 +271,7 @@ test("checking captures and capturing forks explain the tactic before the captur
 });
 
 test("a mating line that starts without check does not direct the learner to checks", () => {
-  const [result] = analyzeCandidates("7k/8/6K1/8/6Q1/8/8/8 w - - 0 1", [
+  const [result] = candidatesFor("7k/8/6K1/8/6Q1/8/8/8 w - - 0 1", [
     { rank: 1, depth: 15, mate: 2, pv: ["g4f5", "h8g8", "f5c8"] },
   ]);
   assert.ok(result);
@@ -293,4 +287,72 @@ test("a mating line that starts without check does not direct the learner to che
       .join(" "),
     /f5|c8/,
   );
+});
+
+test("the fork clue and its reveal identify the same legal targets", () => {
+  for (const rank of ["8", "2P5"]) {
+    const result = candidate(`7k/8/8/8/3n4/8/${rank}/R3Q1K1 b - - 0 1`, "d4c2");
+    const hints = moveHints(result);
+    const [idea, clue] = hints;
+    assert.match(idea.text, /two opposing pieces/);
+    assert.match(clue.text, /queen on e1 and rook on a1/);
+    assert.doesNotMatch(hints.map(({ text }) => text).join(" "), /\bc2\b/);
+    assert.deepEqual(clue.squares, ["e1", "a1"]);
+    assert.equal(result.title, "Create a double attack");
+    assert.match(result.explanation, /queen on e1 and rook on a1/);
+    assert.deepEqual(result.explanationFocus?.arrows, [
+      { from: "c2", to: "e1" },
+      { from: "c2", to: "a1" },
+    ]);
+    if (rank !== "8")
+      assert.match(result.explanation, /takes their pawn on c2/);
+  }
+});
+
+test("checking forks lead with check and then show the other targets", () => {
+  for (const rank of ["8", "2P5"]) {
+    const result = candidate(`7k/8/8/8/3n4/4Q3/${rank}/R3K3 b - - 0 1`, "d4c2");
+    assert.match(result.move.san, /\+$/);
+    const [idea, clue, piece] = moveHints(result);
+    assert.match(idea.text, /gives check/);
+    assert.equal(idea.squares, undefined);
+    assert.match(clue.text, /queen on e3 and rook on a1/);
+    assert.deepEqual(clue.squares, ["e3", "a1"]);
+    assert.doesNotMatch(`${idea.text} ${clue.text} ${piece.text}`, /\bc2\b/);
+    assert.match(
+      result.explanation,
+      /gives check\..*queen on e3 and rook on a1/,
+    );
+    const threats = [
+      { from: "c2", to: "e1" },
+      { from: "c2", to: "e3" },
+      { from: "c2", to: "a1" },
+    ];
+    assert.deepEqual(
+      result.explanationFocus?.arrows,
+      rank === "8" ? threats : [{ from: "d4", to: "c2" }, ...threats],
+    );
+    if (rank !== "8")
+      assert.match(result.explanation, /takes their pawn on c2/);
+  }
+});
+
+test("a checking fork can keep an existing attack by the checking piece", () => {
+  const result = candidate("8/8/n7/8/7k/8/8/R6K w - - 0 1", "a1a4");
+  assert.equal(result.move.san, "Ra4+");
+  assert.deepEqual(moveHints(result)[1].squares, ["a6"]);
+  assert.deepEqual(result.explanationFocus?.arrows, [
+    { from: "a4", to: "h4" },
+    { from: "a4", to: "a6" },
+  ]);
+});
+
+test("a discovered check does not treat a different piece's attack as a fork", () => {
+  const result = candidate("4k3/8/8/1q6/8/8/4N3/K3R3 w - - 0 1", "e2c3");
+  assert.equal(result.move.san, "Nc3+");
+  const clue = moveHints(result)[1];
+  assert.match(clue.text, /uncover a check/);
+  assert.equal(clue.squares, undefined);
+  assert.doesNotMatch(result.explanation, /queen/);
+  assert.deepEqual(result.explanationFocus?.arrows, [{ from: "e1", to: "e8" }]);
 });

@@ -8,14 +8,11 @@
     padding: 0 25px;
   }
   main {
-    padding: 28px 25px 0;
+    padding: 32px 25px 0;
     max-width: 720px;
   }
   .workspace {
     grid-template-columns: 1fr;
-  }
-  .board-panel {
-    padding: 22px;
   }
   .site-footer {
     padding: 20px 25px calc(20px + 110px + env(safe-area-inset-bottom));

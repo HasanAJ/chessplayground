@@ -2,7 +2,7 @@ import { Chess } from "chess.js";
 import { checkedGame, gameOutcome } from "./position.ts";
 import { uciMove } from "./moves.ts";
 
-export type StudyNode = { id: string; parent: string; uci: string };
+type StudyNode = { id: string; parent: string; uci: string };
 export type Study = {
   version: 1;
   id: string;
@@ -15,11 +15,11 @@ export type Study = {
 };
 export const ROOT = "root";
 
-export function createStudy(fen: string, name = "Untitled game"): Study {
+export function createStudy(fen: string): Study {
   return {
     version: 1,
     id: crypto.randomUUID(),
-    name,
+    name: "Untitled game",
     rootFen: checkedGame(fen).fen(),
     nodes: [],
     tipId: ROOT,

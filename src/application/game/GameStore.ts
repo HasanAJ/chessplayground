@@ -27,7 +27,7 @@ import {
 import type { Diagnostic } from "../../i18n/notices.ts";
 import { ObservableState } from "../shared/ObservableState.ts";
 
-export type PieceTool = "move" | `${Color}${PieceSymbol}`;
+type PieceTool = "move" | `${Color}${PieceSymbol}`;
 type Draft = { position: Position; turn: Color; rights: string };
 type Controls = {
   draft: Draft | null;
@@ -81,7 +81,7 @@ function derive(session: StudySession, state: Controls) {
       : null,
   };
 }
-export type GameSnapshot = ReturnType<typeof derive>;
+type GameSnapshot = ReturnType<typeof derive>;
 
 export class GameStore extends ObservableState<GameSnapshot> {
   private session: StudySession;

@@ -307,6 +307,12 @@ export default {
   "coach.explanation.attack.text":
     "Votre {0} attaque maintenant leur {1} en {2}.",
   "coach.explanation.attack.title": "Attaquez leur {0}",
+  "coach.explanation.fork.title": "Créez une double attaque",
+  "coach.explanation.fork.text":
+    "Votre pièce en {1} ({0}) attaque plusieurs pièces adverses à la fois : {2}.",
+  "coach.explanation.fork.focus": "Voir les cibles de la fourchette",
+  "coach.explanation.checkFork.text":
+    "Votre pièce en {1} ({0}) menace aussi du matériel adverse ({2}).",
   "coach.piece.onSquare": "{0} en {1}",
   "coach.explanation.check.plural": "Vos pièces ({0}) donnent échec.",
   "coach.explanation.check.singular": "Votre {0} donne échec.",
@@ -656,7 +662,7 @@ export default {
   "coach.hint.idea.defend":
     "Une pièce non défendue peut être prise. Cherchez à la protéger.",
   "coach.hint.idea.fork":
-    "Cherchez un coup qui attaque deux pièces adverses à la fois.",
+    "Cherchez un coup qui attaque au moins deux pièces adverses à la fois.",
   "coach.hint.idea.attack":
     "Cherchez un coup qui crée une nouvelle attaque sur une pièce adverse.",
   "coach.hint.idea.openFile":
@@ -722,4 +728,20 @@ export default {
   "coach.hint.idea.captureCheck": "Cherchez une prise qui donne aussi échec.",
   "coach.hint.clue.matingSetup":
     "La suite de mat commence par un coup qui ne donne pas échec.",
+  "coach.hint.clue.checkFork":
+    "Cherchez un échec qui menace aussi du matériel adverse ({0}).",
+  "coach.hint.idea.plan.defend":
+    "Cherchez comment ajouter un défenseur à une pièce attaquée.",
+  "coach.hint.idea.plan.attack":
+    "Cherchez un coup qui prépare une attaque pour plus tard.",
+  "coach.hint.idea.plan.capture":
+    "Cherchez un coup qui prépare une prise pour plus tard.",
+  "coach.hint.idea.plan.check":
+    "Cherchez un coup qui prépare un échec pour plus tard.",
+  "coach.hint.idea.plan.promotion":
+    "Cherchez comment rapprocher un pion de la promotion.",
+  "coach.hint.idea.plan.draw": "Cherchez comment atteindre une position nulle.",
+  "coach.hint.clue.plan.target": "Regardez la pièce en {1} ({0}).",
+  "coach.hint.clue.plan.defender":
+    "Votre pièce en {1} ({0}) est défendue par une seule pièce, celle en {3} ({2}).",
 } satisfies Catalog;

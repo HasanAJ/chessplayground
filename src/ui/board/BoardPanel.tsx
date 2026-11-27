@@ -360,6 +360,7 @@ export function BoardPanel(props: Props) {
         <Chessboard
           game={game}
           board={board}
+          botTurn={props.botTurn}
           preview={preview}
           analysis={analysis}
           reviewEvaluation={props.reviewEvaluation}

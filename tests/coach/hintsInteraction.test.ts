@@ -1,13 +1,18 @@
 import test, { type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { act, createElement } from "react";
+import { createStudy } from "../../src/domain/chess/study.ts";
+import { SESSION_KEY } from "../../src/infrastructure/persistence/session.ts";
 import { AnalysisEngine } from "../../src/infrastructure/stockfish/AnalysisEngine.ts";
 import { LanguageProvider } from "../../src/i18n/LanguageProvider.tsx";
 import { notice } from "../../src/i18n/notices.ts";
 import App from "../../src/ui/shell/App.tsx";
 import { createTestRoot } from "../helpers/dom.ts";
 
-async function mount(t: TestContext, mobile = false) {
+async function mount(
+  t: TestContext,
+  { mobile = false, fen }: { mobile?: boolean; fen?: string } = {},
+) {
   const { root, dom } = createTestRoot(t);
   const scrolls: string[] = [];
   dom.window.HTMLElement.prototype.scrollIntoView = function () {
@@ -19,6 +24,11 @@ async function mount(t: TestContext, mobile = false) {
       configurable: true,
     });
   dom.window.localStorage.setItem("tempo-analytics-consent-v1", "denied");
+  if (fen)
+    dom.window.localStorage.setItem(
+      SESSION_KEY,
+      JSON.stringify(createStudy(fen)),
+    );
   const requests: Parameters<AnalysisEngine["analyze"]>[] = [];
   t.mock.method(
     AnalysisEngine.prototype,
@@ -40,16 +50,12 @@ async function mount(t: TestContext, mobile = false) {
     assert.equal(button.disabled, false, selector);
     await act(() => button.click());
   };
-  const complete = (pv = ["g1f3", "d7d5"]) =>
-    act(() =>
-      requests.at(-1)![1].onComplete(
-        [
-          { rank: 1, depth: 15, cp: 30, pv },
-          { rank: 2, depth: 15, cp: 20, pv: ["d2d4", "d7d5"] },
-        ],
-        pv[0],
-      ),
-    );
+  const complete = (pv = ["g1f3", "d7d5"]) => {
+    const lines = [{ rank: 1, depth: 15, cp: 30, pv }];
+    if (!fen) lines.push({ rank: 2, depth: 15, cp: 20, pv: ["d2d4", "d7d5"] });
+    const [, callbacks] = requests.at(-1)!;
+    return act(() => callbacks.onComplete(lines, pv[0]));
+  };
   return { dom, document, click, complete, requests, scrolls };
 }
 
@@ -179,12 +185,51 @@ test("an unexplained quiet move shows the useful piece clue without filler or an
   assert.equal(document.querySelector(".move-arrow"), null);
 });
 
+test("quiet-plan hints highlight the evidence and then the piece on the playable board", async (t) => {
+  const fen = "2k4r/2r2p2/4p3/3nP3/1p1P2p1/1K4B1/1PPR3P/2R5 b - - 0 1";
+  const { document, click, complete, requests } = await mount(t, { fen });
+  const highlighted = () =>
+    Array.from(
+      document.querySelectorAll(".chessboard .strategy-square"),
+      (square) => square.getAttribute("data-square"),
+    ).sort();
+  const hintText = () =>
+    document.querySelector(".hint-description")!.textContent!;
+  await click(".hint-button");
+  await complete(["c8d7", "c1g1", "d7c6", "g3e1", "c6b5"]);
+  assert.match(hintText(), /add a defender/);
+  assert.deepEqual(highlighted(), []);
+  await click(".hint-next");
+  assert.match(hintText(), /pawn on b4.*knight on d5/);
+  assert.deepEqual(highlighted(), ["b4", "d5"]);
+  await click(".hint-next");
+  assert.match(hintText(), /king on c8/);
+  assert.deepEqual(highlighted(), ["c8"]);
+  assert.equal(
+    document.querySelector(".chessboard.previewing, .move-arrow"),
+    null,
+  );
+  assert.equal(
+    document.querySelector<HTMLInputElement>("#fen-input")!.value,
+    fen,
+  );
+  await click(".hint-previous");
+  assert.deepEqual(highlighted(), ["b4", "d5"]);
+  await click(".calculation-controls .calculate-button");
+  assert.equal(document.querySelector(".hint-card"), null);
+  assert.deepEqual(highlighted(), []);
+  assert.match(
+    document.querySelector(".best-move-heading")!.textContent!,
+    /c8.*d7/,
+  );
+  assert.equal(requests.length, 1);
+});
+
 for (const ready of [false, true])
   test(`revealing a ${ready ? "ready" : "pending"} hint resets selection and returns to the coach without another search`, async (t) => {
-    const { document, click, complete, requests, scrolls } = await mount(
-      t,
-      true,
-    );
+    const { document, click, complete, requests, scrolls } = await mount(t, {
+      mobile: true,
+    });
     await click(".hint-button");
     if (ready) await complete();
     await click('#play-workspace [data-square="b1"]');

@@ -308,6 +308,12 @@ export default {
   "coach.explanation.attack.text":
     "Il tuo pezzo ({0}) ora attacca il pezzo avversario ({1}) in {2}.",
   "coach.explanation.attack.title": "Attacca il pezzo avversario ({0})",
+  "coach.explanation.fork.title": "Crea un attacco doppio",
+  "coach.explanation.fork.text":
+    "Il tuo pezzo in {1} ({0}) attacca più pezzi avversari contemporaneamente: {2}.",
+  "coach.explanation.fork.focus": "Vedi i bersagli della forchetta",
+  "coach.explanation.checkFork.text":
+    "Il tuo pezzo in {1} ({0}) attacca anche altro materiale avversario ({2}).",
   "coach.piece.onSquare": "{0} in {1}",
   "coach.explanation.check.plural": "I tuoi pezzi ({0}) danno scacco.",
   "coach.explanation.check.singular": "Il tuo pezzo ({0}) dà scacco.",
@@ -662,7 +668,7 @@ export default {
   "coach.hint.idea.defend":
     "Un pezzo indifeso può essere catturato. Cerca come sostenerlo.",
   "coach.hint.idea.fork":
-    "Cerca una mossa che attacchi due pezzi avversari contemporaneamente.",
+    "Cerca una mossa che attacchi almeno due pezzi avversari contemporaneamente.",
   "coach.hint.idea.attack":
     "Cerca una mossa che crei un nuovo attacco contro un pezzo avversario.",
   "coach.hint.idea.openFile":
@@ -729,4 +735,21 @@ export default {
   "coach.hint.idea.captureCheck": "Cerca una cattura che dia anche scacco.",
   "coach.hint.clue.matingSetup":
     "La sequenza di matto inizia con una mossa che non dà scacco.",
+  "coach.hint.clue.checkFork":
+    "Il pezzo che dà scacco può anche attaccare materiale avversario ({0}).",
+  "coach.hint.idea.plan.defend":
+    "Cerca un modo per aggiungere un difensore a un pezzo sotto attacco.",
+  "coach.hint.idea.plan.attack":
+    "Cerca una mossa che prepari un attacco per un turno successivo.",
+  "coach.hint.idea.plan.capture":
+    "Cerca una mossa che prepari una cattura per un turno successivo.",
+  "coach.hint.idea.plan.check":
+    "Cerca una mossa che prepari uno scacco per un turno successivo.",
+  "coach.hint.idea.plan.promotion":
+    "Cerca un modo per avvicinare un pedone alla promozione.",
+  "coach.hint.idea.plan.draw":
+    "Cerca un modo per raggiungere una posizione di patta.",
+  "coach.hint.clue.plan.target": "Guarda il pezzo in {1} ({0}).",
+  "coach.hint.clue.plan.defender":
+    "Il tuo pezzo in {1} ({0}) ha un solo difensore, il pezzo in {3} ({2}).",
 } satisfies Catalog;

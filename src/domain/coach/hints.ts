@@ -7,8 +7,14 @@ import {
 import { capturedSquare } from "../chess/moves.ts";
 import { opposite, pieceNameKeys } from "../chess/position.ts";
 import { pieceValues } from "../chess/material.ts";
-import type { CandidateAnalysis } from "./candidates.ts";
-import { newThreatArrows } from "./tacticalThreats.ts";
+import type { Candidate } from "./candidatePresentation.ts";
+import type { ContinuationPlan } from "./continuationPlans.ts";
+import {
+  checkingFork,
+  describeTargets,
+  forkArrows,
+  newThreatArrows,
+} from "./tacticalThreats.ts";
 
 function withSideToMove(board: Chess, color: Color) {
   if (board.turn() !== color) {
@@ -69,11 +75,14 @@ function checkingClue(after: Chess, move: Move, t: Translator) {
     : t("coach.hint.clue.discoveredCheck");
 }
 
-type Hint = { heading: string; text: string };
+export type Hint = { heading: string; text: string; squares?: Square[] };
 
-function ideaHints({ move, mate }: CandidateAnalysis, t: Translator): Hint[] {
-  const before = new Chess(move.before),
-    after = new Chess(move.after);
+function ideaHints(
+  { move, mate }: Candidate,
+  after: Chess,
+  t: Translator,
+): Hint[] {
+  const before = new Chess(move.before);
   const name = (type: Move["piece"]) => t(pieceNameKeys[type]);
   const idea = (heading: MessageKey, ...hints: string[]): Hint[] =>
     hints.map((text) => ({ heading: t(heading), text }));
@@ -139,25 +148,28 @@ function ideaHints({ move, mate }: CandidateAnalysis, t: Translator): Hint[] {
       ),
     );
 
-  const attacks = newThreatArrows(move);
-  const forkSource = attacks.find(
-    ({ from }) => attacks.filter((attack) => attack.from === from).length > 1,
-  )?.from;
+  const attacks = newThreatArrows(move, before, after);
+  const fork = forkArrows(attacks);
   const attackHints = () => {
-    const targets = (
-      forkSource
-        ? attacks.filter(({ from }) => from === forkSource)
-        : attacks.slice(0, 1)
-    )
-      .map(({ to }) => t("coach.piece.onSquare", name(after.get(to)!.type), to))
-      .join(t("common.join.and"));
-    return idea(
-      forkSource ? "coach.hint.title.fork" : "coach.hint.title.attack",
-      t(forkSource ? "coach.hint.idea.fork" : "coach.hint.idea.attack"),
-      t("coach.hint.clue.attack", targets),
+    const targets = fork.length ? fork : attacks.slice(0, 1);
+    const heading = t(
+      fork.length ? "coach.hint.title.fork" : "coach.hint.title.attack",
     );
+    return [
+      {
+        heading,
+        text: t(
+          fork.length ? "coach.hint.idea.fork" : "coach.hint.idea.attack",
+        ),
+      },
+      {
+        heading,
+        text: t("coach.hint.clue.attack", describeTargets(after, targets, t)),
+        squares: targets.map(({ to }) => to),
+      },
+    ];
   };
-  if (forkSource) return attackHints();
+  if (fork.length) return attackHints();
   if (move.captured)
     return idea(
       "coach.hint.title.capture",
@@ -283,20 +295,61 @@ function ideaHints({ move, mate }: CandidateAnalysis, t: Translator): Hint[] {
   return [];
 }
 
+function planHints(plan: ContinuationPlan, t: Translator): Hint[] {
+  const { kind } = plan;
+  const heading = t(
+    kind === "draw"
+      ? "coach.explanation.draw.title"
+      : kind === "defend" || kind === "attack"
+        ? `coach.hint.title.${kind}`
+        : `coach.explanation.plan.${kind}.title`,
+  );
+  const hints: Hint[] = [{ heading, text: t(`coach.hint.idea.plan.${kind}`) }];
+  if (kind === "defend" || kind === "attack") {
+    const { target } = plan;
+    const defender = kind === "defend" ? plan.defender : undefined;
+    const name = t(pieceNameKeys[target.type]);
+    hints.push({
+      heading,
+      text: defender
+        ? t(
+            "coach.hint.clue.plan.defender",
+            name,
+            target.square,
+            t(pieceNameKeys[defender.type]),
+            defender.square,
+          )
+        : t("coach.hint.clue.plan.target", name, target.square),
+      squares: defender ? [target.square, defender.square] : [target.square],
+    });
+  }
+  return hints;
+}
+
 /** Reveal observed ideas first, then the piece; never name the destination. */
 export function moveHints(
-  candidate: CandidateAnalysis,
+  candidate: Candidate,
   t: Translator = english,
-) {
+): Hint[] {
+  const { move, mate } = candidate;
+  const after = new Chess(move.after);
+  const ideas = ideaHints(candidate, after, t);
+  const fork = mate ? undefined : checkingFork(move, after);
+  if (fork) {
+    const clue = ideas.at(-1)!;
+    clue.text += ` ${t("coach.hint.clue.checkFork", describeTargets(after, fork.targets, t))}`;
+    clue.squares = fork.targets.map(({ to }) => to);
+  }
   return [
-    ...ideaHints(candidate, t),
+    ...(ideas.length || !candidate.plan ? ideas : planHints(candidate.plan, t)),
     {
       heading: t("coach.hint.title.piece"),
       text: t(
         "coach.hint.considerPiece",
-        t(pieceNameKeys[candidate.move.piece]),
-        candidate.move.from,
+        t(pieceNameKeys[move.piece]),
+        move.from,
       ),
+      squares: [move.from],
     },
   ];
 }

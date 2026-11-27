@@ -414,9 +414,6 @@
   .game-over-card h3 {
     font-size: 30px;
   }
-  .result-message {
-    font-size: var(--text-body);
-  }
 }
 .error-message {
   display: flex;

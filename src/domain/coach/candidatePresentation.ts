@@ -7,8 +7,11 @@ import { pieceNameKeys } from "../chess/position.ts";
 import { formatEvaluation } from "../chess/evaluation.ts";
 import { boardFocus, type BoardFocus } from "./boardFocus.ts";
 import { describeReply } from "./replyDescription.ts";
-import { explainMove } from "./explanations.ts";
-import { explainContinuationPlan } from "./continuationPlans.ts";
+import { explainMove, type Explanation } from "./explanations.ts";
+import {
+  explainContinuationPlan,
+  type ContinuationPlan,
+} from "./continuationPlans.ts";
 import { settledMaterialGain } from "./materialTactics.ts";
 import { analyzeCandidates, type CandidateAnalysis } from "./candidates.ts";
 
@@ -16,6 +19,7 @@ export type Candidate = CandidateAnalysis & {
   title: string;
   explanation: string;
   explanationFocus?: BoardFocus;
+  plan?: ContinuationPlan;
   score: string;
 };
 const localized = new WeakMap<
@@ -32,7 +36,10 @@ function offeredPiece({ move, continuation }: CandidateAnalysis) {
     : undefined;
 }
 
-export function explainCandidate(candidate: CandidateAnalysis, t: Translator) {
+export function explainCandidate(
+  candidate: CandidateAnalysis,
+  t: Translator,
+): Explanation & { plan?: ContinuationPlan } {
   const { move, mate } = candidate;
   const before = new Chess(move.before),
     after = new Chess(move.after);
@@ -134,6 +141,7 @@ function buildPresentation(
     title: insight.title,
     explanation: sentences.filter(Boolean).join(" "),
     explanationFocus: focus,
+    plan: insight.plan,
     score: formatEvaluation(candidate, t.language),
   };
 }

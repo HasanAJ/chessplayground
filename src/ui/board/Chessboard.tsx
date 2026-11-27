@@ -21,6 +21,7 @@ import { useHighlightedMove } from "./SquareHighlight.tsx";
 type Props = {
   game: Pick<GameController, "playable" | "reviewing" | "analysisGame">;
   board: BoardController;
+  botTurn: boolean;
   preview: BoardPreview;
   analysis: Recommendations;
   reviewEvaluation?: PositionEvaluation;
@@ -81,6 +82,10 @@ export function Chessboard(props: Props) {
   const [fileOverBoard, setFileOverBoard] = useState(false);
   const appearance = decorations(props, useHighlightedMove());
   const legal = new Set(board.legalMoves.map((move) => move.to));
+  const hintSquares =
+    !preview.boardPreview && !board.freeDrag && !props.botTurn
+      ? highlights.hintSquares
+      : undefined;
   const squareProps = (
     square: Square,
   ): ButtonHTMLAttributes<HTMLButtonElement> => {
@@ -90,7 +95,6 @@ export function Chessboard(props: Props) {
       selected && "selected-square",
       board.freeDrag === square && "free-piece",
       legal.has(square) && piece && "capture-square",
-      appearance.focus?.squares.includes(square) && "strategy-square",
       highlights.showWarning &&
         highlights.watching.target === square &&
         "warning-target",
@@ -166,6 +170,7 @@ export function Chessboard(props: Props) {
           className={`${preview.boardPreview ? "previewing" : ""} ${board.freeDrag ? "free-placement" : ""}`}
           lastMove={game.playable ? (board.lastMove ?? undefined) : undefined}
           checkedKing={board.checkedKing}
+          focusSquares={appearance.focus?.squares ?? hintSquares}
           squareProps={squareProps}
           onRemovePiece={board.arrangePiece}
         >

@@ -2,7 +2,7 @@ import type { OpeningLesson } from "../../content/openings/lessons.ts";
 import { motifs } from "../../content/openings/content.ts";
 import type { Language } from "../../i18n/translate.ts";
 
-export type LibraryFilters = {
+type LibraryFilters = {
   query: string;
   level: string;
   side: string;

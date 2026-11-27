@@ -4,9 +4,6 @@
   }
 }
 @media (max-width: 900px) {
-  main {
-    padding-top: 32px;
-  }
   .mobile-coach-link {
     display: flex;
     align-items: center;
@@ -20,8 +17,6 @@
 }
 @media (max-width: 540px) {
   .page-heading {
-    flex-direction: column;
-    align-items: stretch;
     gap: 12px;
   }
   .board-toolbar .new-game-button {
@@ -69,7 +64,6 @@
   }
   .page-heading {
     margin-bottom: 24px;
-    gap: 10px;
   }
   .page-heading > div:first-child {
     display: flex;
@@ -367,7 +361,6 @@
   }
 
   .coach-header {
-    align-items: center;
     margin-bottom: 8px;
   }
 

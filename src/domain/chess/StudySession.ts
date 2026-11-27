@@ -3,7 +3,7 @@ import { gameOutcome } from "./position.ts";
 import { uciMove } from "./moves.ts";
 import { addStudyMove, replayStudy, type Study } from "./study.ts";
 
-export type StudySnapshot = {
+type StudySnapshot = {
   study: Study;
   positionGame: Chess;
   history: Move[];

@@ -1,14 +1,18 @@
-import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
-import { moveHints } from "../../domain/coach/hints.ts";
-import type { Candidate } from "../../domain/coach/candidatePresentation.ts";
+import type { Hint } from "../../domain/coach/hints.ts";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
 import { SquareText } from "../board/SquareHighlight.tsx";
 
-export function HintContent({ candidate }: { candidate: Candidate }) {
+export function HintContent({
+  hints,
+  step,
+  onStep,
+}: {
+  hints: Hint[];
+  step: number;
+  onStep: (step: number) => void;
+}) {
   const { t } = useTranslation();
-  const hints = useMemo(() => moveHints(candidate, t), [candidate, t]);
-  const [step, setStep] = useState(0);
   const hint = hints[step];
   return (
     <>
@@ -40,7 +44,7 @@ export function HintContent({ candidate }: { candidate: Candidate }) {
             type="button"
             className="hint-nav-button hint-previous"
             disabled={step === 0}
-            onClick={() => setStep(step - 1)}
+            onClick={() => onStep(step - 1)}
           >
             <ArrowLeft size={18} aria-hidden="true" />
             <span>{t("coach.hint.previous")}</span>
@@ -49,7 +53,7 @@ export function HintContent({ candidate }: { candidate: Candidate }) {
             type="button"
             className="hint-nav-button hint-next"
             disabled={step === hints.length - 1}
-            onClick={() => setStep(step + 1)}
+            onClick={() => onStep(step + 1)}
           >
             <span>{t("coach.hint.next")}</span>
             <ArrowRight size={18} aria-hidden="true" />
