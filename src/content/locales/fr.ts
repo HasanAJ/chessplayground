@@ -543,15 +543,26 @@ export default {
   "position.error.invalidInput": "Ce FEN n’est pas valide.",
   "position.error.clipboard":
     "Le presse-papiers est indisponible. Sélectionnez le texte FEN et copiez-le manuellement.",
-  "position.screenshot.open": "Importer une capture d’écran",
-  "position.screenshot.correctOrientation":
-    "Corriger l’orientation de la capture",
-  "position.screenshot.unavailable":
-    "Impossible de charger la reconnaissance des captures. Réessayez l’importation.",
-  "position.screenshot.reading": "Reconnaissance de l’échiquier…",
+  "position.screenshot.open": "Importer",
   "position.screenshot.error":
     "La position n’a pas pu être lue correctement. Essayez une capture nette, recadrée sur l’échiquier.",
   "position.screenshot.drop": "Déposez la capture pour l’importer",
+  "position.camera.open": "Scanner l’échiquier",
+  "position.camera.scan": "Scanner",
+  "position.camera.close": "Fermer la caméra",
+  "position.camera.opening": "Ouverture de la caméra…",
+  "position.camera.frame":
+    "Placez la caméra face à l’écran et cadrez l’échiquier en entier.",
+  "position.camera.capture": "Capturer l’échiquier",
+  "position.camera.unavailable":
+    "Impossible d’utiliser la caméra. Vérifiez les autorisations du navigateur.",
+  "position.camera.error":
+    "La position n’a pas pu être lue correctement. Réessayez avec une image nette de tout l’échiquier, sans reflets.",
+  "position.recognition.correctOrientation":
+    "Corriger l’orientation de l’échiquier",
+  "position.recognition.unavailable":
+    "Impossible de charger la reconnaissance de l’échiquier. Réessayez l’importation.",
+  "position.recognition.reading": "Reconnaissance de l’échiquier…",
   "position.controls.label": "Commandes de position FEN",
   "position.controls.heading": "Position FEN",
   "position.controls.input": "Collez une position FEN",

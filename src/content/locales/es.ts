@@ -529,15 +529,26 @@ export default {
   "position.error.invalidInput": "Este FEN no es válido.",
   "position.error.clipboard":
     "El portapapeles no está disponible. Selecciona el texto FEN y cópialo manualmente.",
-  "position.screenshot.open": "Importar captura",
-  "position.screenshot.correctOrientation":
-    "Corregir la orientación de la captura",
-  "position.screenshot.unavailable":
-    "No se pudo cargar el reconocimiento de capturas. Vuelve a intentar la importación.",
-  "position.screenshot.reading": "Reconociendo el tablero…",
+  "position.screenshot.open": "Importar",
   "position.screenshot.error":
     "No se pudo reconocer bien el tablero. Prueba con una captura nítida recortada al tablero.",
   "position.screenshot.drop": "Suelta la captura para importarla",
+  "position.camera.open": "Escanear tablero",
+  "position.camera.scan": "Escanear",
+  "position.camera.close": "Cerrar cámara",
+  "position.camera.opening": "Abriendo la cámara…",
+  "position.camera.frame":
+    "Apunta la cámara de frente a la pantalla y encuadra todo el tablero.",
+  "position.camera.capture": "Capturar tablero",
+  "position.camera.unavailable":
+    "No se pudo usar la cámara. Comprueba los permisos de cámara del navegador.",
+  "position.camera.error":
+    "No se pudo reconocer bien el tablero. Vuelve a intentarlo con todo el tablero enfocado y evita los reflejos.",
+  "position.recognition.correctOrientation":
+    "Corregir la orientación del tablero",
+  "position.recognition.unavailable":
+    "No se pudo cargar el reconocimiento del tablero. Vuelve a intentar la importación.",
+  "position.recognition.reading": "Reconociendo el tablero…",
   "position.controls.label": "Controles de posición FEN",
   "position.controls.heading": "Posición FEN",
   "position.controls.input": "Pega una posición FEN",

@@ -2,7 +2,9 @@
 
 A browser-based chess playground with Stockfish analysis, move explanations, a computer opponent, random practice positions, and interactive opening lessons. Available in English, Spanish, German, Italian, and French. Games save locally in your browser.
 
-To load a Chess.com screenshot, drop it on the board, paste it, or choose a file with **Import screenshot** next to the FEN controls. When Tempo is unsure which side is at the bottom, it offers **Correct screenshot orientation**. The board controls let you change whose turn it is or flip the view. Castling and en passant rights start empty.
+To load a Chess.com screenshot, drop it on the board, paste it, or choose a file with **Import** next to the FEN controls. On a phone, open **Edit position** to find **Import** and **Scan**. To scan, allow camera access and point the camera straight at a Chess.com board on another screen. Fit the whole board inside the frame and tap **Capture board**. Camera access on a phone requires HTTPS. Recognition runs in your browser.
+
+Each import loads the position shown in the image. When Tempo is unsure which side is at the bottom, it offers **Correct board orientation**. The board controls let you change whose turn it is or flip the view. Castling and en passant rights start empty.
 
 ## Run
 

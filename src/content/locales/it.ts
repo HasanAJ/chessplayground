@@ -547,15 +547,26 @@ export default {
   "position.error.invalidInput": "Questo FEN non è valido.",
   "position.error.clipboard":
     "Gli appunti non sono disponibili. Seleziona il testo FEN e copialo manualmente.",
-  "position.screenshot.open": "Importa screenshot",
-  "position.screenshot.correctOrientation":
-    "Correggi l’orientamento dello screenshot",
-  "position.screenshot.unavailable":
-    "Impossibile caricare il riconoscimento degli screenshot. Riprova a importare.",
-  "position.screenshot.reading": "Riconoscimento della scacchiera…",
+  "position.screenshot.open": "Importa",
   "position.screenshot.error":
     "Impossibile leggere chiaramente la scacchiera. Prova con uno screenshot nitido ritagliato sulla scacchiera.",
   "position.screenshot.drop": "Rilascia lo screenshot per importarlo",
+  "position.camera.open": "Scansiona scacchiera",
+  "position.camera.scan": "Scansiona",
+  "position.camera.close": "Chiudi fotocamera",
+  "position.camera.opening": "Apertura della fotocamera…",
+  "position.camera.frame":
+    "Punta la fotocamera di fronte allo schermo e inquadra tutta la scacchiera.",
+  "position.camera.capture": "Cattura scacchiera",
+  "position.camera.unavailable":
+    "Impossibile usare la fotocamera. Controlla le autorizzazioni del browser.",
+  "position.camera.error":
+    "Impossibile leggere chiaramente la scacchiera. Riprova mettendola tutta a fuoco ed evitando i riflessi.",
+  "position.recognition.correctOrientation":
+    "Correggi l’orientamento della scacchiera",
+  "position.recognition.unavailable":
+    "Impossibile caricare il riconoscimento della scacchiera. Riprova a importare.",
+  "position.recognition.reading": "Riconoscimento della scacchiera…",
   "position.controls.label": "Controlli della posizione FEN",
   "position.controls.heading": "Posizione FEN",
   "position.controls.input": "Incolla una posizione FEN",

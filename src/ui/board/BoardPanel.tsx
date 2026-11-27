@@ -71,10 +71,11 @@ type Props = {
   onRandomPosition: () => void;
   onShowHistory: (ply: number) => void;
 };
-type ScreenshotImport =
-  | { key: string; state: "reading"; image: File }
-  | { key: string; state: "unreadable" | "unavailable" };
-type ScreenshotOrientation = { position: Chess; alternate: Chess };
+type BoardImageSource = "screenshot" | "camera";
+type BoardImageImport = { key: string; source: BoardImageSource } & (
+  { state: "reading"; image: Blob } | { state: "unreadable" | "unavailable" }
+);
+type OrientationCorrection = { position: Chess; alternate: Chess };
 function Toolbar({
   game,
   board,
@@ -198,10 +199,9 @@ export function BoardPanel(props: Props) {
   );
   const { setFlipped } = board;
   const [editor, setEditor] = useState(false);
-  const [screenshotImport, setScreenshotImport] =
-    useState<ScreenshotImport | null>(null);
-  const [screenshotOrientation, setScreenshotOrientation] =
-    useState<ScreenshotOrientation | null>(null);
+  const [imageImport, setImageImport] = useState<BoardImageImport | null>(null);
+  const [orientationCorrection, setOrientationCorrection] =
+    useState<OrientationCorrection | null>(null);
   const clear = () => {
     preview.clearPreview();
     analysis.clear();
@@ -210,14 +210,14 @@ export function BoardPanel(props: Props) {
   };
   const reset = () => {
     setEditor(false);
-    setScreenshotOrientation(null);
+    setOrientationCorrection(null);
     props.onNewGame();
   };
   const loadPosition = useCallback(
     (position: Chess, alternate: Chess | null = null) => {
       game.replaceGame(position);
       setEditor(false);
-      setScreenshotOrientation(alternate ? { position, alternate } : null);
+      setOrientationCorrection(alternate ? { position, alternate } : null);
     },
     [game.replaceGame],
   );
@@ -225,16 +225,16 @@ export function BoardPanel(props: Props) {
     ? setupFen(game.draft.position, game.draft.turn, game.draft.rights)
     : game.analysisFen;
   const correction =
-    screenshotOrientation &&
+    orientationCorrection &&
     game.history.length === 0 &&
-    fen.split(" ")[0] === screenshotOrientation.position.fen().split(" ")[0]
-      ? screenshotOrientation
+    fen.split(" ")[0] === orientationCorrection.position.fen().split(" ")[0]
+      ? orientationCorrection
       : null;
   useEffect(() => {
-    if (screenshotOrientation && !correction) setScreenshotOrientation(null);
-  }, [correction, screenshotOrientation]);
+    if (orientationCorrection && !correction) setOrientationCorrection(null);
+  }, [correction, orientationCorrection]);
 
-  function correctScreenshotOrientation() {
+  function correctOrientation() {
     if (!correction) return;
     const turn = game.draft?.turn ?? game.analysisGame.turn();
     let position = correction.alternate;
@@ -250,20 +250,18 @@ export function BoardPanel(props: Props) {
     ? `${game.analysisKey}:${fen}`
     : game.analysisKey;
   const currentImport =
-    props.active && screenshotImport?.key === positionKey
-      ? screenshotImport
-      : null;
-  const readingScreenshot = currentImport?.state === "reading";
-  const importScreenshot = useCallback(
-    (image: File) => {
-      setScreenshotImport({ key: positionKey, state: "reading", image });
+    props.active && imageImport?.key === positionKey ? imageImport : null;
+  const readingBoardImage = currentImport?.state === "reading";
+  const importBoardImage = useCallback(
+    (image: Blob, source: BoardImageSource = "screenshot") => {
+      setImageImport({ key: positionKey, source, state: "reading", image });
       scrollToBoard();
     },
     [positionKey],
   );
   useEffect(() => {
-    props.onDraggingChange(board.freeDrag !== null || readingScreenshot);
-  }, [props.onDraggingChange, board.freeDrag, readingScreenshot]);
+    props.onDraggingChange(board.freeDrag !== null || readingBoardImage);
+  }, [props.onDraggingChange, board.freeDrag, readingBoardImage]);
   useEffect(() => {
     if (!props.active) return;
     function pasteScreenshot(event: ClipboardEvent) {
@@ -273,43 +271,38 @@ export function BoardPanel(props: Props) {
       );
       if (!image) return;
       event.preventDefault();
-      importScreenshot(image);
+      importBoardImage(image);
     }
     document.addEventListener("paste", pasteScreenshot);
     return () => document.removeEventListener("paste", pasteScreenshot);
-  }, [props.active, importScreenshot]);
+  }, [props.active, importBoardImage]);
   useEffect(() => {
     if (!currentImport) {
-      if (screenshotImport) setScreenshotImport(null);
+      if (imageImport) setImageImport(null);
       return;
     }
     if (currentImport.state !== "reading") return;
+    const { key, source, image } = currentImport;
     let cancelled = false;
     void import("../../infrastructure/screenshot/recognizeBoard.ts")
-      .then(({ recognizePlayableBoard }) =>
-        recognizePlayableBoard(currentImport.image),
-      )
+      .then(({ recognizePlayableBoard }) => recognizePlayableBoard(image))
       .then((result) => {
         if (cancelled) return;
         if (result?.state !== "ready") {
-          setScreenshotImport({
-            key: currentImport.key,
-            state: result?.state ?? "unreadable",
-          });
+          setImageImport({ key, source, state: result?.state ?? "unreadable" });
           return;
         }
         loadPosition(result.game, result.alternate);
         setFlipped(result.flipped);
-        setScreenshotImport(null);
+        setImageImport(null);
       })
       .catch(() => {
-        if (!cancelled)
-          setScreenshotImport({ key: currentImport.key, state: "unavailable" });
+        if (!cancelled) setImageImport({ key, source, state: "unavailable" });
       });
     return () => {
       cancelled = true;
     };
-  }, [currentImport, loadPosition, screenshotImport, setFlipped]);
+  }, [currentImport, imageImport, loadPosition, setFlipped]);
   const top: Color = board.flipped ? "w" : "b",
     bottom: Color = board.flipped ? "b" : "w";
   const tray = (color: Color, id: string) => (
@@ -350,7 +343,7 @@ export function BoardPanel(props: Props) {
         reset={reset}
         randomize={() => {
           setEditor(false);
-          setScreenshotOrientation(null);
+          setOrientationCorrection(null);
           props.onRandomPosition();
         }}
         navigate={props.onShowHistory}
@@ -365,25 +358,27 @@ export function BoardPanel(props: Props) {
           analysis={analysis}
           reviewEvaluation={props.reviewEvaluation}
           highlights={props.highlights}
-          importingScreenshot={readingScreenshot}
-          onScreenshotDrop={importScreenshot}
+          readingBoardImage={readingBoardImage}
+          onScreenshotDrop={importBoardImage}
         />
-        {correction && !readingScreenshot && (
+        {correction && !readingBoardImage && (
           <button
             type="button"
-            className="small-button screenshot-orientation"
-            onClick={correctScreenshotOrientation}
+            className="small-button image-orientation"
+            onClick={correctOrientation}
           >
             <RotateCw size={15} aria-hidden="true" />
-            {t("position.screenshot.correctOrientation")}
+            {t("position.recognition.correctOrientation")}
           </button>
         )}
-        {currentImport && !readingScreenshot && (
+        {currentImport && !readingBoardImage && (
           <p className="fen-error" role="alert">
             {t(
               currentImport.state === "unavailable"
-                ? "position.screenshot.unavailable"
-                : "position.screenshot.error",
+                ? "position.recognition.unavailable"
+                : currentImport.source === "camera"
+                  ? "position.camera.error"
+                  : "position.screenshot.error",
             )}
           </p>
         )}
@@ -427,7 +422,12 @@ export function BoardPanel(props: Props) {
           <PositionLoader
             fen={fen}
             onLoad={loadPosition}
-            onImportScreenshot={importScreenshot}
+            onImportScreenshot={importBoardImage}
+            onCaptureBoard={
+              props.active
+                ? (image) => importBoardImage(image, "camera")
+                : undefined
+            }
           />
         </div>
       </div>

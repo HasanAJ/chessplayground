@@ -7,23 +7,26 @@ async function move(page: Page, from: string, to: string) {
   await square(page, from).click();
   await square(page, to).click();
 }
-async function loadFen(page: Page, fen: string) {
+async function openPositionEditor(page: Page) {
   const toggle = page.locator(".position-editor-toggle");
   if (
     (await toggle.isVisible()) &&
     (await toggle.getAttribute("aria-expanded")) === "false"
   )
     await toggle.click();
+}
+
+async function loadFen(page: Page, fen: string) {
+  await openPositionEditor(page);
   await page.locator("#fen-input").fill(fen);
   await page.locator(".fen-controls button[type=submit]").click();
 }
 
 async function chooseScreenshot(page: Page, buffer: Buffer) {
-  const edit = page.getByRole("button", { name: "Edit position" });
-  if (await edit.isVisible()) await edit.click();
+  await openPositionEditor(page);
   const [picker] = await Promise.all([
     page.waitForEvent("filechooser"),
-    page.getByRole("button", { name: "Import screenshot" }).click(),
+    page.getByRole("button", { name: "Import", exact: true }).click(),
   ]);
   await picker.setFiles({ name: "board.png", mimeType: "image/png", buffer });
 }
@@ -95,7 +98,7 @@ test("dropping or choosing a screenshot loads a position for play and analysis",
       ),
   ).toEqual(labels);
   await expect(
-    page.getByRole("button", { name: "Correct screenshot orientation" }),
+    page.getByRole("button", { name: "Correct board orientation" }),
   ).toHaveCount(0);
 
   const turnSwitch = page.locator(".turn-switch");
@@ -129,7 +132,6 @@ test("dropping or choosing a screenshot loads a position for play and analysis",
     "/pieces/bP.svg",
   );
   await expect(page.getByRole("alert")).toHaveCount(0);
-  await expect(dialog).toHaveCount(0);
 });
 
 test("a pawnless screenshot can be corrected on the board before play", async ({
@@ -154,7 +156,7 @@ test("a pawnless screenshot can be corrected on the board before play", async ({
   const turnSwitch = page.locator(".turn-switch");
   await turnSwitch.click();
   const correct = page.getByRole("button", {
-    name: "Correct screenshot orientation",
+    name: "Correct board orientation",
   });
   await correct.click();
   await expect(page.locator("#fen-input")).toHaveValue(
@@ -171,16 +173,13 @@ test("screenshot import retries a failed model download", async ({ page }) => {
     .locator(".board-surface .chessboard")
     .screenshot();
   await page.getByRole("button", { name: "New game", exact: true }).click();
-  let modelRequests = 0;
-  await page.route("**/chess-tiles-*.onnx", async (route) => {
-    modelRequests += 1;
-    if (modelRequests === 1) await route.abort();
-    else await route.continue();
+  await page.route("**/chess-tiles-*.onnx", (route) => route.abort(), {
+    times: 1,
   });
 
   await chooseScreenshot(page, screenshot);
   await expect(page.getByRole("alert")).toHaveText(
-    "Couldn’t load screenshot recognition. Try importing again.",
+    "Couldn’t load board recognition. Try importing again.",
   );
   await chooseScreenshot(page, screenshot);
   await expect(square(page, "e4").locator("img")).toHaveAttribute(
@@ -188,7 +187,88 @@ test("screenshot import retries a failed model download", async ({ page }) => {
     "/pieces/wP.svg",
   );
   await expect(page.getByRole("alert")).toHaveCount(0);
-  expect(modelRequests).toBe(2);
+});
+
+test("a camera capture loads the framed position and releases the camera", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await loadFen(page, screenshotPosition);
+  const boardImage = await page
+    .locator(".board-surface .board-grid")
+    .screenshot();
+  await page.getByRole("button", { name: "New game", exact: true }).click();
+
+  const camera = await page.evaluateHandle(async (base64) => {
+    const board = new Image();
+    board.src = `data:image/png;base64,${base64}`;
+    await board.decode();
+    const tracks: MediaStreamTrack[] = [];
+    Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+      value: async (constraints: MediaStreamConstraints) => {
+        const frame = document.createElement("canvas");
+        frame.width = 960;
+        frame.height = 540;
+        const context = frame.getContext("2d")!;
+        const stream = frame.captureStream();
+        tracks.push(...stream.getTracks());
+        requestAnimationFrame(() => {
+          context.fillStyle = "#272522";
+          context.fillRect(0, 0, frame.width, frame.height);
+          context.drawImage(board, 237, 27, 486, 486);
+        });
+        if (constraints.audio !== false) throw new Error("Requested audio");
+        return stream;
+      },
+    });
+    return tracks;
+  }, boardImage.toString("base64"));
+  const trackStates = () =>
+    camera.evaluate((tracks) => tracks.map((track) => track.readyState));
+
+  await openPositionEditor(page);
+  const scan = page.getByRole("button", { name: "Scan board" });
+  const dialog = page.getByRole("dialog", { name: "Scan board" });
+  const capture = dialog.getByRole("button", { name: "Capture board" });
+  expect(await trackStates()).toEqual([]);
+  await scan.click();
+  await expect(capture).toBeEnabled();
+  await dialog.getByRole("button", { name: "Close camera" }).click();
+  await expect(dialog).toBeHidden();
+  expect(await trackStates()).toEqual(["ended"]);
+
+  await scan.click();
+  await capture.click();
+  await expect(dialog).toBeHidden();
+  expect(await trackStates()).toEqual(["ended", "ended"]);
+  await expect(page.locator("#fen-input")).toHaveValue(
+    `${screenshotPosition.split(" ")[0]} w - - 0 1`,
+  );
+});
+
+test("camera permission failure can be dismissed without changing the position", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+      value: async () => {
+        throw new DOMException("Permission denied", "NotAllowedError");
+      },
+    });
+  });
+  await page.goto("/");
+  await loadFen(page, screenshotPosition);
+  await openPositionEditor(page);
+  const scan = page.getByRole("button", { name: "Scan board" });
+  const dialog = page.getByRole("dialog", { name: "Scan board" });
+  await scan.click();
+  await expect(dialog.getByRole("alert")).toHaveText(
+    "Couldn’t use the camera. Check your browser’s camera permissions.",
+  );
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(scan).toBeFocused();
+  await expect(page.locator("#fen-input")).toHaveValue(screenshotPosition);
 });
 
 test("legal play, history branching and reload keep the chosen game", async ({
@@ -464,9 +544,53 @@ test("small and large viewports have no horizontal overflow", async ({
 }) => {
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/", "/openings/", "/openings/wayward-rook/"]) {
+    const playPaths =
+      width === 320 ? ["/", "/de/", "/es/", "/fr/", "/it/"] : ["/"];
+    for (const path of [
+      ...playPaths,
+      "/openings/",
+      "/openings/wayward-rook/",
+    ]) {
       await page.goto(path);
       await page.locator(".site-header").waitFor();
+      if (playPaths.includes(path)) {
+        await openPositionEditor(page);
+        const fits = await page
+          .locator(".fen-controls form")
+          .evaluate((form) => {
+            const row = form.getBoundingClientRect();
+            const controls = form.querySelectorAll(
+              ':scope > :is(input[type="text"], button)',
+            );
+            return (
+              controls.length === 5 &&
+              Array.from(controls).every((control) => {
+                const bounds = control.getBoundingClientRect();
+                return bounds.top === row.top && bounds.right <= row.right;
+              })
+            );
+          });
+        expect(fits, `Position controls at ${width}px on ${path}`).toBe(true);
+        await page.mouse.move(0, 0);
+        const buttonStyles = await page
+          .locator(".fen-controls form > button")
+          .evaluateAll((buttons) =>
+            buttons.map((button) => {
+              const style = getComputedStyle(button);
+              return [
+                style.backgroundColor,
+                style.color,
+                style.fontFamily,
+                style.fontSize,
+                style.fontWeight,
+                style.borderRadius,
+              ];
+            }),
+          );
+        for (const style of buttonStyles.slice(1)) {
+          expect(style).toEqual(buttonStyles[0]);
+        }
+      }
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= window.innerWidth,

@@ -521,14 +521,25 @@ const en = {
   "position.error.invalidInput": "This FEN is not valid.",
   "position.error.clipboard":
     "Clipboard access is unavailable. Select the FEN text and copy it manually.",
-  "position.screenshot.open": "Import screenshot",
-  "position.screenshot.correctOrientation": "Correct screenshot orientation",
-  "position.screenshot.unavailable":
-    "Couldn’t load screenshot recognition. Try importing again.",
-  "position.screenshot.reading": "Reading the board…",
+  "position.screenshot.open": "Import",
   "position.screenshot.error":
     "Couldn’t read the board clearly. Try a sharp screenshot cropped to the board.",
   "position.screenshot.drop": "Drop screenshot to import",
+  "position.camera.open": "Scan board",
+  "position.camera.scan": "Scan",
+  "position.camera.close": "Close camera",
+  "position.camera.opening": "Opening camera…",
+  "position.camera.frame":
+    "Point your camera straight at the screen and fit the whole board inside the frame.",
+  "position.camera.capture": "Capture board",
+  "position.camera.unavailable":
+    "Couldn’t use the camera. Check your browser’s camera permissions.",
+  "position.camera.error":
+    "Couldn’t read the board clearly. Try again with the whole board in focus and avoid glare.",
+  "position.recognition.correctOrientation": "Correct board orientation",
+  "position.recognition.unavailable":
+    "Couldn’t load board recognition. Try importing again.",
+  "position.recognition.reading": "Reading the board…",
   "position.controls.label": "FEN position controls",
   "position.controls.heading": "FEN position",
   "position.controls.input": "Paste a FEN position",

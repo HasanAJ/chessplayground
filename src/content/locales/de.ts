@@ -555,15 +555,25 @@ export default {
   "position.error.invalidInput": "Dieses FEN ist ungültig.",
   "position.error.clipboard":
     "Kein Zugriff auf die Zwischenablage. Markiere den FEN-Text und kopiere ihn manuell.",
-  "position.screenshot.open": "Screenshot importieren",
-  "position.screenshot.correctOrientation":
-    "Screenshot-Ausrichtung korrigieren",
-  "position.screenshot.unavailable":
-    "Die Screenshot-Erkennung konnte nicht geladen werden. Versuche den Import erneut.",
-  "position.screenshot.reading": "Brett wird erkannt …",
+  "position.screenshot.open": "Importieren",
   "position.screenshot.error":
     "Das Brett war nicht eindeutig erkennbar. Versuche es mit einem scharfen Screenshot, der auf das Brett zugeschnitten ist.",
   "position.screenshot.drop": "Screenshot zum Importieren ablegen",
+  "position.camera.open": "Brett scannen",
+  "position.camera.scan": "Scannen",
+  "position.camera.close": "Kamera schließen",
+  "position.camera.opening": "Kamera wird geöffnet …",
+  "position.camera.frame":
+    "Richte die Kamera gerade auf den Bildschirm und bring das ganze Brett in den Rahmen.",
+  "position.camera.capture": "Brett aufnehmen",
+  "position.camera.unavailable":
+    "Die Kamera konnte nicht verwendet werden. Prüfe die Kameraberechtigungen im Browser.",
+  "position.camera.error":
+    "Das Brett war nicht eindeutig erkennbar. Achte beim nächsten Versuch darauf, dass das ganze Brett scharf und frei von Spiegelungen ist.",
+  "position.recognition.correctOrientation": "Brettausrichtung korrigieren",
+  "position.recognition.unavailable":
+    "Die Bretterkennung konnte nicht geladen werden. Versuche den Import erneut.",
+  "position.recognition.reading": "Brett wird erkannt …",
   "position.controls.label": "FEN-Stellungssteuerung",
   "position.controls.heading": "FEN-Stellung",
   "position.controls.input": "FEN-Stellung einfügen",

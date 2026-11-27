@@ -26,7 +26,7 @@ type Props = {
   analysis: Recommendations;
   reviewEvaluation?: PositionEvaluation;
   highlights: CoachPresentation;
-  importingScreenshot: boolean;
+  readingBoardImage: boolean;
   onScreenshotDrop: (image: File) => void;
 };
 
@@ -181,7 +181,7 @@ export function Chessboard(props: Props) {
               appearance.explaining ? "explanation-arrowhead" : "arrowhead"
             }
           />
-          {(fileOverBoard || props.importingScreenshot) && (
+          {(fileOverBoard || props.readingBoardImage) && (
             <div className="screenshot-drop-overlay" role="status">
               <span>
                 {fileOverBoard ? (
@@ -192,7 +192,7 @@ export function Chessboard(props: Props) {
                 {t(
                   fileOverBoard
                     ? "position.screenshot.drop"
-                    : "position.screenshot.reading",
+                    : "position.recognition.reading",
                 )}
               </span>
             </div>

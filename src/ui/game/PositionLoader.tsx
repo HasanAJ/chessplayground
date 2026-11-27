@@ -9,16 +9,19 @@ import {
   type Diagnostic,
 } from "../../i18n/notices.ts";
 import { useTranslation } from "../../i18n/LanguageProvider.tsx";
+import { BoardCamera } from "../board/BoardCamera.tsx";
 
 type State = { text: string; error: Diagnostic | null };
 export function PositionLoader({
   fen,
   onLoad,
   onImportScreenshot,
+  onCaptureBoard,
 }: {
   fen: string;
   onLoad: (game: Chess) => void;
   onImportScreenshot: (image: File) => void;
+  onCaptureBoard?: (image: Blob) => void;
 }) {
   const { t } = useTranslation();
   const screenshotPicker = useRef<HTMLInputElement>(null);
@@ -53,7 +56,6 @@ export function PositionLoader({
     update({ error: null });
   }
   const copyLabel = t("position.controls.copy");
-  const screenshotLabel = t("position.screenshot.open");
   return (
     <section className="fen-controls" aria-label={t("position.controls.label")}>
       <form onSubmit={submit}>
@@ -72,26 +74,22 @@ export function PositionLoader({
         />
         <button
           type="button"
-          className="icon-button"
           aria-label={copyLabel}
           title={copyLabel}
           onClick={copy}
         >
-          <Copy size={15} />
+          <Copy size={17} aria-hidden="true" />
         </button>
-        <button type="submit" className="small-button">
-          {t("position.controls.load")}
-        </button>
+        <button type="submit">{t("position.controls.load")}</button>
         <button
           type="button"
-          className="icon-button screenshot-trigger"
-          aria-label={screenshotLabel}
-          title={screenshotLabel}
+          className="board-image-trigger"
           onClick={() => screenshotPicker.current?.click()}
         >
           <ImagePlus size={17} aria-hidden="true" />
-          <span>{screenshotLabel}</span>
+          {t("position.screenshot.open")}
         </button>
+        {onCaptureBoard && <BoardCamera onCapture={onCaptureBoard} />}
         <input
           ref={screenshotPicker}
           type="file"
